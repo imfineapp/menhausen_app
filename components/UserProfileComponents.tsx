@@ -104,7 +104,7 @@ function isSwitchElement(element: React.ReactNode): boolean {
   
   // Проверяем, является ли элемент Switch компонентом на основе props
   if ('type' in element && typeof element.type === 'object' && element.type !== null) {
-    return 'displayName' in element.type && element.type.displayName === 'Switch';
+    return 'displayName' in element.type && (element.type as any).displayName === 'Switch';
   }
   
   // Проверяем по data-testid для Switch
