@@ -158,7 +158,9 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
 
     test('should reach post-survey application state', async ({ page }) => {
       // Complete onboarding and survey to reach post-survey state
-      await page.getByRole('button', { name: /next/i }).click();
+      const nextButton = page.getByRole('button', { name: /next/i });
+      await expect(nextButton).toBeVisible();
+      await nextButton.click();
       await page.getByRole('button', { name: /get started/i }).click();
       
       // Quick survey completion
