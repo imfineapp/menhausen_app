@@ -122,7 +122,7 @@ function SurveyItem({ option, selected, onToggle }: {
       <div className="absolute box-border content-stretch flex flex-row gap-5 items-center justify-start left-[5.7%] p-0 right-[5.7%] top-1/2 translate-y-[-50%]">
         <RadioButton selected={selected} />
         <div 
-          className={`font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
+          className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
             selected ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}
         >
@@ -187,12 +187,12 @@ function HeroBlockQuestion() {
   return (
     <div className="flex flex-col gap-5 items-center justify-start leading-[0] text-center w-full">
       {/* Основной заголовок опроса */}
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block mb-0">{`What worries you `}</p>
         <p className="block">the most?</p>
       </div>
       {/* Подзаголовок с инструкцией */}
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">You can choose several options</p>
       </div>
     </div>
@@ -215,7 +215,7 @@ function ButtonWithGradient({ onClick, disabled }: { onClick: () => void; disabl
       }`}
       data-name="Bottom Fixed CTA Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </button>

@@ -131,10 +131,10 @@ function RatingTextContainer() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center w-full"
       data-name="Rating text container"
     >
-      <div className="[grid-area:1_/_1] font-['Roboto_Slab:Regular',_sans-serif] font-normal relative text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full">
+      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full">
         <p className="block leading-[0.8]">Please rate the card.</p>
       </div>
-      <div className="[grid-area:1_/_1] font-['PT_Sans:Regular',_sans-serif] mt-[35px] sm:mt-[37px] md:mt-[39px] not-italic relative text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] w-full">
+      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] mt-[35px] sm:mt-[37px] md:mt-[39px] not-italic relative text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] w-full">
         <p className="block leading-none">Your rating will help us to be more useful.</p>
       </div>
     </div>
@@ -171,7 +171,7 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
         <p className="block leading-none">Your feedback is fully protected with AES-256 encryption</p>
       </div>
     </div>
@@ -216,7 +216,7 @@ function InputTextMessageBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-['PT_Sans:Regular',_sans-serif] leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[16px] sm:text-[17px] md:text-[18px] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
+        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[16px] sm:text-[17px] md:text-[18px] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -269,7 +269,7 @@ function RatingMark({
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       )}
-      <div className={`absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[20px] text-center text-nowrap tracking-[-0.43px] ${
+      <div className={`absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[20px] text-center text-nowrap tracking-[-0.43px] ${
         isSelected ? 'text-[#2d2b2b]' : 'text-[#ffffff]'
       }`}>
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{number}</p>
@@ -326,7 +326,7 @@ function RatingCardContainer({
       <RatingOptions selectedRating={selectedRating} onRatingChange={onRatingChange} />
       {showThankYou && (
         <div
-          className="font-['PT_Sans:Regular',_sans-serif] leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center"
+          className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center"
           style={{ width: "min-content" }}
         >
           <p className="block leading-none">Thank you!</p>

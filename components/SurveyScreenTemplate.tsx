@@ -221,7 +221,7 @@ export function SurveyScreenTemplate({
             
             {/* Заголовок и подзаголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-['Roboto_Slab:Regular',_sans-serif] font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
+              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
                 {localizedScreen.title}
               </h1>
               {localizedScreen.subtitle && (

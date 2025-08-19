@@ -6,7 +6,7 @@
   
   <!-- Telegram WebApp Meta Tags -->
   <meta name="telegram-web-app-theme-color" content="#111111" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="format-detection" content="telephone=no" />
   
@@ -23,8 +23,14 @@
   
   <title>Menhausen - Mental Health Support</title>
   
-  <!-- Preload critical resources -->
-  
+    <!-- Google Fonts - Optimized Loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap"></noscript>
+
+  <!-- Critical resources are bundled by Vite -->
+
   <!-- Telegram WebApp Script -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
@@ -35,7 +41,7 @@
       padding: 0;
       background-color: #111111;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
@@ -87,10 +93,10 @@
       display: none;
     }
   </style>
-  <script type="module" crossorigin src="/assets/index-BPsjwWuE.js"></script>
+  <script type="module" crossorigin src="/assets/index-z3yRkvEO.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/vendor-QYCSsVv3.js">
   <link rel="modulepreload" crossorigin href="/assets/ui-1jNB0vmg.js">
-  <link rel="stylesheet" crossorigin href="/assets/index-BCcsxd8y.css">
+  <link rel="stylesheet" crossorigin href="/assets/index-BS9cep96.css">
 </head>
 <body>
   <div id="root"></div>

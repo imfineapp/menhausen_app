@@ -13,7 +13,7 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
       data-name="Feedback button"
     >
       <div className="flex items-center justify-center w-full h-full px-4">
-        <div className="font-['PT_Sans:Bold',_sans-serif] text-[14px] sm:text-[15px] text-[#2d2b2b] text-center tracking-[-0.43px]">
+        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[14px] sm:text-[15px] text-[#2d2b2b] text-center tracking-[-0.43px]">
           <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">Join Channel</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function FeedbackSection() {
         />
         <div className="flex items-start gap-4 mb-4">
           <FeedbackIcon />
-          <div className="font-['PT_Sans:Regular',_sans-serif] text-[18px] sm:text-[20px] text-[#cfcfcf] text-left flex-1">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#cfcfcf] text-left flex-1">
             <p className="block leading-none">Join our Telegram channel to share feedback, get updates, and connect with our community.</p>
           </div>
         </div>

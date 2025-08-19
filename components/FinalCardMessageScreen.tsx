@@ -150,14 +150,14 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
       data-name="Container"
     >
       {/* Заголовок с итоговым сообщением */}
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full text-center">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full text-center">
         <p className="block leading-[0.8]">
           {finalMessage}
         </p>
       </div>
       
       {/* Блок с задачами и объяснением */}
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] w-full text-center">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] w-full text-center">
         {/* Практическое задание */}
         <p className="block leading-none mb-0 text-[18px] sm:text-[19px] md:text-[20px]">
           {practiceTask}

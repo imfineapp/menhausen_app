@@ -59,7 +59,7 @@ function TextButton({ onSkip }: { onSkip: () => void }) {
   return (
     <button
       onClick={onSkip} 
-      className="absolute left-[23px] top-[758px] h-[46px] w-[350px] flex items-center justify-center font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap cursor-pointer hover:text-[#e1ff00] touch-friendly transition-colors duration-200"
+      className="absolute left-[23px] top-[758px] h-[46px] w-[350px] flex items-center justify-center font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap cursor-pointer hover:text-[#e1ff00] touch-friendly transition-colors duration-200"
       data-name="Text button"
     >
       <p className="block leading-none whitespace-pre">Skip</p>
@@ -85,7 +85,7 @@ function NumberButton({ number, onPress }: { number: string; onPress: (num: stri
         </svg>
       </div>
       {/* Цифра */}
-      <div className="absolute font-['Roboto_Slab:Regular',_sans-serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">{number}</p>
       </div>
     </button>
@@ -180,7 +180,7 @@ function PinMessage({ show }: { show: boolean }) {
   
   return (
     <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
         <p className="block leading-none">PIN code does not match, please try again</p>
       </div>
     </div>
@@ -206,7 +206,7 @@ function PinSetup({
       <PinBlock4 pinLength={pinLength} />
       
       {/* Инструкция */}
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
         <p className="block leading-none">
           {mode === 'create' 
             ? 'For more privacy you can set a pin code to log in'

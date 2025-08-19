@@ -29,7 +29,7 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
       }`}
       data-name="User account status"
     >
-      <div className={`font-['PT_Sans:Bold',_sans-serif] text-[14px] sm:text-[15px] text-center tracking-[-0.43px] ${
+      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[14px] sm:text-[15px] text-center tracking-[-0.43px] ${
         isPremium ? 'text-[#2d2b2b]' : 'text-[#696969]'
       }`}>
         <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">
@@ -50,7 +50,7 @@ export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
         <p className="block leading-[0.8]">Hero #1275</p>
       </div>
       <div className="flex items-center gap-4 sm:gap-5">
-        <div className="font-['PT_Sans:Regular',_sans-serif] text-[18px] sm:text-[20px] text-[#696969] text-left">
+        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#696969] text-left">
           <p className="block leading-none">Level 25</p>
         </div>
         <UserAccountStatus isPremium={userHasPremium} />
@@ -151,7 +151,7 @@ export function SettingsItem({
         <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
           <div className="flex items-center gap-2.5">
             {icon}
-            <div className={`font-['PT_Sans:Regular',_sans-serif] text-[18px] sm:text-[20px] text-left ${
+            <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-left ${
               isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
             }`}>
               <p className="block leading-none">{title}</p>
@@ -179,7 +179,7 @@ export function SettingsItem({
       <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
         <div className="flex items-center gap-2.5">
           {icon}
-          <div className={`font-['PT_Sans:Regular',_sans-serif] text-[18px] sm:text-[20px] text-left ${
+          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-left ${
             isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}>
             <p className="block leading-none">{title}</p>

@@ -141,7 +141,7 @@ function AppLogoSection() {
           <h1 className="block leading-[0.8]">Menhausen</h1>
         </div>
         <div className="bg-[#e1ff00] px-3 py-1 rounded-xl">
-          <div className="font-['PT_Sans:Bold',_sans-serif] text-responsive-sm text-[#2d2b2b] text-center tracking-[-0.43px]">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#2d2b2b] text-center tracking-[-0.43px]">
             <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">Beta Version 1.0.0</p>
           </div>
         </div>
@@ -162,10 +162,10 @@ function AppInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-['Roboto_Slab:Regular',_sans-serif] text-responsive-2xl text-[#e1ff00] text-left">
+          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
             <h2 className="block leading-[0.8]">About Menhausen</h2>
           </div>
-          <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
             <p className="block leading-[1.5]">
               Menhausen is your personal mental health companion designed to help you track your mood, 
               build healthy habits, and support your emotional well-being through daily check-ins and mindful exercises.
@@ -180,37 +180,37 @@ function AppInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-['Roboto_Slab:Regular',_sans-serif] text-responsive-2xl text-[#e1ff00] text-left">
+          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
             <h2 className="block leading-[0.8]">Key Features</h2>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Daily mood tracking and emotional check-ins</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Personalized mental health exercises and activities</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Progress tracking with levels and achievements</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Secure and private - your data stays yours</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Built specifically for Telegram Mini Apps</p>
               </div>
             </div>
@@ -232,20 +232,20 @@ function TeamSection() {
         className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
       />
       <div className="flex flex-col gap-4">
-        <div className="font-['Roboto_Slab:Regular',_sans-serif] text-responsive-2xl text-[#e1ff00] text-left">
+        <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
           <h2 className="block leading-[0.8]">Development Team</h2>
         </div>
-        <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
+        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
           <p className="block leading-[1.5]">
             Created with care by a dedicated team of developers and mental health advocates. 
             Our mission is to make mental wellness accessible and engaging for everyone.
           </p>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
             <p className="block leading-[1.5]">Made with ❤️ for the Telegram community</p>
           </div>
-          <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-sm text-[#696969] text-left">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#696969] text-left">
             <p className="block leading-[1.5]">© 2024 Menhausen Team. All rights reserved.</p>
           </div>
         </div>
@@ -272,7 +272,7 @@ function TechnicalInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex items-center justify-between">
-          <div className="font-['Roboto_Slab:Regular',_sans-serif] text-responsive-2xl text-[#e1ff00] text-left">
+          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
             <h2 className="block leading-[0.8]">Technical Information</h2>
           </div>
           <div className={`transform transition-transform duration-200 ${showTechnicalInfo ? 'rotate-180' : ''}`}>
@@ -291,34 +291,34 @@ function TechnicalInfoSection() {
           />
           <div className="flex flex-col gap-3">
             <div className="flex justify-between">
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Version:</p>
               </div>
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">1.0.0 Beta</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Platform:</p>
               </div>
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">Telegram Mini App</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Built with:</p>
               </div>
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">React & TypeScript</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Last updated:</p>
               </div>
-              <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">December 2024</p>
               </div>
             </div>
@@ -374,17 +374,17 @@ export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
           />
           <div className="flex flex-col gap-3">
-            <div className="font-['Roboto_Slab:Regular',_sans-serif] text-responsive-2xl text-[#e1ff00] text-left">
+            <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
               <h2 className="block leading-[0.8]">Important Note</h2>
             </div>
-            <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
               <p className="block leading-[1.5]">
                 Menhausen is designed to support your mental wellness journey, but it is not a substitute for 
                 professional medical advice, diagnosis, or treatment. If you're experiencing serious mental health 
                 concerns, please consult with qualified healthcare professionals.
               </p>
             </div>
-            <div className="font-['PT_Sans:Regular',_sans-serif] text-responsive-sm text-[#696969] text-left">
+            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#696969] text-left">
               <p className="block leading-[1.5]">
                 For emergencies, please contact your local emergency services or mental health crisis hotline.
               </p>

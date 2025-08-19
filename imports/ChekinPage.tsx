@@ -128,7 +128,7 @@ function CardInfo() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Card Info"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[0px] text-left w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[0px] text-left w-full">
         <p className="leading-[0.8] text-[24px]">
           <span>{`Card #1 / `}</span>
           <span className="text-[#696969]">26.02.1984</span>
@@ -151,7 +151,7 @@ function InputAnswerBlock() {
       />
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[85px] items-center justify-center p-[20px] relative w-full">
-          <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
             <p className="block leading-none">{`Oh, I don't know what to say. Everyone just pisses me off.`}</p>
           </div>
         </div>
@@ -172,7 +172,7 @@ function InputAnswerBlock1() {
       />
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[83px] items-center justify-center p-[20px] relative w-full">
-          <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
             <p className="block leading-none">{`I want everyone to just leave me alone and that's it`}</p>
           </div>
         </div>
@@ -184,15 +184,15 @@ function InputAnswerBlock1() {
 function Frame49() {
   return (
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
-      <div className="font-['PT_Sans:Regular',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
         <p className="block leading-none">{`What in other people's behavior most often irritates or offends you?`}</p>
       </div>
       <InputAnswerBlock />
-      <div className="font-['PT_Sans:Regular',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
         <p className="block leading-none">What are your expectations behind this reaction?</p>
       </div>
       <InputAnswerBlock1 />
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-left w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-left w-full">
         <p className="block leading-none mb-0 text-[20px]">
           Awareness of expectations reduces the automaticity of emotional reactions.
         </p>

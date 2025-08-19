@@ -41,7 +41,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </div>
@@ -58,7 +58,7 @@ function InputAnswerBlock() {
         aria-hidden="true"
         className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
       />
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[311px]">
         <p className="block leading-none">{`I want everyone to just leave me alone and that's it`}</p>
       </div>
     </div>
@@ -84,7 +84,7 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left w-[302px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left w-[302px]">
         <p className="block leading-none">Your answers are fully protected with AES-256 encryption</p>
       </div>
     </div>
@@ -109,7 +109,7 @@ function ContentBlock() {
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-[21px] p-0 top-[141px] w-[351px]"
       data-name="Content block"
     >
-      <div className="font-['PT_Sans:Regular',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-center w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-11 leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-center w-full">
         <p className="block leading-none">What are your expectations behind this reaction?</p>
       </div>
       <AnswerBlock />

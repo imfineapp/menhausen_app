@@ -17,11 +17,11 @@ function PlanInfo() {
       className="box-border content-stretch flex flex-col gap-2.5 h-[49px] items-center justify-start leading-[0] p-0 relative shrink-0 text-center"
       data-name="Plan Info"
     >
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-nowrap">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-nowrap">
         <p className="block leading-none whitespace-pre">Your current plan</p>
       </div>
       <div
-        className="font-['Roboto_Slab:Regular',_sans-serif] font-normal min-w-full relative shrink-0 text-[#e1ff00] text-[24px]"
+        className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal min-w-full relative shrink-0 text-[#e1ff00] text-[24px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-[0.8]">FREE</p>

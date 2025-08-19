@@ -56,7 +56,7 @@ function Button() {
     <div className="bg-[#e1ff00] h-[46px] relative rounded-xl shrink-0 w-full" data-name="Button">
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
             <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
           </div>
         </div>
@@ -71,14 +71,14 @@ function ButtonBlock() {
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-[21px] p-0 top-[688px] w-[351px]"
       data-name="button block"
     >
-      <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
         <p className="leading-none text-[14px]">
           <span>{`By clicking the button you agree to the `}</span>
-          <span className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT_Sans:Regular',_sans-serif] not-italic">
+          <span className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic">
             Terms of use
           </span>
-          <span className="font-['PT_Sans:Regular',_sans-serif] not-italic">{` and`}</span>
-          <span className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT_Sans:Regular',_sans-serif] not-italic">{` Privacy policy`}</span>
+          <span className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic">{` and`}</span>
+          <span className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic">{` Privacy policy`}</span>
         </p>
       </div>
       <Button />
@@ -92,14 +92,14 @@ function MainContent() {
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-[21px] p-0 text-center top-[277px] w-[351px]"
       data-name="main_content"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
         <p className="block leading-[0.8] mb-0 text-[36px]">{`You don't have `}</p>
         <p className="leading-[0.8] text-[36px]">
-          <span className="font-['Roboto_Slab:Regular',_sans-serif] font-normal text-[#e1ff00]">to cope</span>
+          <span className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-[#e1ff00]">to cope</span>
           <span>{` alone`}</span>
         </p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Anonymous digital self-help tool for men. Сards based on scientific methods. `}</p>
       </div>
     </div>

@@ -299,7 +299,7 @@
 @layer base {
   :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
     h1 {
-      font-family: 'Roboto_Slab:Regular', sans-serif;
+      font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
       font-weight: 400; /* normal */
       font-size: clamp(24px, 5vw, 32px);
       line-height: 0.8;

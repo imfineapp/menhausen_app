@@ -151,10 +151,10 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
       data-name="Card Header"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">{cardTitle}</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{cardDescription || defaultDescription}</p>
       </div>
     </div>
@@ -177,7 +177,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">{checkin.formattedDate}</p>
       </div>
     </button>
@@ -193,7 +193,7 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       className="relative shrink-0 w-full"
       data-name="Checkins Container"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Checkins</p>
       </div>
       <div
@@ -222,7 +222,7 @@ function OpenCardButton({ onClick }: { onClick: () => void }) {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-98 transition-all duration-200"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open card</p>
       </div>
     </button>
