@@ -26,9 +26,10 @@ export default defineConfig({
   
   /* Reporter to use */
   reporter: [
-    ['html'],
+    ['html', { open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['junit', { outputFile: 'test-results/results.xml' }],
+    ['list'], // Add console output for test progress
   ],
   
   /* Shared settings for all the projects below */
@@ -84,7 +85,7 @@ export default defineConfig({
   },
 
   /* Global test configuration */
-  timeout: 30 * 1000,
+  timeout: 5 * 1000,
   expect: {
     timeout: 5 * 1000,
     toHaveScreenshot: {
