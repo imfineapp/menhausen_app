@@ -279,7 +279,7 @@ function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
  * Главный компонент домашней страницы темы
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards = new Set(), cardCompletionCounts = {} }: ThemeHomeScreenProps) {
+export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards: _completedCards = new Set(), cardCompletionCounts: _cardCompletionCounts = {} }: ThemeHomeScreenProps) {
   // Моковые данные карточек (в реальном приложении будут загружаться с сервера)
   const cards: Card[] = [
     {

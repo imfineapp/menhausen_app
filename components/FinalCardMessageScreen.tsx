@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
+// import { useState } from 'react';
 import svgPaths from "../imports/svg-qmw9c7g6l8";
 import { BottomFixedButton } from "./BottomFixedButton";
 
@@ -184,7 +184,7 @@ export function FinalCardMessageScreen({
   onBack, 
   onNext, 
   cardId, 
-  cardTitle, 
+  cardTitle: _cardTitle, 
   finalMessage, 
   practiceTask, 
   whyExplanation 

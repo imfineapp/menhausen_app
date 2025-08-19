@@ -405,7 +405,7 @@ function ScienceContainer() {
  * Блок с контентом всех преимуществ
  * Объединяет все четыре преимущества в вертикальный список
  */
-function ContentBlock({ onComplete }: { onComplete: () => void }) {
+function ContentBlock({ onComplete: _onComplete }: { onComplete: () => void }) {
   return (
     <div
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-[42px] p-0 top-36 w-[310px]"

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import svgPaths from "../imports/svg-xgh5f6h0jm";
 
 interface CheckInScreenProps {
@@ -117,11 +117,11 @@ function MoodProgressBar({
     onMoodChange(mood);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
     const mood = calculateMoodFromPosition(e.clientX);
     onMoodChange(mood);
-  };
+  }, [isDragging, onMoodChange]);
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -143,7 +143,7 @@ function MoodProgressBar({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging]);
+  }, [isDragging, handleMouseMove]);
 
   const fillWidth = selectedMood !== null ? Math.max(30, (selectedMood / 4) * 351) : 186;
 

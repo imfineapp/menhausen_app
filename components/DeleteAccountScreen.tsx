@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-tf9lg82y07";
-import WarningIcon from "../imports/Frame-6-24";
+// import WarningIcon from "../imports/Frame-6-24";
 import warningIconPaths from "../imports/svg-iawz1hhk6y";
 
 /**

@@ -345,7 +345,7 @@ function RatingCardContainer({
  * Главный компонент экрана оценки карточки
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function RateCardScreen({ onBack, onNext, cardId, cardTitle }: RateCardScreenProps) {
+export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }: RateCardScreenProps) {
   // Состояние для хранения выбранного рейтинга (по умолчанию 5, как в дизайне)
   const [selectedRating, setSelectedRating] = useState(5);
   
@@ -385,7 +385,7 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle }: RateCardSc
    * Функция для обработки кнопки "Back" 
    * Возвращается к предыдущему экрану (итоговое сообщение)
    */
-  const handleBack = () => {
+  const _handleBack = () => {
     console.log(`Going back from rating screen for card: ${cardId}`);
     onBack();
   };

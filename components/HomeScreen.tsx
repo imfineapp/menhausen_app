@@ -720,7 +720,7 @@ function TwitterIcon() {
  */
 function FollowButton({ 
   icon, 
-  platform, 
+  platform: _platform, 
   onClick 
 }: { 
   icon: React.ReactNode; 

@@ -59,7 +59,7 @@ export function UserProfileScreen({
   
   // Хуки для управления языком и шарингом
   const { language, openLanguageModal } = useLanguage();
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   const { handleShare } = useAppShare();
 
   /**

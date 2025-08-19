@@ -246,7 +246,7 @@ function HeaderBlock({ onBack }: { onBack: () => void }) {
  * Основной компонент страницы "Under Construction"
  */
 export function UnderConstructionScreen({ onBack, featureName }: UnderConstructionScreenProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, setIsLoading] = useState(false);
 
   /**
    * Обработчик кнопки "Got it" с анимацией

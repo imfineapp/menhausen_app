@@ -258,7 +258,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
  * Главный компонент экрана первого вопроса карточки
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function QuestionScreen01({ onBack, onNext, cardId, cardTitle, questionText }: QuestionScreen01Props) {
+export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle, questionText }: QuestionScreen01Props) {
   // Состояние для хранения ответа пользователя
   const [answer, setAnswer] = useState('');
   

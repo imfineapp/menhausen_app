@@ -259,7 +259,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
  * Главный компонент экрана второго вопроса карточки
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function QuestionScreen02({ onBack, onNext, cardId, cardTitle, questionText, previousAnswer }: QuestionScreen02Props) {
+export function QuestionScreen02({ onBack, onNext, cardId, cardTitle: _cardTitle, questionText, previousAnswer: _previousAnswer }: QuestionScreen02Props) {
   // Состояние для хранения ответа пользователя
   const [answer, setAnswer] = useState('');
   

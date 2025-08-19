@@ -169,7 +169,7 @@ export function ThemeWelcomeScreen({
   onBack, 
   onStart, 
   onUnlock, 
-  themeTitle, 
+  themeTitle: _themeTitle, 
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {

@@ -53,7 +53,7 @@ function Light() {
 /**
  * Кнопка покупки Premium с состоянием загрузки
  */
-function BuyButton({ onPurchase, isLoading, selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
+function BuyButton({ onPurchase, isLoading, selectedPlan: _selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
   return (
     <button
       onClick={onPurchase}
@@ -219,7 +219,7 @@ function ThemeBlockBackground2() {
 /**
  * Иконка Premium звезды
  */
-function PlanIcon() {
+function _PlanIcon() {
   return (
     <div className="relative shrink-0 size-6" data-name="Plan Icon">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">

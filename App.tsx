@@ -49,7 +49,7 @@ function AppContent() {
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
-  const [cardRating, setCardRating] = useState<number>(0);
+  const [_cardRating, setCardRating] = useState<number>(0);
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
   const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
@@ -122,15 +122,15 @@ function AppContent() {
     setCurrentScreen('survey01');
   };
 
-  const handleShowPinSetup = () => {
+  const _handleShowPinSetup = () => {
     setCurrentScreen('pin');
   };
 
-  const handleShowCheckIn = () => {
+  const _handleShowCheckIn = () => {
     setCurrentScreen('checkin');
   };
 
-  const handleShowHome = () => {
+  const _handleShowHome = () => {
     setCurrentScreen('home');
   };
 
@@ -242,7 +242,7 @@ function AppContent() {
     setCurrentScreen('theme-home');
   };
 
-  const handleBackToThemeWelcome = () => {
+  const _handleBackToThemeWelcome = () => {
     setCurrentScreen('theme-welcome');
   };
 
@@ -598,7 +598,7 @@ function AppContent() {
             userHasPremium={userHasPremium}
           />
         );
-      case 'theme-welcome':
+      case 'theme-welcome': {
         const themeData = getTheme(currentTheme);
         
         return (
@@ -611,6 +611,7 @@ function AppContent() {
             userHasPremium={userHasPremium}
           />
         );
+      }
       case 'theme-home':
         return (
           <ThemeHomeScreen
@@ -652,7 +653,7 @@ function AppContent() {
             cardDescription={currentCard.description}
           />
         );
-      case 'question-01':
+      case 'question-01': {
         const card1 = getCard(currentCard.id);
         const question1 = card1?.questions[0];
         
@@ -665,7 +666,8 @@ function AppContent() {
             questionText={question1 ? getLocalizedText(question1.text) : "What in other people's behavior most often irritates or offends you?"}
           />
         );
-      case 'question-02':
+      }
+      case 'question-02': {
         const card2 = getCard(currentCard.id);
         const question2 = card2?.questions[1];
         
@@ -679,7 +681,8 @@ function AppContent() {
             previousAnswer={userAnswers.question1}
           />
         );
-      case 'final-message':
+      }
+      case 'final-message': {
         const cardFinal = getCard(currentCard.id);
         const finalMessage = cardFinal?.finalMessage;
         
@@ -694,6 +697,7 @@ function AppContent() {
             whyExplanation={finalMessage ? getLocalizedText(finalMessage.whyExplanation) : "You learn to distinguish people's behavior from your own projections."}
           />
         );
+      }
       case 'rate-card':
         return (
           <RateCardScreen

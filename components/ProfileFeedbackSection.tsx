@@ -25,7 +25,7 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
  * Адаптивная секция обратной связи
  */
 export function FeedbackSection() {
-  const { t } = useTranslation();
+  const { t: _t } = useTranslation();
   
   const handleFeedback = () => {
     console.log('Opening Telegram channel for feedback');
