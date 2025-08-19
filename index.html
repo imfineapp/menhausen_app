@@ -107,15 +107,20 @@
   <script>
     // Initialize Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
+      const webApp = window.Telegram.WebApp;
+      webApp.ready();
+      webApp.expand();
       
-      // Set theme color
-      window.Telegram.WebApp.setHeaderColor('#111111');
-      window.Telegram.WebApp.setBackgroundColor('#111111');
+      // Check version and set colors only if supported (version 6.1+)
+      if (webApp.version >= '6.1') {
+        webApp.setHeaderColor('#111111');
+        webApp.setBackgroundColor('#111111');
+      }
       
-      // Disable vertical swipes
-      window.Telegram.WebApp.disableVerticalSwipes();
+      // Disable vertical swipes only if supported (version 6.1+)
+      if (webApp.version >= '6.1' && webApp.disableVerticalSwipes) {
+        webApp.disableVerticalSwipes();
+      }
     }
     
     // Prevent zoom on double tap (iOS Safari)
