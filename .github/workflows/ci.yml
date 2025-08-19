@@ -58,7 +58,7 @@ jobs:
         run: npm run test:coverage
 
       - name: 📈 Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
           flags: unittests
@@ -66,7 +66,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: 💾 Upload coverage artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
@@ -107,7 +107,7 @@ jobs:
         run: npm run test:e2e
 
       - name: 📸 Upload test artifacts on failure
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: playwright-report
@@ -147,7 +147,7 @@ jobs:
           du -sh dist/*
 
       - name: 💾 Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: dist/
