@@ -1,0 +1,859 @@
+{
+  "config": {
+    "configFile": "/Users/leontev/Projects/menhausen/menhausen_app/playwright.config.ts",
+    "rootDir": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 7
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/results.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/leontev/Projects/menhausen/menhausen_app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 7
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "/.*\\.setup\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/leontev/Projects/menhausen/menhausen_app/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 7
+        },
+        "id": "Telegram WebApp",
+        "name": "Telegram WebApp",
+        "testDir": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.2",
+    "workers": 7,
+    "webServer": {
+      "command": "npm run dev",
+      "url": "http://localhost:5173",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "user-stories/epic1-data-persistence.spec.ts",
+      "file": "user-stories/epic1-data-persistence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Epic 1: Enhanced Data Persistence & API Integration",
+          "file": "user-stories/epic1-data-persistence.spec.ts",
+          "line": 11,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "User Story 1.1: Robust Data Recovery",
+              "file": "user-stories/epic1-data-persistence.spec.ts",
+              "line": 25,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should persist survey results immediately after each screen completion",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 30350,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 29
+                              },
+                              "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 27 |\u001b[39m     test(\u001b[32m'should persist survey results immediately after each screen completion'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 28 |\u001b[39m       \u001b[90m// Start the survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 29 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 30 |\u001b[39m       \n \u001b[90m 31 |\u001b[39m       \u001b[90m// Complete first survey screen\u001b[39m\n \u001b[90m 32 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Survey Question 1'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:29:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.540Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-787f2fe5de97b4a3dac4",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 27,
+                  "column": 5
+                },
+                {
+                  "title": "should recover partial survey progress after interruption",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "timedOut",
+                          "duration": 30289,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 63
+                              },
+                              "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 61 |\u001b[39m     test(\u001b[32m'should recover partial survey progress after interruption'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 62 |\u001b[39m       \u001b[90m// Start survey and complete first two screens\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 63 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 66 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:63:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.533Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-c982e4e647ad9d671128",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 61,
+                  "column": 5
+                },
+                {
+                  "title": "should validate and prevent corrupted state",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 2,
+                          "status": "failed",
+                          "duration": 26664,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:98:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 98
+                            },
+                            "snippet": "\u001b[0m \u001b[90m  96 |\u001b[39m       \n \u001b[90m  97 |\u001b[39m       \u001b[90m// Navigate to survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \n \u001b[90m 100 |\u001b[39m       \u001b[90m// App should detect corruption and start fresh\u001b[39m\n \u001b[90m 101 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Survey Question 1'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 98
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m  96 |\u001b[39m       \n \u001b[90m  97 |\u001b[39m       \u001b[90m// Navigate to survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \n \u001b[90m 100 |\u001b[39m       \u001b[90m// App should detect corruption and start fresh\u001b[39m\n \u001b[90m 101 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Survey Question 1'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:98:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.540Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-2c93e-and-prevent-corrupted-state-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 98
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-eb7a738aeb53d5e759be",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 91,
+                  "column": 5
+                },
+                {
+                  "title": "should handle data format migration from v1 to v2",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 3,
+                          "status": "failed",
+                          "duration": 3562,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:136:36",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 36,
+                              "line": 136
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 134 |\u001b[39m       })\u001b[33m;\u001b[39m\n \u001b[90m 135 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 136 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mversion)\u001b[33m.\u001b[39mtoBe(\u001b[35m2\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 137 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mscreen01)\u001b[33m.\u001b[39mtoContain(\u001b[32m'old_option'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 138 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mmigratedAt)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m 139 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 36,
+                                "line": 136
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m2\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n\u001b[0m \u001b[90m 134 |\u001b[39m       })\u001b[33m;\u001b[39m\n \u001b[90m 135 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 136 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mversion)\u001b[33m.\u001b[39mtoBe(\u001b[35m2\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 137 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mscreen01)\u001b[33m.\u001b[39mtoContain(\u001b[32m'old_option'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 138 |\u001b[39m       expect(migratedData\u001b[33m.\u001b[39mdata\u001b[33m.\u001b[39mmigratedAt)\u001b[33m.\u001b[39mtoBeTruthy()\u001b[33m;\u001b[39m\n \u001b[90m 139 |\u001b[39m     })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:136:36\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.553Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 36,
+                            "line": 136
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-ea73f19e8a77327bd4e2",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 112,
+                  "column": 5
+                },
+                {
+                  "title": "should display user-friendly error messages for storage failures",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 4,
+                          "status": "failed",
+                          "duration": 24451,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:150:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 150
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 148 |\u001b[39m       \n \u001b[90m 149 |\u001b[39m       \u001b[90m// Try to start survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 150 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 151 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 152 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 153 |\u001b[39m       \u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 150
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 148 |\u001b[39m       \n \u001b[90m 149 |\u001b[39m       \u001b[90m// Try to start survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 150 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 151 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 152 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 153 |\u001b[39m       \u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:150:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.544Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-71b7e-ssages-for-storage-failures-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 150
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-0a94ad9c0fbda7280af9",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 141,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "User Story 1.2: API Service Layer Foundation",
+              "file": "user-stories/epic1-data-persistence.spec.ts",
+              "line": 160,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should handle survey submission with API sync",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 5,
+                          "status": "failed",
+                          "duration": 28977,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:192:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 192
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 190 |\u001b[39m       \n \u001b[90m 191 |\u001b[39m       \u001b[90m// Complete full survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 192 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 193 |\u001b[39m       \n \u001b[90m 194 |\u001b[39m       \u001b[90m// Complete all survey screens\u001b[39m\n \u001b[90m 195 |\u001b[39m       \u001b[36mfor\u001b[39m (\u001b[36mlet\u001b[39m i \u001b[33m=\u001b[39m \u001b[35m1\u001b[39m\u001b[33m;\u001b[39m i \u001b[33m<=\u001b[39m \u001b[35m5\u001b[39m\u001b[33m;\u001b[39m i\u001b[33m++\u001b[39m) {\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 192
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 190 |\u001b[39m       \n \u001b[90m 191 |\u001b[39m       \u001b[90m// Complete full survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 192 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 193 |\u001b[39m       \n \u001b[90m 194 |\u001b[39m       \u001b[90m// Complete all survey screens\u001b[39m\n \u001b[90m 195 |\u001b[39m       \u001b[36mfor\u001b[39m (\u001b[36mlet\u001b[39m i \u001b[33m=\u001b[39m \u001b[35m1\u001b[39m\u001b[33m;\u001b[39m i \u001b[33m<=\u001b[39m \u001b[35m5\u001b[39m\u001b[33m;\u001b[39m i\u001b[33m++\u001b[39m) {\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:192:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.538Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-a41a2-ey-submission-with-API-sync-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 192
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-fbd7d4ede07ec4819ae4",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 181,
+                  "column": 5
+                },
+                {
+                  "title": "should track exercise completion with timestamps",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "timedOut",
+                          "duration": 30349,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 69,
+                                "line": 224
+                              },
+                              "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /exercises|themes/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 222 |\u001b[39m       \n \u001b[90m 223 |\u001b[39m       \u001b[90m// Navigate to exercises\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 224 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/exercises|themes/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                     \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 225 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Self-Compassion'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 226 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Card 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 227 |\u001b[39m       \u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:224:69\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:51.534Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-1e8b645067ed756dad6b",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 213,
+                  "column": 5
+                },
+                {
+                  "title": "should queue failed API calls for retry when offline",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 3,
+                          "status": "failed",
+                          "duration": 28674,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:253:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 253
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 251 |\u001b[39m       \n \u001b[90m 252 |\u001b[39m       \u001b[90m// Complete survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 253 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 254 |\u001b[39m       \n \u001b[90m 255 |\u001b[39m       \u001b[36mfor\u001b[39m (\u001b[36mlet\u001b[39m i \u001b[33m=\u001b[39m \u001b[35m1\u001b[39m\u001b[33m;\u001b[39m i \u001b[33m<=\u001b[39m \u001b[35m5\u001b[39m\u001b[33m;\u001b[39m i\u001b[33m++\u001b[39m) {\n \u001b[90m 256 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m`Option ${i}`\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 253
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 251 |\u001b[39m       \n \u001b[90m 252 |\u001b[39m       \u001b[90m// Complete survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 253 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 254 |\u001b[39m       \n \u001b[90m 255 |\u001b[39m       \u001b[36mfor\u001b[39m (\u001b[36mlet\u001b[39m i \u001b[33m=\u001b[39m \u001b[35m1\u001b[39m\u001b[33m;\u001b[39m i \u001b[33m<=\u001b[39m \u001b[35m5\u001b[39m\u001b[33m;\u001b[39m i\u001b[33m++\u001b[39m) {\n \u001b[90m 256 |\u001b[39m         \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m`Option ${i}`\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:253:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:24:55.863Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-0df35-alls-for-retry-when-offline-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 253
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-4bc483d8b7bd678b9b82",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 248,
+                  "column": 5
+                },
+                {
+                  "title": "should resolve data synchronization conflicts",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 4,
+                          "status": "failed",
+                          "duration": 14210,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /sync|refresh/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /sync|refresh/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:312:65",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 65,
+                              "line": 312
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 310 |\u001b[39m       \n \u001b[90m 311 |\u001b[39m       \u001b[90m// Trigger sync\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 312 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/sync|refresh/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 313 |\u001b[39m       \n \u001b[90m 314 |\u001b[39m       \u001b[90m// Verify conflict resolution (server wins with newer timestamp)\u001b[39m\n \u001b[90m 315 |\u001b[39m       \u001b[36mconst\u001b[39m resolvedData \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(() \u001b[33m=>\u001b[39m {\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 65,
+                                "line": 312
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /sync|refresh/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 310 |\u001b[39m       \n \u001b[90m 311 |\u001b[39m       \u001b[90m// Trigger sync\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 312 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/sync|refresh/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 313 |\u001b[39m       \n \u001b[90m 314 |\u001b[39m       \u001b[90m// Verify conflict resolution (server wins with newer timestamp)\u001b[39m\n \u001b[90m 315 |\u001b[39m       \u001b[36mconst\u001b[39m resolvedData \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(() \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:312:65\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:25:16.789Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-27bf4-a-synchronization-conflicts-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 65,
+                            "line": 312
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-55392939d1f57d75e2ed",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 284,
+                  "column": 5
+                },
+                {
+                  "title": "should ensure privacy-compliant data transmission",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 2,
+                          "status": "failed",
+                          "duration": 9261,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:340:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 340
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 338 |\u001b[39m       \n \u001b[90m 339 |\u001b[39m       \u001b[90m// Complete survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 340 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 341 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 342 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue|submit/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 343 |\u001b[39m       \u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 340
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 338 |\u001b[39m       \n \u001b[90m 339 |\u001b[39m       \u001b[90m// Complete survey\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 340 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 341 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 342 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue|submit/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 343 |\u001b[39m       \u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:340:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:25:19.034Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-d3dd2-compliant-data-transmission-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 340
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-75d644ca2dfba71cc6c6",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 323,
+                  "column": 5
+                }
+              ]
+            },
+            {
+              "title": "Integration: Data Persistence + API Sync",
+              "file": "user-stories/epic1-data-persistence.spec.ts",
+              "line": 357,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "should maintain data consistency across offline/online transitions",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Telegram WebApp",
+                      "projectName": "Telegram WebApp",
+                      "results": [
+                        {
+                          "workerIndex": 10,
+                          "parallelIndex": 5,
+                          "status": "failed",
+                          "duration": 4658,
+                          "error": {
+                            "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n",
+                            "stack": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:361:71",
+                            "location": {
+                              "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                              "column": 71,
+                              "line": 361
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 359 |\u001b[39m     test(\u001b[32m'should maintain data consistency across offline/online transitions'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 360 |\u001b[39m       \u001b[90m// Start survey online\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 361 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 362 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 363 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 364 |\u001b[39m       \u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                                "column": 71,
+                                "line": 361
+                              },
+                              "message": "Error: locator.click: Target page, context or browser has been closed\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /start survey|begin/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 359 |\u001b[39m     test(\u001b[32m'should maintain data consistency across offline/online transitions'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 360 |\u001b[39m       \u001b[90m// Start survey online\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 361 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/start survey|begin/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 362 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Option 1'\u001b[39m)\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 363 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/next|continue/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m 364 |\u001b[39m       \u001b[0m\n\u001b[2m    at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:361:71\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-08-19T15:25:21.296Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "/Users/leontev/Projects/menhausen/menhausen_app/test-results/user-stories-epic1-data-pe-c1453--offline-online-transitions-Telegram-WebApp/video.webm"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "/Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts",
+                            "column": 71,
+                            "line": 361
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "6da407f8ec2209ef8a08-e91b9fa9c5dd68f72b11",
+                  "file": "user-stories/epic1-data-persistence.spec.ts",
+                  "line": 359,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-19T15:24:49.603Z",
+    "duration": 41662.049,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 11,
+    "flaky": 0
+  }
+}
