@@ -58,7 +58,7 @@
         "testMatch": [
           "/.*\\.setup\\.ts/"
         ],
-        "timeout": 5000
+        "timeout": 10000
       },
       {
         "outputDir": "/Users/leontev/Projects/menhausen/menhausen_app/test-results",
@@ -74,7 +74,7 @@
         "testMatch": [
           "**/*.@(spec|test).?(c|m)[jt]s?(x)"
         ],
-        "timeout": 5000
+        "timeout": 10000
       }
     ],
     "shard": null,
@@ -116,7 +116,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -126,12 +126,12 @@
                           "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "passed",
-                          "duration": 2980,
+                          "duration": 3440,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.620Z",
+                          "startTime": "2025-08-19T16:10:36.339Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -150,7 +150,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -160,12 +160,12 @@
                           "workerIndex": 1,
                           "parallelIndex": 1,
                           "status": "passed",
-                          "duration": 3704,
+                          "duration": 4164,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.622Z",
+                          "startTime": "2025-08-19T16:10:36.338Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -184,7 +184,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -194,12 +194,12 @@
                           "workerIndex": 2,
                           "parallelIndex": 2,
                           "status": "passed",
-                          "duration": 2887,
+                          "duration": 3271,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.621Z",
+                          "startTime": "2025-08-19T16:10:36.347Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -218,7 +218,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -228,12 +228,12 @@
                           "workerIndex": 3,
                           "parallelIndex": 3,
                           "status": "passed",
-                          "duration": 3214,
+                          "duration": 3677,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.620Z",
+                          "startTime": "2025-08-19T16:10:36.338Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -260,7 +260,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -270,7 +270,7 @@
                           "workerIndex": 4,
                           "parallelIndex": 4,
                           "status": "passed",
-                          "duration": 3331,
+                          "duration": 3715,
                           "errors": [],
                           "stdout": [
                             {
@@ -282,7 +282,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.622Z",
+                          "startTime": "2025-08-19T16:10:36.363Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -301,7 +301,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -311,7 +311,7 @@
                           "workerIndex": 5,
                           "parallelIndex": 5,
                           "status": "passed",
-                          "duration": 3232,
+                          "duration": 3677,
                           "errors": [],
                           "stdout": [
                             {
@@ -320,7 +320,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.633Z",
+                          "startTime": "2025-08-19T16:10:36.339Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -330,7 +330,7 @@
                   ],
                   "id": "6da407f8ec2209ef8a08-7633c80d28ab797c82c7",
                   "file": "user-stories/epic1-data-persistence.spec.ts",
-                  "line": 208,
+                  "line": 210,
                   "column": 5
                 },
                 {
@@ -339,7 +339,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -349,12 +349,12 @@
                           "workerIndex": 6,
                           "parallelIndex": 6,
                           "status": "passed",
-                          "duration": 2736,
+                          "duration": 3192,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:50.622Z",
+                          "startTime": "2025-08-19T16:10:36.339Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -364,7 +364,7 @@
                   ],
                   "id": "6da407f8ec2209ef8a08-6796c36dbb719b5f9884",
                   "file": "user-stories/epic1-data-persistence.spec.ts",
-                  "line": 259,
+                  "line": 261,
                   "column": 5
                 },
                 {
@@ -373,7 +373,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -383,7 +383,7 @@
                           "workerIndex": 6,
                           "parallelIndex": 6,
                           "status": "passed",
-                          "duration": 1633,
+                          "duration": 2020,
                           "errors": [],
                           "stdout": [
                             {
@@ -392,7 +392,7 @@
                           ],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:53.707Z",
+                          "startTime": "2025-08-19T16:10:39.934Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -402,7 +402,7 @@
                   ],
                   "id": "6da407f8ec2209ef8a08-f4b6686859011d54bafd",
                   "file": "user-stories/epic1-data-persistence.spec.ts",
-                  "line": 283,
+                  "line": 285,
                   "column": 5
                 }
               ]
@@ -410,7 +410,7 @@
             {
               "title": "Integration: Data Persistence + Navigation",
               "file": "user-stories/epic1-data-persistence.spec.ts",
-              "line": 331,
+              "line": 333,
               "column": 8,
               "specs": [
                 {
@@ -419,7 +419,7 @@
                   "tags": [],
                   "tests": [
                     {
-                      "timeout": 5000,
+                      "timeout": 10000,
                       "annotations": [],
                       "expectedStatus": "passed",
                       "projectId": "Telegram WebApp",
@@ -429,12 +429,12 @@
                           "workerIndex": 2,
                           "parallelIndex": 2,
                           "status": "passed",
-                          "duration": 1898,
+                          "duration": 2212,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-08-19T16:02:53.847Z",
+                          "startTime": "2025-08-19T16:10:40.002Z",
                           "annotations": [],
                           "attachments": []
                         }
@@ -444,7 +444,7 @@
                   ],
                   "id": "6da407f8ec2209ef8a08-5209e01d7855f3159483",
                   "file": "user-stories/epic1-data-persistence.spec.ts",
-                  "line": 333,
+                  "line": 335,
                   "column": 5
                 }
               ]
@@ -456,8 +456,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-19T16:02:50.060Z",
-    "duration": 5718.438999999999,
+    "startTime": "2025-08-19T16:10:35.816Z",
+    "duration": 6454.536,
     "expected": 9,
     "skipped": 0,
     "unexpected": 0,
