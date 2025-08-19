@@ -24,6 +24,8 @@ export default defineConfig({
   /* Opt out of parallel tests on CI */
   workers: process.env.CI ? 1 : undefined,
   
+
+  
   /* Reporter to use */
   reporter: [
     ['html', { open: 'never' }],
@@ -48,6 +50,22 @@ export default defineConfig({
     
     /* Telegram WebApp user agent for compatibility testing */
     userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1 TelegramWebView/7.0',
+    
+    /* CI-specific browser launch options */
+    ...(process.env.CI && {
+      launchOptions: {
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+          '--disable-gpu'
+        ],
+      },
+    }),
   },
 
   /* Configure projects for major browsers */
@@ -85,9 +103,9 @@ export default defineConfig({
   },
 
   /* Global test configuration */
-  timeout: 5 * 1000,
+  timeout: process.env.CI ? 30 * 1000 : 5 * 1000, // Longer timeout in CI
   expect: {
-    timeout: 5 * 1000,
+    timeout: process.env.CI ? 10 * 1000 : 5 * 1000, // Longer expect timeout in CI
     toHaveScreenshot: {
       // Allow small differences for cross-browser compatibility
       threshold: 0.2,
