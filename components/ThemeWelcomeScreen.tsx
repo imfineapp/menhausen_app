@@ -69,7 +69,7 @@ function ActionButton({
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200 touch-friendly"
       data-name={isLocked ? "Unlock Button" : "Start Button"}
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{buttonText}</p>
       </div>
     </button>
@@ -169,7 +169,7 @@ export function ThemeWelcomeScreen({
   onBack, 
   onStart, 
   onUnlock, 
-  themeTitle, 
+  themeTitle: _themeTitle, 
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {

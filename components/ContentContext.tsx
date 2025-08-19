@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, AppContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent } from '../types/content';
 import { appContent } from '../data/content';
 
 /**

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import svgPaths from "../imports/svg-xgh5f6h0jm";
 
 interface CheckInScreenProps {
@@ -67,7 +67,7 @@ function SendButton({ onClick, disabled }: { onClick: () => void; disabled: bool
       }`}
       data-name="Bottom Fixed CTA Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Send</p>
       </div>
     </button>
@@ -80,10 +80,10 @@ function HeroBlockQuestion() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block leading-[0.8]">How are you?</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
       </div>
     </div>
@@ -117,11 +117,11 @@ function MoodProgressBar({
     onMoodChange(mood);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
     const mood = calculateMoodFromPosition(e.clientX);
     onMoodChange(mood);
-  };
+  }, [isDragging, onMoodChange]);
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -143,7 +143,7 @@ function MoodProgressBar({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging]);
+  }, [isDragging, handleMouseMove]);
 
   const fillWidth = selectedMood !== null ? Math.max(30, (selectedMood / 4) * 351) : 186;
 

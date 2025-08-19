@@ -125,7 +125,7 @@ function ProgressTheme() {
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -202,26 +202,26 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
       <div className="relative size-full">
         <div className="box-border content-stretch flex flex-col gap-2.5 h-[106px] items-start justify-start p-[15px] relative w-full text-left">
           <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-            <div className={`font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 ${
+            <div className={`font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 ${
               isInactive ? "text-[#696969]" : "text-[#e1ff00]"
             } text-[24px] text-left w-[158px]`}>
               <p className="block leading-[0.8]">{card.title}</p>
             </div>
             {card.isActive && (
               <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-                <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+                <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
                   <p className="block leading-[0.8] whitespace-pre">{card.checkins}</p>
                 </div>
                 <CheckinIcon />
               </div>
             )}
           </div>
-          <div className={`font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 ${
+          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 ${
             isInactive ? "text-[#696969]" : "text-[#696969]"
           } text-[20px] text-left w-full`}>
             <p className="block leading-none">{card.level}</p>
           </div>
-          <div className={`font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 ${
+          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 ${
             isInactive ? "text-[#696969]" : "text-[#ffffff]"
           } text-[20px] text-left w-full`}>
             <p className="block leading-none">{card.description}</p>
@@ -268,7 +268,7 @@ function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-98 transition-all duration-200"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open next level</p>
       </div>
     </button>
@@ -279,7 +279,7 @@ function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
  * Главный компонент домашней страницы темы
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards = new Set(), cardCompletionCounts = {} }: ThemeHomeScreenProps) {
+export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards: _completedCards = new Set(), cardCompletionCounts: _cardCompletionCounts = {} }: ThemeHomeScreenProps) {
   // Моковые данные карточек (в реальном приложении будут загружаться с сервера)
   const cards: Card[] = [
     {
@@ -396,7 +396,7 @@ export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTit
             </div>
             
             {/* Описание темы */}
-            <div className="font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
+            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
               <p className="block leading-none">
                 {`Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.`}
               </p>

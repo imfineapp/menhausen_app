@@ -41,7 +41,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px]"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Doubtful, but okay</p>
       </div>
     </div>
@@ -97,10 +97,10 @@ function HeroBlockQuestion() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block leading-[0.8]">Something went wrong</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">
           We already know about the problem and are fighting with each other over the right to solve it.
         </p>

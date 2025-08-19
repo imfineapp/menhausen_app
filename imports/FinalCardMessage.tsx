@@ -41,7 +41,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </div>
@@ -54,12 +54,12 @@ function Container() {
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] left-[21px] p-0 text-center top-[231px] w-[351px]"
       data-name="Container"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">
           Awareness of expectations reduces the automaticity of emotional reactions.
         </p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[0px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[0px] w-full">
         <p className="block leading-none mb-0 text-[20px]">{`Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments. `}</p>
         <p className="block leading-none mb-0 text-[20px]">&nbsp;</p>
         <p className="leading-none text-[20px]">

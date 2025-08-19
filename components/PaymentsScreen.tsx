@@ -53,7 +53,7 @@ function Light() {
 /**
  * Кнопка покупки Premium с состоянием загрузки
  */
-function BuyButton({ onPurchase, isLoading, selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
+function BuyButton({ onPurchase, isLoading, selectedPlan: _selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
   return (
     <button
       onClick={onPurchase}
@@ -63,7 +63,7 @@ function BuyButton({ onPurchase, isLoading, selectedPlan }: { onPurchase: () => 
       }`}
       data-name="Buy Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
           {isLoading ? 'Processing...' : 'Buy Premium'}
         </p>
@@ -97,10 +97,10 @@ function PlanInfo() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center text-nowrap"
       data-name="Plan Info"
     >
-      <div className="[grid-area:1_/_1] font-['PT_Sans:Regular',_sans-serif] ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
+      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
         <p className="block leading-none text-nowrap whitespace-pre">Your current plan</p>
       </div>
-      <div className="[grid-area:1_/_1] font-['Roboto_Slab:Regular',_sans-serif] font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
+      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
         <p className="block leading-[0.8] text-nowrap whitespace-pre">FREE</p>
       </div>
     </div>
@@ -149,10 +149,10 @@ function PremiumContainer() {
       data-name="Container"
     >
       <ThemeBlockBackground1 />
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">Premium</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
         <p className="block leading-none mb-0">Opened all themes and cards</p>
         <ul className="css-ed5n1g list-disc">
           <li className="mb-0 ms-[30px]">
@@ -219,7 +219,7 @@ function ThemeBlockBackground2() {
 /**
  * Иконка Premium звезды
  */
-function PlanIcon() {
+function _PlanIcon() {
   return (
     <div className="relative shrink-0 size-6" data-name="Plan Icon">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
@@ -247,7 +247,7 @@ function PlanPriceContainer({ price, color }: { price: string; color: string }) 
       className="box-border content-stretch flex flex-row gap-[5px] items-center justify-start p-0 relative shrink-0"
       data-name="Plan Price Container"
     >
-      <div className={`font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
+      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
         <p className="block leading-none whitespace-pre">{price}</p>
       </div>
       <div className="relative shrink-0 size-6" data-name="Plan Icon">
@@ -278,7 +278,7 @@ function PlanCost({ price, period, color }: { price: string; period: string; col
       data-name="Plan Cost"
     >
       <PlanPriceContainer price={price} color={color} />
-      <div className={`font-['PT_Sans:Regular',_sans-serif] leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
+      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
         <p className="block leading-none whitespace-pre">{period}</p>
       </div>
     </div>
@@ -295,7 +295,7 @@ function PlanDetails({ title, price, period, color }: { title: string; price: st
       data-name="Plan Details"
     >
       <div
-        className={`font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] min-w-full relative shrink-0 text-[${color}] text-[20px] text-left`}
+        className={`font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] min-w-full relative shrink-0 text-[${color}] text-[20px] text-left`}
         style={{ width: "min-content" }}
       >
         <p className="block leading-[0.8]">{title}</p>

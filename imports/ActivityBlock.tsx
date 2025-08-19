@@ -46,7 +46,7 @@ export default function ActivityBlock() {
       </div>
       <ActivityProgress />
       <ActivityHeader />
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] leading-[0] left-5 not-italic text-[#ffffff] text-[20px] text-left top-[81px] w-[311px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] left-5 not-italic text-[#ffffff] text-[20px] text-left top-[81px] w-[311px]">
         <p className="block leading-none">Only by doing exercises regularly will you achieve results.</p>
       </div>
     </div>

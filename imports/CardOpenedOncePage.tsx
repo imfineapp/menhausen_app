@@ -41,10 +41,10 @@ function CardHeader() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
       data-name="Card Header"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">Card #1</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.`}</p>
       </div>
     </div>
@@ -60,7 +60,7 @@ function Checkin() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.1984</p>
       </div>
     </div>
@@ -76,7 +76,7 @@ function Checkin1() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.1986</p>
       </div>
     </div>
@@ -92,7 +92,7 @@ function Checkin2() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.2000</p>
       </div>
     </div>
@@ -108,7 +108,7 @@ function Checkin3() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.2001</p>
       </div>
     </div>
@@ -124,7 +124,7 @@ function Checkin4() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.2025</p>
       </div>
     </div>
@@ -140,7 +140,7 @@ function Checkin5() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Regular',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">26.02.2026</p>
       </div>
     </div>
@@ -170,7 +170,7 @@ function CheckinsContainer() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid place-items-start relative shrink-0"
       data-name="Checkins Container"
     >
-      <div className="[grid-area:1_/_1] font-['Roboto_Slab:Regular',_sans-serif] font-normal leading-[0] ml-0 mt-0 relative text-[#e1ff00] text-[24px] text-left w-[351px]">
+      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] ml-0 mt-0 relative text-[#e1ff00] text-[24px] text-left w-[351px]">
         <p className="block leading-[0.8]">Checkins</p>
       </div>
       <CheckinsList />
@@ -196,7 +196,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open card</p>
       </div>
     </div>

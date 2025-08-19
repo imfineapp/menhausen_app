@@ -72,12 +72,12 @@ function MainContent() {
       data-name="main_content"
     >
       {/* Заголовок страницы */}
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
         <p className="block leading-[0.8]">Privacy policy</p>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="block leading-none mb-0">Effective Date: August 2, 2025</p>

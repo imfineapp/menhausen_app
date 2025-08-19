@@ -53,7 +53,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT_Sans:Bold',_sans-serif] leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </div>
@@ -66,10 +66,10 @@ function RatingTextContainer() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center"
       data-name="Rating text container"
     >
-      <div className="[grid-area:1_/_1] font-['Roboto_Slab:Regular',_sans-serif] font-normal ml-[175.5px] mt-0 relative text-[#e1ff00] text-[24px] translate-x-[-50%] w-[351px]">
+      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-[175.5px] mt-0 relative text-[#e1ff00] text-[24px] translate-x-[-50%] w-[351px]">
         <p className="block leading-[0.8]">Please rate the card.</p>
       </div>
-      <div className="[grid-area:1_/_1] font-['PT_Sans:Regular',_sans-serif] ml-[175.5px] mt-[39px] not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%] w-[351px]">
+      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-[175.5px] mt-[39px] not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%] w-[351px]">
         <p className="block leading-none">Your rating will help us to be more useful.</p>
       </div>
     </div>
@@ -85,7 +85,7 @@ function Mark() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">1</p>
       </div>
     </div>
@@ -101,7 +101,7 @@ function Mark1() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">2</p>
       </div>
     </div>
@@ -117,7 +117,7 @@ function Mark2() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">3</p>
       </div>
     </div>
@@ -133,7 +133,7 @@ function Mark3() {
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#ffffff] text-[20px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">4</p>
       </div>
     </div>
@@ -144,7 +144,7 @@ function Mark4() {
   return (
     <div className="relative shrink-0 size-[46px]" data-name="Mark">
       <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Background" />
-      <div className="absolute font-['PT_Sans:Bold',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#2d2b2b] text-[20px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[#2d2b2b] text-[20px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">5</p>
       </div>
     </div>
@@ -180,7 +180,7 @@ function RatingCardContainer() {
       <RatingTextContainer />
       <RatingOptions />
       <div
-        className="font-['PT_Sans:Regular',_sans-serif] leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[20px] text-center"
+        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[20px] text-center"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Thank you!</p>

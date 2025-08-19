@@ -4,10 +4,10 @@ function HeroBlockQuestion() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto_Slab:Regular',_sans-serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block leading-[0.8]">How are you?</p>
       </div>
-      <div className="font-['PT_Sans:Regular',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
       </div>
     </div>
