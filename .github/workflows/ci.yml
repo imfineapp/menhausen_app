@@ -91,10 +91,21 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      - name: 🎭 Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
       - name: 🎭 Install Playwright browsers
-        run: |
-          npm run playwright:install
-          npx playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      - name: 🎭 Install Playwright system dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
 
       - name: 🏗️ Build application
         run: npm run build
@@ -105,11 +116,19 @@ jobs:
       - name: ⏳ Wait for server to be ready
         run: npx wait-on http://localhost:5173 --timeout 60000
 
+      - name: 🔍 Debug Playwright installation
+        run: |
+          echo "🔍 Checking Playwright installation..."
+          npx playwright --version
+          echo "📁 Playwright cache directory:"
+          ls -la ~/.cache/ms-playwright/ || echo "Cache directory not found"
+          echo "🌍 Environment variables:"
+          env | grep -E "(PLAYWRIGHT|CI)" || echo "No Playwright env vars"
+
       - name: 🎭 Run E2E tests
         run: npm run test:e2e
         env:
           CI: true
-          PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
 
       - name: 📸 Upload test artifacts on failure
         uses: actions/upload-artifact@v4
