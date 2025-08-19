@@ -1,0 +1,369 @@
+<testsuites id="" name="" tests="11" failures="11" skipped="0" errors="0" time="41.662048999999996">
+<testsuite name="user-stories/epic1-data-persistence.spec.ts" timestamp="2025-08-19T15:24:50.958Z" hostname="Telegram WebApp" tests="11" failures="11" skipped="0" time="231.445" errors="0">
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.1: Robust Data Recovery › should persist survey results immediately after each screen completion" classname="user-stories/epic1-data-persistence.spec.ts" time="30.35">
+<failure message="epic1-data-persistence.spec.ts:27:5 should persist survey results immediately after each screen completion" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:27:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.1: Robust Data Recovery › should persist survey results immediately after each screen completion 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      27 |     test('should persist survey results immediately after each screen completion', async ({ page }) => {
+      28 |       // Start the survey
+    > 29 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+         |                                                                       ^
+      30 |       
+      31 |       // Complete first survey screen
+      32 |       await expect(page.getByText('Survey Question 1')).toBeVisible();
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:29:71
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/test-failed-1.png]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/video.webm]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d5af4-fter-each-screen-completion-Telegram-WebApp/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.1: Robust Data Recovery › should recover partial survey progress after interruption" classname="user-stories/epic1-data-persistence.spec.ts" time="30.289">
+<failure message="epic1-data-persistence.spec.ts:61:5 should recover partial survey progress after interruption" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:61:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.1: Robust Data Recovery › should recover partial survey progress after interruption 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      61 |     test('should recover partial survey progress after interruption', async ({ page }) => {
+      62 |       // Start survey and complete first two screens
+    > 63 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+         |                                                                       ^
+      64 |       
+      65 |       await page.getByText('Option 1').click();
+      66 |       await page.getByRole('button', { name: /next|continue/i }).click();
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:63:71
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/test-failed-1.png]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/video.webm]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-15da2-progress-after-interruption-Telegram-WebApp/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.1: Robust Data Recovery › should validate and prevent corrupted state" classname="user-stories/epic1-data-persistence.spec.ts" time="26.664">
+<failure message="epic1-data-persistence.spec.ts:91:5 should validate and prevent corrupted state" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:91:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.1: Robust Data Recovery › should validate and prevent corrupted state 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+       96 |       
+       97 |       // Navigate to survey
+    >  98 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+       99 |       
+      100 |       // App should detect corruption and start fresh
+      101 |       await expect(page.getByText('Survey Question 1')).toBeVisible();
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:98:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-2c93e-and-prevent-corrupted-state-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-2c93e-and-prevent-corrupted-state-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.1: Robust Data Recovery › should handle data format migration from v1 to v2" classname="user-stories/epic1-data-persistence.spec.ts" time="3.562">
+<failure message="epic1-data-persistence.spec.ts:112:5 should handle data format migration from v1 to v2" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:112:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.1: Robust Data Recovery › should handle data format migration from v1 to v2 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 1
+
+      134 |       });
+      135 |       
+    > 136 |       expect(migratedData.version).toBe(2);
+          |                                    ^
+      137 |       expect(migratedData.data.screen01).toContain('old_option');
+      138 |       expect(migratedData.data.migratedAt).toBeTruthy();
+      139 |     });
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:136:36
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/test-failed-1.png]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/video.webm]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d99a8-mat-migration-from-v1-to-v2-Telegram-WebApp/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.1: Robust Data Recovery › should display user-friendly error messages for storage failures" classname="user-stories/epic1-data-persistence.spec.ts" time="24.451">
+<failure message="epic1-data-persistence.spec.ts:141:5 should display user-friendly error messages for storage failures" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:141:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.1: Robust Data Recovery › should display user-friendly error messages for storage failures 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      148 |       
+      149 |       // Try to start survey
+    > 150 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+      151 |       await page.getByText('Option 1').click();
+      152 |       await page.getByRole('button', { name: /next|continue/i }).click();
+      153 |       
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:150:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-71b7e-ssages-for-storage-failures-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-71b7e-ssages-for-storage-failures-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.2: API Service Layer Foundation › should handle survey submission with API sync" classname="user-stories/epic1-data-persistence.spec.ts" time="28.977">
+<failure message="epic1-data-persistence.spec.ts:181:5 should handle survey submission with API sync" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:181:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.2: API Service Layer Foundation › should handle survey submission with API sync 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      190 |       
+      191 |       // Complete full survey
+    > 192 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+      193 |       
+      194 |       // Complete all survey screens
+      195 |       for (let i = 1; i <= 5; i++) {
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:192:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-a41a2-ey-submission-with-API-sync-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-a41a2-ey-submission-with-API-sync-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.2: API Service Layer Foundation › should track exercise completion with timestamps" classname="user-stories/epic1-data-persistence.spec.ts" time="30.349">
+<failure message="epic1-data-persistence.spec.ts:213:5 should track exercise completion with timestamps" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:213:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.2: API Service Layer Foundation › should track exercise completion with timestamps 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /exercises|themes/i })
+
+
+      222 |       
+      223 |       // Navigate to exercises
+    > 224 |       await page.getByRole('button', { name: /exercises|themes/i }).click();
+          |                                                                     ^
+      225 |       await page.getByText('Self-Compassion').click();
+      226 |       await page.getByText('Card 1').click();
+      227 |       
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:224:69
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../test-results/user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/test-failed-1.png]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/video.webm]]
+
+[[ATTACHMENT|user-stories-epic1-data-pe-d70a3--completion-with-timestamps-Telegram-WebApp/error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.2: API Service Layer Foundation › should queue failed API calls for retry when offline" classname="user-stories/epic1-data-persistence.spec.ts" time="28.674">
+<failure message="epic1-data-persistence.spec.ts:248:5 should queue failed API calls for retry when offline" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:248:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.2: API Service Layer Foundation › should queue failed API calls for retry when offline 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      251 |       
+      252 |       // Complete survey
+    > 253 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+      254 |       
+      255 |       for (let i = 1; i <= 5; i++) {
+      256 |         await page.getByText(`Option ${i}`).click();
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:253:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-0df35-alls-for-retry-when-offline-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-0df35-alls-for-retry-when-offline-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.2: API Service Layer Foundation › should resolve data synchronization conflicts" classname="user-stories/epic1-data-persistence.spec.ts" time="14.21">
+<failure message="epic1-data-persistence.spec.ts:284:5 should resolve data synchronization conflicts" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:284:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.2: API Service Layer Foundation › should resolve data synchronization conflicts 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /sync|refresh/i })
+
+
+      310 |       
+      311 |       // Trigger sync
+    > 312 |       await page.getByRole('button', { name: /sync|refresh/i }).click();
+          |                                                                 ^
+      313 |       
+      314 |       // Verify conflict resolution (server wins with newer timestamp)
+      315 |       const resolvedData = await page.evaluate(() => {
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:312:65
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-27bf4-a-synchronization-conflicts-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-27bf4-a-synchronization-conflicts-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › User Story 1.2: API Service Layer Foundation › should ensure privacy-compliant data transmission" classname="user-stories/epic1-data-persistence.spec.ts" time="9.261">
+<failure message="epic1-data-persistence.spec.ts:323:5 should ensure privacy-compliant data transmission" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:323:5 › Epic 1: Enhanced Data Persistence & API Integration › User Story 1.2: API Service Layer Foundation › should ensure privacy-compliant data transmission 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      338 |       
+      339 |       // Complete survey
+    > 340 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+      341 |       await page.getByText('Option 1').click();
+      342 |       await page.getByRole('button', { name: /next|continue|submit/i }).click();
+      343 |       
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:340:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-d3dd2-compliant-data-transmission-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-d3dd2-compliant-data-transmission-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Epic 1: Enhanced Data Persistence &amp; API Integration › Integration: Data Persistence + API Sync › should maintain data consistency across offline/online transitions" classname="user-stories/epic1-data-persistence.spec.ts" time="4.658">
+<failure message="epic1-data-persistence.spec.ts:359:5 should maintain data consistency across offline/online transitions" type="FAILURE">
+<![CDATA[  [Telegram WebApp] › user-stories/epic1-data-persistence.spec.ts:359:5 › Epic 1: Enhanced Data Persistence & API Integration › Integration: Data Persistence + API Sync › should maintain data consistency across offline/online transitions 
+
+    Error: locator.click: Target page, context or browser has been closed
+    Call log:
+      - waiting for getByRole('button', { name: /start survey|begin/i })
+
+
+      359 |     test('should maintain data consistency across offline/online transitions', async ({ page }) => {
+      360 |       // Start survey online
+    > 361 |       await page.getByRole('button', { name: /start survey|begin/i }).click();
+          |                                                                       ^
+      362 |       await page.getByText('Option 1').click();
+      363 |       await page.getByRole('button', { name: /next|continue/i }).click();
+      364 |       
+        at /Users/leontev/Projects/menhausen/menhausen_app/tests/e2e/user-stories/epic1-data-persistence.spec.ts:361:71
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../test-results/user-stories-epic1-data-pe-c1453--offline-online-transitions-Telegram-WebApp/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|user-stories-epic1-data-pe-c1453--offline-online-transitions-Telegram-WebApp/video.webm]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
