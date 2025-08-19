@@ -8,6 +8,7 @@ import { defineConfig, devices } from '@playwright/test';
  * - Mobile viewport optimized for Mini Apps
  * - User story E2E testing
  * - Telegram WebApp API compatibility testing
+ * - CI/CD compatibility: Uses Chromium in CI, WebKit locally
  */
 export default defineConfig({
   testDir: './tests/e2e',
@@ -51,21 +52,7 @@ export default defineConfig({
     /* Telegram WebApp user agent for compatibility testing */
     userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1 TelegramWebView/7.0',
     
-    /* CI-specific browser launch options */
-    ...(process.env.CI && {
-      launchOptions: {
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--single-process',
-          '--disable-gpu'
-        ],
-      },
-    }),
+
   },
 
   /* Configure projects for major browsers */
@@ -80,7 +67,8 @@ export default defineConfig({
     {
       name: 'Telegram WebApp',
       use: {
-        ...devices['iPhone 12'],
+        // Use Chromium in CI for better compatibility, WebKit locally
+        ...(process.env.CI ? devices['Desktop Chrome'] : devices['iPhone 12']),
         viewport: { width: 390, height: 844 },
         userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1 TelegramWebView/7.0',
         extraHTTPHeaders: {
@@ -89,6 +77,21 @@ export default defineConfig({
         // Mental health app specific settings
         colorScheme: 'light',
         locale: 'en-US',
+        
+        // CI-specific launch options
+        ...(process.env.CI && {
+          launchOptions: {
+            args: [
+              '--no-sandbox',
+              '--disable-setuid-sandbox',
+              '--disable-dev-shm-usage',
+              '--disable-accelerated-2d-canvas',
+              '--no-first-run',
+              '--disable-gpu'
+            ],
+            headless: true,
+          },
+        }),
       },
       dependencies: ['setup'],
     },
