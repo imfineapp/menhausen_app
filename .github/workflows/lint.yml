@@ -1,28 +1,35 @@
-name: Lint
+name: Quick Lint Check
 
+# This workflow provides fast feedback for PRs
+# Full CI pipeline runs in ci.yml
 on:
   pull_request:
     branches: [ '*' ]
+  workflow_dispatch:
 
 jobs:
-  lint:
+  quick-lint:
+    name: 🚀 Quick Lint Check
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: 📥 Checkout code
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
+    - name: 🚀 Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '22'
         cache: 'npm'
 
-    - name: Install dependencies
+    - name: 📦 Install dependencies
       run: npm ci
 
-    - name: Run linting
+    - name: 🔍 Run linting
       run: npm run lint:all
 
-    - name: Run type checking
+    - name: 🏷️ Run type checking
       run: npm run type-check
+      
+    - name: ✅ Quick check complete
+      run: echo "🎉 Quick lint check passed! Full CI will run on main branches."

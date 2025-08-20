@@ -1,3 +1,5 @@
 node_modules
 .cursor
 dist
+playwright-report
+test-results

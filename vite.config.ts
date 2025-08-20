@@ -29,11 +29,62 @@ export default defineConfig({
     assetsDir: 'assets',
     sourcemap: false,
     minify: 'terser',
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['lucide-react', 'sonner'],
+        manualChunks: (id) => {
+          // React core libraries
+          if (id.includes('react') || id.includes('react-dom')) {
+            return 'react-vendor';
+          }
+          
+          // Radix UI components (large component library)
+          if (id.includes('@radix-ui')) {
+            return 'radix-ui';
+          }
+          
+          // UI and styling libraries
+          if (id.includes('lucide-react') || id.includes('sonner') || 
+              id.includes('motion') || id.includes('class-variance-authority') ||
+              id.includes('tailwind') || id.includes('clsx')) {
+            return 'ui-components';
+          }
+          
+          // Chart and visualization libraries
+          if (id.includes('recharts') || id.includes('embla-carousel')) {
+            return 'charts-carousel';
+          }
+          
+          // Form and interaction libraries
+          if (id.includes('react-hook-form') || id.includes('react-dnd') ||
+              id.includes('input-otp') || id.includes('react-day-picker')) {
+            return 'forms-interaction';
+          }
+          
+          // Additional utility libraries
+          if (id.includes('next-themes') || id.includes('cmdk') ||
+              id.includes('@floating-ui') || id.includes('react-resizable') ||
+              id.includes('react-slick') || id.includes('react-responsive-masonry')) {
+            return 'utilities';
+          }
+          
+          // Large node_modules that don't fit above categories
+          if (id.includes('node_modules')) {
+            return 'vendor-misc';
+          }
+          
+          // App components by directory
+          if (id.includes('/components/ui/')) {
+            return 'app-ui-components';
+          }
+          
+          if (id.includes('/components/') && !id.includes('/components/ui/')) {
+            return 'app-components';
+          }
+          
+          if (id.includes('/imports/')) {
+            return 'app-imports';
+          }
         },
       },
     },
