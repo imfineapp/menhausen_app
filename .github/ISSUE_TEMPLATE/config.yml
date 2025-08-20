@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Документация проекта
+    url: https://github.com/yourusername/menhausen-app#readme
+    about: Ознакомьтесь с документацией проекта перед созданием issue
+  - name: 💬 Обсуждения
+    url: https://github.com/yourusername/menhausen-app/discussions
+    about: Задайте вопрос в разделе обсуждений
+  - name: 📧 Поддержка
+    url: https://t.me/menhausen_support
+    about: Свяжитесь с командой поддержки в Telegram
