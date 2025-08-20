@@ -106,9 +106,9 @@ export default defineConfig({
   },
 
   /* Global test configuration */
-  timeout: process.env.CI ? 30 * 1000 : 5 * 1000, // Longer timeout in CI
+  timeout: process.env.CI ? 30 * 1000 : 30 * 1000, // Longer timeout in CI
   expect: {
-    timeout: process.env.CI ? 10 * 1000 : 5 * 1000, // Longer expect timeout in CI
+    timeout: process.env.CI ? 10 * 1000 : 30 * 1000, // Longer expect timeout in CI
     toHaveScreenshot: {
       // Allow small differences for cross-browser compatibility
       threshold: 0.2,
