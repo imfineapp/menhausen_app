@@ -297,40 +297,58 @@
  * Base typography with responsive scaling
  */
 @layer base {
-  h1 {
-    font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-    font-weight: 400;
-    font-size: clamp(24px, 5vw, 32px);
-    line-height: 1.1;
+  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
+    h1 {
+      font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
+      font-weight: 400; /* normal */
+      font-size: clamp(24px, 5vw, 32px);
+      line-height: 0.8;
+    }
+
+    h2 {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: clamp(18px, 3.5vw, 24px);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    h4 {
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: clamp(14px, 2.5vw, 18px);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+    }
+
+    label {
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+    }
+
+    button {
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+      min-height: 44px; /* Touch-friendly */
+    }
+
+    input {
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.4;
+      min-height: 44px; /* Touch-friendly */
+    }
   }
-
-  h2,
-  h3,
-  h4 {
-    font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-    font-weight: 500;
-  }
-
-  h2 { font-size: clamp(20px, 4vw, 28px); line-height: 1.3; }
-  h3 { font-size: clamp(18px, 3.5vw, 24px); line-height: 1.4; }
-  h4 { font-size: clamp(16px, 3vw, 20px); line-height: 1.4; }
-
-  p {
-    font-size: clamp(14px, 2.5vw, 18px);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-  }
-
-  label,
-  button,
-  input {
-    font-size: clamp(14px, 2.5vw, 16px);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.4;
-  }
-
-  button,
-  input { min-height: 44px; }
 }
 
 html {
@@ -393,12 +411,4 @@ html, body {
 @media (min-width: 640px) and (max-width: 767px) {
   .md-only-block { display: block; }
   .md-only-hidden { display: none; }
-}
-
-/* Apply heading font to common heading pattern used in components */
-@layer base {
-  .leading-\[0\.8\] {
-    font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-    font-weight: 400;
-  }
 }

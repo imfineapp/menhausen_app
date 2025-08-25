@@ -117,7 +117,7 @@ function MainContent() {
     >
       <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
         <p className="block leading-[0.8] mb-0 text-[36px]">{`You don't have `}</p>
-        <p className="leading-[0.8] text-[36px]">
+        <p className="block leading-[0.8] text-[36px]">
           <span className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-[#e1ff00]">to cope</span>
           <span>{` alone`}</span>
         </p>
