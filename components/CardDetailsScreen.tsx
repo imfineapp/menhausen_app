@@ -1,5 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
-import svgPaths from "../imports/svg-3cs3yu7qqd";
+import { useState } from 'react';
+import svgPaths from "../imports/svg-9v3gqqhb3l";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -214,18 +216,13 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
 
 /**
  * Адаптивная кнопка "Open card"
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenCardButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-98 transition-all duration-200"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open card</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Open card
+    </BottomFixedButton>
   );
 }
 
@@ -272,23 +269,21 @@ export function CardDetailsScreen({ onBack, onOpenCard, onOpenCheckin, cardId, c
   };
 
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Card Details Page"
-    >
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Мини-логотип */}
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Кнопка возврата */}
+      {/* Кнопка назад */}
       <BackButton onClick={onBack} />
       
-      {/* Основной контент - скроллируемый */}
-      <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
-        <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
-          <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
             {/* Заголовок карточки */}
             <CardHeader 
               cardTitle={cardTitle} 
@@ -300,12 +295,14 @@ export function CardDetailsScreen({ onBack, onOpenCard, onOpenCheckin, cardId, c
               checkins={checkins}
               onCheckinClick={handleCheckinClick}
             />
+
           </div>
         </div>
       </div>
-      
-      {/* Bottom Fixed CTA Button согласно Guidelines.md */}
+
+      {/* Bottom Fixed Button */}
       <OpenCardButton onClick={handleOpenCard} />
+
     </div>
   );
 }

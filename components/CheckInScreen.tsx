@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import svgPaths from "../imports/svg-xgh5f6h0jm";
+import { BottomFixedButton } from './BottomFixedButton';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -57,20 +58,12 @@ function Light() {
 
 function SendButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
   return (
-    <button
+    <BottomFixedButton 
       onClick={onClick}
       disabled={disabled}
-      className={`fixed bottom-[60px] bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl w-[350px] touch-friendly z-50 ${
-        disabled 
-          ? 'opacity-50 cursor-not-allowed' 
-          : 'cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200'
-      }`}
-      data-name="Bottom Fixed CTA Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Send</p>
-      </div>
-    </button>
+      Send
+    </BottomFixedButton>
   );
 }
 
@@ -316,21 +309,31 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
   const canSubmit = selectedMood !== null;
 
   return (
-    <div className="bg-[#111111] relative size-full min-h-screen" data-name="005_how are you page">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      <BackButton onClick={onBack} />
+      {/* Кнопка назад */}
+      <BackButton onBack={onBack} />
       
-      <div className="absolute left-[21px] top-[277px] w-[351px]">
-        <ContentContainer 
-          selectedMood={selectedMood} 
-          onMoodChange={handleMoodChange}
-        />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Основной контент */}
+            <ContentContainer selectedMood={selectedMood} onMoodChange={setSelectedMood} />
+
+          </div>
+        </div>
       </div>
-      
-      <SendButton onClick={handleSubmit} disabled={!canSubmit} />
+
+      {/* Bottom Fixed Button */}
+      <SendButton onClick={handleSubmit} disabled={selectedMood === null} />
+
     </div>
   );
 }

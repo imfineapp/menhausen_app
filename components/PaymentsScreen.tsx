@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
+import { BottomFixedButton } from './BottomFixedButton';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -52,23 +53,17 @@ function Light() {
 
 /**
  * Кнопка покупки Premium с состоянием загрузки
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function BuyButton({ onPurchase, isLoading, selectedPlan: _selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
   return (
-    <button
+    <BottomFixedButton 
       onClick={onPurchase}
       disabled={isLoading}
-      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] touch-friendly hover:bg-[#d1ef00] ${
-        isLoading ? 'opacity-70 cursor-not-allowed' : ''
-      }`}
-      data-name="Buy Button"
+      className={isLoading ? 'opacity-70 cursor-not-allowed' : ''}
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
-          {isLoading ? 'Processing...' : 'Buy Premium'}
-        </p>
-      </div>
-    </button>
+      {isLoading ? 'Processing...' : 'Buy Premium'}
+    </BottomFixedButton>
   );
 }
 
@@ -608,12 +603,41 @@ export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenPro
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Payments Screen">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
-      <BuyButton onPurchase={handlePurchase} isLoading={isLoading} selectedPlan={selectedPlan} />
-      <MainContainer selectedPlan={selectedPlan} onSelectPlan={setSelectedPlan} />
-      <MiniStripeLogo />
+      
+      {/* Кнопка назад */}
       <BackButton onBack={onBack} />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Сравнение планов */}
+            <PlanComparisonContainer />
+            
+            {/* Выбор плана */}
+            <PlanSelectionContainer 
+              selectedPlan={selectedPlan}
+              onSelectPlan={setSelectedPlan}
+            />
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <BuyButton 
+        onPurchase={handlePurchase}
+        isLoading={isLoading}
+        selectedPlan={selectedPlan}
+      />
+
     </div>
   );
 }

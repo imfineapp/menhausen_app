@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import svgPaths from "../imports/svg-bamg6d8zx5";
+import svgPaths from "../imports/svg-nt7wuddmjy";
+import { BottomFixedButton } from './BottomFixedButton';
 
 /**
  * Компонент страницы "Under Construction"
@@ -52,18 +53,13 @@ function Light() {
 
 /**
  * Кнопка "Got it" для возврата к профилю
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function Button({ onBack }: { onBack: () => void }) {
   return (
-    <button
-      onClick={onBack}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] hover:bg-[#d1ef00] touch-friendly"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Got it</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onBack}>
+      Got it
+    </BottomFixedButton>
   );
 }
 
@@ -274,11 +270,36 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Under Construction Screen">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
-      <Button onBack={handleBackClick} />
-      <IconContainer featureName={featureName} />
-      <HeaderBlock onBack={handleBackClick} />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
+      {/* Кнопка назад */}
+      <BackButton onClick={onBack} />
+      
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Иконка и заголовок */}
+            <div className="text-center mb-12">
+              <div className="flex justify-center mb-8">
+                <Icon />
+              </div>
+              <HeroBlockQuestion featureName={featureName} />
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <Button onBack={onBack} />
+
     </div>
   );
 }
