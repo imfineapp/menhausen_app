@@ -12,6 +12,10 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        heading: ['"Roboto Slab"', 'Georgia', '"Times New Roman"', 'serif'],
+        sans: ['"PT Sans"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
       screens: {
         'xs': '320px',
         'sm': '375px',

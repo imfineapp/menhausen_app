@@ -29,6 +29,7 @@ import { RateCardScreen } from './components/RateCardScreen';
 
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
+import { LanguageProvider } from './components/LanguageContext';
 import { appContent } from './data/content';
 import { SurveyResults } from './types/content';
 
@@ -783,8 +784,10 @@ function AppContent() {
  */
 export default function App() {
   return (
-    <ContentProvider>
-      <AppContent />
-    </ContentProvider>
+    <LanguageProvider>
+      <ContentProvider>
+        <AppContent />
+      </ContentProvider>
+    </LanguageProvider>
   );
 }
