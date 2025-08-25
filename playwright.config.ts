@@ -106,6 +106,7 @@ export default defineConfig({
   },
 
   /* Global test configuration */
+
   timeout: process.env.CI ? 30 * 1000 : 30 * 1000, // Longer timeout in CI
   expect: {
     timeout: process.env.CI ? 10 * 1000 : 30 * 1000, // Longer expect timeout in CI
