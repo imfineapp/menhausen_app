@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { useState } from 'react';
 import svgPaths from "../imports/svg-foh1vkrbvd";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface SurveyScreenProps {
@@ -201,24 +202,16 @@ function HeroBlockQuestion() {
 
 /**
  * Кнопка "Next" согласно Bottom Fixed CTA Button стандарту
- * 350px ширина, 46px высота, 23px отступ слева, абсолютное позиционирование
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function ButtonWithGradient({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
   return (
-    <button
+    <BottomFixedButton 
       onClick={onClick}
       disabled={disabled}
-      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] touch-friendly ${
-        disabled 
-          ? 'opacity-50 cursor-not-allowed' 
-          : 'cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200'
-      }`}
-      data-name="Bottom Fixed CTA Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
-      </div>
-    </button>
+      Next
+    </BottomFixedButton>
   );
 }
 
@@ -363,44 +356,38 @@ export function SurveyScreen({ onComplete, onBack }: SurveyScreenProps) {
   const hasSelection = selectedOptions.size > 0;
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="003_Survey_page_template">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип */}
-      <MiniStripeLogo />
-      
-      {/* Кнопка назад */}
-      <BackButton onClick={onBack} />
-      
-      {/* Прогресс-бар */}
-      <div className="absolute left-[21px] top-[129px] w-[351px]">
-        <ProgressBar />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок и описание */}
+            <div className="text-center mb-12">
+              <HeroBlockQuestion />
+            </div>
+            
+            {/* Разделительная линия */}
+            <div className="mb-8">
+              <SeparationLine />
+            </div>
+            
+            {/* Опции опроса */}
+            <SurveyBlock 
+              selectedOptions={selectedOptions} 
+              onToggleOption={handleToggleOption} 
+            />
+
+          </div>
+        </div>
       </div>
-      
-      {/* Основной контент - заголовок */}
-      <div className="absolute left-[21px] top-[188px] w-[351px]">
-        <HeroBlockQuestion />
-      </div>
-      
-      {/* Разделительная линия */}
-      <div className="absolute left-[21px] top-[308px] w-[351px]">
-        <SeparationLine />
-      </div>
-      
-      {/* Основной контент - опции опроса */}
-      <div className="absolute left-[21px] top-[328px] w-[351px]">
-        <SurveyBlock 
-          selectedOptions={selectedOptions} 
-          onToggleOption={handleToggleOption}
-        />
-      </div>
-      
-      {/* Bottom Fixed CTA Button */}
-      <ButtonWithGradient 
-        onClick={handleComplete} 
-        disabled={!hasSelection}
-      />
+
+      {/* Bottom Fixed Button */}
+      <ButtonWithGradient onClick={handleComplete} disabled={selectedOptions.size === 0} />
+
     </div>
   );
 }

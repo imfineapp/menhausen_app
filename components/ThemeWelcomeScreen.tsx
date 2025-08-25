@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
-import svgPaths from "../imports/svg-gkcc8oftuu";
-import Container from "../imports/Container-16-22";
+import { useState } from 'react';
+import svgPaths from "../imports/svg-9v3gqqhb3l";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface ThemeWelcomeScreenProps {
@@ -51,8 +52,8 @@ function Light() {
 }
 
 /**
- * Адаптивная кнопка "Start" или "Unlock" с touch-friendly дизайном
- * Отображает "Unlock" для Premium тем без подписки, "Start" для всех остальных случаев
+ * Кнопка действия (Start/Unlock) согласно Bottom Fixed CTA Button стандарту
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function ActionButton({ 
   onClick, 
@@ -64,15 +65,9 @@ function ActionButton({
   buttonText: string; 
 }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200 touch-friendly"
-      data-name={isLocked ? "Unlock Button" : "Start Button"}
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{buttonText}</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      {buttonText}
+    </BottomFixedButton>
   );
 }
 
@@ -182,30 +177,42 @@ export function ThemeWelcomeScreen({
   const handleButtonClick = isThemeLocked ? onUnlock : onStart;
   
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Theme Welcome Page"
-    >
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Мини-логотип */}
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Кнопка возврата */}
+      {/* Кнопка назад */}
       <BackButton onClick={onBack} />
       
-      {/* Основной контент - позиционирован согласно Guidelines.md */}
-      <div className="absolute left-[21px] top-[277px] w-[351px]">
-        <Container />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-12">
+              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
+                {_themeTitle}
+              </h1>
+              <p className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-white text-[20px]">
+                {isThemeLocked ? 'Unlock this theme to get started' : 'Ready to begin your journey?'}
+              </p>
+            </div>
+
+          </div>
+        </div>
       </div>
-      
-      {/* Кнопка действия (Start/Unlock) - позиционирована согласно Guidelines.md */}
+
+      {/* Bottom Fixed Button */}
       <ActionButton 
-        onClick={handleButtonClick} 
-        isLocked={isThemeLocked}
-        buttonText={buttonText}
+        onClick={onStart} 
+        isLocked={isThemeLocked} 
+        buttonText={buttonText} 
       />
+
     </div>
   );
 }

@@ -1,5 +1,6 @@
-// Импортируем необходимые SVG пути из файла согласно импортированному образцу
+// Импортируем SVG пути для первого экрана
 import svgPaths from "../imports/svg-nt7wuddmjy";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface OnboardingScreen01Props {
@@ -48,20 +49,14 @@ function Light() {
 }
 
 /**
- * Кнопка "Next" согласно Bottom Fixed CTA Button стандарту из Guidelines.md
- * Positioning: Fixed to bottom, Width: 350px, Height: 46px, Left: 23px, top-[758px]
+ * Кнопка "Next" согласно Bottom Fixed CTA Button стандарту
+ * Теперь использует стандартный компонент BottomFixedButton
  */
-function BottomFixedButton({ onClick }: { onClick: () => void }) {
+function NextButton({ onClick }: { onClick: () => void }) {
   return (
-    <button 
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Next
+    </BottomFixedButton>
   );
 }
 
@@ -192,12 +187,35 @@ function MiniStripeLogo() {
  */
 export function OnboardingScreen01({ onNext, onShowPrivacy, onShowTerms }: OnboardingScreen01Props) {
   return (
-    <div className="bg-[#111111] relative size-full" data-name="002_onboarding page_01">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
-      <AgreementTextBlock onShowPrivacy={onShowPrivacy} onShowTerms={onShowTerms} />
-      <BottomFixedButton onClick={onNext} />
-      <MainContent />
+      
+      {/* Логотип */}
       <MiniStripeLogo />
+      
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Основной контент */}
+            <div className="text-center mb-12">
+              <MainContent />
+            </div>
+            
+            {/* Соглашение */}
+            <div className="text-center">
+              <AgreementTextBlock onShowPrivacy={onShowPrivacy} onShowTerms={onShowTerms} />
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <NextButton onClick={onNext} />
+
     </div>
   );
 }
