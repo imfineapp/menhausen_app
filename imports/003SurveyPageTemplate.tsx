@@ -54,7 +54,7 @@ function SurveyItem() {
       data-name="Survey_item"
     >
       <RadioButton />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Stress</p>
       </div>
     </div>
@@ -94,7 +94,7 @@ function SurveyItem1() {
       data-name="Survey_item"
     >
       <RadioButton1 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Depression</p>
       </div>
     </div>
@@ -134,7 +134,7 @@ function SurveyItem2() {
       data-name="Survey_item"
     >
       <RadioButton2 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Anger</p>
       </div>
     </div>
@@ -174,7 +174,7 @@ function SurveyItem3() {
       data-name="Survey_item"
     >
       <RadioButton3 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Sadness and apathy</p>
       </div>
     </div>
@@ -214,7 +214,7 @@ function SurveyItem4() {
       data-name="Survey_item"
     >
       <RadioButton4 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Anxiety</p>
       </div>
     </div>
@@ -254,7 +254,7 @@ function SurveyItem5() {
       data-name="Survey_item"
     >
       <RadioButton5 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Relationships</p>
       </div>
     </div>
@@ -322,11 +322,11 @@ function HeroBlockQuestion() {
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] left-5 p-0 text-center top-[189px] w-[352px]"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-heading font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block mb-0">{`What worries you `}</p>
         <p className="block">the most?</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">You can choose several options</p>
       </div>
     </div>
@@ -339,7 +339,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </div>

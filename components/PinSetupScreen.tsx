@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { useState } from 'react';
-import svgPaths from "../imports/svg-6yay9zhlpl";
+import svgPaths from "../imports/svg-nt7wuddmjy";
+import { SecondaryButton } from './SecondaryButton';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -53,17 +54,13 @@ function Light() {
 
 /**
  * Кнопка Skip для пропуска настройки пин-кода
- * Позиционирование согласно Bottom Fixed Button стандарту из Guidelines.md
+ * Использует Secondary Button стиль согласно Guidelines.md
  */
 function TextButton({ onSkip }: { onSkip: () => void }) {
   return (
-    <button
-      onClick={onSkip} 
-      className="absolute left-[23px] top-[758px] h-[46px] w-[350px] flex items-center justify-center font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap cursor-pointer hover:text-[#e1ff00] touch-friendly transition-colors duration-200"
-      data-name="Text button"
-    >
-      <p className="block leading-none whitespace-pre">Skip</p>
-    </button>
+    <SecondaryButton onClick={onSkip}>
+      Skip
+    </SecondaryButton>
   );
 }
 
@@ -85,7 +82,7 @@ function NumberButton({ number, onPress }: { number: string; onPress: (num: stri
         </svg>
       </div>
       {/* Цифра */}
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-sans font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">{number}</p>
       </div>
     </button>
@@ -180,7 +177,7 @@ function PinMessage({ show }: { show: boolean }) {
   
   return (
     <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
+      <div className="font-sans font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
         <p className="block leading-none">PIN code does not match, please try again</p>
       </div>
     </div>
@@ -206,7 +203,7 @@ function PinSetup({
       <PinBlock4 pinLength={pinLength} />
       
       {/* Инструкция */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
+      <div className="font-sans font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
         <p className="block leading-none">
           {mode === 'create' 
             ? 'For more privacy you can set a pin code to log in'
@@ -379,33 +376,49 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
   };
 
   return (
-    <div className="bg-[#111111] relative size-full min-h-screen flex flex-col" data-name="004_PIN page">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Заголовочный блок с навигацией */}
+      {/* Заголовочный блок с логотипом и кнопкой назад */}
       <HeaderBlock onBack={onBack} />
       
-      {/* Основной контент */}
-      <div className="flex-1 flex flex-col items-center justify-start pt-[180px] px-4 sm:px-6 md:px-8 lg:px-0 pb-20">
-        
-        {/* Блок настройки пин-кода */}
-        <div className="mb-12">
-          <PinSetup 
-            pinLength={currentPin.length} 
-            showError={showError} 
-            mode={mode}
-          />
-        </div>
-        
-        {/* Цифровая клавиатура */}
-        <div className="w-full max-w-[280px]">
-          <PinButtons onNumberPress={handleNumberPress} />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-12">
+              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
+                Set up your PIN
+              </h1>
+              <p className="font-sans text-white text-[20px]">
+                Create a 4-digit PIN to secure your account
+              </p>
+            </div>
+            
+            {/* Отображение PIN */}
+            <div className="flex justify-center mb-12">
+              <PinSetup 
+                pinLength={currentPin.length} 
+                showError={showError} 
+                mode={mode}
+              />
+            </div>
+            
+            {/* Клавиатура */}
+            <div className="flex justify-center">
+              <PinButtons onNumberPress={handleNumberPress} />
+            </div>
+
+          </div>
         </div>
       </div>
-      
-      {/* Кнопка Skip */}
+
+      {/* Bottom Fixed Button */}
       <TextButton onSkip={onSkip} />
+
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
+import { BottomFixedButton } from './BottomFixedButton';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -51,28 +52,6 @@ function Light() {
 }
 
 /**
- * Кнопка покупки Premium с состоянием загрузки
- */
-function BuyButton({ onPurchase, isLoading, selectedPlan: _selectedPlan }: { onPurchase: () => void; isLoading: boolean; selectedPlan: 'monthly' | 'annually' }) {
-  return (
-    <button
-      onClick={onPurchase}
-      disabled={isLoading}
-      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] touch-friendly hover:bg-[#d1ef00] ${
-        isLoading ? 'opacity-70 cursor-not-allowed' : ''
-      }`}
-      data-name="Buy Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
-          {isLoading ? 'Processing...' : 'Buy Premium'}
-        </p>
-      </div>
-    </button>
-  );
-}
-
-/**
  * Фон для блока текущего плана
  */
 function ThemeBlockBackground() {
@@ -97,10 +76,10 @@ function PlanInfo() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center text-nowrap"
       data-name="Plan Info"
     >
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
-        <p className="block leading-none text-nowrap whitespace-pre">Your current plan</p>
+      <div className="[grid-area:1_/_1] font-sans ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
+        <p className="block leading-none">Your current plan</p>
       </div>
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
         <p className="block leading-[0.8] text-nowrap whitespace-pre">FREE</p>
       </div>
     </div>
@@ -149,10 +128,10 @@ function PremiumContainer() {
       data-name="Container"
     >
       <ThemeBlockBackground1 />
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">Premium</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
+      <div className="font-sans h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
         <p className="block leading-none mb-0">Opened all themes and cards</p>
         <ul className="css-ed5n1g list-disc">
           <li className="mb-0 ms-[30px]">
@@ -247,7 +226,7 @@ function PlanPriceContainer({ price, color }: { price: string; color: string }) 
       className="box-border content-stretch flex flex-row gap-[5px] items-center justify-start p-0 relative shrink-0"
       data-name="Plan Price Container"
     >
-      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
+      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
         <p className="block leading-none whitespace-pre">{price}</p>
       </div>
       <div className="relative shrink-0 size-6" data-name="Plan Icon">
@@ -278,7 +257,7 @@ function PlanCost({ price, period, color }: { price: string; period: string; col
       data-name="Plan Cost"
     >
       <PlanPriceContainer price={price} color={color} />
-      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
+      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
         <p className="block leading-none whitespace-pre">{period}</p>
       </div>
     </div>
@@ -295,7 +274,7 @@ function PlanDetails({ title, price, period, color }: { title: string; price: st
       data-name="Plan Details"
     >
       <div
-        className={`font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] min-w-full relative shrink-0 text-[${color}] text-[20px] text-left`}
+        className={`font-heading font-normal leading-[0] min-w-full relative shrink-0 text-[${color}] text-[20px] text-left`}
         style={{ width: "min-content" }}
       >
         <p className="block leading-[0.8]">{title}</p>
@@ -359,7 +338,7 @@ function PlanOption({
       data-name="Plan Option"
     >
       <PlanDetails title={title} price={price} period={period} color={color} />
-      <div className="touch-friendly flex items-center justify-center">
+      <div className="min-h-[44px] min-w-[44px] flex items-center justify-center">
         <RadioButton isSelected={isSelected} color={color} />
       </div>
     </div>
@@ -373,7 +352,7 @@ function MonthlyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; o
   return (
     <button 
       onClick={onSelect}
-      className="h-[82px] relative shrink-0 w-full touch-friendly hover:bg-[rgba(217,217,217,0.06)]" 
+      className="h-[82px] relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]" 
       data-name="Container"
     >
       <div className="flex flex-col items-center justify-center relative size-full">
@@ -409,7 +388,7 @@ function AnnuallyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; 
   return (
     <button 
       onClick={onSelect}
-      className="h-[82px] relative shrink-0 w-full touch-friendly hover:bg-[rgba(217,217,217,0.06)]" 
+      className="h-[82px] relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]" 
       data-name="Container"
     >
       <div className="flex flex-col items-center justify-center relative size-full">
@@ -542,13 +521,13 @@ function MiniStripeLogo() {
 }
 
 /**
- * Кнопка "Назад" с touch-friendly размером
+ * Кнопка "Назад" с min-h-[44px] min-w-[44px] размером
  */
 function BackButton({ onBack }: { onBack: () => void }) {
   return (
     <button
       onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] touch-friendly hover:opacity-80"
+      className="absolute left-[21px] size-12 top-[53px] min-h-[44px] min-w-[44px] hover:opacity-80"
       data-name="Back button"
       aria-label="Go back to profile"
     >
@@ -575,9 +554,10 @@ export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenPro
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annually'>('monthly');
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Обработчик покупки Premium подписки
-   */
+  const handlePlanSelect = (plan: 'monthly' | 'annually') => {
+    setSelectedPlan(plan);
+  };
+
   const handlePurchase = async () => {
     try {
       console.log('Starting Premium purchase process...', { plan: selectedPlan });
@@ -608,12 +588,37 @@ export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenPro
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Payments Screen">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
-      <BuyButton onPurchase={handlePurchase} isLoading={isLoading} selectedPlan={selectedPlan} />
-      <MainContainer selectedPlan={selectedPlan} onSelectPlan={setSelectedPlan} />
+      
+      {/* Логотип */}
       <MiniStripeLogo />
+      
+      {/* Кнопка назад */}
       <BackButton onBack={onBack} />
+      
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Основной контейнер с информацией и выбором планов */}
+            <MainContainer selectedPlan={selectedPlan} onSelectPlan={handlePlanSelect} />
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <BottomFixedButton 
+        onClick={handlePurchase}
+        disabled={isLoading}
+        className={isLoading ? 'opacity-70 cursor-not-allowed' : ''}
+      >
+        {isLoading ? 'Processing...' : 'Buy Premium'}
+      </BottomFixedButton>
+
     </div>
   );
 }

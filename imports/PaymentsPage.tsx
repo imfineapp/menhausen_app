@@ -41,7 +41,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px]"
       data-name="Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Buy Premium</p>
       </div>
     </div>
@@ -67,10 +67,10 @@ function PlanInfo() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center text-nowrap"
       data-name="Plan Info"
     >
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
+      <div className="[grid-area:1_/_1] font-sans ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
         <p className="block leading-none text-nowrap whitespace-pre">Your current plan</p>
       </div>
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
         <p className="block leading-[0.8] text-nowrap whitespace-pre">FREE</p>
       </div>
     </div>
@@ -110,10 +110,10 @@ function Container1() {
       data-name="Container"
     >
       <ThemeBlockBackground1 />
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">Premium</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
+      <div className="font-sans h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
         <p className="block leading-none mb-0">Opened all themes and cards</p>
         <ul className="css-ed5n1g list-disc">
           <li className="mb-0 ms-[30px]">
@@ -193,7 +193,7 @@ function PlanPriceContainer() {
       className="box-border content-stretch flex flex-row gap-[5px] items-center justify-start p-0 relative shrink-0"
       data-name="Plan Price Container"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">150</p>
       </div>
       <PlanIcon />
@@ -208,7 +208,7 @@ function PlanCost() {
       data-name="Plan Cost"
     >
       <PlanPriceContainer />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">/ month</p>
       </div>
     </div>
@@ -222,7 +222,7 @@ function PlanDetails() {
       data-name="Plan Details"
     >
       <div
-        className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] min-w-full relative shrink-0 text-[#2d2b2b] text-[20px] text-left"
+        className="font-heading font-normal leading-[0] min-w-full relative shrink-0 text-[#2d2b2b] text-[20px] text-left"
         style={{ width: "min-content" }}
       >
         <p className="block leading-[0.8]">Monthly</p>
@@ -307,7 +307,7 @@ function PlanPriceContainer1() {
       className="box-border content-stretch flex flex-row gap-[5px] items-center justify-start p-0 relative shrink-0"
       data-name="Plan Price Container"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">150</p>
       </div>
       <PlanIcon1 />
@@ -322,7 +322,7 @@ function PlanCost1() {
       data-name="Plan Cost"
     >
       <PlanPriceContainer1 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">/ year</p>
       </div>
     </div>
@@ -336,7 +336,7 @@ function PlanDetails1() {
       data-name="Plan Details"
     >
       <div
-        className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] min-w-full relative shrink-0 text-[#ffffff] text-[20px] text-left"
+        className="font-heading font-normal leading-[0] min-w-full relative shrink-0 text-[#ffffff] text-[20px] text-left"
         style={{ width: "min-content" }}
       >
         <p className="block leading-[0.8]">Annually</p>

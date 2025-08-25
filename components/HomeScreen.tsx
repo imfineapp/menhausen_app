@@ -201,7 +201,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
       }`}
       data-name="User_account_status"
     >
-      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px] ${
+      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px] ${
         isPremium 
           ? 'text-[#2d2b2b]' 
           : 'text-[#696969]'
@@ -223,7 +223,7 @@ function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[18px] sm:text-[19px] md:text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[18px] sm:text-[19px] md:text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Level 25</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
@@ -253,7 +253,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
   return (
     <button
       onClick={onClick}
-      className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0 w-full cursor-pointer rounded-lg touch-friendly hover:bg-[rgba(217,217,217,0.06)]"
+      className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0 w-full cursor-pointer rounded-lg min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]"
       data-name="User frame info block"
       aria-label="Open user profile"
     >
@@ -310,7 +310,7 @@ function InfoGroup() {
       className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
       data-name="Info_group"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-left text-nowrap">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-left text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">How are you?</p>
       </div>
       <InfoIcon />
@@ -325,12 +325,12 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="bg-[#2d2b2b] h-[44px] sm:h-[46px] relative rounded-xl shrink-0 w-full cursor-pointer touch-friendly hover:bg-[#3d3b3b]"
+      className="bg-[#2d2b2b] h-[44px] sm:h-[46px] relative rounded-xl shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[#3d3b3b]"
       data-name="Start Mining"
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
             <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px] whitespace-pre">Send</p>
           </div>
         </div>
@@ -349,7 +349,7 @@ function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
       data-name="Info container"
     >
       <InfoGroup />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
       </div>
       <CheckInButton onClick={onGoToCheckIn} />
@@ -428,7 +428,7 @@ function ActivityBlock() {
       </div>
       <ActivityProgress />
       <ActivityHeader />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] left-4 sm:left-5 not-italic text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left top-[75px] sm:top-[78px] md:top-[81px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)]">
+      <div className="absolute font-sans font-bold leading-[0] left-4 sm:left-5 not-italic text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left top-[75px] sm:top-[78px] md:top-[81px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)]">
         <p className="block leading-none">Only by doing exercises regularly will you achieve results.</p>
       </div>
     </div>
@@ -454,7 +454,7 @@ function ThemeCard({
   return (
     <button
       onClick={onClick}
-      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[140px] sm:h-[147px] md:h-[154px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer touch-friendly hover:bg-[rgba(217,217,217,0.06)]"
+      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[140px] sm:h-[147px] md:h-[154px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]"
       data-name="Theme card narrow"
     >
       <div className="absolute inset-0" data-name="theme_block_background">
@@ -468,14 +468,14 @@ function ThemeCard({
       
       {/* Контент карточки */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
-        <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
+        <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
           <p className="block leading-[0.8]">{title}</p>
         </div>
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
+        <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
           <p className="block leading-none">{description}</p>
         </div>
         <div className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] md:text-[16px] text-left w-[200px] sm:w-[220px] md:w-[235px]">
+          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] md:text-[16px] text-left w-[200px] sm:w-[220px] md:w-[235px]">
             <p className="block leading-none">Use 80% users</p>
           </div>
           <UserAccountStatus isPremium={isPremium} />
@@ -492,7 +492,7 @@ function ThemeCard({
             data-name="Block" 
           />
         )}
-        <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[14px] sm:text-[15px] md:text-[16px] text-right">
+        <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[14px] sm:text-[15px] md:text-[16px] text-right">
           <p className="block leading-none">Progress</p>
         </div>
       </div>
@@ -567,7 +567,7 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
     <button
       onClick={onClick}
       disabled={!card.isAvailable}
-      className={`bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[180px] sm:h-[190px] md:h-[197px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-[270px] sm:w-[283px] md:w-[296px] touch-friendly ${
+      className={`bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[180px] sm:h-[190px] md:h-[197px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-[270px] sm:w-[283px] md:w-[296px] min-h-[44px] min-w-[44px] ${
         card.isAvailable 
           ? 'cursor-pointer hover:bg-[#d1ef00]' 
           : 'opacity-75 cursor-not-allowed'
@@ -582,7 +582,7 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
           <p className="block leading-[0.8]">{card.title}</p>
         </div>
         <div
-          className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#333333] text-[16px] sm:text-[18px] md:text-[20px] text-left"
+          className="font-sans font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#333333] text-[16px] sm:text-[18px] md:text-[20px] text-left"
           style={{ width: "min-content" }}
         >
           <p className="block leading-none">{card.description}</p>
@@ -595,7 +595,7 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
           }`}
           data-name="Card_anons_status"
         >
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center tracking-[-0.43px] w-[60px] sm:w-[63px] md:w-[66px] ${
+          <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center tracking-[-0.43px] w-[60px] sm:w-[63px] md:w-[66px] ${
             card.isAvailable 
               ? 'text-[#e1ff00]' 
               : 'text-[#e1ff00]'
@@ -730,14 +730,14 @@ function FollowButton({
   return (
     <button
       onClick={onClick}
-      className="h-[65px] sm:h-[69px] md:h-[73px] relative shrink-0 w-[150px] sm:w-[158px] md:w-[166px] cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-200 touch-friendly"
+      className="h-[65px] sm:h-[69px] md:h-[73px] relative shrink-0 w-[150px] sm:w-[158px] md:w-[166px] cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-200 min-h-[44px] min-w-[44px]"
       data-name="Follow button"
     >
       <div className="absolute contents inset-0">
         <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" />
         <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-start p-0">
           {icon}
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap text-right">
+          <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap text-right">
             <p className="block leading-[0.8] whitespace-pre">Follow</p>
           </div>
         </div>

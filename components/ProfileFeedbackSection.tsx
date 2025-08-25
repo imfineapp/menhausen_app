@@ -9,11 +9,11 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="bg-[#e1ff00] h-[44px] sm:h-[46px] rounded-xl w-full cursor-pointer touch-friendly hover:bg-[#d1ef00]"
+      className="bg-[#e1ff00] h-[44px] sm:h-[46px] rounded-xl w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[#d1ef00]"
       data-name="Feedback button"
     >
       <div className="flex items-center justify-center w-full h-full px-4">
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[14px] sm:text-[15px] text-[#2d2b2b] text-center tracking-[-0.43px]">
+        <div className="font-sans text-[14px] sm:text-[15px] text-[#2d2b2b] text-center tracking-[-0.43px]">
           <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">Join Channel</p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function FeedbackSection() {
         />
         <div className="flex items-start gap-4 mb-4">
           <FeedbackIcon />
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#cfcfcf] text-left flex-1">
+          <div className="font-sans text-[18px] sm:text-[20px] text-[#cfcfcf] text-left flex-1">
             <p className="block leading-none">Join our Telegram channel to share feedback, get updates, and connect with our community.</p>
           </div>
         </div>

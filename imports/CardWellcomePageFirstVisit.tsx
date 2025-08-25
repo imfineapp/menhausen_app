@@ -41,7 +41,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
       </div>
     </div>
@@ -121,7 +121,7 @@ export default function CardWellcomePageFirstVisit() {
     <div className="bg-[#111111] relative size-full" data-name="Card Wellcome Page (first visit)">
       <Light />
       <Button />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-[89px] leading-[0] left-[196.5px] not-italic text-[#ffffff] text-[20px] text-center top-[337px] translate-x-[-50%] w-[351px]">
+      <div className="absolute font-sans h-[89px] leading-[0] left-[196.5px] not-italic text-[#ffffff] text-[20px] text-center top-[337px] translate-x-[-50%] w-[351px]">
         <p className="block leading-none">{`Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.`}</p>
       </div>
       <MiniStripeLogo />

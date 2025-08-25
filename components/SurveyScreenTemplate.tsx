@@ -134,7 +134,7 @@ export function SurveyScreenTemplate({
             <button
               key={option.id}
               onClick={() => handleOptionSelect(option.id)}
-              className={`w-full min-h-[56px] px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left touch-friendly ${
+              className={`w-full min-h-[56px] px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left min-h-[44px] min-w-[44px] ${
                 isSelected 
                   ? 'border-[#e1ff00] bg-[#e1ff00]/10 text-white' 
                   : 'border-[#3a3a3a] bg-[#2a2a2a] text-[#d4d4d4] hover:border-[#4a4a4a] hover:bg-[#333333]'
@@ -196,7 +196,7 @@ export function SurveyScreenTemplate({
           {/* Обновленная кнопка назад в стиле guidelines */}
           <button
             onClick={onBack}
-            className="touch-friendly flex items-center justify-center w-12 h-12 transition-transform duration-200 hover:scale-105 active:scale-95"
+            className="min-h-[44px] min-w-[44px] flex items-center justify-center w-12 h-12 transition-transform duration-200 hover:scale-105 active:scale-95"
           >
             <div className="w-12 h-12">
               <BackButton />
@@ -221,7 +221,7 @@ export function SurveyScreenTemplate({
             
             {/* Заголовок и подзаголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
+              <h1 className="font-heading font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
                 {localizedScreen.title}
               </h1>
               {localizedScreen.subtitle && (

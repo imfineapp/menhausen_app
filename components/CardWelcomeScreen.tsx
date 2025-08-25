@@ -114,7 +114,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -144,7 +144,7 @@ function CardDescription({ description: _description }: { description: string })
       className="absolute left-1/2 top-[300px] sm:top-[320px] md:top-[337px] translate-x-[-50%] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Card Description"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center">
+      <div className="font-sans h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center">
         <p className="block leading-none">Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.</p>
       </div>
     </div>

@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
-import svgPaths from "../imports/svg-3cs3yu7qqd";
+import svgPaths from "../imports/svg-9v3gqqhb3l";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -121,7 +122,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -151,10 +152,10 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
       data-name="Card Header"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">{cardTitle}</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{cardDescription || defaultDescription}</p>
       </div>
     </div>
@@ -168,7 +169,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
   return (
     <button
       onClick={() => onClick?.(checkin.id)}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 touch-friendly"
+      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px]"
       data-name="Checkin"
     >
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Background">
@@ -177,7 +178,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-sans inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">{checkin.formattedDate}</p>
       </div>
     </button>
@@ -193,7 +194,7 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       className="relative shrink-0 w-full"
       data-name="Checkins Container"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Checkins</p>
       </div>
       <div
@@ -214,18 +215,13 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
 
 /**
  * Адаптивная кнопка "Open card"
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenCardButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-98 transition-all duration-200"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open card</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Open card
+    </BottomFixedButton>
   );
 }
 
@@ -272,23 +268,21 @@ export function CardDetailsScreen({ onBack, onOpenCard, onOpenCheckin, cardId, c
   };
 
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Card Details Page"
-    >
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Мини-логотип */}
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Кнопка возврата */}
+      {/* Кнопка назад */}
       <BackButton onClick={onBack} />
       
-      {/* Основной контент - скроллируемый */}
-      <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
-        <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
-          <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
             {/* Заголовок карточки */}
             <CardHeader 
               cardTitle={cardTitle} 
@@ -300,12 +294,14 @@ export function CardDetailsScreen({ onBack, onOpenCard, onOpenCheckin, cardId, c
               checkins={checkins}
               onCheckinClick={handleCheckinClick}
             />
+
           </div>
         </div>
       </div>
-      
-      {/* Bottom Fixed CTA Button согласно Guidelines.md */}
+
+      {/* Bottom Fixed Button */}
       <OpenCardButton onClick={handleOpenCard} />
+
     </div>
   );
 }

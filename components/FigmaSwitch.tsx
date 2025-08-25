@@ -3,4 +3,4 @@
 // 
 // The new Switch component provides the same functionality with a 
 // shadcn-compatible API while maintaining the brand colors and 
-// touch-friendly design without external dependencies.
+// min-h-[44px] min-w-[44px] design without external dependencies.

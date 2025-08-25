@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { useState } from 'react';
 import svgPaths from "../imports/svg-foh1vkrbvd";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface SurveyScreenProps {
@@ -98,7 +99,7 @@ function SurveyItem({ option, selected, onToggle }: {
   return (
     <button
       onClick={onToggle}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] touch-friendly"
+      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] min-h-[44px] min-w-[44px]"
       data-name="Survey_item_box"
     >
       {/* Фон элемента */}
@@ -122,7 +123,7 @@ function SurveyItem({ option, selected, onToggle }: {
       <div className="absolute box-border content-stretch flex flex-row gap-5 items-center justify-start left-[5.7%] p-0 right-[5.7%] top-1/2 translate-y-[-50%]">
         <RadioButton selected={selected} />
         <div 
-          className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
+          className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
             selected ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}
         >
@@ -187,13 +188,11 @@ function HeroBlockQuestion() {
   return (
     <div className="flex flex-col gap-5 items-center justify-start leading-[0] text-center w-full">
       {/* Основной заголовок опроса */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block mb-0">{`What worries you `}</p>
-        <p className="block">the most?</p>
+      <div className="font-heading font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+        <p className="block leading-[0.8]">How are you feeling today?</p>
       </div>
-      {/* Подзаголовок с инструкцией */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">You can choose several options</p>
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+        <p className="block leading-none">Select the option that best describes your current mood</p>
       </div>
     </div>
   );
@@ -201,24 +200,16 @@ function HeroBlockQuestion() {
 
 /**
  * Кнопка "Next" согласно Bottom Fixed CTA Button стандарту
- * 350px ширина, 46px высота, 23px отступ слева, абсолютное позиционирование
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function ButtonWithGradient({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
   return (
-    <button
+    <BottomFixedButton 
       onClick={onClick}
       disabled={disabled}
-      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] touch-friendly ${
-        disabled 
-          ? 'opacity-50 cursor-not-allowed' 
-          : 'cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200'
-      }`}
-      data-name="Bottom Fixed CTA Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Next</p>
-      </div>
-    </button>
+      Next
+    </BottomFixedButton>
   );
 }
 
@@ -304,7 +295,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly" 
+      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]" 
       data-name="Back Button"
       aria-label="Go back"
     >
@@ -363,8 +354,8 @@ export function SurveyScreen({ onComplete, onBack }: SurveyScreenProps) {
   const hasSelection = selectedOptions.size > 0;
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="003_Survey_page_template">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
       {/* Логотип */}
@@ -374,33 +365,40 @@ export function SurveyScreen({ onComplete, onBack }: SurveyScreenProps) {
       <BackButton onClick={onBack} />
       
       {/* Прогресс-бар */}
-      <div className="absolute left-[21px] top-[129px] w-[351px]">
-        <ProgressBar />
+      <div className="absolute top-[120px] left-0 right-0 px-[16px] sm:px-[20px] md:px-[21px]">
+        <div className="max-w-[351px] mx-auto">
+          <ProgressBar />
+        </div>
       </div>
       
-      {/* Основной контент - заголовок */}
-      <div className="absolute left-[21px] top-[188px] w-[351px]">
-        <HeroBlockQuestion />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[160px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок и описание */}
+            <div className="text-center mb-12">
+              <HeroBlockQuestion />
+            </div>
+            
+            {/* Разделительная линия */}
+            <div className="mb-8">
+              <SeparationLine />
+            </div>
+            
+            {/* Опции опроса */}
+            <SurveyBlock 
+              selectedOptions={selectedOptions} 
+              onToggleOption={handleToggleOption} 
+            />
+
+          </div>
+        </div>
       </div>
-      
-      {/* Разделительная линия */}
-      <div className="absolute left-[21px] top-[308px] w-[351px]">
-        <SeparationLine />
-      </div>
-      
-      {/* Основной контент - опции опроса */}
-      <div className="absolute left-[21px] top-[328px] w-[351px]">
-        <SurveyBlock 
-          selectedOptions={selectedOptions} 
-          onToggleOption={handleToggleOption}
-        />
-      </div>
-      
-      {/* Bottom Fixed CTA Button */}
-      <ButtonWithGradient 
-        onClick={handleComplete} 
-        disabled={!hasSelection}
-      />
+
+      {/* Bottom Fixed Button */}
+      <ButtonWithGradient onClick={handleComplete} disabled={!hasSelection} />
+
     </div>
   );
 }

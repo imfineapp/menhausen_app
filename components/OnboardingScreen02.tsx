@@ -1,5 +1,6 @@
 // Импортируем SVG пути для второго экрана
 import svgPaths from "../imports/svg-vn1j3wuqix";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -48,20 +49,14 @@ function Light() {
 }
 
 /**
- * Кнопка завершения онбординга согласно Bottom Fixed CTA Button стандарту
- * 350px ширина, 46px высота, 23px отступ слева, абсолютное позиционирование
+ * Кнопка "Get Started" согласно Bottom Fixed CTA Button стандарту
+ * Теперь использует стандартный компонент BottomFixedButton
  */
-function Button({ onClick }: { onClick: () => void }) {
+function GetStartedButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200 touch-friendly"
-      data-name="Bottom Fixed CTA Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Get Started</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Get Started
+    </BottomFixedButton>
   );
 }
 
@@ -109,11 +104,11 @@ function NoLoginTextBlock() {
       data-name="Text block"
     >
       {/* Заголовок преимущества */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">No sign-up, no traces</p>
       </div>
       {/* Описание преимущества */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">Works directly in Telegram. No accounts, no email required</p>
       </div>
     </div>
@@ -182,11 +177,11 @@ function EncryptionTextBlock() {
       data-name="Container"
     >
       {/* Описание шифрования (располагается ниже заголовка) */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Data encryption</p>
       </div>
     </div>
@@ -253,11 +248,11 @@ function AlwaysWithYouTextBlock() {
       data-name="Container"
     >
       {/* Описание доступности */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">In your pocket, in Telegram. Help available 24/7, when you need it</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Always with you</p>
       </div>
     </div>
@@ -372,13 +367,13 @@ function ScienceTextBlock() {
       data-name="Container"
     >
       {/* Подробное описание методов */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">
           CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
         </p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Based on science-backed methods</p>
       </div>
     </div>
@@ -492,18 +487,28 @@ function MiniStripeLogo() {
  */
 export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
   return (
-    <div className="bg-[#111111] relative size-full" data-name="002_onboarding page_02">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
       {/* Логотип приложения */}
       <MiniStripeLogo />
       
-      {/* Блок с преимуществами приложения */}
-      <ContentBlock onComplete={onComplete} />
-      
-      {/* Bottom Fixed CTA Button */}
-      <Button onClick={onComplete} />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Блок с контентом всех преимуществ */}
+            <ContentBlock onComplete={onComplete} />
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <GetStartedButton onClick={onComplete} />
+
     </div>
   );
 }
