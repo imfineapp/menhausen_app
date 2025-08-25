@@ -1,5 +1,6 @@
 // Импортируем SVG пути для второго экрана
 import svgPaths from "../imports/svg-vn1j3wuqix";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -49,19 +50,13 @@ function Light() {
 
 /**
  * Кнопка завершения онбординга согласно Bottom Fixed CTA Button стандарту
- * 350px ширина, 46px высота, 23px отступ слева, абсолютное позиционирование
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function Button({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200 touch-friendly"
-      data-name="Bottom Fixed CTA Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Get Started</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Get Started
+    </BottomFixedButton>
   );
 }
 
@@ -492,18 +487,39 @@ function MiniStripeLogo() {
  */
 export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
   return (
-    <div className="bg-[#111111] relative size-full" data-name="002_onboarding page_02">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
       {/* Логотип приложения */}
       <MiniStripeLogo />
       
-      {/* Блок с преимуществами приложения */}
-      <ContentBlock onComplete={onComplete} />
-      
-      {/* Bottom Fixed CTA Button */}
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-12">
+              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
+                Why Menhausen?
+              </h1>
+            </div>
+
+            {/* Преимущества */}
+            <div className="space-y-8">
+              <NoLoginContainer />
+              <EncryptionContainer />
+              <AlwaysWithYouContainer />
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
       <Button onClick={onComplete} />
+
     </div>
   );
 }

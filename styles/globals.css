@@ -27,6 +27,27 @@
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
   
+  /* Bottom Fixed Button стандарты */
+  --bottom-button-width: 350px;
+  --bottom-button-height: 46px;
+  --bottom-button-bottom: 35px;
+  --bottom-button-padding-x: 126px;
+  --bottom-button-padding-y: 15px;
+  --bottom-button-radius: 12px;
+  --bottom-button-center: center; /* Кнопка центрирована по горизонтали */
+  
+  /* Secondary Button стандарты */
+  --secondary-button-width: 350px;
+  --secondary-button-height: 46px;
+  --secondary-button-bottom: 35px;
+  --secondary-button-radius: 12px;
+  --secondary-button-border-color: #e1ff00;
+  --secondary-button-text-color: #e1ff00;
+  --secondary-button-hover-bg-opacity: 0.1;
+  
+  /* Content padding для предотвращения перекрытия кнопкой */
+  --content-bottom-padding: 200px;
+  
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -154,6 +175,39 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Стандартные стили для экранов с нижними кнопками */
+  .screen-container {
+    @apply w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col;
+  }
+
+  .screen-content {
+    @apply flex-1 overflow-y-auto;
+  }
+
+  .screen-content-inner {
+    @apply px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px];
+  }
+
+  .screen-content-wrapper {
+    @apply max-w-[351px] mx-auto;
+  }
+
+  /* Центрирование нижних кнопок */
+  .bottom-button-centered {
+    @apply left-1/2 transform -translate-x-1/2;
+  }
+
+  /* Secondary Button стили */
+  .secondary-button {
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] 
+           bg-transparent border border-[#e1ff00] rounded-xl 
+           font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold text-[15px] 
+           text-[#e1ff00] text-center
+           hover:bg-[#e1ff00] hover:text-[#2d2b2b] hover:bg-opacity-10
+           active:scale-[0.98] transition-all duration-200
+           touch-friendly cursor-pointer;
   }
 
   /* Адаптивные утилиты для контейнеров */

@@ -1,5 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
-import svgPaths from "../imports/svg-gdbzrtqw2x";
+import { useState } from 'react';
+import svgPaths from "../imports/svg-9v3gqqhb3l";
+import { BottomFixedButton } from './BottomFixedButton';
 
 // Типы для пропсов компонента
 interface ThemeHomeScreenProps {
@@ -259,19 +261,14 @@ function BackButton({ onClick }: { onClick: () => void }) {
 }
 
 /**
- * Кнопка "Open next level" согласно Bottom Fixed Button стандарту из Guidelines.md
+ * Кнопка "Open next level" согласно Bottom Fixed Button стандарту
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer touch-friendly hover:bg-[#d1ef00] active:scale-98 transition-all duration-200"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open next level</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick}>
+      Open next level
+    </BottomFixedButton>
   );
 }
 
@@ -373,54 +370,46 @@ export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTit
   ];
 
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Theme Home Page"
-    >
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Мини-логотип */}
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Кнопка возврата */}
+      {/* Кнопка назад */}
       <BackButton onClick={onBack} />
       
-      {/* Основной контент - скроллируемый */}
-      <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
-        <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
-          <div className="w-full max-w-[352px] mx-auto flex flex-col gap-5">
-            {/* Заголовок темы */}
-            <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
-              <p className="block leading-[0.8]">{themeTitle}</p>
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-8">
+              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-4 leading-[0.8]">
+                {themeTitle}
+              </h1>
             </div>
             
-            {/* Описание темы */}
-            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-full">
-              <p className="block leading-none">
-                {`Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.`}
-              </p>
-            </div>
-            
-            {/* Прогресс-бар */}
-            <ProgressTheme />
-            
-            {/* Блок карточек */}
-            <div className="flex flex-col gap-5 w-full">
+            {/* Карточки */}
+            <div className="space-y-4">
               {cards.map((card) => (
-                <ThemeCard
+                <ThemeCard 
                   key={card.id}
                   card={card}
-                  onClick={onCardClick}
+                  onClick={() => onCardClick(card.id)}
                 />
               ))}
             </div>
+
           </div>
         </div>
       </div>
-      
-      {/* Bottom Fixed CTA Button согласно Guidelines.md */}
+
+      {/* Bottom Fixed Button */}
       <OpenNextLevelButton onClick={onOpenNextLevel} />
+
     </div>
   );
 }

@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
-import svgPaths from "../imports/svg-6yay9zhlpl";
+import { useState, useRef, useEffect } from 'react';
+import svgPaths from "../imports/svg-nt7wuddmjy";
+import { SecondaryButton } from './SecondaryButton';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -53,17 +54,13 @@ function Light() {
 
 /**
  * Кнопка Skip для пропуска настройки пин-кода
- * Позиционирование согласно Bottom Fixed Button стандарту из Guidelines.md
+ * Использует Secondary Button стиль согласно Guidelines.md
  */
 function TextButton({ onSkip }: { onSkip: () => void }) {
   return (
-    <button
-      onClick={onSkip} 
-      className="absolute left-[23px] top-[758px] h-[46px] w-[350px] flex items-center justify-center font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap cursor-pointer hover:text-[#e1ff00] touch-friendly transition-colors duration-200"
-      data-name="Text button"
-    >
-      <p className="block leading-none whitespace-pre">Skip</p>
-    </button>
+    <SecondaryButton onClick={onSkip}>
+      Skip
+    </SecondaryButton>
   );
 }
 
@@ -379,33 +376,52 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
   };
 
   return (
-    <div className="bg-[#111111] relative size-full min-h-screen flex flex-col" data-name="004_PIN page">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Заголовочный блок с навигацией */}
-      <HeaderBlock onBack={onBack} />
+      {/* Логотип */}
+      <MiniStripeLogo />
       
-      {/* Основной контент */}
-      <div className="flex-1 flex flex-col items-center justify-start pt-[180px] px-4 sm:px-6 md:px-8 lg:px-0 pb-20">
-        
-        {/* Блок настройки пин-кода */}
-        <div className="mb-12">
-          <PinSetup 
-            pinLength={currentPin.length} 
-            showError={showError} 
-            mode={mode}
-          />
-        </div>
-        
-        {/* Цифровая клавиатура */}
-        <div className="w-full max-w-[280px]">
-          <PinButtons onNumberPress={handleNumberPress} />
+      {/* Кнопка назад */}
+      <BackButton onClick={onBack} />
+      
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-12">
+              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
+                Set up your PIN
+              </h1>
+              <p className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-white text-[20px]">
+                Create a 4-digit PIN for quick access
+              </p>
+            </div>
+            
+            {/* Отображение PIN */}
+            <div className="flex justify-center mb-12">
+              <PinSetup 
+                pinLength={currentPin.length} 
+                showError={showError} 
+                mode={mode}
+              />
+            </div>
+            
+            {/* Клавиатура */}
+            <div className="flex justify-center">
+              <PinButtons onNumberPress={handleNumberPress} />
+            </div>
+
+          </div>
         </div>
       </div>
-      
-      {/* Кнопка Skip */}
+
+      {/* Bottom Fixed Button */}
       <TextButton onSkip={onSkip} />
+
     </div>
   );
 }
