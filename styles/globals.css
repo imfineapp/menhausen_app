@@ -203,11 +203,11 @@
   .secondary-button {
     @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] 
            bg-transparent border border-[#e1ff00] rounded-xl 
-           font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold text-[15px] 
+           font-sans font-bold text-[15px] 
            text-[#e1ff00] text-center
-           hover:bg-[#e1ff00] hover:text-[#2d2b2b] hover:bg-opacity-10
+           hover:bg-[rgba(225,255,0,0.1)] hover:text-[#2d2b2b]
            active:scale-[0.98] transition-all duration-200
-           touch-friendly cursor-pointer;
+           min-h-[44px] min-w-[44px] cursor-pointer;
   }
 
   /* Адаптивные утилиты для контейнеров */
@@ -358,16 +358,20 @@
     line-height: 1.1;
   }
 
-  h2,
-  h3,
-  h4 {
-    font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-    font-weight: 500;
+  h2 { 
+    font-size: clamp(20px, 4vw, 28px); 
+    line-height: 1.3; 
   }
 
-  h2 { font-size: clamp(20px, 4vw, 28px); line-height: 1.3; }
-  h3 { font-size: clamp(18px, 3.5vw, 24px); line-height: 1.4; }
-  h4 { font-size: clamp(16px, 3vw, 20px); line-height: 1.4; }
+  h3 { 
+    font-size: clamp(18px, 3.5vw, 24px); 
+    line-height: 1.4; 
+  }
+
+  h4 { 
+    font-size: clamp(16px, 3vw, 20px); 
+    line-height: 1.4; 
+  }
 
   p {
     font-size: clamp(14px, 2.5vw, 18px);

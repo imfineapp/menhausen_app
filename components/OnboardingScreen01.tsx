@@ -70,7 +70,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
       className="absolute box-border content-stretch flex flex-col items-center justify-start left-[21px] p-0 top-[680px] w-[351px]"
       data-name="agreement text block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
         <p className="leading-none text-[14px]" style={{ lineHeight: '0.9' }}>
           <span>{`By clicking the button you agree to the `}</span>
           <a
@@ -79,18 +79,18 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
               e.preventDefault();
               onShowTerms();
             }}
-            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] touch-friendly inline transition-colors duration-200"
+            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
             Terms of use
           </a>
-          <span className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic">{` and`}</span>
+          <span className="font-sans not-italic">{` and`}</span>
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
               onShowPrivacy();
             }}
-            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] touch-friendly inline transition-colors duration-200"
+            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
             {` Privacy policy`}
           </a>
@@ -110,14 +110,14 @@ function MainContent() {
       className="absolute box-border content-stretch flex flex-col gap-10 items-center justify-start leading-[0] left-[21px] p-0 text-center top-[277px] w-[351px]"
       data-name="main_content"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
         <p className="block leading-[0.8] mb-0 text-[36px]">{`You don't have `}</p>
         <p className="block leading-[0.8] text-[36px]">
-          <span className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-[#e1ff00]">to cope</span>
+          <span className="font-heading font-normal text-[#e1ff00]">to cope</span>
           <span>{` alone`}</span>
         </p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Anonymous digital self-help tool for men. Сards based on scientific methods. `}</p>
       </div>
     </div>

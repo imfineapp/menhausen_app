@@ -116,7 +116,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -160,7 +160,7 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
         <p className="block leading-none">Your answers are fully protected with AES-256 encryption</p>
       </div>
     </div>
@@ -205,7 +205,7 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
+        className="font-sans leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -245,7 +245,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[120px] sm:top-[130px] md:top-[141px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Content block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-h-[40px] sm:min-h-[44px] leading-[22px] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-center w-full">
+      <div className="font-sans min-h-[40px] sm:min-h-[44px] leading-[22px] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-center w-full">
         <p className="block leading-[22px]">{questionText}</p>
       </div>
       <AnswerBlock answer={answer} onAnswerChange={onAnswerChange} />

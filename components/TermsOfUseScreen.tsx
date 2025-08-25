@@ -72,12 +72,12 @@ function MainContent() {
       data-name="main_content"
     >
       {/* Заголовок страницы */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
         <p className="block leading-[0.8]">Terms of use</p>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
           <p className="block leading-none mb-0">Last updated: August 2, 2025</p>
           <p className="block leading-none mb-0">

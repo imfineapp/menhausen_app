@@ -1,5 +1,4 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { BottomFixedButton } from './BottomFixedButton';
 
@@ -65,7 +64,10 @@ function ActionButton({
   buttonText: string; 
 }) {
   return (
-    <BottomFixedButton onClick={onClick}>
+    <BottomFixedButton 
+      onClick={onClick}
+      className={isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : ''}
+    >
       {buttonText}
     </BottomFixedButton>
   );
@@ -136,7 +138,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -194,10 +196,10 @@ export function ThemeWelcomeScreen({
             
             {/* Заголовок */}
             <div className="text-center mb-12">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
+              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
                 {_themeTitle}
               </h1>
-              <p className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-white text-[20px]">
+              <p className="font-sans text-white text-[20px]">
                 {isThemeLocked ? 'Unlock this theme to get started' : 'Ready to begin your journey?'}
               </p>
             </div>
@@ -208,7 +210,7 @@ export function ThemeWelcomeScreen({
 
       {/* Bottom Fixed Button */}
       <ActionButton 
-        onClick={onStart} 
+        onClick={handleButtonClick} 
         isLocked={isThemeLocked} 
         buttonText={buttonText} 
       />

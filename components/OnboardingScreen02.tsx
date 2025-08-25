@@ -49,10 +49,10 @@ function Light() {
 }
 
 /**
- * Кнопка завершения онбординга согласно Bottom Fixed CTA Button стандарту
+ * Кнопка "Get Started" согласно Bottom Fixed CTA Button стандарту
  * Теперь использует стандартный компонент BottomFixedButton
  */
-function Button({ onClick }: { onClick: () => void }) {
+function GetStartedButton({ onClick }: { onClick: () => void }) {
   return (
     <BottomFixedButton onClick={onClick}>
       Get Started
@@ -104,11 +104,11 @@ function NoLoginTextBlock() {
       data-name="Text block"
     >
       {/* Заголовок преимущества */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">No sign-up, no traces</p>
       </div>
       {/* Описание преимущества */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">Works directly in Telegram. No accounts, no email required</p>
       </div>
     </div>
@@ -177,11 +177,11 @@ function EncryptionTextBlock() {
       data-name="Container"
     >
       {/* Описание шифрования (располагается ниже заголовка) */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Data encryption</p>
       </div>
     </div>
@@ -248,11 +248,11 @@ function AlwaysWithYouTextBlock() {
       data-name="Container"
     >
       {/* Описание доступности */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">In your pocket, in Telegram. Help available 24/7, when you need it</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Always with you</p>
       </div>
     </div>
@@ -367,13 +367,13 @@ function ScienceTextBlock() {
       data-name="Container"
     >
       {/* Подробное описание методов */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
+      <div className="[grid-area:1_/_1] font-sans ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
         <p className="block leading-none">
           CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
         </p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
+      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
         <p className="block leading-[0.8]">Based on science-backed methods</p>
       </div>
     </div>
@@ -499,26 +499,15 @@ export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
-            {/* Заголовок */}
-            <div className="text-center mb-12">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
-                Why Menhausen?
-              </h1>
-            </div>
-
-            {/* Преимущества */}
-            <div className="space-y-8">
-              <NoLoginContainer />
-              <EncryptionContainer />
-              <AlwaysWithYouContainer />
-            </div>
+            {/* Блок с контентом всех преимуществ */}
+            <ContentBlock onComplete={onComplete} />
 
           </div>
         </div>
       </div>
 
       {/* Bottom Fixed Button */}
-      <Button onClick={onComplete} />
+      <GetStartedButton onClick={onComplete} />
 
     </div>
   );

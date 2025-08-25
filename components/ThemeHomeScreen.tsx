@@ -1,5 +1,4 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { BottomFixedButton } from './BottomFixedButton';
 
@@ -127,7 +126,7 @@ function ProgressTheme() {
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -181,7 +180,7 @@ function CheckinIcon() {
 }
 
 /**
- * Адаптивная карточка темы с touch-friendly дизайном
+ * Адаптивная карточка темы с min-h-[44px] min-w-[44px] дизайном
  */
 function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) => void }) {
   const isInactive = !card.isActive;
@@ -194,7 +193,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
         isInactive 
           ? "bg-[rgba(217,217,217,0.02)] cursor-not-allowed" 
           : "bg-[rgba(217,217,217,0.04)] cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98"
-      } h-[106px] relative rounded-xl shrink-0 w-full transition-all duration-200 touch-friendly`}
+      } h-[106px] relative rounded-xl shrink-0 w-full transition-all duration-200 min-h-[44px] min-w-[44px]`}
       data-name="Card_item"
     >
       <div
@@ -204,26 +203,26 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
       <div className="relative size-full">
         <div className="box-border content-stretch flex flex-col gap-2.5 h-[106px] items-start justify-start p-[15px] relative w-full text-left">
           <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-            <div className={`font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 ${
+            <div className={`font-heading font-normal leading-[0] relative shrink-0 ${
               isInactive ? "text-[#696969]" : "text-[#e1ff00]"
             } text-[24px] text-left w-[158px]`}>
               <p className="block leading-[0.8]">{card.title}</p>
             </div>
             {card.isActive && (
               <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-                <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+                <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
                   <p className="block leading-[0.8] whitespace-pre">{card.checkins}</p>
                 </div>
                 <CheckinIcon />
               </div>
             )}
           </div>
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 ${
+          <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 ${
             isInactive ? "text-[#696969]" : "text-[#696969]"
           } text-[20px] text-left w-full`}>
             <p className="block leading-none">{card.level}</p>
           </div>
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 ${
+          <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 ${
             isInactive ? "text-[#696969]" : "text-[#ffffff]"
           } text-[20px] text-left w-full`}>
             <p className="block leading-none">{card.description}</p>
@@ -241,7 +240,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -387,9 +386,14 @@ export function ThemeHomeScreen({ onBack, onCardClick, onOpenNextLevel, themeTit
             
             {/* Заголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-4 leading-[0.8]">
+              <h1 className="font-heading font-normal text-white text-[36px] mb-4 leading-[0.8]">
                 {themeTitle}
               </h1>
+            </div>
+            
+            {/* Прогресс темы */}
+            <div className="mb-8">
+              <ProgressTheme />
             </div>
             
             {/* Карточки */}

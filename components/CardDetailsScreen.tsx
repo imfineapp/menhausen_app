@@ -1,5 +1,4 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { BottomFixedButton } from './BottomFixedButton';
 
@@ -123,7 +122,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
+      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]"
       data-name="Back button"
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
@@ -153,10 +152,10 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
       data-name="Card Header"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">{cardTitle}</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{cardDescription || defaultDescription}</p>
       </div>
     </div>
@@ -170,7 +169,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
   return (
     <button
       onClick={() => onClick?.(checkin.id)}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 touch-friendly"
+      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px]"
       data-name="Checkin"
     >
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Background">
@@ -179,7 +178,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
+      <div className="absolute font-sans inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
         <p className="block leading-none">{checkin.formattedDate}</p>
       </div>
     </button>
@@ -195,7 +194,7 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       className="relative shrink-0 w-full"
       data-name="Checkins Container"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Checkins</p>
       </div>
       <div

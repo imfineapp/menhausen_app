@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import svgPaths from "../imports/svg-nt7wuddmjy";
+import svgPaths from "../imports/svg-bamg6d8zx5";
 import { BottomFixedButton } from './BottomFixedButton';
 
 /**
@@ -118,10 +118,10 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block leading-[0.8]">Under Construction</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">
           {featureName ? `${featureName} feature` : 'This feature'} is currently being developed by our team. We're working hard to bring you the best experience possible.
         </p>
@@ -200,13 +200,13 @@ function MiniStripeLogo() {
 }
 
 /**
- * Кнопка "Назад" с touch-friendly размером
+ * Кнопка "Назад" с min-h-[44px] min-w-[44px] размером
  */
 function BackButton({ onBack }: { onBack: () => void }) {
   return (
     <button
       onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] touch-friendly hover:opacity-80"
+      className="absolute left-[21px] size-12 top-[53px] min-h-[44px] min-w-[44px] hover:opacity-80"
       data-name="Back Button"
       aria-label="Go back to profile"
     >
@@ -274,31 +274,23 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
       {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип */}
-      <MiniStripeLogo />
-      
-      {/* Кнопка назад */}
-      <BackButton onClick={onBack} />
+      {/* Заголовочный блок с логотипом и кнопкой назад */}
+      <HeaderBlock onBack={handleBackClick} />
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
-            {/* Иконка и заголовок */}
-            <div className="text-center mb-12">
-              <div className="flex justify-center mb-8">
-                <Icon />
-              </div>
-              <HeroBlockQuestion featureName={featureName} />
-            </div>
+            {/* Контейнер с иконкой и текстом */}
+            <IconContainer featureName={featureName} />
 
           </div>
         </div>
       </div>
 
       {/* Bottom Fixed Button */}
-      <Button onBack={onBack} />
+      <Button onBack={handleBackClick} />
 
     </div>
   );

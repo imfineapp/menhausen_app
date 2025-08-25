@@ -99,7 +99,7 @@ function SurveyItem({ option, selected, onToggle }: {
   return (
     <button
       onClick={onToggle}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] touch-friendly"
+      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] min-h-[44px] min-w-[44px]"
       data-name="Survey_item_box"
     >
       {/* Фон элемента */}
@@ -123,7 +123,7 @@ function SurveyItem({ option, selected, onToggle }: {
       <div className="absolute box-border content-stretch flex flex-row gap-5 items-center justify-start left-[5.7%] p-0 right-[5.7%] top-1/2 translate-y-[-50%]">
         <RadioButton selected={selected} />
         <div 
-          className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
+          className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
             selected ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}
         >
@@ -188,13 +188,11 @@ function HeroBlockQuestion() {
   return (
     <div className="flex flex-col gap-5 items-center justify-start leading-[0] text-center w-full">
       {/* Основной заголовок опроса */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block mb-0">{`What worries you `}</p>
-        <p className="block">the most?</p>
+      <div className="font-heading font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+        <p className="block leading-[0.8]">How are you feeling today?</p>
       </div>
-      {/* Подзаголовок с инструкцией */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">You can choose several options</p>
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+        <p className="block leading-none">Select the option that best describes your current mood</p>
       </div>
     </div>
   );
@@ -297,7 +295,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly" 
+      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]" 
       data-name="Back Button"
       aria-label="Go back"
     >
@@ -360,9 +358,22 @@ export function SurveyScreen({ onComplete, onBack }: SurveyScreenProps) {
       {/* Световые эффекты */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
+      {/* Кнопка назад */}
+      <BackButton onClick={onBack} />
+      
+      {/* Прогресс-бар */}
+      <div className="absolute top-[120px] left-0 right-0 px-[16px] sm:px-[20px] md:px-[21px]">
+        <div className="max-w-[351px] mx-auto">
+          <ProgressBar />
+        </div>
+      </div>
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[160px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок и описание */}
@@ -386,7 +397,7 @@ export function SurveyScreen({ onComplete, onBack }: SurveyScreenProps) {
       </div>
 
       {/* Bottom Fixed Button */}
-      <ButtonWithGradient onClick={handleComplete} disabled={selectedOptions.size === 0} />
+      <ButtonWithGradient onClick={handleComplete} disabled={!hasSelection} />
 
     </div>
   );

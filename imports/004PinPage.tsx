@@ -38,7 +38,7 @@ function Light() {
 function TextButton() {
   return (
     <div className="absolute h-5 left-[179px] top-[771px] w-[37px]" data-name="Text button">
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-0 leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap">
+      <div className="absolute font-sans inset-0 leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap">
         <p className="block leading-none whitespace-pre">Skip</p>
       </div>
     </div>
@@ -53,7 +53,7 @@ function Group22() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_42.65%_36.77%_42.65%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_42.65%_36.77%_42.65%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">1</p>
       </div>
     </div>
@@ -68,7 +68,7 @@ function Group23() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">2</p>
       </div>
     </div>
@@ -83,7 +83,7 @@ function Group24() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_41.18%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_41.18%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">3</p>
       </div>
     </div>
@@ -98,7 +98,7 @@ function Group25() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">4</p>
       </div>
     </div>
@@ -113,7 +113,7 @@ function Group26() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_41.18%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_41.18%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">5</p>
       </div>
     </div>
@@ -128,7 +128,7 @@ function Group27() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">6</p>
       </div>
     </div>
@@ -143,7 +143,7 @@ function Group28() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">7</p>
       </div>
     </div>
@@ -158,7 +158,7 @@ function Group29() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">8</p>
       </div>
     </div>
@@ -173,7 +173,7 @@ function Group30() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">9</p>
       </div>
     </div>
@@ -188,7 +188,7 @@ function Group31() {
           <circle cx="34" cy="34" fill="var(--fill-0, #D9D9D9)" fillOpacity="0.04" id="Ellipse 3" r="34" />
         </svg>
       </div>
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-heading font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">0</p>
       </div>
     </div>
@@ -244,7 +244,7 @@ function PinBlock4() {
 function PinMessage() {
   return (
     <div className="absolute h-4 left-[21px] top-[296px] w-[351px]" data-name="pin message">
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-0 leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
+      <div className="absolute font-sans inset-0 leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
         <p className="block leading-none">PIN code does not match, please try again</p>
       </div>
     </div>
@@ -255,7 +255,7 @@ function PinSetup() {
   return (
     <div className="absolute contents left-[21px] top-[154px]" data-name="Pin setup">
       <PinBlock4 />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] left-[196.5px] not-italic text-[#ffffff] text-[20px] text-center top-[154px] translate-x-[-50%] w-[351px]">
+      <div className="absolute font-sans font-bold leading-[0] left-[196.5px] not-italic text-[#ffffff] text-[20px] text-center top-[154px] translate-x-[-50%] w-[351px]">
         <p className="block leading-none">For more privacy you can set a pin code to log in</p>
       </div>
       <PinMessage />

@@ -46,7 +46,7 @@ export function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="size-10 sm:size-12 cursor-pointer touch-friendly hover:opacity-80" 
+      className="size-10 sm:size-12 cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80" 
       data-name="Back Button"
       aria-label="Go back"
     >

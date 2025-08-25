@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import svgPaths from "../imports/svg-nt7wuddmjy";
 import { SecondaryButton } from './SecondaryButton';
 
@@ -82,7 +82,7 @@ function NumberButton({ number, onPress }: { number: string; onPress: (num: stri
         </svg>
       </div>
       {/* Цифра */}
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
+      <div className="absolute font-sans font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">{number}</p>
       </div>
     </button>
@@ -177,7 +177,7 @@ function PinMessage({ show }: { show: boolean }) {
   
   return (
     <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
+      <div className="font-sans font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
         <p className="block leading-none">PIN code does not match, please try again</p>
       </div>
     </div>
@@ -203,7 +203,7 @@ function PinSetup({
       <PinBlock4 pinLength={pinLength} />
       
       {/* Инструкция */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
+      <div className="font-sans font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
         <p className="block leading-none">
           {mode === 'create' 
             ? 'For more privacy you can set a pin code to log in'
@@ -380,11 +380,8 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
       {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип */}
-      <MiniStripeLogo />
-      
-      {/* Кнопка назад */}
-      <BackButton onClick={onBack} />
+      {/* Заголовочный блок с логотипом и кнопкой назад */}
+      <HeaderBlock onBack={onBack} />
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
@@ -393,11 +390,11 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
             
             {/* Заголовок */}
             <div className="text-center mb-12">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-[36px] mb-6 leading-[0.8]">
+              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
                 Set up your PIN
               </h1>
-              <p className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-white text-[20px]">
-                Create a 4-digit PIN for quick access
+              <p className="font-sans text-white text-[20px]">
+                Create a 4-digit PIN to secure your account
               </p>
             </div>
             

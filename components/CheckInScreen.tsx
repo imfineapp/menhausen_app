@@ -73,10 +73,10 @@ function HeroBlockQuestion() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
         <p className="block leading-[0.8]">How are you?</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
       </div>
     </div>
@@ -272,7 +272,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly" 
+      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]" 
       data-name="Back Button"
       aria-label="Go back"
     >
@@ -317,7 +317,7 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
       <MiniStripeLogo />
       
       {/* Кнопка назад */}
-      <BackButton onBack={onBack} />
+      <BackButton onClick={onBack} />
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
@@ -325,14 +325,14 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контент */}
-            <ContentContainer selectedMood={selectedMood} onMoodChange={setSelectedMood} />
+            <ContentContainer selectedMood={selectedMood} onMoodChange={handleMoodChange} />
 
           </div>
         </div>
       </div>
 
       {/* Bottom Fixed Button */}
-      <SendButton onClick={handleSubmit} disabled={selectedMood === null} />
+      <SendButton onClick={handleSubmit} disabled={!canSubmit} />
 
     </div>
   );

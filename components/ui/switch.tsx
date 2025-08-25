@@ -14,7 +14,7 @@ interface SwitchProps {
 /**
  * Адаптивный Switch компонент без внешних зависимостей
  * Совместим с shadcn API, но реализован нативно для Figma Make
- * Включает фирменные цвета и touch-friendly дизайн
+ * Включает фирменные цвета и min-h-[44px] min-w-[44px] дизайн
  */
 function Switch({
   checked = false,
@@ -54,7 +54,7 @@ function Switch({
         rounded-full border-2 border-transparent transition-all duration-200
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
         focus-visible:ring-offset-2 focus-visible:ring-offset-background
-        disabled:cursor-not-allowed disabled:opacity-50 touch-friendly
+        disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] min-w-[44px]
         ${checked 
           ? 'bg-[#e1ff00] data-[state=checked]:bg-[#e1ff00]' 
           : 'bg-[#2d2b2b] data-[state=unchecked]:bg-[#2d2b2b]'

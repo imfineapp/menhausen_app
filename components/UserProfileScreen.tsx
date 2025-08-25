@@ -41,7 +41,7 @@ interface UserProfileScreenProps {
 
 /**
  * Главный компонент страницы профиля пользователя
- * Полностью адаптивный с поддержкой всех устройств и touch-friendly элементами
+ * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
 export function UserProfileScreen({ 
   onBack, 
@@ -161,7 +161,7 @@ export function UserProfileScreen({
         
         {/* Секция "Your status" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
+          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
             <p className="block leading-[0.8]">Your status</p>
           </div>
           <div className="flex flex-col w-full">
@@ -209,7 +209,7 @@ export function UserProfileScreen({
         
         {/* Секция "Settings" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
+          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
             <p className="block leading-[0.8]">Settings</p>
           </div>
           <div className="flex flex-col w-full">
@@ -217,7 +217,7 @@ export function UserProfileScreen({
               icon={<LanguageIcon />}
               title="Language"
               rightElement={
-                <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#ffffff] text-right">
+                <div className="font-sans text-[18px] sm:text-[20px] text-[#ffffff] text-right">
                   <p className="block leading-none">{language === 'en' ? 'English' : 'Русский'}</p>
                 </div>
               }
@@ -230,7 +230,7 @@ export function UserProfileScreen({
                 <Switch 
                   checked={notificationsEnabled} 
                   onCheckedChange={handleNotificationToggle}
-                  className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 touch-friendly"
+                  className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 min-h-[44px] min-w-[44px]"
                   data-testid="notifications-switch"
                 />
               }
