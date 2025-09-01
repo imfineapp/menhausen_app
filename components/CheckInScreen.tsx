@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import svgPaths from "../imports/svg-xgh5f6h0jm";
 import { BottomFixedButton } from './BottomFixedButton';
 import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 

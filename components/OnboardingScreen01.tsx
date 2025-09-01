@@ -1,5 +1,4 @@
-// Импортируем SVG пути для первого экрана
-import svgPaths from "../imports/svg-nt7wuddmjy";
+// Импортируем необходимые компоненты
 import { BottomFixedButton } from './BottomFixedButton';
 import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 

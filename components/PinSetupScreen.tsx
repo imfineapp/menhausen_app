@@ -1,6 +1,5 @@
-// Импортируем необходимые хуки и SVG пути
+// Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
-import svgPaths from "../imports/svg-nt7wuddmjy";
 import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 // Типы для пропсов компонента
