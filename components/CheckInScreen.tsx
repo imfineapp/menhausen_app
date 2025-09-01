@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import svgPaths from "../imports/svg-xgh5f6h0jm";
 import { BottomFixedButton } from './BottomFixedButton';
+import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -104,6 +104,7 @@ function MoodProgressBar({
     return moodIndex;
   };
 
+  // Обработчики для мыши
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
     const mood = calculateMoodFromPosition(e.clientX);
@@ -120,6 +121,30 @@ function MoodProgressBar({
     setIsDragging(false);
   };
 
+  // Обработчики для сенсорных событий
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true);
+    const touch = e.touches[0];
+    const mood = calculateMoodFromPosition(touch.clientX);
+    onMoodChange(mood);
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    if (!isDragging) return;
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      const mood = calculateMoodFromPosition(touch.clientX);
+      onMoodChange(mood);
+      
+      // Предотвращаем скроллинг страницы при перетаскивании
+      e.preventDefault();
+    }
+  }, [isDragging, onMoodChange]);
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   const handleTrackClick = (e: React.MouseEvent) => {
     if (!isDragging) {
       const mood = calculateMoodFromPosition(e.clientX);
@@ -127,21 +152,36 @@ function MoodProgressBar({
     }
   };
 
+  // Регистрируем обработчики событий
   useEffect(() => {
     if (isDragging) {
+      // Обработчики для мыши
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      
+      // Обработчики для сенсорных событий
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchcancel', handleTouchEnd);
+      
       return () => {
+        // Удаляем обработчики для мыши
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        
+        // Удаляем обработчики для сенсорных событий
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+        document.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove]);
+  }, [isDragging, handleMouseMove, handleTouchMove]);
 
   const fillWidth = selectedMood !== null ? Math.max(30, (selectedMood / 4) * 351) : 186;
 
   return (
     <div className="bg-[#2d2b2b] relative rounded-xl h-[30px] w-full" data-name="Mood_prograssbar">
+      {/* Заполняющая полоса */}
       <div 
         className="absolute bg-[#e1ff00] h-[30px] left-0 rounded-xl top-0" 
         style={{ width: `${fillWidth}px` }}
@@ -153,13 +193,35 @@ function MoodProgressBar({
         />
       </div>
       
+      {/* Визуальный ползунок для перетаскивания */}
+      {selectedMood !== null && (
+        <div 
+          className="absolute h-[34px] w-[34px] bg-white rounded-full border-4 border-[#e1ff00] top-[-2px] cursor-grab"
+          style={{ 
+            left: `${(selectedMood / 4) * 100}%`,
+            transform: 'translateX(-50%)',
+            boxShadow: '0 0 10px rgba(225, 255, 0, 0.5)'
+          }}
+          data-name="Slider"
+        />
+      )}
+      
+      {/* Подсказка для пользователя */}
+      <div className="absolute -top-8 left-0 right-0 text-center text-[#999999] text-sm">
+        Перетащите ползунок для выбора настроения
+      </div>
+      
+      {/* Область для взаимодействия */}
       <div 
         ref={trackRef}
         onClick={handleTrackClick}
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
         className="absolute inset-0 cursor-pointer select-none"
+        style={{ touchAction: 'none' }}
       />
       
+      {/* Метки */}
       {MOOD_OPTIONS.map((_, index) => (
         <div
           key={index}
@@ -223,51 +285,6 @@ function ContentContainer({
   );
 }
 
-function SymbolBig() {
-  return (
-    <div className="relative size-full" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function Menhausen() {
-  return (
-    <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
-        <g id="Menhausen">
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_2" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_3" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_4" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p2d60800} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
@@ -314,7 +331,9 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
       <Light />
       
       {/* Логотип */}
-      <MiniStripeLogo />
+      <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]">
+        <MiniStripeLogo />
+      </div>
       
       {/* Кнопка назад */}
       <BackButton onClick={onBack} />

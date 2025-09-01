@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { useRef } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
+import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -92,64 +93,6 @@ function Light() {
           </defs>
         </svg>
       </div>
-    </div>
-  );
-}
-
-/**
- * Адаптивный компонент символа логотипа
- */
-function SymbolBig() {
-  return (
-    <div className="h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивный компонент названия приложения с версией beta
- */
-function MenhausenBeta() {
-  return (
-    <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
-        <g id="Menhausen beta">
-          <path d={svgPaths.p25a36300} fill="var(--fill-0, #E1FF00)" id="Vector" />
-          <path d={svgPaths.p1120ed00} fill="var(--fill-0, #E1FF00)" id="Vector_2" />
-          <path d={svgPaths.p33898780} fill="var(--fill-0, #E1FF00)" id="Vector_3" />
-          <path d={svgPaths.p9060800} fill="var(--fill-0, #E1FF00)" id="Vector_4" />
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_10" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_11" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_12" />
-          <path d={svgPaths.p296762f0} fill="var(--fill-0, #CFCFCF)" id="Vector_13" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивный мини-логотип с символом и названием - центрированный
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
     </div>
   );
 }
@@ -377,7 +320,7 @@ function CheckInBlock({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
 function ActivityProgress() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-row h-[11px] items-center justify-between left-4 sm:left-5 p-0 top-[50px] sm:top-[53px] md:top-[55px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)]"
+      className="absolute box-border content-stretch flex flex-row h-[11px] items-center justify-between inset-x-4 sm:inset-x-5 p-0 top-[50px] sm:top-[53px] md:top-[55px]"
       data-name="Activity progress"
     >
       <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
@@ -398,7 +341,7 @@ function ActivityProgress() {
 function ActivityHeader() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-row font-['Kreon:Regular',_sans-serif] font-normal items-center justify-between leading-[0] left-3 sm:left-4 p-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap top-3 sm:top-4 w-[calc(100%-1.5rem)] sm:w-[calc(100%-2rem)]"
+      className="absolute box-border content-stretch flex flex-row font-['Kreon:Regular',_sans-serif] font-normal items-center justify-between leading-[0] inset-x-3 sm:inset-x-4 p-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap top-3 sm:top-4"
       data-name="Activity header"
     >
       <div className="relative shrink-0 text-left">
@@ -418,7 +361,7 @@ function ActivityBlock() {
   return (
     <div className="relative w-full h-[130px] sm:h-[135px] md:h-[141px]" data-name="Activity block">
       <div
-        className="absolute bg-[rgba(217,217,217,0.04)] h-[130px] sm:h-[135px] md:h-[141px] left-0 rounded-xl top-0 w-full"
+        className="absolute bg-[rgba(217,217,217,0.04)] h-[130px] sm:h-[135px] md:h-[141px] inset-x-0 rounded-xl top-0 w-full"
         data-name="Activity container"
       >
         <div
@@ -428,7 +371,7 @@ function ActivityBlock() {
       </div>
       <ActivityProgress />
       <ActivityHeader />
-      <div className="absolute font-sans font-bold leading-[0] left-4 sm:left-5 not-italic text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left top-[75px] sm:top-[78px] md:top-[81px] w-[calc(100%-2rem)] sm:w-[calc(100%-2.5rem)]">
+      <div className="absolute font-sans font-bold leading-[0] inset-x-4 sm:inset-x-5 not-italic text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left top-[75px] sm:top-[78px] md:top-[81px]">
         <p className="block leading-none">Only by doing exercises regularly will you achieve results.</p>
       </div>
     </div>
@@ -474,12 +417,6 @@ function ThemeCard({
         <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
           <p className="block leading-none">{description}</p>
         </div>
-        <div className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full">
-          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] md:text-[16px] text-left w-[200px] sm:w-[220px] md:w-[235px]">
-            <p className="block leading-none">Use 80% users</p>
-          </div>
-          <UserAccountStatus isPremium={isPremium} />
-        </div>
       </div>
       
       {/* Индикатор прогресса */}
@@ -496,12 +433,20 @@ function ThemeCard({
           <p className="block leading-none">Progress</p>
         </div>
       </div>
+      
+      {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
+      <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
+        <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] md:text-[16px] text-left">
+          <p className="block leading-none">Use 80% users</p>
+        </div>
+        <UserAccountStatus isPremium={isPremium} />
+      </div>
     </button>
   );
 }
 
 /**
- * Адаптивный список проблем пользователя с обработкой кликов на до��тупные темы
+ * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
 function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => void }) {
   const worries = [
@@ -609,8 +554,30 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
 }
 
 /**
+ * Адаптивный основной контейнер контента главной страницы
+ */
+function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium }: { 
+  onGoToCheckIn: () => void; 
+  onGoToProfile: () => void;
+  onGoToTheme: (themeTitle: string) => void;
+  userHasPremium: boolean;
+}) {
+  return (
+    <div
+      className="flex flex-col gap-[48px] sm:gap-[54px] md:gap-[60px] items-start justify-start w-full max-w-[351px] mx-auto pb-6 sm:pb-7 md:pb-8"
+      data-name="Main_page_contenct_block"
+    >
+      <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
+      <CheckInBlock onGoToCheckIn={onGoToCheckIn} />
+      <ActivityBlock />
+      <WorriesContainer onGoToTheme={onGoToTheme} />
+    </div>
+  );
+}
+
+/**
  * Адаптивный горизонтальный слайдер экстренной помощи без навигационных кнопок
- * Управляется только горизонтальными свайпами
+ * Управляется только горизонтальными свайпами и занимает всю ширину экрана
  */
 function EmergencySlider() {
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -627,49 +594,53 @@ function EmergencySlider() {
   };
 
   return (
-    <div className="relative w-full -mr-[16px] sm:-mr-[20px] md:-mr-[21px]">
-      {/* Контейнер слайдера с горизонтальной прокруткой только через свайпы */}
-      <div
-        ref={sliderRef}
-        className="box-border content-stretch flex flex-row gap-[12px] sm:gap-[13px] md:gap-[15px] items-center justify-start pl-0 pr-[16px] sm:pr-[20px] md:pr-[21px] relative shrink-0 overflow-x-auto scrollbar-hide"
-        data-name="Slider_emergency"
-        style={{ 
-          scrollSnapType: 'x mandatory',
-          WebkitOverflowScrolling: 'touch',
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none'
-        }}
-      >
-        {EMERGENCY_CARDS.map((card) => (
-          <div 
-            key={card.id} 
-            style={{ scrollSnapAlign: 'start' }}
-            className="shrink-0"
-          >
-            <EmergencyCard 
-              card={card} 
-              onClick={() => handleCardClick(card)}
-            />
-          </div>
-        ))}
-      </div>
+    <div
+      ref={sliderRef}
+      className="flex flex-row gap-[12px] sm:gap-[13px] md:gap-[15px] items-center overflow-x-auto scrollbar-hide w-full"
+      data-name="Slider_emergency"
+      style={{ 
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none'
+      }}
+    >
+      {EMERGENCY_CARDS.map((card) => (
+        <div 
+          key={card.id} 
+          style={{ scrollSnapAlign: 'start' }}
+          className="shrink-0"
+        >
+          <EmergencyCard 
+            card={card} 
+            onClick={() => handleCardClick(card)}
+          />
+        </div>
+      ))}
+      {/* Пустой элемент для создания отступа в конце слайдера для лучшего UX */}
+      <div className="shrink-0 w-4" aria-hidden="true" />
     </div>
   );
 }
 
 /**
  * Адаптивный блок экстренной помощи с заголовком и слайдером
+ * Занимает всю ширину экрана
  */
 function EmergencyBlock() {
   return (
-    <div
-      className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full"
-      data-name="Emergency_block"
-    >
-      <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">Quick mental help</p>
+    <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Emergency_block_container">
+      {/* Заголовок с отступами как у основного контента */}
+      <div className="px-[16px] sm:px-[20px] md:px-[21px] max-w-[calc(351px+32px)] sm:max-w-[calc(351px+40px)] md:max-w-[calc(351px+42px)] mx-auto w-full mb-4 sm:mb-5">
+        <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
+          <p className="block leading-[0.8]">Quick mental help</p>
+        </div>
       </div>
-      <EmergencySlider />
+      
+      {/* Слайдер с отступом слева как у основного контента и без отступа справа */}
+      <div className="px-[16px] sm:px-[20px] md:px-[21px] pr-0">
+        <EmergencySlider />
+      </div>
     </div>
   );
 }
@@ -730,12 +701,12 @@ function FollowButton({
   return (
     <button
       onClick={onClick}
-      className="h-[65px] sm:h-[69px] md:h-[73px] relative shrink-0 w-[150px] sm:w-[158px] md:w-[166px] cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-200 min-h-[44px] min-w-[44px]"
+      className="h-[65px] sm:h-[69px] md:h-[73px] relative w-full cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-200 min-h-[44px] min-w-[44px]"
       data-name="Follow button"
     >
       <div className="absolute contents inset-0">
         <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" />
-        <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-start p-0">
+        <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-center p-0">
           {icon}
           <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap text-right">
             <p className="block leading-[0.8] whitespace-pre">Follow</p>
@@ -762,7 +733,7 @@ function SocialFollowBlock() {
 
   return (
     <div
-      className="box-border content-stretch flex flex-row gap-[15px] sm:gap-[17px] md:gap-[19px] items-center justify-center p-0 relative shrink-0 w-full"
+      className="grid grid-cols-2 gap-[15px] sm:gap-[17px] md:gap-[19px] w-full"
       data-name="Follow_block"
     >
       <FollowButton 
@@ -775,30 +746,6 @@ function SocialFollowBlock() {
         platform="twitter"
         onClick={() => handleFollow('twitter')}
       />
-    </div>
-  );
-}
-
-/**
- * Адаптивный основной контейнер контента главной страницы
- */
-function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium }: { 
-  onGoToCheckIn: () => void; 
-  onGoToProfile: () => void;
-  onGoToTheme: (themeTitle: string) => void;
-  userHasPremium: boolean;
-}) {
-  return (
-    <div
-      className="absolute box-border content-stretch flex flex-col gap-[48px] sm:gap-[54px] md:gap-[60px] items-start justify-start left-[16px] sm:left-[18px] md:left-[21px] p-0 top-[95px] sm:top-[102px] md:top-[109px] w-[calc(100%-32px)] sm:w-[calc(100%-36px)] md:w-[351px] max-w-[351px] pb-6 sm:pb-7 md:pb-8"
-      data-name="Main_page_contenct_block"
-    >
-      <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
-      <CheckInBlock onGoToCheckIn={onGoToCheckIn} />
-      <ActivityBlock />
-      <WorriesContainer onGoToTheme={onGoToTheme} />
-      <EmergencyBlock />
-      <SocialFollowBlock />
     </div>
   );
 }
@@ -821,15 +768,36 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasP
       <Light />
       
       {/* Мини-логотип */}
-      <MiniStripeLogo />
+      <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]">
+        <MiniStripeLogo />
+      </div>
       
-      {/* Основной контент страницы */}
-      <MainPageContentBlock 
-        onGoToCheckIn={onGoToCheckIn} 
-        onGoToProfile={onGoToProfile} 
-        onGoToTheme={onGoToTheme}
-        userHasPremium={userHasPremium}
-      />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px]">
+          {/* Основной контент страницы */}
+          <MainPageContentBlock 
+            onGoToCheckIn={onGoToCheckIn} 
+            onGoToProfile={onGoToProfile} 
+            onGoToTheme={onGoToTheme}
+            userHasPremium={userHasPremium}
+          />
+        </div>
+        
+        {/* Отступ между блоками */}
+        <div className="h-[40px]"></div>
+        
+        {/* Блок экстренной помощи - независимый, на всю ширину экрана */}
+        <EmergencyBlock />
+        
+        {/* Блок с кнопками социальных сетей - на всю ширину экрана */}
+        <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Social_follow_container">
+          {/* Заголовок с отступами как у основного контента */}
+          <div className="px-[16px] sm:px-[20px] md:px-[21px] w-full">
+            <SocialFollowBlock />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
