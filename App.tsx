@@ -26,6 +26,7 @@ import { QuestionScreen01 } from './components/QuestionScreen01';
 import { QuestionScreen02 } from './components/QuestionScreen02';
 import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
+import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
@@ -68,6 +69,14 @@ function AppContent() {
 
   // Получение системы контента
   const { getCard, getTheme, getLocalizedText } = useContent();
+  
+  // Проверка, является ли текущий экран главной страницей
+  const isHomePage = currentScreen === 'home';
+  
+  // Функция для возврата на предыдущий экран
+  const goBack = () => {
+    setCurrentScreen(previousScreen);
+  };
 
   // =====================================================================================
   // ФУНКЦИИ СОХРАНЕНИЯ ДАННЫХ ОПРОСА
@@ -773,6 +782,9 @@ function AppContent() {
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
       <div className="flex-1 relative w-full h-full overflow-hidden">
+        {/* Глобальная кнопка Back для Telegram WebApp */}
+        <BackButton isHomePage={isHomePage} onBack={goBack} />
+        
         {renderCurrentScreen()}
       </div>
     </div>

@@ -23,7 +23,7 @@ import {
 } from './UserProfileIcons';
 import { UserInfoSection, SeparationLine, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
-import { Light, BackButton, MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
 
 // Типы для пропсов компонента
@@ -142,14 +142,8 @@ export function UserProfileScreen({
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <div className="absolute left-4 sm:left-6 md:left-[21px] top-[53px] z-10">
-        <BackButton onClick={onBack} />
-      </div>
-      <MiniStripeLogo />
-      
       {/* Основной контент */}
-      <div className="absolute flex flex-col gap-8 sm:gap-10 left-4 sm:left-6 md:left-[21px] top-[120px] sm:top-[130px] md:top-[142px] w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[351px] max-w-[351px] pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[40px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Информация о пользователе */}
         <UserInfoSection userHasPremium={userHasPremium} />

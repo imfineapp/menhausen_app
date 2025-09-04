@@ -767,14 +767,9 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasP
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Мини-логотип */}
-      <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]">
-        <MiniStripeLogo />
-      </div>
-      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px]">
           {/* Основной контент страницы */}
           <MainPageContentBlock 
             onGoToCheckIn={onGoToCheckIn} 

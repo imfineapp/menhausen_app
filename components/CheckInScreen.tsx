@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
@@ -285,30 +285,6 @@ function ContentContainer({
   );
 }
 
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]" 
-      data-name="Back Button"
-      aria-label="Go back"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
 export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
   const [selectedMood, setSelectedMood] = useState<number | null>(2);
 
@@ -330,17 +306,9 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
       {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип */}
-      <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]">
-        <MiniStripeLogo />
-      </div>
-      
-      {/* Кнопка назад */}
-      <BackButton onClick={onBack} />
-      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контент */}
