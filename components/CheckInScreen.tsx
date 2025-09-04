@@ -295,6 +295,17 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
   const handleSubmit = () => {
     if (selectedMood !== null) {
       const moodData = MOOD_OPTIONS[selectedMood];
+      
+      // Отправляем данные о настроении в аналитику через window
+      if (window.TwaAnalytics) {
+        window.TwaAnalytics.trackEvent('mood_checkin', {
+          mood_id: moodData.id,
+          mood_label: moodData.label,
+          mood_value: moodData.value,
+          timestamp: new Date().toISOString()
+        });
+      }
+      
       onSubmit(moodData.label);
     }
   };

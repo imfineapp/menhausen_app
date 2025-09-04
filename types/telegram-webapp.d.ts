@@ -5,6 +5,10 @@
 
 declare global {
   interface Window {
+    TwaAnalytics?: {
+      trackEvent: (eventName: string, eventData: Record<string, any>) => void;
+    };
+    
     Telegram?: {
       WebApp: {
         /**
