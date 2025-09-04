@@ -68,7 +68,7 @@ function Light() {
 function MainContent() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-[21px] p-0 top-[122px] w-[351px]"
+      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[40px] w-full max-w-[351px] mx-auto"
       data-name="main_content"
     >
       {/* Заголовок страницы */}
@@ -263,60 +263,6 @@ function Menhausen() {
   );
 }
 
-/**
- * Компонент мини-логотипа (повторно используемый)
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[153px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка возврата к предыдущему экрану
- * Интерактивная стрелка "назад"
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80" 
-      data-name="Back Button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onClick={onBack} />
-    </div>
-  );
-}
 
 /**
  * Главный компонент страницы Privacy Policy
@@ -330,9 +276,6 @@ export function PrivacyPolicyScreen({ onBack }: PrivacyPolicyScreenProps) {
       
       {/* Основной контент документа */}
       <MainContent />
-      
-      {/* Заголовочный блок с навигацией */}
-      <HeaderBlock onBack={onBack} />
     </div>
   );
 }

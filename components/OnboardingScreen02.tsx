@@ -1,7 +1,6 @@
 // Импортируем SVG пути для второго экрана
 import svgPaths from "../imports/svg-vn1j3wuqix";
 import { BottomFixedButton } from './BottomFixedButton';
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -432,16 +431,9 @@ export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
       {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип приложения */}
-      <div className="absolute left-1/2 transform -translate-x-1/2 top-[69px]">
-        <div className="h-[13px] w-[89px]">
-          <MiniStripeLogo />
-        </div>
-      </div>
-      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
           <div className="max-w-[351px] mx-auto flex flex-col items-center">
             {/* Блок с контентом всех преимуществ */}
             <ContentBlock onComplete={onComplete} />

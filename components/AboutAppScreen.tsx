@@ -44,32 +44,6 @@ function Light() {
   );
 }
 
-/**
- * Адаптивная кнопка назад
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="size-10 sm:size-12 cursor-pointer hover:opacity-80 min-h-[44px] min-w-[44px]" 
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
 
 /**
  * Адаптивный компонент символа логотипа
@@ -106,21 +80,6 @@ function MenhausenBeta() {
   );
 }
 
-/**
- * Адаптивный мини-логотип с символом и названием - центрированный
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
-    </div>
-  );
-}
 
 /**
  * Адаптивная секция с логотипом приложения
@@ -346,14 +305,8 @@ export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <div className="absolute left-4 sm:left-6 md:left-[21px] top-[53px] z-10">
-        <BackButton onClick={onBack} />
-      </div>
-      <MiniStripeLogo />
-      
       {/* Основной контент */}
-      <div className="absolute flex flex-col gap-8 sm:gap-10 left-4 sm:left-6 md:left-[21px] top-[120px] sm:top-[130px] md:top-[142px] w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[351px] max-w-[351px] pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[40px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Логотип и название приложения */}
         <AppLogoSection />

@@ -1,6 +1,5 @@
 // Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -224,45 +223,6 @@ function PinSetup({
   );
 }
 
-/**
- * Кнопка возврата к предыдущему экрану
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-8 lg:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80" 
-      data-name="Back Button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]">
-        <MiniStripeLogo />
-      </div>
-      <BackButton onClick={onBack} />
-    </div>
-  );
-}
 
 /**
  * Главный компонент экрана настройки пин-кода
@@ -334,12 +294,9 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
       {/* Световые эффекты */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <HeaderBlock onBack={onBack} />
-      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок */}

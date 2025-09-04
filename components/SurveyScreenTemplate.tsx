@@ -6,8 +6,6 @@ import { useState, useEffect } from 'react';
 import { useSurveyScreen, useUIText } from './ContentContext';
 import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
-import BackButton from '../imports/BackButton-25-362';
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
 
 interface SurveyScreenTemplateProps {
   screenId: keyof SurveyContent;
@@ -190,33 +188,9 @@ export function SurveyScreenTemplate({
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
-      {/* Header с логотипом */}
-      <div className="flex-shrink-0 px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[24px]">
-        <div className="flex items-center justify-between mb-6">
-          {/* Обновленная кнопка назад в стиле guidelines */}
-          <button
-            onClick={onBack}
-            className="min-h-[44px] min-w-[44px] flex items-center justify-center w-12 h-12 transition-transform duration-200 hover:scale-105 active:scale-95"
-          >
-            <div className="w-12 h-12">
-              <BackButton />
-            </div>
-          </button>
-          
-          {/* Центрированный логотип */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <div className="h-[13px] w-[89px]">
-              <MiniStripeLogo />
-            </div>
-          </div>
-          
-          <div className="w-12" /> {/* Spacer для симметрии */}
-        </div>
-      </div>
-
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок и подзаголовок */}

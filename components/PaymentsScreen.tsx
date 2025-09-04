@@ -453,7 +453,7 @@ function MainContainer({
 }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-[19px] p-0 top-[120px] w-[352px]"
+      className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 w-full"
       data-name="Container"
     >
       <PlanComparisonContainer />
@@ -462,90 +462,6 @@ function MainContainer({
   );
 }
 
-/**
- * SVG иконка для стрелки назад
- */
-function SymbolBig() {
-  return (
-    <div className="h-[13px] relative w-2" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Логотип Menhausen Beta
- */
-function MenhausenBeta() {
-  return (
-    <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
-        <g id="Menhausen beta">
-          <path d={svgPaths.p25a36300} fill="var(--fill-0, #E1FF00)" id="Vector" />
-          <path d={svgPaths.p1120ed00} fill="var(--fill-0, #E1FF00)" id="Vector_2" />
-          <path d={svgPaths.p33898780} fill="var(--fill-0, #E1FF00)" id="Vector_3" />
-          <path d={svgPaths.p9060800} fill="var(--fill-0, #E1FF00)" id="Vector_4" />
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_10" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_11" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_12" />
-          <path d={svgPaths.p296762f0} fill="var(--fill-0, #CFCFCF)" id="Vector_13" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Мини-логотип с иконкой
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[133px] top-[69px] w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
-    </div>
-  );
-}
-
-/**
- * Кнопка "Назад" с min-h-[44px] min-w-[44px] размером
- */
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] min-h-[44px] min-w-[44px] hover:opacity-80"
-      data-name="Back button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
 
 /**
  * Основной компонент экрана покупки Premium подписки
@@ -592,15 +508,9 @@ export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenPro
       {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип */}
-      <MiniStripeLogo />
-      
-      {/* Кнопка назад */}
-      <BackButton onBack={onBack} />
-      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контейнер с информацией и выбором планов */}
