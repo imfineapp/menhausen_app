@@ -90,6 +90,36 @@ export function SurveyScreenTemplate({
       answers = selectedOptions;
     }
 
+    // Отправляем данные опроса в аналитику через глобальный объект
+    if (window.TwaAnalytics) {
+      // Подготовка данных для аналитики
+      let analyticsData: Record<string, any> = {
+        screen_id: screenId,
+        question_type: surveyData.screen.questionType,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Добавляем ответы в зависимости от типа вопроса
+      if (surveyData.screen.questionType === 'text-input') {
+        analyticsData.answer_text = textInput.trim();
+      } else {
+        // Преобразуем выбранные варианты в строковое представление для аналитики
+        analyticsData.selected_options = answers;
+        analyticsData.option_count = answers.length;
+        
+        // Добавляем текстовое представление выбранных опций
+        if (localizedScreen.options) {
+          const selectedTexts = answers.map(id => {
+            const option = localizedScreen.options?.find(opt => opt.id === id);
+            return option?.text || id;
+          });
+          analyticsData.selected_texts = selectedTexts;
+        }
+      }
+      
+      window.TwaAnalytics.trackEvent('survey_answer', analyticsData);
+    }
+
     onNext(answers);
   };
 
