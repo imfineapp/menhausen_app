@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки React
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { getInitialLanguage, saveLanguage } from '../utils/languageDetector';
 
 // Типы для языков приложения
 export type Language = 'en' | 'ru';
@@ -26,8 +27,8 @@ interface LanguageProviderProps {
  * Управляет текущим языком и состоянием модального окна выбора языка
  */
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  // Состояние для текущего языка (по умолчанию английский)
-  const [language, setLanguageState] = useState<Language>('en');
+  // Состояние для текущего языка (определяется автоматически)
+  const [language, setLanguageState] = useState<Language>(() => getInitialLanguage());
   
   // Состояние для модального окна выбора языка
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -38,12 +39,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
    */
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    // Сохраняем выбор языка в localStorage
-    try {
-      localStorage.setItem('menhausen-language', lang);
-    } catch (error) {
-      console.warn('Failed to save language preference:', error);
-    }
+    saveLanguage(lang);
   };
 
   /**
@@ -60,17 +56,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     setIsLanguageModalOpen(false);
   };
 
-  // Загружаем сохраненный язык при инициализации
-  useState(() => {
-    try {
-      const savedLanguage = localStorage.getItem('menhausen-language') as Language;
-      if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
-        setLanguageState(savedLanguage);
-      }
-    } catch (error) {
-      console.warn('Failed to load language preference:', error);
-    }
-  });
+  // Язык уже определен в useState через getInitialLanguage()
 
   // Значение контекста
   const contextValue: LanguageContextType = {

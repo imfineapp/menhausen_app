@@ -73,7 +73,7 @@ export class FontLoader {
         document.body.appendChild(element);
         
         // Force reflow
-        element.offsetHeight;
+        void element.offsetHeight;
         
         // Check if font is loaded
         const isLoaded = this.isFontLoaded(font, text);

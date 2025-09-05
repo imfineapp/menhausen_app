@@ -1,0 +1,38 @@
+{
+  "navigation": {
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "complete": "Complete",
+    "continue": "Continue"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "tryAgain": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "home": {
+    "greeting": "Good morning",
+    "checkInPrompt": "How are you feeling today?",
+    "quickHelpTitle": "Quick mental help",
+    "themesTitle": "Choose what bothers you"
+  },
+  "profile": {
+    "title": "Profile",
+    "aboutApp": "About app",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "deleteAccount": "Delete account",
+    "payments": "Subscription"
+  },
+  "survey": {
+    "progress": "Step {current} of {total}",
+    "selectAtLeastOne": "Please select at least one option",
+    "optional": "Optional",
+    "required": "Required"
+  }
+}

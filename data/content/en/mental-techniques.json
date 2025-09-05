@@ -1,0 +1,114 @@
+{
+  "breathing-4-7-8": {
+    "id": "breathing-4-7-8",
+    "title": "4-7-8 Breathing",
+    "subtitle": "Quick nervous system calming",
+    "duration": "5 minutes",
+    "difficulty": "beginner",
+    "emergencyLevel": "high",
+    "category": "breathing",
+    "isPremium": false,
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "Inhale through nose for 4 counts",
+        "duration": 4,
+        "visual": "breathing"
+      },
+      {
+        "step": 2,
+        "instruction": "Hold breath for 7 counts",
+        "duration": 7,
+        "visual": "breathing"
+      },
+      {
+        "step": 3,
+        "instruction": "Exhale through mouth for 8 counts",
+        "duration": 8,
+        "visual": "breathing"
+      }
+    ],
+    "tips": [
+      "Sit straight, shoulders relaxed",
+      "Repeat cycle 4-6 times",
+      "Stop if you feel dizzy"
+    ],
+    "accordionItems": [
+      {
+        "title": "How it works",
+        "content": "The 4-7-8 technique activates the parasympathetic nervous system through controlled breathing. The increased breath hold raises carbon dioxide levels in the blood, signaling the brain to relax."
+      },
+      {
+        "title": "Why it's effective",
+        "content": "The 4-7-8 ratio creates optimal balance between activation and relaxation. The 4-count inhale prepares the body, the 7-count hold allows oxygen absorption, and the 8-count exhale fully clears the lungs and calms the nervous system."
+      },
+      {
+        "title": "When to use",
+        "content": "Perfect for emergency situations: panic attacks, pre-event stress, insomnia, anxiety. Can be practiced any time of day, especially before sleep or during moments of strong excitement."
+      },
+      {
+        "title": "Practical tips",
+        "content": "Start with 3-4 cycles, gradually increasing to 8. Breathe quietly to avoid attracting attention. If you feel dizzy - take a break. Works best in a quiet place, but can be practiced in public spaces too."
+      }
+    ]
+  },
+  "breathing-square": {
+    "id": "breathing-square",
+    "title": "Square Breathing",
+    "subtitle": "Stabilization in stressful situations",
+    "duration": "3 minutes",
+    "difficulty": "beginner",
+    "emergencyLevel": "high",
+    "category": "breathing",
+    "isPremium": false,
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "Inhale for 4 counts",
+        "duration": 4,
+        "visual": "square"
+      },
+      {
+        "step": 2,
+        "instruction": "Hold for 4 counts",
+        "duration": 4,
+        "visual": "square"
+      },
+      {
+        "step": 3,
+        "instruction": "Exhale for 4 counts",
+        "duration": 4,
+        "visual": "square"
+      },
+      {
+        "step": 4,
+        "instruction": "Pause for 4 counts",
+        "duration": 4,
+        "visual": "square"
+      }
+    ],
+    "tips": [
+      "Breathe evenly and calmly",
+      "Follow the dot moving around the square",
+      "Repeat 3-5 cycles"
+    ],
+    "accordionItems": [
+      {
+        "title": "Technique mechanics",
+        "content": "Square breathing is based on an even rhythm of 4-4-4-4. Each breathing phase lasts the same time, creating a symmetrical pattern. Visualizing movement around a square helps focus and maintain rhythm."
+      },
+      {
+        "title": "Why it works",
+        "content": "The even rhythm activates the vagus nerve, which is responsible for the rest state. Breathing symmetry calms the nervous system and reduces cortisol levels. Visual concentration distracts from anxious thoughts."
+      },
+      {
+        "title": "Application",
+        "content": "Effective for acute stress, anxiety, panic attacks. Helps before important meetings, exams, public speaking. Can be used anytime when you need quick emotional state stabilization."
+      },
+      {
+        "title": "Recommendations",
+        "content": "Start with 2-3 cycles, gradually increasing to 10. Monitor comfort - if you feel tension, slow down the pace. Best practiced sitting with straight back, but can be done standing or lying down."
+      }
+    ]
+  }
+}
