@@ -19,7 +19,10 @@
     "greeting": "Good morning",
     "checkInPrompt": "How are you feeling today?",
     "quickHelpTitle": "Quick mental help",
-    "themesTitle": "Choose what bothers you"
+    "themesTitle": "Choose what bothers you",
+    "howAreYou": "How are you?",
+    "checkInDescription": "Check in with yourself — it's the first step to self-care! Do it everyday.",
+    "whatWorriesYou": "What worries you?"
   },
   "profile": {
     "title": "Profile",

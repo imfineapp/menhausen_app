@@ -160,6 +160,9 @@ export interface UITexts {
     checkInPrompt: LocalizedContent;
     quickHelpTitle: LocalizedContent;
     themesTitle: LocalizedContent;
+    howAreYou: LocalizedContent;
+    checkInDescription: LocalizedContent;
+    whatWorriesYou: LocalizedContent;
   };
   profile: {
     title: LocalizedContent;
@@ -279,4 +282,6 @@ export interface ContentContextType {
   getMentalTechnique: (techniqueId: string) => MentalTechniqueData | undefined;
   getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
+  getUI: () => UITexts;
+  getAllThemes: () => ThemeData[];
 }
