@@ -2,9 +2,9 @@
 // REACT КОНТЕКСТ ДЛЯ УПРАВЛЕНИЯ КОНТЕНТОМ И ЯЗЫКОМ
 // ========================================================================================
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData } from '../types/content';
-import { appContent } from '../data/content';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent } from '../types/content';
+import { loadContentWithCache } from '../utils/contentLoader';
 
 /**
  * React контекст для централизованного управления контентом
@@ -21,89 +21,146 @@ interface ContentProviderProps {
 export function ContentProvider({ children }: ContentProviderProps) {
   // Состояние текущего языка (по умолчанию английский)
   const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>('en');
+  
+  // Состояние загруженного контента
+  const [content, setContent] = useState<AppContent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Загрузка контента для текущего языка
+   */
+  const loadContentForLanguage = useCallback(async (language: SupportedLanguage) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const loadedContent = await loadContentWithCache(language);
+      setContent(loadedContent);
+      console.log(`Content loaded for language: ${language}`);
+    } catch (err) {
+      const errorMessage = `Failed to load content for language: ${language}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   /**
    * Изменение языка приложения
    */
   const setLanguage = useCallback((language: SupportedLanguage) => {
     setCurrentLanguage(language);
-    // Здесь можно добавить сохранение языка в localStorage
+    loadContentForLanguage(language);
+    // Сохраняем язык в localStorage
     localStorage.setItem('app-language', language);
-  }, []);
+  }, [loadContentForLanguage]);
+
+  // Загружаем контент при изменении языка
+  useEffect(() => {
+    loadContentForLanguage(currentLanguage);
+  }, [currentLanguage, loadContentForLanguage]);
 
   /**
    * Получение локализованного текста для текущего языка
+   * Теперь text уже является строкой нужного языка
    */
   const getLocalizedText = useCallback((text: LocalizedContent): string => {
-    return text[currentLanguage] || text.en; // Fallback на английский
-  }, [currentLanguage]);
+    return text || ''; // text уже является строкой нужного языка
+  }, []);
 
   /**
    * Получение темы по ID
    */
   const getTheme = useCallback((themeId: string): ThemeData | undefined => {
-    return appContent.themes[themeId];
-  }, []);
+    return content?.themes[themeId];
+  }, [content]);
 
   /**
    * Получение карточки по ID
    */
   const getCard = useCallback((cardId: string): CardData | undefined => {
-    return appContent.cards[cardId];
-  }, []);
+    return content?.cards[cardId];
+  }, [content]);
 
   /**
    * Получение карточки экстренной помощи по ID
    */
   const getEmergencyCard = useCallback((cardId: string): EmergencyCardData | undefined => {
-    return appContent.emergencyCards[cardId];
-  }, []);
+    return content?.emergencyCards[cardId];
+  }, [content]);
 
   /**
    * Получение всех карточек для конкретной темы
    */
   const getThemeCards = useCallback((themeId: string): CardData[] => {
-    const theme = appContent.themes[themeId];
+    const theme = content?.themes[themeId];
     if (!theme) return [];
     
     return theme.cardIds
-      .map(cardId => appContent.cards[cardId])
+      .map(cardId => content?.cards[cardId])
       .filter((card): card is CardData => card !== undefined);
-  }, []);
+  }, [content]);
 
   /**
    * Получение экрана опроса по ID
    */
   const getSurveyScreen = useCallback((screenId: keyof SurveyContent): SurveyScreenData | undefined => {
-    return appContent.survey[screenId];
-  }, []);
+    return content?.survey[screenId];
+  }, [content]);
 
   /**
    * Получение ментальной техники по ID
    */
   const getMentalTechnique = useCallback((techniqueId: string): MentalTechniqueData | undefined => {
-    return appContent.mentalTechniques[techniqueId];
-  }, []);
+    return content?.mentalTechniques[techniqueId];
+  }, [content]);
 
   /**
    * Получение ментальных техник по категории
    */
   const getMentalTechniquesByCategory = useCallback((category: string): MentalTechniqueData[] => {
-    return Object.values(appContent.mentalTechniques)
+    if (!content?.mentalTechniques) return [];
+    return Object.values(content.mentalTechniques)
       .filter(technique => technique.category === category);
-  }, []);
+  }, [content]);
 
   /**
    * Получение меню ментальных техник
    */
   const getMentalTechniquesMenu = useCallback((): MentalTechniquesMenuData => {
-    return appContent.mentalTechniquesMenu;
-  }, []);
+    return content?.mentalTechniquesMenu || {
+      title: 'Techniques',
+      subtitle: 'Loading...',
+      categories: {
+        emergency: {
+          title: 'Emergency',
+          description: '1-2 min',
+          techniqueIds: []
+        },
+        breathing: {
+          title: 'Breathing',
+          description: '3-5 min',
+          techniqueIds: []
+        },
+        stabilization: {
+          title: 'Stabilization',
+          description: '5-10 min',
+          techniqueIds: []
+        },
+        recovery: {
+          title: 'Recovery',
+          description: '10-20 min',
+          techniqueIds: []
+        }
+      }
+    };
+  }, [content]);
 
   // Значение контекста
   const contextValue: ContentContextType = {
     currentLanguage,
-    content: appContent,
+    content: content || {} as AppContent, // Fallback на пустой объект
     setLanguage,
     getLocalizedText,
     getTheme,
@@ -115,6 +172,33 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getMentalTechniquesByCategory,
     getMentalTechniquesMenu
   };
+
+  // Показываем загрузку или ошибку
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Loading content...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-lg text-red-600">Error loading content: {error}</div>
+          <button 
+            onClick={() => loadContentForLanguage(currentLanguage)}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ContentContext.Provider value={contextValue}>

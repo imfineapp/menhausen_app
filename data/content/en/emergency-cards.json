@@ -1,0 +1,16 @@
+{
+  "emergency-grounding": {
+    "id": "emergency-grounding",
+    "title": "Grounding techniques",
+    "description": "Quick techniques to help you feel more present and centered when overwhelmed.",
+    "isPremium": false,
+    "actionUrl": "/grounding-exercise"
+  },
+  "emergency-support": {
+    "id": "emergency-support",
+    "title": "Crisis support contacts",
+    "description": "Access to professional support when you need immediate help.",
+    "isPremium": false,
+    "actionUrl": "/crisis-support"
+  }
+}

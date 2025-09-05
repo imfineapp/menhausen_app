@@ -1,0 +1,186 @@
+{
+  "screen01": {
+    "id": "screen01",
+    "step": 1,
+    "totalSteps": 5,
+    "title": "С какими проблемами вы сталкиваетесь сейчас?",
+    "subtitle": "Выберите все подходящие варианты. Это поможет нам персонализировать ваш опыт.",
+    "questionType": "multiple-choice",
+    "options": [
+      {
+        "id": "anxiety",
+        "text": "Я борюсь с тревожностью"
+      },
+      {
+        "id": "stress",
+        "text": "У меня проблемы с управлением стрессом"
+      },
+      {
+        "id": "mood",
+        "text": "Мое настроение нестабильно"
+      },
+      {
+        "id": "relationships",
+        "text": "У меня проблемы в отношениях"
+      },
+      {
+        "id": "motivation",
+        "text": "Мне не хватает мотивации или цели"
+      },
+      {
+        "id": "sleep",
+        "text": "У меня проблемы со сном"
+      }
+    ],
+    "buttonText": "Продолжить",
+    "skipAllowed": false
+  },
+  "screen02": {
+    "id": "screen02",
+    "step": 2,
+    "totalSteps": 5,
+    "title": "Как долго вы испытываете эти проблемы?",
+    "subtitle": "Это поможет нам лучше понять вашу текущую ситуацию.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "recent",
+        "text": "Недавно (в течение последнего месяца)"
+      },
+      {
+        "id": "few-months",
+        "text": "Несколько месяцев"
+      },
+      {
+        "id": "half-year",
+        "text": "Около 6 месяцев"
+      },
+      {
+        "id": "year-plus",
+        "text": "Более года"
+      },
+      {
+        "id": "always",
+        "text": "Сколько себя помню"
+      }
+    ],
+    "buttonText": "Продолжить",
+    "skipAllowed": false
+  },
+  "screen03": {
+    "id": "screen03",
+    "step": 3,
+    "totalSteps": 5,
+    "title": "В какое время дня вы чувствуете себя наиболее мотивированным?",
+    "subtitle": "Мы предложим лучшее время для ваших практических занятий.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "early-morning",
+        "text": "Раннее утро (6-8 утра)"
+      },
+      {
+        "id": "morning",
+        "text": "Утро (8-11 утра)"
+      },
+      {
+        "id": "midday",
+        "text": "Полдень (11-14 часов)"
+      },
+      {
+        "id": "afternoon",
+        "text": "День (14-18 часов)"
+      },
+      {
+        "id": "evening",
+        "text": "Вечер (18-21 час)"
+      },
+      {
+        "id": "night",
+        "text": "Поздний вечер (после 21 часа)"
+      },
+      {
+        "id": "varies",
+        "text": "Меняется день ото дня"
+      }
+    ],
+    "buttonText": "Продолжить",
+    "skipAllowed": false
+  },
+  "screen04": {
+    "id": "screen04",
+    "step": 4,
+    "totalSteps": 5,
+    "title": "Сколько времени вы можете посвятить упражнениям для ментального здоровья?",
+    "subtitle": "Будьте честны - постоянство важнее продолжительности.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "5-min",
+        "text": "5 минут в день"
+      },
+      {
+        "id": "10-min",
+        "text": "10 минут в день"
+      },
+      {
+        "id": "15-min",
+        "text": "15 минут в день"
+      },
+      {
+        "id": "20-min",
+        "text": "20+ минут в день"
+      },
+      {
+        "id": "few-times",
+        "text": "Несколько раз в неделю"
+      },
+      {
+        "id": "when-needed",
+        "text": "Только когда действительно нужно"
+      }
+    ],
+    "buttonText": "Продолжить",
+    "skipAllowed": false
+  },
+  "screen05": {
+    "id": "screen05",
+    "step": 5,
+    "totalSteps": 5,
+    "title": "Какова ваша главная цель в поддержке ментального здоровья?",
+    "subtitle": "Это поможет нам расставить приоритеты того, что для вас важнее всего.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "reduce-anxiety",
+        "text": "Снизить тревожность и беспокойство"
+      },
+      {
+        "id": "manage-stress",
+        "text": "Лучшее управление стрессом"
+      },
+      {
+        "id": "improve-mood",
+        "text": "Улучшить общее настроение"
+      },
+      {
+        "id": "better-relationships",
+        "text": "Построить лучшие отношения"
+      },
+      {
+        "id": "find-purpose",
+        "text": "Найти мотивацию и цель"
+      },
+      {
+        "id": "daily-support",
+        "text": "Просто нужна ежедневная эмоциональная поддержка"
+      },
+      {
+        "id": "crisis-help",
+        "text": "Помощь в трудные моменты"
+      }
+    ],
+    "buttonText": "Завершить настройку",
+    "skipAllowed": false
+  }
+}

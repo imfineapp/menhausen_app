@@ -32,10 +32,11 @@ export const themeUtils = {
 
   /**
    * Найти тему по локализованному названию
+   * Теперь title уже является строкой нужного языка
    */
-  findThemeByLocalizedTitle(title: string, language: 'en' = 'en'): ThemeData | undefined {
+  findThemeByLocalizedTitle(title: string, _language: 'en' = 'en'): ThemeData | undefined {
     return Object.values(appContent.themes).find(theme => 
-      theme.title[language] === title
+      theme.title === title
     );
   }
 };
@@ -92,23 +93,26 @@ export const cardUtils = {
 export const localizationUtils = {
   /**
    * Получить текст для указанного языка с fallback
+   * Теперь content уже является строкой нужного языка
    */
-  getText(content: LocalizedContent, language: 'en' = 'en'): string {
-    return content[language] || content.en;
+  getText(content: LocalizedContent, _language: 'en' = 'en'): string {
+    return content || '';
   },
 
   /**
    * Проверить, есть ли перевод для языка
+   * Теперь content уже является строкой нужного языка
    */
-  hasTranslation(content: LocalizedContent, language: string): boolean {
-    return language in content;
+  hasTranslation(content: LocalizedContent, _language: string): boolean {
+    return !!content;
   },
 
   /**
    * Получить все доступные языки для контента
+   * Теперь content уже является строкой нужного языка
    */
   getAvailableLanguages(content: LocalizedContent): string[] {
-    return Object.keys(content);
+    return content ? ['current'] : [];
   }
 };
 
@@ -154,8 +158,8 @@ export const migrationUtils = {
     
     return {
       id: cardId,
-      title: card.title.en,
-      description: card.description.en
+      title: card.title,
+      description: card.description
     };
   }
 };
@@ -191,7 +195,7 @@ export const validationUtils = {
 
     Object.values(appContent.cards).forEach(card => {
       // Проверить обязательные поля
-      if (!card.id || !card.title.en || !card.description.en) {
+      if (!card.id || !card.title || !card.description) {
         console.error(`Card "${card.id}" missing required fields`);
         isValid = false;
       }
