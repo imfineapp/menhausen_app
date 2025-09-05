@@ -146,7 +146,7 @@ export function UserProfileScreen({
       <MiniStripeLogo />
       
       {/* Основной контент */}
-      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[90px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Информация о пользователе */}
         <UserInfoSection userHasPremium={userHasPremium} />

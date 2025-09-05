@@ -273,7 +273,7 @@ function RatingCardContainer({
 }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[200px] sm:top-[220px] md:top-[254px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Rating card container"
     >
       <RatingTextContainer />

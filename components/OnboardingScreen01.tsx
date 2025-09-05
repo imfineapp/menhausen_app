@@ -139,7 +139,7 @@ export function OnboardingScreen01({ onNext, onShowPrivacy, onShowTerms }: Onboa
       
       {/* Основной контент по центру экрана */}
       <div className="flex-1 overflow-y-auto flex flex-col justify-center items-center">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[90px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
           <div className="max-w-[351px] mx-auto flex flex-col items-center justify-center gap-12">
             <MainContent />
           </div>

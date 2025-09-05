@@ -195,7 +195,7 @@ export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, 
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок карточки */}

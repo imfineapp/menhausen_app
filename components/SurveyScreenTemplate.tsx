@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { useSurveyScreen, useUIText } from './ContentContext';
 import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
+import { Light } from './ProfileLayoutComponents';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 interface SurveyScreenTemplateProps {
   screenId: keyof SurveyContent;
@@ -218,9 +220,15 @@ export function SurveyScreenTemplate({
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
+      <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок и подзаголовок */}
