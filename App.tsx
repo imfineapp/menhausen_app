@@ -28,13 +28,19 @@ import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 
+// Импорты ментальных техник
+import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
+import { SquareBreathingScreen } from './components/mental-techniques/SquareBreathingScreen';
+import { Grounding54321Screen } from './components/mental-techniques/Grounding54321Screen';
+import { GroundingAnchorScreen } from './components/mental-techniques/GroundingAnchorScreen';
+
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
 import { LanguageProvider } from './components/LanguageContext';
 import { appContent } from './data/content';
 import { SurveyResults } from './types/content';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor';
 
 /**
  * Основной компонент приложения с навигацией
@@ -564,6 +570,19 @@ function AppContent() {
   };
 
   // =====================================================================================
+  // ФУНКЦИИ НАВИГАЦИИ ДЛЯ МЕНТАЛЬНЫХ ТЕХНИК
+  // =====================================================================================
+
+  const handleOpenMentalTechnique = (techniqueId: string) => {
+    console.log(`Opening mental technique: ${techniqueId}`);
+    navigateTo(techniqueId as AppScreen);
+  };
+
+  const handleBackFromMentalTechnique = () => {
+    navigateTo('home');
+  };
+
+  // =====================================================================================
   // РЕНДЕРИНГ ЭКРАНОВ С ИСПОЛЬЗОВАНИЕМ КОНТЕНТА
   // =====================================================================================
 
@@ -638,6 +657,7 @@ function AppContent() {
             onGoToCheckIn={handleGoToCheckIn} 
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
+            onOpenMentalTechnique={handleOpenMentalTechnique}
             userHasPremium={userHasPremium}
           />
         );
@@ -807,6 +827,33 @@ function AppContent() {
             featureName={currentFeatureName}
           />
         );
+      
+      // Экраны ментальных техник
+      case 'breathing-4-7-8':
+        return (
+          <Breathing478Screen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'breathing-square':
+        return (
+          <SquareBreathingScreen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'grounding-5-4-3-2-1':
+        return (
+          <Grounding54321Screen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'grounding-anchor':
+        return (
+          <GroundingAnchorScreen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      
       default:
         return <OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />;
     }

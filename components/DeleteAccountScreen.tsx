@@ -182,7 +182,7 @@ function MainContent() {
 /**
  * Основной компонент экрана удаления аккаунта
  */
-export function DeleteAccountScreen({ onBack, onDeleteAccount }: DeleteAccountScreenProps) {
+export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: DeleteAccountScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   /**
