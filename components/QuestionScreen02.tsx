@@ -161,7 +161,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
 }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[120px] sm:top-[130px] md:top-[141px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[130px] sm:top-[140px] md:top-[151px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Content block"
     >
       <div className="font-sans min-h-[40px] sm:min-h-[44px] leading-[22px] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-center w-full">
