@@ -137,7 +137,7 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
 function IconContainer({ featureName }: { featureName?: string }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-center justify-start left-[21px] p-0 top-[294px] w-[351px]"
+      className="box-border content-stretch flex flex-col gap-5 items-center justify-start p-0 w-full"
       data-name="Icon container"
     >
       <Icon />
@@ -147,44 +147,6 @@ function IconContainer({ featureName }: { featureName?: string }) {
 }
 
 
-/**
- * Кнопка "Назад" с min-h-[44px] min-w-[44px] размером
- */
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] min-h-[44px] min-w-[44px] hover:opacity-80"
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onBack={onBack} />
-    </div>
-  );
-}
 
 /**
  * Основной компонент страницы "Under Construction"
@@ -222,12 +184,12 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
       {/* Световые эффекты */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <HeaderBlock onBack={handleBackClick} />
+      {/* Логотип */}
+      <MiniStripeLogo />
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[90px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Контейнер с иконкой и текстом */}

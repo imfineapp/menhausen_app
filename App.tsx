@@ -72,6 +72,7 @@ function AppContent() {
   const { getCard, getTheme, getLocalizedText } = useContent();
   
   // Проверка, является ли текущий экран главной страницей
+  // На первой странице онбординга кнопка Back должна закрывать приложение
   const isHomePage = currentScreen === 'home';
   
   // Функция для навигации с отслеживанием истории
@@ -80,6 +81,16 @@ function AppContent() {
     setCurrentScreen(screen);
   };
   
+  // Функция для закрытия приложения через Telegram WebApp
+  const closeApp = () => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.close();
+    } else {
+      // Fallback для тестирования вне Telegram
+      console.log('App would be closed in Telegram WebApp');
+    }
+  };
+
   // Функция для возврата на предыдущий экран
   const goBack = () => {
     if (navigationHistory.length > 1) {
@@ -89,8 +100,8 @@ function AppContent() {
       setNavigationHistory(newHistory);
       setCurrentScreen(previousScreen);
     } else {
-      // Если это первый экран, возвращаемся на главную
-      setCurrentScreen('home');
+      // Если это первый экран, закрываем приложение
+      closeApp();
     }
   };
 
@@ -265,7 +276,10 @@ function AppContent() {
 
   const handleStartTheme = () => {
     console.log(`Starting theme: ${currentTheme}`);
-    navigateTo('theme-home');
+    // Очищаем историю навигации, чтобы кнопка Back на theme-home вела сразу к home
+    // theme-welcome доступна только при прямом переходе с home, не через кнопку Back
+    setNavigationHistory(['home', 'theme-home']);
+    setCurrentScreen('theme-home');
   };
 
   const _handleBackToThemeWelcome = () => {
@@ -348,7 +362,11 @@ function AppContent() {
     setUserAnswers({});
     setCardRating(0);
     setCurrentCard({id: ''});
-    navigateTo('theme-home');
+    
+    // Очищаем историю навигации и устанавливаем правильный путь для кнопки Back
+    // Кнопка Back на theme-home должна вести сразу к home, минуя theme-welcome
+    setNavigationHistory(['home', 'theme-home']);
+    setCurrentScreen('theme-home');
   };
 
   const handleStartCardExercise = () => {

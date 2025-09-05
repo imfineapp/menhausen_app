@@ -437,7 +437,7 @@ export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[90px] pb-[200px]">
           <div className="max-w-[351px] mx-auto flex flex-col items-center">
             {/* Блок с контентом всех преимуществ */}
             <ContentBlock onComplete={onComplete} />

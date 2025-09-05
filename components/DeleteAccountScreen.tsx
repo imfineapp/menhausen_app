@@ -119,7 +119,7 @@ function ButtonBlock({ onDelete, isLoading }: { onDelete: () => void; isLoading:
 function WarningIconComponent() {
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 top-[280px] w-20 h-20 flex items-center justify-center"
+      className="absolute left-1/2 -translate-x-1/2 top-[370px] w-20 h-20 flex items-center justify-center"
       data-name="warning_icon"
     >
       <div className="w-16 h-16">
@@ -162,7 +162,7 @@ function WarningIconComponent() {
 function MainContent() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[380px] w-[351px]"
+      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[470px] w-[351px]"
       data-name="main_content"
     >
       <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
@@ -178,44 +178,6 @@ function MainContent() {
 }
 
 
-/**
- * Кнопка "Назад" с min-h-[44px] min-w-[44px] размером
- */
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] min-h-[44px] min-w-[44px] hover:opacity-80"
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onBack={onBack} />
-    </div>
-  );
-}
 
 /**
  * Основной компонент экрана удаления аккаунта
@@ -267,10 +229,13 @@ export function DeleteAccountScreen({ onBack, onDeleteAccount }: DeleteAccountSc
   return (
     <div className="bg-[#111111] relative size-full" data-name="Delete Account Screen">
       <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       <ButtonBlock onDelete={handleDelete} isLoading={isLoading} />
       <WarningIconComponent />
       <MainContent />
-      <HeaderBlock onBack={onBack} />
     </div>
   );
 }

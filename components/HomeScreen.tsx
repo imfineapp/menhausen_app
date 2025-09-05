@@ -772,7 +772,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasP
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[90px]">
           {/* Основной контент страницы */}
           <MainPageContentBlock 
             onGoToCheckIn={onGoToCheckIn} 
