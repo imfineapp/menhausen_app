@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки
 import { useState } from 'react';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
 interface AboutAppScreenProps {
@@ -305,8 +306,11 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
       {/* Световые эффекты фона */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Основной контент */}
-      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[40px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[90px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Логотип и название приложения */}
         <AppLogoSection />
