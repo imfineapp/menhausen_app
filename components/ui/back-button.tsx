@@ -7,8 +7,8 @@ interface BackButtonProps {
   isHomePage?: boolean;
 }
 
-export function BackButton({ onBack, fallbackIcon = true, isHomePage = false }: BackButtonProps) {
-  const [isTelegramWebAppAvailable, setIsTelegramWebAppAvailable] = useState(false);
+export function BackButton({ onBack, fallbackIcon: _fallbackIcon = true, isHomePage = false }: BackButtonProps) {
+  const [_isTelegramWebAppAvailable, setIsTelegramWebAppAvailable] = useState(false);
   
   // Определяем функцию возврата - используем переданную или возвращаемся в историю
   const handleBack = onBack || (() => window.history.back());

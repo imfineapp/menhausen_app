@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -228,7 +229,7 @@ function PinSetup({
  * Главный компонент экрана настройки пин-кода
  * Управляет состоянием ввода, валидацией и навигацией
  */
-export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenProps) {
+export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetupScreenProps) {
   // Состояние для текущего пин-кода
   const [currentPin, setCurrentPin] = useState<string>('');
   // Состояние для сохраненного пин-кода (при подтверждении)
@@ -294,9 +295,12 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
       {/* Световые эффекты */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок */}

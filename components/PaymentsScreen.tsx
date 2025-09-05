@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
 import { BottomFixedButton } from './BottomFixedButton';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -466,7 +467,7 @@ function MainContainer({
 /**
  * Основной компонент экрана покупки Premium подписки
  */
-export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenProps) {
+export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete }: PaymentsScreenProps) {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annually'>('monthly');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -508,9 +509,12 @@ export function PaymentsScreen({ onBack, onPurchaseComplete }: PaymentsScreenPro
       {/* Световые эффекты */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контейнер с информацией и выбором планов */}

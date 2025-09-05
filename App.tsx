@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { TwaAnalyticsProvider, useAnalytics } from '@tonsolutions/telemetree-react';
+import { useState } from 'react';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -42,15 +41,6 @@ type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'surv
  * Теперь использует централизованную систему управления контентом и расширенную систему опроса
  */
 function AppContent() {
-  // Инициализация аналитики
-  const analytics = useAnalytics();
-  
-  // Отслеживание начала сессии
-  useEffect(() => {
-    if (analytics) {
-      analytics.trackEvent('app_session_start', { timestamp: new Date().toISOString() });
-    }
-  }, [analytics]);
 
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
@@ -88,10 +78,6 @@ function AppContent() {
   const navigateTo = (screen: AppScreen) => {
     setNavigationHistory(prev => [...prev, screen]);
     setCurrentScreen(screen);
-    // Отслеживание навигации в аналитике
-    if (analytics) {
-      analytics.trackEvent('screen_view', { screen_name: screen });
-    }
   };
   
   // Функция для возврата на предыдущий экран
@@ -359,11 +345,6 @@ function AppContent() {
     
     console.log('Exercise completed with data:', completionData);
     
-    // Отслеживание завершения карточки в аналитике
-    if (analytics) {
-      analytics.trackEvent('card_completed', completionData);
-    }
-    
     setUserAnswers({});
     setCardRating(0);
     setCurrentCard({id: ''});
@@ -479,7 +460,7 @@ function AppContent() {
     navigateTo('terms');
   };
 
-  const handleBackToOnboarding = () => {
+  const _handleBackToOnboarding = () => {
     navigateTo('onboarding1');
   };
 
@@ -491,7 +472,7 @@ function AppContent() {
     navigateTo('terms');
   };
 
-  const handleBackToProfileFromDocuments = () => {
+  const _handleBackToProfileFromDocuments = () => {
     navigateTo('profile');
   };
 
@@ -830,16 +811,10 @@ function AppContent() {
  */
 export default function App() {
   return (
-    <TwaAnalyticsProvider
-      projectId='c6f87962-3ba5-4375-90b1-863868bb1d3f'
-      apiKey='8ce756ac-b3fb-407c-8d35-1ee7f4f04c86'
-      appName='Menhausen App'
-    >
-      <LanguageProvider>
-        <ContentProvider>
-          <AppContent />
-        </ContentProvider>
-      </LanguageProvider>
-    </TwaAnalyticsProvider>
+    <LanguageProvider>
+      <ContentProvider>
+        <AppContent />
+      </ContentProvider>
+    </LanguageProvider>
   );
 }
