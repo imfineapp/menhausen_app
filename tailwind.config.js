@@ -13,8 +13,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['"Roboto Slab"', 'Georgia', '"Times New Roman"', 'serif'],
-        sans: ['"PT Sans"', 'ui-sans-serif', 'system-ui', 'Segoe UI', 'Roboto', 'sans-serif'],
+        heading: ['"Roboto Slab"', '"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Arial', 'serif'],
+        sans: ['"PT Sans"', '"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
       },
       screens: {
         'xs': '320px',
