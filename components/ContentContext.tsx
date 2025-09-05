@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData } from '../types/content';
 import { appContent } from '../data/content';
 
 /**
@@ -78,6 +78,28 @@ export function ContentProvider({ children }: ContentProviderProps) {
     return appContent.survey[screenId];
   }, []);
 
+  /**
+   * Получение ментальной техники по ID
+   */
+  const getMentalTechnique = useCallback((techniqueId: string): MentalTechniqueData | undefined => {
+    return appContent.mentalTechniques[techniqueId];
+  }, []);
+
+  /**
+   * Получение ментальных техник по категории
+   */
+  const getMentalTechniquesByCategory = useCallback((category: string): MentalTechniqueData[] => {
+    return Object.values(appContent.mentalTechniques)
+      .filter(technique => technique.category === category);
+  }, []);
+
+  /**
+   * Получение меню ментальных техник
+   */
+  const getMentalTechniquesMenu = useCallback((): MentalTechniquesMenuData => {
+    return appContent.mentalTechniquesMenu;
+  }, []);
+
   // Значение контекста
   const contextValue: ContentContextType = {
     currentLanguage,
@@ -88,7 +110,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getCard,
     getEmergencyCard,
     getThemeCards,
-    getSurveyScreen
+    getSurveyScreen,
+    getMentalTechnique,
+    getMentalTechniquesByCategory,
+    getMentalTechniquesMenu
   };
 
   return (
@@ -257,6 +282,93 @@ export function useSurveyScreen(screenId: keyof SurveyContent) {
         text: getLocalizedText(option.text),
         isMultipleChoice: option.isMultipleChoice
       }))
+    }
+  };
+}
+
+/**
+ * Хук для работы с ментальными техниками
+ */
+export function useMentalTechnique(techniqueId: string) {
+  const { getMentalTechnique, getLocalizedText } = useContent();
+  
+  const technique = getMentalTechnique(techniqueId);
+  
+  if (!technique) {
+    return null;
+  }
+  
+  return {
+    technique,
+    localizedTechnique: {
+      title: getLocalizedText(technique.title),
+      subtitle: getLocalizedText(technique.subtitle),
+      duration: getLocalizedText(technique.duration),
+      steps: technique.steps.map(step => ({
+        ...step,
+        instruction: getLocalizedText(step.instruction),
+        placeholder: step.placeholder ? getLocalizedText(step.placeholder) : undefined
+      })),
+      tips: technique.tips.map(tip => getLocalizedText(tip)),
+      accordionItems: technique.accordionItems.map(item => ({
+        title: getLocalizedText(item.title),
+        content: getLocalizedText(item.content)
+      }))
+    }
+  };
+}
+
+/**
+ * Хук для работы с ментальными техниками по категории
+ */
+export function useMentalTechniquesByCategory(category: string) {
+  const { getMentalTechniquesByCategory, getLocalizedText } = useContent();
+  
+  const techniques = getMentalTechniquesByCategory(category);
+  
+  return techniques.map(technique => ({
+    ...technique,
+    title: getLocalizedText(technique.title),
+    subtitle: getLocalizedText(technique.subtitle),
+    duration: getLocalizedText(technique.duration)
+  }));
+}
+
+/**
+ * Хук для работы с меню ментальных техник
+ */
+export function useMentalTechniquesMenu() {
+  const { getMentalTechniquesMenu, getLocalizedText } = useContent();
+  
+  const menu = getMentalTechniquesMenu();
+  
+  return {
+    menu,
+    localizedMenu: {
+      title: getLocalizedText(menu.title),
+      subtitle: getLocalizedText(menu.subtitle),
+      categories: {
+        emergency: {
+          title: getLocalizedText(menu.categories.emergency.title),
+          description: getLocalizedText(menu.categories.emergency.description),
+          techniqueIds: menu.categories.emergency.techniqueIds
+        },
+        breathing: {
+          title: getLocalizedText(menu.categories.breathing.title),
+          description: getLocalizedText(menu.categories.breathing.description),
+          techniqueIds: menu.categories.breathing.techniqueIds
+        },
+        stabilization: {
+          title: getLocalizedText(menu.categories.stabilization.title),
+          description: getLocalizedText(menu.categories.stabilization.description),
+          techniqueIds: menu.categories.stabilization.techniqueIds
+        },
+        recovery: {
+          title: getLocalizedText(menu.categories.recovery.title),
+          description: getLocalizedText(menu.categories.recovery.description),
+          techniqueIds: menu.categories.recovery.techniqueIds
+        }
+      }
     }
   };
 }

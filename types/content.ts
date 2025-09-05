@@ -180,6 +180,73 @@ export interface UITexts {
 }
 
 /**
+ * Шаг ментальной техники
+ */
+export interface TechniqueStep {
+  step: number;
+  instruction: LocalizedContent;
+  duration: number; // в секундах
+  visual?: 'breathing' | 'square' | 'grounding' | 'body-scan';
+  input?: 'text' | 'checkbox' | 'none';
+  placeholder?: LocalizedContent;
+}
+
+/**
+ * Элемент аккордеона с дополнительной информацией
+ */
+export interface AccordionItem {
+  title: LocalizedContent;
+  content: LocalizedContent;
+}
+
+/**
+ * Данные ментальной техники
+ */
+export interface MentalTechniqueData {
+  id: string;
+  title: LocalizedContent;
+  subtitle: LocalizedContent;
+  duration: LocalizedContent; // "5 минут"
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  emergencyLevel: 'critical' | 'high' | 'medium' | 'low';
+  category: 'breathing' | 'grounding' | 'meditation' | 'relaxation';
+  steps: TechniqueStep[];
+  tips: LocalizedContent[];
+  accordionItems: AccordionItem[];
+  isPremium: boolean;
+}
+
+/**
+ * Контент для меню ментальных техник
+ */
+export interface MentalTechniquesMenuData {
+  title: LocalizedContent;
+  subtitle: LocalizedContent;
+  categories: {
+    emergency: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    breathing: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    stabilization: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    recovery: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+  };
+}
+
+/**
  * Полная структура контента приложения
  */
 export interface AppContent {
@@ -189,6 +256,8 @@ export interface AppContent {
   onboarding: OnboardingContent;
   survey: SurveyContent;
   ui: UITexts;
+  mentalTechniques: Record<string, MentalTechniqueData>;
+  mentalTechniquesMenu: MentalTechniquesMenuData;
 }
 
 /**
@@ -209,4 +278,7 @@ export interface ContentContextType {
   getEmergencyCard: (cardId: string) => EmergencyCardData | undefined;
   getThemeCards: (themeId: string) => CardData[];
   getSurveyScreen: (screenId: keyof SurveyContent) => SurveyScreenData | undefined;
+  getMentalTechnique: (techniqueId: string) => MentalTechniqueData | undefined;
+  getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
+  getMentalTechniquesMenu: () => MentalTechniquesMenuData;
 }

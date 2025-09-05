@@ -2,12 +2,14 @@
 import { useRef } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
   onGoToCheckIn: () => void; // Функция для перехода к чекину
   onGoToProfile: () => void; // Функция для перехода к профилю пользователя
   onGoToTheme: (themeTitle: string) => void; // Функция для перехода к теме
+  onOpenMentalTechnique: (techniqueId: string) => void; // Функция для открытия ментальной техники
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -20,8 +22,8 @@ interface EmergencyCard {
   isAvailable: boolean;
 }
 
-// Данные карточек экстренной помощи
-const EMERGENCY_CARDS: EmergencyCard[] = [
+// Данные карточек экстренной помощи (не используется, заменено на динамические данные)
+const _EMERGENCY_CARDS: EmergencyCard[] = [
   {
     id: 'breathing',
     title: 'Emergency breathing patterns',
@@ -579,18 +581,23 @@ function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userH
  * Адаптивный горизонтальный слайдер экстренной помощи без навигационных кнопок
  * Управляется только горизонтальными свайпами и занимает всю ширину экрана
  */
-function EmergencySlider() {
+function EmergencySlider({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const { getMentalTechniquesByCategory, getLocalizedText } = useContent();
+
+  // Получаем ментальные техники для экстренной помощи
+  const emergencyTechniques = getMentalTechniquesByCategory('grounding');
+  const breathingTechniques = getMentalTechniquesByCategory('breathing');
+
+  // Объединяем техники для отображения в слайдере
+  const allTechniques = [...emergencyTechniques, ...breathingTechniques];
 
   /**
    * Обработчик клика на карточку
    */
-  const handleCardClick = (card: EmergencyCard) => {
-    if (card.isAvailable) {
-      console.log(`Opening emergency help: ${card.title}`);
-      // TODO: Добавить функциональность экстренной помощи
-      alert(`Opening: ${card.title}`);
-    }
+  const handleCardClick = (techniqueId: string) => {
+    console.log(`Opening mental technique: ${techniqueId}`);
+    onOpenMentalTechnique(techniqueId);
   };
 
   return (
@@ -605,15 +612,21 @@ function EmergencySlider() {
         scrollbarWidth: 'none'
       }}
     >
-      {EMERGENCY_CARDS.map((card) => (
+      {allTechniques.map((technique) => (
         <div 
-          key={card.id} 
+          key={technique.id} 
           style={{ scrollSnapAlign: 'start' }}
           className="shrink-0"
         >
           <EmergencyCard 
-            card={card} 
-            onClick={() => handleCardClick(card)}
+            card={{
+              id: technique.id,
+              title: getLocalizedText(technique.title),
+              description: getLocalizedText(technique.subtitle),
+              status: 'Available',
+              isAvailable: true
+            }} 
+            onClick={() => handleCardClick(technique.id)}
           />
         </div>
       ))}
@@ -627,7 +640,7 @@ function EmergencySlider() {
  * Адаптивный блок экстренной помощи с заголовком и слайдером
  * Занимает всю ширину экрана
  */
-function EmergencyBlock() {
+function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
   return (
     <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Emergency_block_container">
       {/* Заголовок с отступами как у основного контента */}
@@ -639,7 +652,7 @@ function EmergencyBlock() {
       
       {/* Слайдер с отступом слева как у основного контента и без отступа справа */}
       <div className="px-[16px] sm:px-[20px] md:px-[21px] pr-0">
-        <EmergencySlider />
+        <EmergencySlider onOpenMentalTechnique={onOpenMentalTechnique} />
       </div>
     </div>
   );
@@ -754,7 +767,7 @@ function SocialFollowBlock() {
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMentalTechnique, userHasPremium }: HomeScreenProps) {
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
@@ -786,7 +799,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasP
         <div className="h-[40px]"></div>
         
         {/* Блок экстренной помощи - независимый, на всю ширину экрана */}
-        <EmergencyBlock />
+        <EmergencyBlock onOpenMentalTechnique={onOpenMentalTechnique} />
         
         {/* Блок с кнопками социальных сетей - на всю ширину экрана */}
         <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Social_follow_container">
