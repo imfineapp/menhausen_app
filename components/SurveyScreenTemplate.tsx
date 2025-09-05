@@ -21,7 +21,7 @@ interface SurveyScreenTemplateProps {
 export function SurveyScreenTemplate({ 
   screenId, 
   onNext, 
-  onBack, 
+  onBack: _onBack, 
   initialSelections = [] 
 }: SurveyScreenTemplateProps) {
   // =====================================================================================
@@ -93,7 +93,7 @@ export function SurveyScreenTemplate({
     // Отправляем данные опроса в аналитику через глобальный объект
     if (window.TwaAnalytics) {
       // Подготовка данных для аналитики
-      let analyticsData: Record<string, any> = {
+      const analyticsData: Record<string, any> = {
         screen_id: screenId,
         question_type: surveyData.screen.questionType,
         timestamp: new Date().toISOString()

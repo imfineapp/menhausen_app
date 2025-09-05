@@ -1,7 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { useRef } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -767,9 +767,12 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasP
       {/* Световые эффекты фона */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px]">
           {/* Основной контент страницы */}
           <MainPageContentBlock 
             onGoToCheckIn={onGoToCheckIn} 

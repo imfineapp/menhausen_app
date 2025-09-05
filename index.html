@@ -14,6 +14,9 @@
   <meta name="theme-color" content="#111111" />
   <meta name="msapplication-TileColor" content="#111111" />
   
+  <!-- Content Security Policy for development -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org; connect-src 'self' https://telegram.org https://*.telegram.org; object-src 'none';" />
+  
   <!-- iOS Safari specific -->
   <meta name="apple-touch-fullscreen" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Menhausen" />
@@ -105,23 +108,7 @@
   <script type="module" src="/main.tsx"></script>
   
   <script>
-    // Initialize Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-      const webApp = window.Telegram.WebApp;
-      webApp.ready();
-      webApp.expand();
-      
-      // Check version and set colors only if supported (version 6.1+)
-      if (webApp.version >= '6.1') {
-        webApp.setHeaderColor('#111111');
-        webApp.setBackgroundColor('#111111');
-      }
-      
-      // Disable vertical swipes only if supported (version 6.1+)
-      if (webApp.version >= '6.1' && webApp.disableVerticalSwipes) {
-        webApp.disableVerticalSwipes();
-      }
-    }
+    // Telegram WebApp initialization is now handled by TelegramWebAppProvider component
     
     // Prevent zoom on double tap (iOS Safari)
     let lastTouchEnd = 0;

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -285,7 +285,7 @@ function ContentContainer({
   );
 }
 
-export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
+export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps) {
   const [selectedMood, setSelectedMood] = useState<number | null>(2);
 
   const handleMoodChange = (moodIndex: number) => {
@@ -296,15 +296,13 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
     if (selectedMood !== null) {
       const moodData = MOOD_OPTIONS[selectedMood];
       
-      // Отправляем данные о настроении в аналитику через window
-      if (window.TwaAnalytics) {
-        window.TwaAnalytics.trackEvent('mood_checkin', {
-          mood_id: moodData.id,
-          mood_label: moodData.label,
-          mood_value: moodData.value,
-          timestamp: new Date().toISOString()
-        });
-      }
+      // Логируем данные о настроении
+      console.log('Mood check-in:', {
+        mood_id: moodData.id,
+        mood_label: moodData.label,
+        mood_value: moodData.value,
+        timestamp: new Date().toISOString()
+      });
       
       onSubmit(moodData.label);
     }
@@ -317,9 +315,12 @@ export function CheckInScreen({ onSubmit, onBack }: CheckInScreenProps) {
       {/* Световые эффекты */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[40px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контент */}

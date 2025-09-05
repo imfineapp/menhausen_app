@@ -48,7 +48,7 @@ function Light() {
 /**
  * Адаптивный компонент символа логотипа
  */
-function SymbolBig() {
+function _SymbolBig() {
   return (
     <div className="h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2" data-name="Symbol_big">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
@@ -63,7 +63,7 @@ function SymbolBig() {
 /**
  * Адаптивный компонент названия приложения с версией beta
  */
-function MenhausenBeta() {
+function _MenhausenBeta() {
   return (
     <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
@@ -292,7 +292,7 @@ function TechnicalInfoSection() {
  * Главный компонент страницы "О приложении"
  * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
-export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
+export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 

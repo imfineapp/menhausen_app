@@ -1,5 +1,6 @@
 // Импортируем SVG пути для страницы Terms of Use
 import svgPaths from "../imports/svg-k77qyw9djl";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
 interface TermsOfUseScreenProps {
@@ -68,7 +69,7 @@ function Light() {
 function MainContent() {
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[40px] w-full max-w-[351px] mx-auto"
+      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[60px] w-full max-w-[351px] mx-auto"
       data-name="main_content"
     >
       {/* Заголовок страницы */}
@@ -174,7 +175,7 @@ function MainContent() {
 /**
  * Компонент символа логотипа (повторно используемый)
  */
-function SymbolBig() {
+function _SymbolBig() {
   return (
     <div className="relative size-full" data-name="Symbol_big">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
@@ -189,7 +190,7 @@ function SymbolBig() {
 /**
  * Компонент названия приложения (повторно используемый)
  */
-function Menhausen() {
+function _Menhausen() {
   return (
     <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
@@ -214,11 +215,14 @@ function Menhausen() {
  * Главный компонент страницы Terms of Use
  * Отображает полный документ с навигацией
  */
-export function TermsOfUseScreen({ onBack }: TermsOfUseScreenProps) {
+export function TermsOfUseScreen({ onBack: _onBack }: TermsOfUseScreenProps) {
   return (
     <div className="bg-[#111111] relative size-full overflow-hidden" data-name="002_terms of use">
       {/* Световые эффекты фона */}
       <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
       
       {/* Основной контент документа */}
       <MainContent />
