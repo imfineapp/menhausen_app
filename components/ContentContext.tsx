@@ -3,8 +3,9 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
+import { useLanguage } from './LanguageContext';
 
 /**
  * React контекст для централизованного управления контентом
@@ -19,8 +20,9 @@ interface ContentProviderProps {
 }
 
 export function ContentProvider({ children }: ContentProviderProps) {
-  // Состояние текущего языка (по умолчанию английский)
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>('en');
+  // Получаем язык и функцию изменения языка из LanguageContext
+  const { language, setLanguage: setLanguageFromContext } = useLanguage();
+  const currentLanguage = language as SupportedLanguage;
   
   // Состояние загруженного контента
   const [content, setContent] = useState<AppContent | null>(null);
@@ -50,11 +52,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
    * Изменение языка приложения
    */
   const setLanguage = useCallback((language: SupportedLanguage) => {
-    setCurrentLanguage(language);
+    // Используем функцию из LanguageContext
+    setLanguageFromContext(language as 'en' | 'ru');
     loadContentForLanguage(language);
-    // Сохраняем язык в localStorage
-    localStorage.setItem('app-language', language);
-  }, [loadContentForLanguage]);
+  }, [setLanguageFromContext, loadContentForLanguage]);
 
   // Загружаем контент при изменении языка
   useEffect(() => {
@@ -157,6 +158,66 @@ export function ContentProvider({ children }: ContentProviderProps) {
     };
   }, [content]);
 
+  /**
+   * Получение UI текстов
+   */
+  const getUI = useCallback((): UITexts => {
+    if (content?.ui) {
+      return content.ui;
+    }
+    
+    // Fallback UI с правильными типами
+    return {
+      navigation: {
+        back: 'Back',
+        next: 'Next',
+        skip: 'Skip',
+        complete: 'Complete',
+        continue: 'Continue'
+      },
+      common: {
+        loading: 'Loading...',
+        error: 'Error',
+        tryAgain: 'Try again',
+        save: 'Save',
+        cancel: 'Cancel',
+        delete: 'Delete',
+        edit: 'Edit'
+      },
+      home: {
+        greeting: 'Hello',
+        checkInPrompt: 'How are you?',
+        quickHelpTitle: 'Quick help',
+        themesTitle: 'Themes',
+        howAreYou: 'How are you?',
+        checkInDescription: 'Check in with yourself — it\'s the first step to self-care! Do it everyday.',
+        whatWorriesYou: 'What worries you?'
+      },
+      profile: {
+        title: 'Profile',
+        aboutApp: 'About',
+        privacy: 'Privacy',
+        terms: 'Terms',
+        deleteAccount: 'Delete account',
+        payments: 'Payments'
+      },
+      survey: {
+        progress: 'Step {current} of {total}',
+        selectAtLeastOne: 'Select at least one',
+        optional: 'Optional',
+        required: 'Required'
+      }
+    };
+  }, [content]);
+
+  /**
+   * Получение всех тем
+   */
+  const getAllThemes = useCallback((): ThemeData[] => {
+    if (!content?.themes) return [];
+    return Object.values(content.themes);
+  }, [content]);
+
   // Значение контекста
   const contextValue: ContentContextType = {
     currentLanguage,
@@ -170,7 +231,9 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getSurveyScreen,
     getMentalTechnique,
     getMentalTechniquesByCategory,
-    getMentalTechniquesMenu
+    getMentalTechniquesMenu,
+    getUI,
+    getAllThemes
   };
 
   // Показываем загрузку или ошибку

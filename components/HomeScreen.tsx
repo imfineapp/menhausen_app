@@ -250,13 +250,15 @@ function InfoIcon() {
  * Адаптивный заголовок блока чекина
  */
 function InfoGroup() {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
       data-name="Info_group"
     >
       <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-left text-nowrap">
-        <p className="block leading-[0.8] whitespace-pre">How are you?</p>
+        <p className="block leading-[0.8] whitespace-pre">{getUI().home.howAreYou}</p>
       </div>
       <InfoIcon />
     </div>
@@ -288,6 +290,8 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
  * Адаптивный контейнер блока чекина
  */
 function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full max-w-[311px]"
@@ -295,7 +299,7 @@ function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
     >
       <InfoGroup />
       <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
-        <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
+        <p className="block leading-none">{getUI().home.checkInDescription}</p>
       </div>
       <CheckInButton onClick={onGoToCheckIn} />
     </div>
@@ -451,21 +455,27 @@ function ThemeCard({
  * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
 function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => void }) {
-  const worries = [
-    { title: 'Stress', description: 'Some text about theme. Some text about theme.', progress: 0, isPremium: false, isAvailable: true },
-    { title: 'Angry', description: 'Some text about theme. Some text about theme.', progress: 20, isPremium: false, isAvailable: true },
-    { title: 'Sadness and apathy', description: 'Some text about theme. Some text about theme.', progress: 0, isPremium: true, isAvailable: true },
-    { title: 'Anxiety', description: 'Some text about theme. Some text about theme.', progress: 60, isPremium: false, isAvailable: true },
-    { title: 'Lack and self-confidence', description: 'Some text about theme. Some text about theme.', progress: 90, isPremium: false, isAvailable: true },
-    { title: 'Relationships an family', description: 'Some text about theme. Some text about theme.', progress: 100, isPremium: false, isAvailable: true }
-  ];
+  const { getAllThemes } = useContent();
+  
+  // Получаем все темы из контента
+  const themes = getAllThemes();
+  
+  // Создаем массив для отображения с фиктивными данными прогресса
+  const worries = themes.map((theme) => ({
+    title: theme.title,
+    description: theme.description,
+    progress: Math.floor(Math.random() * 100), // Фиктивный прогресс для демонстрации
+    isPremium: theme.isPremium,
+    isAvailable: true,
+    themeId: theme.id
+  }));
 
-  const handleThemeClick = (theme: string, isAvailable: boolean) => {
+  const handleThemeClick = (themeId: string, isAvailable: boolean) => {
     if (isAvailable) {
-      console.log(`Opening theme: ${theme}`);
-      onGoToTheme(theme);
+      console.log(`Opening theme: ${themeId}`);
+      onGoToTheme(themeId);
     } else {
-      console.log(`Theme ${theme} is not available`);
+      console.log(`Theme ${themeId} is not available`);
       // TODO: Показать модальное окно с информацией о том, что тема недоступна
     }
   };
@@ -475,14 +485,14 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => voi
       className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries list"
     >
-      {worries.map((worry, index) => (
+      {worries.map((worry) => (
         <ThemeCard 
-          key={index}
+          key={worry.themeId}
           title={worry.title}
           description={worry.description}
           progress={worry.progress}
           isPremium={worry.isPremium}
-          onClick={() => handleThemeClick(worry.title, worry.isAvailable)}
+          onClick={() => handleThemeClick(worry.themeId, worry.isAvailable)}
         />
       ))}
     </div>
@@ -493,13 +503,15 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => voi
  * Адаптивный контейнер блока "What worries you?"
  */
 function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => void }) {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
     >
       <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">What worries you?</p>
+        <p className="block leading-[0.8]">{getUI().home.whatWorriesYou}</p>
       </div>
       <WorriesList onGoToTheme={onGoToTheme} />
     </div>
@@ -641,12 +653,14 @@ function EmergencySlider({ onOpenMentalTechnique }: { onOpenMentalTechnique: (te
  * Занимает всю ширину экрана
  */
 function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
+  const { getUI } = useContent();
+  
   return (
     <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Emergency_block_container">
       {/* Заголовок с отступами как у основного контента */}
       <div className="px-[16px] sm:px-[20px] md:px-[21px] max-w-[calc(351px+32px)] sm:max-w-[calc(351px+40px)] md:max-w-[calc(351px+42px)] mx-auto w-full mb-4 sm:mb-5">
         <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-          <p className="block leading-[0.8]">Quick mental help</p>
+          <p className="block leading-[0.8]">{getUI().home.quickHelpTitle}</p>
         </div>
       </div>
       

@@ -105,7 +105,10 @@ export const appContent: AppContent = {
       greeting: 'Hello',
       checkInPrompt: 'How are you?',
       quickHelpTitle: 'Quick help',
-      themesTitle: 'Themes'
+      themesTitle: 'Themes',
+      howAreYou: 'How are you?',
+      checkInDescription: 'Check in with yourself — it\'s the first step to self-care! Do it everyday.',
+      whatWorriesYou: 'What worries you?'
     },
     profile: {
       title: 'Profile',
