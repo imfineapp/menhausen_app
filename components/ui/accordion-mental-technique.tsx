@@ -71,3 +71,5 @@ export function MentalTechniqueAccordion({ items, className = '' }: MentalTechni
     </div>
   );
 }
+
+

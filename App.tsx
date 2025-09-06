@@ -37,7 +37,7 @@ import { GroundingAnchorScreen } from './components/mental-techniques/GroundingA
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
 import { LanguageProvider } from './components/LanguageContext';
-import { appContent } from './data/content';
+// import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor';
@@ -258,20 +258,17 @@ function AppContent() {
   /**
    * Навигация к теме - теперь использует систему контента
    */
-  const handleGoToTheme = (themeTitle: string) => {
-    console.log(`Opening theme: ${themeTitle}`);
+  const handleGoToTheme = (themeId: string) => {
+    console.log(`Opening theme: ${themeId}`);
     
-    // Найти тему по локализованному названию
-    const themeId = Object.keys(appContent.themes).find(id => {
-      const theme = getTheme(id);
-      return theme && getLocalizedText(theme.title) === themeTitle;
-    });
+    // Проверяем, существует ли тема с таким ID
+    const theme = getTheme(themeId);
     
-    if (themeId) {
+    if (theme) {
       setCurrentTheme(themeId);
       navigateTo('theme-welcome');
     } else {
-      console.error('Theme not found:', themeTitle);
+      console.error('Theme not found:', themeId);
     }
   };
 

@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -13,13 +14,7 @@ interface MoodOption {
   value: number;
   color: string;
 }
-const MOOD_OPTIONS: MoodOption[] = [
-  { id: 'down', label: "I'm feeling down...", value: 0, color: '#666666' },
-  { id: 'anxious', label: "I'm anxious", value: 1, color: '#ff6b6b' },
-  { id: 'neutral', label: "I'm neutral", value: 2, color: '#ffd93d' },
-  { id: 'energized', label: "I'm energized", value: 3, color: '#6bcf7f' },
-  { id: 'happy', label: "I'm happy!", value: 4, color: '#4ecdc4' }
-];
+
 
 function Light() {
   return (
@@ -57,27 +52,31 @@ function Light() {
 }
 
 function SendButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
+  const { content } = useContent();
+  
   return (
     <BottomFixedButton 
       onClick={onClick}
       disabled={disabled}
     >
-      Send
+      {content.ui.checkin.send}
     </BottomFixedButton>
   );
 }
 
 function HeroBlockQuestion() {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
       <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">How are you?</p>
+        <p className="block leading-[0.8]">{content.ui.checkin.title}</p>
       </div>
       <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
+        <p className="block leading-none">{content.ui.checkin.subtitle}</p>
       </div>
     </div>
   );
@@ -85,183 +84,105 @@ function HeroBlockQuestion() {
 
 function MoodProgressBar({ 
   selectedMood, 
-  onMoodChange 
+  onMoodChange,
+  moodOptions
 }: { 
   selectedMood: number | null; 
   onMoodChange: (mood: number) => void;
+  moodOptions: MoodOption[];
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  const calculateMoodFromPosition = (clientX: number): number => {
+  const calculateMoodFromPosition = useCallback((clientX: number): number => {
     if (!trackRef.current) return 2;
     
     const rect = trackRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const percentage = Math.max(0, Math.min(1, x / rect.width));
-    
-    const moodIndex = Math.round(percentage * 4);
-    return moodIndex;
-  };
+    return Math.round(percentage * (moodOptions.length - 1));
+  }, [moodOptions.length]);
 
-  // Обработчики для мыши
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    const mood = calculateMoodFromPosition(e.clientX);
-    onMoodChange(mood);
+    const moodIndex = calculateMoodFromPosition(e.clientX);
+    onMoodChange(moodIndex);
   };
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging) return;
-    const mood = calculateMoodFromPosition(e.clientX);
-    onMoodChange(mood);
-  }, [isDragging, onMoodChange]);
+    const moodIndex = calculateMoodFromPosition(e.clientX);
+    onMoodChange(moodIndex);
+  }, [isDragging, onMoodChange, calculateMoodFromPosition]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
-  // Обработчики для сенсорных событий
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setIsDragging(true);
-    const touch = e.touches[0];
-    const mood = calculateMoodFromPosition(touch.clientX);
-    onMoodChange(mood);
-  };
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging) return;
-    if (e.touches.length > 0) {
-      const touch = e.touches[0];
-      const mood = calculateMoodFromPosition(touch.clientX);
-      onMoodChange(mood);
-      
-      // Предотвращаем скроллинг страницы при перетаскивании
-      e.preventDefault();
-    }
-  }, [isDragging, onMoodChange]);
-
-  const handleTouchEnd = () => {
-    setIsDragging(false);
-  };
-
-  const handleTrackClick = (e: React.MouseEvent) => {
-    if (!isDragging) {
-      const mood = calculateMoodFromPosition(e.clientX);
-      onMoodChange(mood);
-    }
-  };
-
-  // Регистрируем обработчики событий
   useEffect(() => {
     if (isDragging) {
-      // Обработчики для мыши
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      
-      // Обработчики для сенсорных событий
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchcancel', handleTouchEnd);
-      
       return () => {
-        // Удаляем обработчики для мыши
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
-        
-        // Удаляем обработчики для сенсорных событий
-        document.removeEventListener('touchmove', handleTouchMove);
-        document.removeEventListener('touchend', handleTouchEnd);
-        document.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleTouchMove]);
-
-  const fillWidth = selectedMood !== null ? Math.max(30, (selectedMood / 4) * 351) : 186;
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div className="bg-[#2d2b2b] relative rounded-xl h-[30px] w-full" data-name="Mood_prograssbar">
-      {/* Заполняющая полоса */}
+    <div
+      ref={trackRef}
+      onMouseDown={handleMouseDown}
+      className="relative h-2 w-full bg-[rgba(217,217,217,0.1)] rounded-full cursor-pointer"
+    >
       <div 
-        className="absolute bg-[#e1ff00] h-[30px] left-0 rounded-xl top-0" 
-        style={{ width: `${fillWidth}px` }}
-        data-name="Block"
-      >
-        <div
-          aria-hidden="true"
-          className="absolute border-2 border-[#2d2b2b] border-solid inset-0 pointer-events-none rounded-xl"
-        />
-      </div>
-      
-      {/* Визуальный ползунок для перетаскивания */}
-      {selectedMood !== null && (
-        <div 
-          className="absolute h-[34px] w-[34px] bg-white rounded-full border-4 border-[#e1ff00] top-[-2px] cursor-grab"
-          style={{ 
-            left: `${(selectedMood / 4) * 100}%`,
-            transform: 'translateX(-50%)',
-            boxShadow: '0 0 10px rgba(225, 255, 0, 0.5)'
-          }}
-          data-name="Slider"
-        />
-      )}
-      
-      {/* Подсказка для пользователя */}
-      <div className="absolute -top-8 left-0 right-0 text-center text-[#999999] text-sm">
-        Перетащите ползунок для выбора настроения
-      </div>
-      
-      {/* Область для взаимодействия */}
-      <div 
-        ref={trackRef}
-        onClick={handleTrackClick}
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        className="absolute inset-0 cursor-pointer select-none"
-        style={{ touchAction: 'none' }}
+        className="absolute h-full bg-gradient-to-r from-[#666666] via-[#ff6b6b] via-[#ffd93d] via-[#6bcf7f] to-[#4ecdc4] rounded-full"
+        style={{ width: selectedMood !== null ? `${((selectedMood + 1) / moodOptions.length) * 100}%` : '0%' }}
       />
-      
-      {/* Метки */}
-      {MOOD_OPTIONS.map((_, index) => (
-        <div
-          key={index}
-          className="absolute top-0 bottom-0 w-1 pointer-events-none"
-          style={{ left: `${(index / 4) * 100}%` }}
-        />
-      ))}
     </div>
   );
 }
 
-function MoodDisplay({ selectedMood }: { selectedMood: number | null }) {
-  const currentMood = selectedMood !== null ? MOOD_OPTIONS[selectedMood] : MOOD_OPTIONS[2];
-
-  return (
-    <div className="h-[26px] relative shrink-0 w-full" data-name="I'm feeling down...">
-      <div className="absolute font-['Kreon:Regular',_sans-serif] font-normal inset-0 leading-[0] text-[#ffffff] text-[32px] text-center">
-        <p className="block leading-[0.8]">
-          {currentMood.label}
-        </p>
+function MoodDisplay({ selectedMood, moodOptions }: { selectedMood: number | null; moodOptions: MoodOption[] }) {
+  if (selectedMood === null || !moodOptions[selectedMood]) {
+    return (
+      <div className="text-center">
+        <div className="text-white text-lg">Выберите настроение</div>
       </div>
+    );
+  }
+
+  const mood = moodOptions[selectedMood];
+  
+  return (
+    <div className="text-center">
+      <div 
+        className="w-8 h-8 rounded-full mx-auto mb-2"
+        style={{ backgroundColor: mood.color }}
+      />
+      <div className="text-white text-lg font-medium">{mood.label}</div>
     </div>
   );
 }
 
 function MoodContainer({ 
   selectedMood, 
-  onMoodChange 
+  onMoodChange,
+  moodOptions
 }: { 
   selectedMood: number | null; 
   onMoodChange: (mood: number) => void;
+  moodOptions: MoodOption[];
 }) {
   return (
     <div
       className="box-border content-stretch flex flex-col gap-10 items-center justify-start p-0 relative shrink-0 w-full"
       data-name="Container"
     >
-      <MoodDisplay selectedMood={selectedMood} />
+      <MoodDisplay selectedMood={selectedMood} moodOptions={moodOptions} />
       <div className="h-[30px] w-full">
-        <MoodProgressBar selectedMood={selectedMood} onMoodChange={onMoodChange} />
+        <MoodProgressBar selectedMood={selectedMood} onMoodChange={onMoodChange} moodOptions={moodOptions} />
       </div>
     </div>
   );
@@ -269,10 +190,12 @@ function MoodContainer({
 
 function ContentContainer({ 
   selectedMood, 
-  onMoodChange 
+  onMoodChange,
+  moodOptions
 }: { 
   selectedMood: number | null; 
   onMoodChange: (mood: number) => void;
+  moodOptions: MoodOption[];
 }) {
   return (
     <div
@@ -280,13 +203,24 @@ function ContentContainer({
       data-name="Container"
     >
       <HeroBlockQuestion />
-      <MoodContainer selectedMood={selectedMood} onMoodChange={onMoodChange} />
+      <MoodContainer selectedMood={selectedMood} onMoodChange={onMoodChange} moodOptions={moodOptions} />
     </div>
   );
 }
 
 export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps) {
+  const { content } = useContent();
   const [selectedMood, setSelectedMood] = useState<number | null>(2);
+
+  // Создаем MOOD_OPTIONS с переводами и обновляем глобальную переменную
+  const moodOptions: MoodOption[] = [
+    { id: 'down', label: content.ui.checkin.moodOptions.down, value: 0, color: '#666666' },
+    { id: 'anxious', label: content.ui.checkin.moodOptions.anxious, value: 1, color: '#ff6b6b' },
+    { id: 'neutral', label: content.ui.checkin.moodOptions.neutral, value: 2, color: '#ffd93d' },
+    { id: 'energized', label: content.ui.checkin.moodOptions.energized, value: 3, color: '#6bcf7f' },
+    { id: 'happy', label: content.ui.checkin.moodOptions.happy, value: 4, color: '#4ecdc4' }
+  ];
+
 
   const handleMoodChange = (moodIndex: number) => {
     setSelectedMood(moodIndex);
@@ -294,7 +228,7 @@ export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps)
 
   const handleSubmit = () => {
     if (selectedMood !== null) {
-      const moodData = MOOD_OPTIONS[selectedMood];
+      const moodData = moodOptions[selectedMood];
       
       // Логируем данные о настроении
       console.log('Mood check-in:', {
@@ -324,7 +258,7 @@ export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps)
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контент */}
-            <ContentContainer selectedMood={selectedMood} onMoodChange={handleMoodChange} />
+            <ContentContainer selectedMood={selectedMood} onMoodChange={handleMoodChange} moodOptions={moodOptions} />
 
           </div>
         </div>

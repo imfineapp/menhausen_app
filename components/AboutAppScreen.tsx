@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки
 import { useState } from 'react';
+import { useTranslation } from './LanguageContext';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
@@ -113,7 +114,7 @@ function AppLogoSection() {
 /**
  * Адаптивная секция информации о приложении
  */
-function AppInfoSection() {
+function AppInfoSection({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex flex-col gap-6 sm:gap-8 w-full" data-name="App info section">
       <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative" data-name="Description container">
@@ -123,7 +124,7 @@ function AppInfoSection() {
         />
         <div className="flex flex-col gap-4">
           <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">About Menhausen</h2>
+            <h2 className="block leading-[0.8]">{t('about_menhausen')}</h2>
           </div>
           <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
             <p className="block leading-[1.5]">
@@ -141,7 +142,7 @@ function AppInfoSection() {
         />
         <div className="flex flex-col gap-4">
           <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">Key Features</h2>
+            <h2 className="block leading-[0.8]">{t('key_features')}</h2>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-3">
@@ -184,7 +185,7 @@ function AppInfoSection() {
 /**
  * Адаптивная секция команды разработчиков
  */
-function TeamSection() {
+function TeamSection({ t }: { t: (key: string) => string }) {
   return (
     <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="Team container">
       <div
@@ -193,7 +194,7 @@ function TeamSection() {
       />
       <div className="flex flex-col gap-4">
         <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-          <h2 className="block leading-[0.8]">Development Team</h2>
+          <h2 className="block leading-[0.8]">{t('development_team')}</h2>
         </div>
         <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
           <p className="block leading-[1.5]">
@@ -217,7 +218,7 @@ function TeamSection() {
 /**
  * Адаптивная секция технической информации
  */
-function TechnicalInfoSection() {
+function TechnicalInfoSection({ t }: { t: (key: string) => string }) {
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
 
   return (
@@ -233,7 +234,7 @@ function TechnicalInfoSection() {
         />
         <div className="flex items-center justify-between">
           <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">Technical Information</h2>
+            <h2 className="block leading-[0.8]">{t('technical_information')}</h2>
           </div>
           <div className={`transform transition-transform duration-200 ${showTechnicalInfo ? 'rotate-180' : ''}`}>
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="#e1ff00">
@@ -294,6 +295,7 @@ function TechnicalInfoSection() {
  * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
 export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
+  const { t } = useTranslation();
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
@@ -316,13 +318,13 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
         <AppLogoSection />
         
         {/* Информация о приложении */}
-        <AppInfoSection />
+        <AppInfoSection t={t} />
         
         {/* Техническая информация */}
-        <TechnicalInfoSection />
+        <TechnicalInfoSection t={t} />
         
         {/* Команда разработчиков */}
-        <TeamSection />
+        <TeamSection t={t} />
         
         {/* Дополнительная информация */}
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="Additional info">
@@ -332,7 +334,7 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
           />
           <div className="flex flex-col gap-3">
             <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-              <h2 className="block leading-[0.8]">Important Note</h2>
+              <h2 className="block leading-[0.8]">{t('important_note')}</h2>
             </div>
             <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
               <p className="block leading-[1.5]">

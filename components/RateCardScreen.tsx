@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface RateCardScreenProps {
@@ -80,16 +81,18 @@ function Light() {
  * Адаптивный компонент заголовка рейтинга
  */
 function RatingTextContainer() {
+  const { content } = useContent();
+  
   return (
     <div
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center w-full"
       data-name="Rating text container"
     >
       <div className="[grid-area:1_/_1] font-heading font-normal relative text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full">
-        <p className="block leading-[0.8]">Please rate the card.</p>
+        <p className="block leading-[0.8]">{content.ui.cards.rating.title}</p>
       </div>
       <div className="[grid-area:1_/_1] font-sans mt-[35px] sm:mt-[37px] md:mt-[39px] not-italic relative text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] w-full">
-        <p className="block leading-none">Your rating will help us to be more useful.</p>
+        <p className="block leading-none">{content.ui.cards.rating.subtitle}</p>
       </div>
     </div>
   );
@@ -182,6 +185,8 @@ function InputTextMessageBlock({ value, onChange, placeholder }: {
  * Адаптивный блок сообщения с полем ввода и информацией о шифровании
  */
 function TextMessageBlock({ textMessage, onTextMessageChange }: { textMessage: string; onTextMessageChange: (value: string) => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -190,7 +195,7 @@ function TextMessageBlock({ textMessage, onTextMessageChange }: { textMessage: s
       <InputTextMessageBlock 
         value={textMessage}
         onChange={onTextMessageChange}
-        placeholder="Share additional thoughts about this card (optional)..."
+        placeholder={content.ui.cards.rating.placeholder}
       />
       <EncryptInfoBlock />
     </div>
@@ -300,6 +305,7 @@ function RatingCardContainer({
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }: RateCardScreenProps) {
+  const { content } = useContent();
   // Состояние для хранения выбранного рейтинга (по умолчанию 5, как в дизайне)
   const [selectedRating, setSelectedRating] = useState(5);
   
@@ -369,7 +375,7 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
         onClick={handleNext}
         disabled={false} // Кнопка всегда активна, так как по умолчанию выбран рейтинг 5
       >
-        Next
+        {content.ui.cards.rating.submit}
       </BottomFixedButton>
     </div>
   );

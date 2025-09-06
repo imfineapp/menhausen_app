@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface ThemeHomeScreenProps {
@@ -65,12 +66,14 @@ function Light() {
  * Адаптивный компонент прогресс-бара темы
  */
 function ProgressTheme() {
+  const { content } = useContent();
+  
   return (
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
       <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
-        <p className="block leading-none">Progress</p>
+        <p className="block leading-none">{content.ui.themes.home.progress}</p>
       </div>
     </div>
   );
@@ -126,6 +129,7 @@ function CheckinIcon() {
  * Адаптивная карточка темы с min-h-[44px] min-w-[44px] дизайном
  */
 function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) => void }) {
+  const { content: _content } = useContent();
   const isInactive = !card.isActive;
   
   return (
@@ -182,9 +186,11 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
+  const { content } = useContent();
+  
   return (
     <BottomFixedButton onClick={onClick}>
-      Open next level
+      {content.ui.themes.home.nextLevel}
     </BottomFixedButton>
   );
 }

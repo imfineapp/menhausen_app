@@ -2,10 +2,11 @@
 // КОМПОНЕНТ: Квадратное дыхание
 // ========================================================================================
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useContent } from '../ContentContext';
+import { useTranslation } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
-import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
+// import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique'; // Unused
 
 interface SquareBreathingScreenProps {
   onBack: () => void;
@@ -52,36 +53,22 @@ function SquareVisualization({
   };
 
   const pos = getPosition();
-
+  
   return (
-    <div className="relative w-48 h-48 mx-auto">
-      <svg className="w-full h-full" viewBox="0 0 200 200">
-        <rect 
-          x="20" y="20" 
-          width="160" height="160" 
-          fill="none" 
-          stroke="#e1ff00" 
-          strokeWidth="3"
-          strokeDasharray="5,5"
-        />
-        <circle 
-          cx={pos.x}
-          cy={pos.y}
-          r="8" 
-          fill="#e1ff00"
-          className="transition-all duration-1000 ease-in-out"
-        />
+    <div className="flex justify-center items-center">
+      <div className="relative w-[180px] h-[180px] border-2 border-[#e1ff00] rounded-lg">
+        {/* Квадрат */}
+        <div className="absolute inset-0 border-2 border-[#e1ff00] rounded-lg"></div>
+        
         {/* Подсветка текущей стороны */}
-        <rect 
-          x="20" y="20" 
-          width="160" height="160" 
-          fill="none" 
-          stroke="#e1ff00" 
-          strokeWidth="1"
-          strokeOpacity="0.3"
-          className="animate-pulse"
-        />
-      </svg>
+        <div 
+          className="absolute w-2 h-2 bg-[#e1ff00] rounded-full transition-all duration-100"
+          style={{
+            left: pos.x - 4,
+            top: pos.y - 4
+          }}
+        ></div>
+      </div>
     </div>
   );
 }
@@ -89,95 +76,47 @@ function SquareVisualization({
 /**
  * Интерактивный таймер для квадратного дыхания
  */
-function SquareTimer({ 
-  duration, 
-  onComplete, 
+function BreathingTimer({ 
   isRunning, 
-  onToggle 
+  onToggle, 
+  onComplete 
 }: { 
-  duration: number; 
-  onComplete: () => void; 
-  isRunning: boolean; 
-  onToggle: () => void; 
+  isRunning: boolean;
+  onToggle: () => void;
+  onComplete: () => void;
 }) {
-  const [timeLeft, setTimeLeft] = useState(duration);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(prev => {
-          const newTime = prev - 1;
-          setProgress(((duration - newTime) / duration) * 100);
-          return newTime;
-        });
-      }, 1000);
-    } else if (timeLeft === 0) {
-      onComplete();
-    }
-
-    return () => clearInterval(interval);
-  }, [isRunning, timeLeft, duration, onComplete]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const reset = () => {
-    setTimeLeft(duration);
-    setProgress(0);
-  };
-
+  const { t } = useTranslation();
+  
   return (
-    <div className="flex flex-col items-center gap-4 w-full">
-      {/* Круглый прогресс-бар */}
-      <div className="relative w-20 h-20">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r="40"
-            fill="none"
-            stroke="#212121"
-            strokeWidth="6"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="40"
-            fill="none"
-            stroke="#e1ff00"
-            strokeWidth="6"
-            strokeDasharray={`${2 * Math.PI * 40}`}
-            strokeDashoffset={`${2 * Math.PI * 40 * (1 - progress / 100)}`}
-            className="transition-all duration-1000 ease-linear"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[#e1ff00] font-bold text-sm">
-            {formatTime(timeLeft)}
-          </span>
-        </div>
-      </div>
+    <div className="text-center space-y-4">
+      <button
+        onClick={onToggle}
+        className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
+      >
+        {isRunning ? t('pause') : t('start')}
+      </button>
+      
+      <button
+        onClick={onComplete}
+        className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg hover:bg-[#444] transition-colors"
+      >
+        {t('reset')}
+      </button>
+    </div>
+  );
+}
 
-      {/* Кнопки управления */}
-      <div className="flex gap-3">
-        <button
-          onClick={onToggle}
-          className="px-4 py-2 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors text-sm"
-        >
-          {isRunning ? 'Пауза' : 'Старт'}
-        </button>
-        <button
-          onClick={reset}
-          className="px-4 py-2 border border-[#e1ff00] text-[#e1ff00] rounded-lg font-semibold hover:bg-[#e1ff00] hover:text-[#2d2b2b] transition-colors text-sm"
-        >
-          Сброс
-        </button>
+/**
+ * Дополнительная информация
+ */
+function AdditionalInfo({ technique }: { technique: any }) {
+  const { t } = useTranslation();
+  
+  return (
+    <div className="space-y-4">
+      <h3 className="text-[#e1ff00] text-lg font-semibold">{t('about_technique')}</h3>
+      <div className="text-[#cfcfcf] text-sm space-y-2">
+        <p>{technique?.description || t('square_breathing_description')}</p>
       </div>
     </div>
   );
@@ -187,39 +126,44 @@ function SquareTimer({
  * Главный компонент квадратного дыхания
  */
 export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
-  const { getMentalTechnique, getLocalizedText } = useContent();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [cycleCount, setCycleCount] = useState(0);
-
+  const { getMentalTechniques } = useContent();
+  const { t } = useTranslation();
+  
   // Получаем данные техники из системы контента
-  const technique = getMentalTechnique('breathing-square');
-
-  const handleTimerComplete = useCallback(() => {
-    if (!technique || !technique.steps) return;
+  const techniques = getMentalTechniques();
+  const technique = techniques.find(t => t.id === 'square-breathing');
+  
+  // Состояние для анимации
+  const [isRunning, setIsRunning] = useState(false);
+  const [position, setPosition] = useState(0); // 0-3 для сторон квадрата
+  const [progress, setProgress] = useState(0); // 0-100 для текущей стороны
+  
+  // Таймер для анимации
+  useEffect(() => {
+    if (!isRunning) return;
     
-    if (currentStep < technique.steps.length - 1) {
-      setCurrentStep(prev => {
-        const nextStep = prev + 1;
-        // Дополнительная проверка, что следующий шаг существует
-        if (nextStep < technique.steps.length) {
-          return nextStep;
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          setPosition(prevPos => (prevPos + 1) % 4);
+          return 0;
         }
-        return prev; // Остаемся на текущем шаге, если следующий не существует
+        return prev + 1;
       });
-      setProgress(0);
-    } else {
-      // Цикл завершен - сбрасываем на первый шаг
-      setCycleCount(prev => prev + 1);
-      setCurrentStep(0);
-      setProgress(0);
-    }
-  }, [technique, currentStep]);
-
-  const handleToggle = useCallback(() => {
+    }, 50); // Обновляем каждые 50мс для плавной анимации
+    
+    return () => clearInterval(interval);
+  }, [isRunning]);
+  
+  const handleToggle = () => {
     setIsRunning(prev => !prev);
-  }, []);
+  };
+  
+  const handleComplete = () => {
+    setIsRunning(false);
+    setPosition(0);
+    setProgress(0);
+  };
   
   if (!technique) {
     return (
@@ -228,35 +172,14 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Техника не найдена
+              {t('technique_not_found')}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              Назад
+              {t('back')}
             </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const currentStepData = technique.steps[currentStep];
-
-  // Проверяем, что currentStepData существует
-  if (!currentStepData) {
-    return (
-      <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-        <MiniStripeLogo />
-        <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-          <div className="text-center">
-            <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Ошибка загрузки техники
-            </h1>
-            <p className="text-[#cfcfcf] text-lg">
-              Не удалось загрузить данные техники
-            </p>
           </div>
         </div>
       </div>
@@ -271,61 +194,29 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         {/* Заголовок */}
         <div className="text-center">
           <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-            {getLocalizedText(technique.title)}
+            {technique.title}
           </h1>
-          <p className="text-[#cfcfcf] text-lg">
-            {getLocalizedText(technique.subtitle)}
-          </p>
-          <div className="mt-2 flex items-center justify-center gap-4">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg text-sm font-semibold">
-              {getLocalizedText(technique.duration)}
-            </span>
-            <span className="text-[#cfcfcf] text-sm">
-              Цикл {cycleCount + 1}
-            </span>
-          </div>
         </div>
 
         {/* Визуализация */}
-        <div className="flex justify-center">
-          <SquareVisualization position={currentStep} progress={progress} />
-        </div>
+        <SquareVisualization position={position} progress={progress} />
 
         {/* Текущий шаг */}
-        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-          <div className="text-center">
-            <h3 className="text-[#e1ff00] text-lg font-semibold mb-2">
-              Шаг {currentStep + 1} из {technique.steps.length}
-            </h3>
-            <p className="text-[#cfcfcf] text-base">
-              {getLocalizedText(currentStepData.instruction)}
-            </p>
-          </div>
+        <div className="text-center">
+          <p className="text-white text-lg mb-2">
+            {t('cycle')} {Math.floor(position / 4) + 1} - {t('step')} {position + 1} {t('of')} 4
+          </p>
         </div>
 
-        {/* Таймер */}
-        <SquareTimer
-          duration={currentStepData.duration}
-          onComplete={handleTimerComplete}
+        {/* Интерактивный таймер */}
+        <BreathingTimer 
           isRunning={isRunning}
           onToggle={handleToggle}
+          onComplete={handleComplete}
         />
 
         {/* Дополнительная информация */}
-        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-          <div className="flex flex-col gap-4">
-            <h3 className="text-[#e1ff00] text-lg font-semibold">О технике</h3>
-            <MentalTechniqueAccordion 
-              items={technique.accordionItems.map(item => ({
-                title: getLocalizedText(item.title),
-                content: getLocalizedText(item.content)
-              }))}
-            />
-          </div>
-        </div>
-
+        <AdditionalInfo technique={technique} />
       </div>
     </div>
   );

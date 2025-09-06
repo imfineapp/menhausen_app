@@ -1,6 +1,7 @@
 // Импортируем необходимые компоненты
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface OnboardingScreen01Props {
@@ -53,9 +54,11 @@ function Light() {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function NextButton({ onClick }: { onClick: () => void }) {
+  const { content } = useContent();
+  
   return (
     <BottomFixedButton onClick={onClick}>
-      Next
+      {content.ui.onboarding.screen01.buttonText}
     </BottomFixedButton>
   );
 }
@@ -65,6 +68,8 @@ function NextButton({ onClick }: { onClick: () => void }) {
  * Содержит текст о принятии условий с кликабельными ссылками
  */
 function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () => void; onShowTerms: () => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="flex flex-col items-center justify-start p-0 w-full max-w-[351px]"
@@ -72,7 +77,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
     >
       <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
         <p className="leading-none text-[14px]" style={{ lineHeight: '0.9' }}>
-          <span>{`By clicking the button you agree to the `}</span>
+          <span>{content.ui.onboarding.screen01.agreementText} </span>
           <a
             href="#"
             onClick={(e) => {
@@ -81,9 +86,9 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
             }}
             className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
-            Terms of use
+            {content.ui.onboarding.screen01.termsText}
           </a>
-          <span className="font-sans not-italic">{` and`}</span>
+          <span className="font-sans not-italic"> и</span>
           <a
             href="#"
             onClick={(e) => {
@@ -92,7 +97,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
             }}
             className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
-            {` Privacy policy`}
+            {` ${content.ui.onboarding.screen01.privacyText}`}
           </a>
         </p>
       </div>
@@ -105,20 +110,18 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
  * Содержит заголовок и описание приложения
  */
 function MainContent() {
+  const { content } = useContent();
+  
   return (
     <div
       className="flex flex-col gap-10 items-center justify-start leading-[0] text-center w-full max-w-[351px]"
       data-name="main_content"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#cfcfcf] text-[0px] w-full">
-        <p className="block leading-[0.8] mb-0 text-[36px]">{`You don't have `}</p>
-        <p className="block leading-[0.8] text-[36px]">
-          <span className="font-heading font-normal text-[#e1ff00]">to cope</span>
-          <span>{` alone`}</span>
-        </p>
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
+        <p className="block leading-[0.8]">{content.ui.onboarding.screen01.title}</p>
       </div>
       <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">{`Anonymous digital self-help tool for men. Сards based on scientific methods. `}</p>
+        <p className="block leading-none">{content.ui.onboarding.screen01.subtitle}</p>
       </div>
     </div>
   );
