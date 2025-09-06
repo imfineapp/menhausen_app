@@ -56,10 +56,10 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [value, setValue] = useState('');
@@ -121,10 +121,10 @@ function InteractiveInput({
  */
 export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [currentStep, setCurrentStep] = useState(0);
@@ -176,10 +176,10 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getLocalizedText({ ru: 'Ошибка загрузки техники', en: 'Technique loading error' })}
+              {getText('Ошибка загрузки техники', 'Technique loading error')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {getLocalizedText({ ru: 'Не удалось загрузить данные техники', en: 'Failed to load technique data' })}
+              {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}
             </p>
           </div>
         </div>

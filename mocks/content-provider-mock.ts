@@ -209,6 +209,24 @@ const mockContent: ContentContextType = {
           subtitle: 'Your feedback helps us improve',
           placeholder: 'Share your thoughts...',
           submit: 'Submit'
+        },
+        themeHome: {
+          card1: 'Social Anxiety',
+          card2: 'Work Stress',
+          card3: 'Relationships',
+          card4: 'Family Issues',
+          card5: 'Health Concerns',
+          card6: 'Financial Stress',
+          card7: 'Academic Pressure',
+          card8: 'Career Development',
+          card9: 'Personal Growth',
+          card10: 'Life Transitions',
+          level1: 'Beginner',
+          level2: 'Intermediate',
+          level3: 'Advanced',
+          level4: 'Expert',
+          level5: 'Master',
+          description: 'Choose a theme to start your journey'
         }
       }
     },
