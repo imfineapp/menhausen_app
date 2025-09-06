@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface CheckinDetailsScreenProps {
@@ -21,6 +22,7 @@ interface CheckinData {
   question2: string;
   answer2: string;
   instructions: string;
+  practiceTask: string;
   whyNote: string;
 }
 
@@ -156,6 +158,8 @@ function InputAnswerBlock({ answer, height = 85 }: { answer: string; height?: nu
  * Адаптивный основной контейнер с вопросами и ответами
  */
 function MainContent({ checkinData }: { checkinData: CheckinData }) {
+  const { content, getLocalizedText } = useContent();
+  
   return (
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
       {/* Первый вопрос */}
@@ -177,15 +181,28 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
         </p>
         <p className="block leading-none mb-0">&nbsp;</p>
         <p className="block leading-none mb-0">
-          Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments.
+          {checkinData.practiceTask}
         </p>
         <p className="block leading-none mb-0">&nbsp;</p>
         <p className="leading-none">
-          <span className="text-[#e1ff00]">Why:</span>
+          <span className="text-[#e1ff00]">{getLocalizedText(content.ui.cards.final.why)}</span>
           <span> {checkinData.whyNote}</span>
         </p>
       </div>
     </div>
+  );
+}
+
+/**
+ * Кнопка для страницы деталей чекина
+ */
+function CheckinDetailsBottomButton({ onClick }: { onClick: () => void }) {
+  const { content, getLocalizedText } = useContent();
+  
+  return (
+    <BottomFixedButton onClick={onClick}>
+      {getLocalizedText(content.ui.navigation.continue)}
+    </BottomFixedButton>
   );
 }
 
@@ -195,63 +212,58 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
  * Адаптивный дизайн с поддержкой mobile-first подхода и корректным скроллингом
  */
 export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Card #1", checkinDate }: CheckinDetailsScreenProps) {
+  const { getLocalizedText, getCard } = useContent();
+  
   /**
    * Функция для получения данных чекина
    * В реальном приложении данные будут загружаться с сервера
    */
   const getCheckinData = (id: string): CheckinData => {
-    // Моковые данные чекинов (в реальном приложении будут загружаться с сервера)
-    const checkinMapping: Record<string, Omit<CheckinData, 'id'>> = {
+    // Получаем данные карточки для переводов вопросов и рекомендаций
+    const cardData = getCard('card-1'); // Используем первую карточку как пример
+    
+    // Моковые данные ответов пользователей (не переводятся)
+    const userAnswersMapping: Record<string, { answer1: string; answer2: string }> = {
       "1": {
-        cardTitle: "Card #1",
-        date: "1984-02-26",
-        formattedDate: "26.02.1984",
-        question1: "What in other people's behavior most often irritates or offends you?",
         answer1: "Oh, I don't know what to say. Everyone just pisses me off.",
-        question2: "What are your expectations behind this reaction?",
-        answer2: "I want everyone to just leave me alone and that's it",
-        instructions: "Awareness of expectations reduces the automaticity of emotional reactions.",
-        whyNote: "You learn to distinguish people's behavior from your own projections."
+        answer2: "I want everyone to just leave me alone and that's it"
       },
       "2": {
-        cardTitle: "Card #1",
-        date: "1986-02-26",
-        formattedDate: "26.02.1986",
-        question1: "What in other people's behavior most often irritates or offends you?",
         answer1: "When people don't listen to what I'm saying and interrupt me constantly.",
-        question2: "What are your expectations behind this reaction?",
-        answer2: "I expect people to respect my time and opinions when I'm speaking.",
-        instructions: "Awareness of expectations reduces the automaticity of emotional reactions.",
-        whyNote: "You learn to distinguish people's behavior from your own projections."
+        answer2: "I expect people to respect my time and opinions when I'm speaking."
       },
       "3": {
-        cardTitle: "Card #2",
-        date: "2000-02-26",
-        formattedDate: "26.02.2000",
-        question1: "What in other people's behavior most often irritates or offends you?",
         answer1: "People who are always late and don't apologize for it.",
-        question2: "What are your expectations behind this reaction?",
-        answer2: "I expect punctuality and respect for other people's schedules.",
-        instructions: "Awareness of expectations reduces the automaticity of emotional reactions.",
-        whyNote: "You learn to distinguish people's behavior from your own projections."
+        answer2: "I expect punctuality and respect for other people's schedules."
       }
     };
 
-    const defaultData = {
-      cardTitle: cardTitle,
-      date: checkinDate || "2025-01-01",
-      formattedDate: checkinDate || "01.01.2025",
-      question1: "What in other people's behavior most often irritates or offends you?",
+    const defaultAnswers = {
       answer1: "This is a sample answer for demonstration purposes.",
-      question2: "What are your expectations behind this reaction?",
-      answer2: "This is another sample answer to show the format.",
-      instructions: "Awareness of expectations reduces the automaticity of emotional reactions.",
-      whyNote: "You learn to distinguish people's behavior from your own projections."
+      answer2: "This is another sample answer to show the format."
     };
+
+    const userAnswers = userAnswersMapping[id] || defaultAnswers;
+
+    // Получаем переведенные вопросы и рекомендации из карточки
+    const question1 = cardData?.questions?.[0] ? getLocalizedText(cardData.questions[0].text) : "What in other people's behavior most often irritates or offends you?";
+    const question2 = cardData?.questions?.[1] ? getLocalizedText(cardData.questions[1].text) : "What are your expectations behind this reaction?";
+    const instructions = cardData?.finalMessage?.message ? getLocalizedText(cardData.finalMessage.message) : "Awareness of expectations reduces the automaticity of emotional reactions.";
+    const practiceTask = cardData?.finalMessage?.practiceTask ? getLocalizedText(cardData.finalMessage.practiceTask) : "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments.";
+    const whyNote = cardData?.finalMessage?.whyExplanation ? getLocalizedText(cardData.finalMessage.whyExplanation) : "You learn to distinguish people's behavior from your own projections.";
 
     return {
       id,
-      ...(checkinMapping[id] || defaultData)
+      cardTitle: cardTitle,
+      date: checkinDate || "2025-01-01",
+      formattedDate: checkinDate || "01.01.2025",
+      question1,
+      answer1: userAnswers.answer1,
+      question2,
+      answer2: userAnswers.answer2,
+      instructions,
+      practiceTask,
+      whyNote
     };
   };
 
@@ -285,9 +297,7 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Card #1",
       </div>
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
-      <BottomFixedButton onClick={onBack}>
-        Continue
-      </BottomFixedButton>
+      <CheckinDetailsBottomButton onClick={onBack} />
     </div>
   );
 }

@@ -221,4 +221,28 @@
 * Use consistent naming conventions
 * Keep utility functions separate
 
+## 🌍 Multilingual Support
+
+### Localization Guidelines
+* **Detailed Rules**: See [Multilingual Guidelines](./multilingual-guidelines.md) for comprehensive localization rules
+* **Key Principles**:
+  - Use `getText()` for UI elements (buttons, labels, messages)
+  - Use `getLocalizedText()` for content from JSON files
+  - Never pass `{ru: '...', en: '...'}` objects directly to JSX
+  - Always update types, JSON files, and fallbacks together
+* **Supported Languages**: Russian (ru), English (en)
+* **Content Structure**: `data/content/{language}/` with separate files for UI, cards, themes, techniques
+
+### Quick Reference
+```typescript
+// UI texts
+const getText = (ruText: string, enText: string) => {
+  return currentLanguage === 'ru' ? ruText : enText;
+};
+
+// Content from JSON
+const { getLocalizedText } = useContent();
+{getLocalizedText(dataFromJSON.title)}
+```
+
 Remember: This is a Telegram Mini App, so prioritize mobile experience while ensuring it works well on all devices that access Telegram Web.

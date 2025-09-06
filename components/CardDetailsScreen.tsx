@@ -64,7 +64,8 @@ function Light() {
  * Адаптивный заголовок карточки с описанием
  */
 function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: string; cardDescription?: string }) {
-  const defaultDescription = "Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.";
+  const { content, getLocalizedText } = useContent();
+  const defaultDescription = getLocalizedText(content.ui.cards.welcome.subtitle);
   
   return (
     <div
@@ -108,7 +109,7 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
  * Адаптивный контейнер списка чекинов
  */
 function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; onCheckinClick?: (checkinId: string) => void }) {
-  const { content } = useContent();
+  const { content, getLocalizedText } = useContent();
   
   return (
     <div
@@ -116,7 +117,7 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       data-name="Checkins Container"
     >
       <div className="font-heading font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">{content.ui.cards.checkins}</p>
+        <p className="block leading-[0.8]">{getLocalizedText(content.ui.cards.checkins)}</p>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"
@@ -139,9 +140,11 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenCardButton({ onClick }: { onClick: () => void }) {
+  const { content, getLocalizedText } = useContent();
+  
   return (
     <BottomFixedButton onClick={onClick}>
-      Open card
+      {getLocalizedText(content.ui.navigation.start)}
     </BottomFixedButton>
   );
 }

@@ -595,14 +595,10 @@ function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userH
  */
 function EmergencySlider({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
   const sliderRef = useRef<HTMLDivElement>(null);
-  const { getMentalTechniquesByCategory, getLocalizedText } = useContent();
+  const { getMentalTechniques, getLocalizedText } = useContent();
 
-  // Получаем ментальные техники для экстренной помощи
-  const emergencyTechniques = getMentalTechniquesByCategory('grounding');
-  const breathingTechniques = getMentalTechniquesByCategory('breathing');
-
-  // Объединяем техники для отображения в слайдере
-  const allTechniques = [...emergencyTechniques, ...breathingTechniques];
+  // Получаем все ментальные техники
+  const allTechniques = getMentalTechniques();
 
   /**
    * Обработчик клика на карточку

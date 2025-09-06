@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../ContentContext';
+import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 
@@ -67,6 +68,12 @@ function InteractiveTimer({
   isRunning: boolean; 
   onToggle: () => void; 
 }) {
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
+  
   const [timeLeft, setTimeLeft] = useState(duration);
   const [progress, setProgress] = useState(0);
 
@@ -137,13 +144,13 @@ function InteractiveTimer({
           onClick={onToggle}
           className="px-6 py-2 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
         >
-          {isRunning ? 'Пауза' : 'Старт'}
+          {isRunning ? getText('Пауза', 'Pause') : getText('Старт', 'Start')}
         </button>
         <button
           onClick={reset}
           className="px-6 py-2 border border-[#e1ff00] text-[#e1ff00] rounded-lg font-semibold hover:bg-[#e1ff00] hover:text-[#2d2b2b] transition-colors"
         >
-          Сброс
+          {getText('Сброс', 'Reset')}
         </button>
       </div>
     </div>
@@ -155,6 +162,12 @@ function InteractiveTimer({
  */
 export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [phase, setPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
@@ -170,13 +183,13 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Техника не найдена
+              {getText('Техника не найдена', 'Technique not found')}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              Назад
+              {getText('Назад', 'Back')}
             </button>
           </div>
         </div>
@@ -211,10 +224,10 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Ошибка загрузки техники
+              {getText('Ошибка загрузки техники', 'Technique loading error')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              Не удалось загрузить данные техники
+              {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}
             </p>
           </div>
         </div>
@@ -252,7 +265,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="text-[#e1ff00] text-lg font-semibold mb-2">
-              Шаг {currentStep + 1} из {technique.steps.length}
+              {getText('Шаг', 'Step')} {currentStep + 1} {getText('из', 'of')} {technique.steps.length}
             </h3>
             <p className="text-[#cfcfcf] text-base">
               {getLocalizedText(currentStepData.instruction)}
@@ -272,7 +285,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="text-[#e1ff00] text-lg font-semibold">О технике</h3>
+            <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

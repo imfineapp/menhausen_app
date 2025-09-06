@@ -4,9 +4,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../ContentContext';
-import { useTranslation } from '../LanguageContext';
+import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
-// import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique'; // Unused
+import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 
 interface SquareBreathingScreenProps {
   onBack: () => void;
@@ -85,7 +85,11 @@ function BreathingTimer({
   onToggle: () => void;
   onComplete: () => void;
 }) {
-  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
   
   return (
     <div className="text-center space-y-4">
@@ -93,14 +97,14 @@ function BreathingTimer({
         onClick={onToggle}
         className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
       >
-        {isRunning ? t('pause') : t('start')}
+        {isRunning ? getText('Пауза', 'Pause') : getText('Старт', 'Start')}
       </button>
       
       <button
         onClick={onComplete}
         className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg hover:bg-[#444] transition-colors"
       >
-        {t('reset')}
+        {getText('Сброс', 'Reset')}
       </button>
     </div>
   );
@@ -110,13 +114,24 @@ function BreathingTimer({
  * Дополнительная информация
  */
 function AdditionalInfo({ technique }: { technique: any }) {
-  const { t } = useTranslation();
+  const { getLocalizedText } = useContent();
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
   
   return (
-    <div className="space-y-4">
-      <h3 className="text-[#e1ff00] text-lg font-semibold">{t('about_technique')}</h3>
-      <div className="text-[#cfcfcf] text-sm space-y-2">
-        <p>{technique?.description || t('square_breathing_description')}</p>
+    <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
+      <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
+      <div className="space-y-4">
+        <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
+        <MentalTechniqueAccordion 
+          items={technique?.accordionItems?.map((item: any) => ({
+            title: getLocalizedText(item.title),
+            content: getLocalizedText(item.content)
+          })) || []}
+        />
       </div>
     </div>
   );
@@ -126,12 +141,15 @@ function AdditionalInfo({ technique }: { technique: any }) {
  * Главный компонент квадратного дыхания
  */
 export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
-  const { getMentalTechniques } = useContent();
-  const { t } = useTranslation();
+  const { getMentalTechnique, getLocalizedText } = useContent();
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
   
   // Получаем данные техники из системы контента
-  const techniques = getMentalTechniques();
-  const technique = techniques.find(t => t.id === 'square-breathing');
+  const technique = getMentalTechnique('breathing-square');
   
   // Состояние для анимации
   const [isRunning, setIsRunning] = useState(false);
@@ -172,13 +190,13 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_not_found')}
+              {getText('Техника не найдена', 'Technique not found')}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {t('back')}
+              {getText('Назад', 'Back')}
             </button>
           </div>
         </div>
@@ -194,18 +212,29 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         {/* Заголовок */}
         <div className="text-center">
           <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-            {technique.title}
+            {getLocalizedText(technique.title)}
           </h1>
+          <p className="text-[#cfcfcf] text-lg">
+            {getLocalizedText(technique.subtitle)}
+          </p>
+          <div className="mt-2">
+            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg text-sm font-semibold">
+              {getLocalizedText(technique.duration)}
+            </span>
+          </div>
         </div>
 
         {/* Визуализация */}
         <SquareVisualization position={position} progress={progress} />
 
         {/* Текущий шаг */}
-        <div className="text-center">
-          <p className="text-white text-lg mb-2">
-            {t('cycle')} {Math.floor(position / 4) + 1} - {t('step')} {position + 1} {t('of')} 4
-          </p>
+        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
+          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="text-center">
+            <p className="text-white text-lg mb-2">
+              {getText('Цикл', 'Cycle')} {Math.floor(position / 4) + 1} - {getText('Шаг', 'Step')} {position + 1} {getText('из', 'of')} 4
+            </p>
+          </div>
         </div>
 
         {/* Интерактивный таймер */}
