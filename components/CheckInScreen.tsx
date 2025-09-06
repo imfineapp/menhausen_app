@@ -73,7 +73,7 @@ function HeroBlockQuestion() {
       data-name="Hero_block_question"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <p className="block">{content.ui.checkin.title}</p>
+        <h1 className="block">{content.ui.checkin.title}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">{content.ui.checkin.subtitle}</p>

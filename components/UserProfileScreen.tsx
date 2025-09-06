@@ -164,7 +164,7 @@ export function UserProfileScreen({
         {/* Секция "Your status" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
           <div className="typography-h2 text-[#e1ff00] text-left">
-            <p className="block">{t('your_status')}</p>
+            <h2 className="block">{t('your_status')}</h2>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
@@ -212,7 +212,7 @@ export function UserProfileScreen({
         {/* Секция "Settings" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
           <div className="typography-h2 text-[#e1ff00] text-left">
-            <p className="block">{t('settings')}</p>
+            <h2 className="block">{t('settings')}</h2>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem

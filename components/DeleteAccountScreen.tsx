@@ -166,7 +166,7 @@ function MainContent() {
       data-name="main_content"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <p className="block">Danger zone</p>
+        <h1 className="block">Danger zone</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">

@@ -133,7 +133,7 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
       data-name="Hero_block_question"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <p className="block">{getText('В разработке', 'Under Construction')}</p>
+        <h1 className="block">{getText('В разработке', 'Under Construction')}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block leading-none">

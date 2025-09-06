@@ -118,7 +118,7 @@ function MainContent() {
       data-name="main_content"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <p className="block">{content.ui.onboarding.screen01.title}</p>
+        <h1 className="block">{content.ui.onboarding.screen01.title}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">{content.ui.onboarding.screen01.subtitle}</p>

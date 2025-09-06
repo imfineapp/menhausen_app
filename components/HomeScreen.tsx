@@ -127,7 +127,7 @@ function UserInfo() {
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <p className="block">Hero #1275</p>
+        <h2 className="block">Hero #1275</h2>
       </div>
     </div>
   );
@@ -258,7 +258,7 @@ function InfoGroup() {
       data-name="Info_group"
     >
       <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
-        <p className="block whitespace-pre">{getUI().home.howAreYou}</p>
+        <h2 className="block whitespace-pre">{getUI().home.howAreYou}</h2>
       </div>
       <InfoIcon />
     </div>
@@ -351,10 +351,10 @@ function ActivityHeader() {
       data-name="Activity header"
     >
       <div className="typography-h2 text-left">
-        <p className="block text-nowrap whitespace-pre">Activity</p>
+        <h2 className="block text-nowrap whitespace-pre">Activity</h2>
       </div>
       <div className="typography-h2 text-right">
-        <p className="block text-nowrap whitespace-pre">4 days</p>
+        <h2 className="block text-nowrap whitespace-pre">4 days</h2>
       </div>
     </div>
   );
@@ -418,7 +418,7 @@ function ThemeCard({
       {/* Контент карточки */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
         <div className="typography-h2 text-[#e1ff00] text-left w-full">
-          <p className="block">{title}</p>
+          <h2 className="block">{title}</h2>
         </div>
         <div className="typography-body text-[#ffffff] text-left w-full">
           <p className="block">{description}</p>
@@ -511,7 +511,7 @@ function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => v
       data-name="Worries container"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
-        <p className="block">{getUI().home.whatWorriesYou}</p>
+        <h2 className="block">{getUI().home.whatWorriesYou}</h2>
       </div>
       <WorriesList onGoToTheme={onGoToTheme} />
     </div>
@@ -534,12 +534,12 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
       data-name="Emergency card"
     >
       <div className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-[230px] sm:w-[242px] md:w-[249px]">
-        <div
-          className="typography-h2 min-w-full text-[#313131] text-left"
-          style={{ width: "min-content" }}
-        >
-          <p className="block">{card.title}</p>
-        </div>
+          <div
+            className="typography-h2 min-w-full text-[#313131] text-left"
+            style={{ width: "min-content" }}
+          >
+            <h2 className="block">{card.title}</h2>
+          </div>
         <div
           className="typography-body min-w-full text-[#333333] text-left"
           style={{ width: "min-content" }}
@@ -656,7 +656,7 @@ function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (tec
       {/* Заголовок с отступами как у основного контента */}
       <div className="px-[16px] sm:px-[20px] md:px-[21px] max-w-[calc(351px+32px)] sm:max-w-[calc(351px+40px)] md:max-w-[calc(351px+42px)] mx-auto w-full mb-4 sm:mb-5">
         <div className="typography-h2 text-[#e1ff00] text-left w-full">
-          <p className="block">{getUI().home.quickHelpTitle}</p>
+          <h2 className="block">{getUI().home.quickHelpTitle}</h2>
         </div>
       </div>
       
@@ -732,7 +732,7 @@ function FollowButton({
         <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-center p-0">
           {icon}
           <div className="typography-h2 text-[#2d2b2b] text-nowrap text-right">
-            <p className="block whitespace-pre">Follow</p>
+            <h2 className="block whitespace-pre">Follow</h2>
           </div>
         </div>
       </div>

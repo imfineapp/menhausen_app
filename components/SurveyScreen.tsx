@@ -189,7 +189,7 @@ function HeroBlockQuestion() {
     <div className="flex flex-col gap-5 items-center justify-start leading-[0] text-center w-full">
       {/* Основной заголовок опроса */}
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <p className="block">How are you feeling today?</p>
+        <h1 className="block">How are you feeling today?</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">Select the option that best describes your current mood</p>

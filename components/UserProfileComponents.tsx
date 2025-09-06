@@ -47,7 +47,7 @@ export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
   return (
     <div className="flex flex-col gap-2.5 items-center justify-start w-full" data-name="User info block">
       <div className="typography-h2 text-[#e1ff00] text-center">
-        <p className="block">Hero #1275</p>
+        <h2 className="block">Hero #1275</h2>
       </div>
       <div className="flex items-center gap-4 sm:gap-5">
         <div className="typography-body text-[#696969] text-left">

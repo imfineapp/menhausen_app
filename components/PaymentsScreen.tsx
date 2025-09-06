@@ -81,7 +81,7 @@ function PlanInfo() {
         <p className="block">Your current plan</p>
       </div>
       <div className="[grid-area:1_/_1] typography-h2 ml-[74px] mt-[30px] text-[#e1ff00] translate-x-[-50%]">
-        <p className="block text-nowrap whitespace-pre">FREE</p>
+        <h2 className="block text-nowrap whitespace-pre">FREE</h2>
       </div>
     </div>
   );
@@ -130,7 +130,7 @@ function PremiumContainer() {
     >
       <ThemeBlockBackground1 />
       <div className="typography-h2 text-[#e1ff00] text-center text-nowrap">
-        <p className="block whitespace-pre">Premium</p>
+        <h2 className="block whitespace-pre">Premium</h2>
       </div>
       <div className="typography-body h-[131px] text-[#ffffff] text-left w-[310px]">
         <p className="block mb-0">Opened all themes and cards</p>

@@ -111,7 +111,7 @@ function NoLoginTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="typography-h2 text-[#e1ff00] w-full">
-        <p className="block">{content.ui.onboarding.screen02.benefits[0]}</p>
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[0]}</h2>
       </div>
       {/* Описание преимущества */}
       <div className="typography-body text-[#ffffff] w-full">
@@ -190,7 +190,7 @@ function EncryptionTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <p className="block">{content.ui.onboarding.screen02.benefits[1]}</p>
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[1]}</h2>
       </div>
     </div>
   );
@@ -263,7 +263,7 @@ function AlwaysWithYouTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <p className="block">{content.ui.onboarding.screen02.benefits[2]}</p>
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[2]}</h2>
       </div>
     </div>
   );
@@ -386,7 +386,7 @@ function ScienceTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <p className="block">{content.ui.onboarding.screen02.benefits[3]}</p>
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[3]}</h2>
       </div>
     </div>
   );

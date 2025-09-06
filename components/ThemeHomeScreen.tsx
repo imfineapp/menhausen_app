@@ -153,12 +153,12 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
             <div className={`typography-h2 ${
               isInactive ? "text-[#696969]" : "text-[#e1ff00]"
             } text-left w-[158px]`}>
-              <p className="block">{card.title}</p>
+              <h2 className="block">{card.title}</h2>
             </div>
             {card.isActive && (
               <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
                 <div className="typography-h2 text-[#e1ff00] text-nowrap text-right">
-                  <p className="block whitespace-pre">{card.checkins}</p>
+                  <h2 className="block whitespace-pre">{card.checkins}</h2>
                 </div>
                 <CheckinIcon />
               </div>
