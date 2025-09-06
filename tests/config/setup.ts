@@ -21,12 +21,21 @@ afterEach(() => {
 beforeEach(() => {
   // Mock localStorage
   const localStorageMock = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
+    getItem: vi.fn((key: string) => {
+      return localStorageMock.storage[key] || null;
+    }),
+    setItem: vi.fn((key: string, value: string) => {
+      localStorageMock.storage[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete localStorageMock.storage[key];
+    }),
+    clear: vi.fn(() => {
+      localStorageMock.storage = {};
+    }),
     key: vi.fn(),
     length: 0,
+    storage: {} as Record<string, string>,
   };
   
   Object.defineProperty(window, 'localStorage', {
@@ -85,6 +94,31 @@ beforeEach(() => {
     writable: true,
     value: true,
   });
+
+  // Mock content loading
+  vi.mock('../components/ContentContext', () => ({
+    ContentProvider: ({ children }: { children: React.ReactNode }) => children,
+    useContent: vi.fn(() => ({
+      currentLanguage: 'en',
+      content: {
+        ui: {
+          home: {
+            greeting: 'Good morning'
+          },
+          language: 'Language',
+          english: 'English',
+          russian: 'Russian'
+        }
+      },
+      setLanguage: vi.fn(),
+      getLocalizedText: vi.fn((key: string) => key),
+      getUI: vi.fn(() => ({
+        language: 'Language',
+        english: 'English',
+        russian: 'Russian'
+      }))
+    }))
+  }));
 
   // Mock Telegram WebApp API
   Object.defineProperty(window, 'Telegram', {

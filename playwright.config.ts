@@ -77,6 +77,8 @@ export default defineConfig({
         // Mental health app specific settings
         colorScheme: 'light',
         locale: 'en-US',
+        // Load authentication state
+        storageState: 'tests/e2e/auth.json',
         
         // CI-specific launch options
         ...(process.env.CI && {
@@ -124,6 +126,5 @@ export default defineConfig({
   outputDir: 'test-results/',
   
   /* Global setup and teardown */
-  // globalSetup: './tests/config/global-setup.ts',
-  // globalTeardown: './tests/config/global-teardown.ts',
+  globalSetup: './tests/e2e/global-setup.ts',
 });

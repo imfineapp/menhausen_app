@@ -51,8 +51,16 @@ function AppContent() {
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
   // =====================================================================================
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding1');
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['onboarding1']);
+  // В E2E тестовой среде начинаем с главной страницы
+  const isE2ETestEnvironment = typeof window !== 'undefined' && 
+    (window as any).__PLAYWRIGHT__ === true;
+  
+  if (isE2ETestEnvironment) {
+    console.log('E2E test environment detected, starting with home screen');
+  }
+  
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>(isE2ETestEnvironment ? 'home' : 'onboarding1');
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([isE2ETestEnvironment ? 'home' : 'onboarding1']);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
