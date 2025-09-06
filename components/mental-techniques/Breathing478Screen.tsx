@@ -68,10 +68,10 @@ function InteractiveTimer({
   isRunning: boolean; 
   onToggle: () => void; 
 }) {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [timeLeft, setTimeLeft] = useState(duration);
@@ -162,10 +162,10 @@ function InteractiveTimer({
  */
 export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [currentStep, setCurrentStep] = useState(0);

@@ -85,10 +85,10 @@ function BreathingTimer({
   onToggle: () => void;
   onComplete: () => void;
 }) {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   return (
@@ -115,10 +115,10 @@ function BreathingTimer({
  */
 function AdditionalInfo({ technique }: { technique: any }) {
   const { getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   return (
@@ -142,10 +142,10 @@ function AdditionalInfo({ technique }: { technique: any }) {
  */
 export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   // Получаем данные техники из системы контента

@@ -20,10 +20,10 @@ function AnchorVisualization({
 }: { 
   currentStep: number; 
 }) {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const steps = [
@@ -69,10 +69,10 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [value, setValue] = useState("");
@@ -184,10 +184,10 @@ function ConfirmationCheckbox({
  */
 export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
   
   const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
+    return language === 'ru' ? ruText : enText;
   };
   
   const [currentStep, setCurrentStep] = useState(0);
