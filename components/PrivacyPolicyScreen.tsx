@@ -81,7 +81,7 @@ function MainContent() {
     >
       {/* Заголовок страницы */}
       <div className="typography-h2 text-[#e1ff00] text-center w-full">
-        <p className="block">{getText('Политика конфиденциальности', 'Privacy policy')}</p>
+        <h2 className="block">{getText('Политика конфиденциальности', 'Privacy policy')}</h2>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}

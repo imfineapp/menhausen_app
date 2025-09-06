@@ -73,9 +73,9 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
     >
       {/* Заголовок с итоговым сообщением */}
       <div className="typography-h2 text-[#e1ff00] w-full text-center">
-        <p className="block">
+        <h2 className="block">
           {finalMessage}
-        </p>
+        </h2>
       </div>
       
       {/* Блок с задачами и объяснением */}

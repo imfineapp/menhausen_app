@@ -89,7 +89,7 @@ function RatingTextContainer() {
       data-name="Rating text container"
     >
       <div className="[grid-area:1_/_1] typography-h2 text-[#e1ff00] w-full">
-        <p className="block">{content.ui.cards.rating.title}</p>
+        <h2 className="block">{content.ui.cards.rating.title}</h2>
       </div>
       <div className="[grid-area:1_/_1] typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
         <p className="block">{content.ui.cards.rating.subtitle}</p>

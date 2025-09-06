@@ -73,7 +73,7 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
       data-name="Card Header"
     >
       <div className="typography-h2 text-[#e1ff00] w-full">
-        <p className="block">{cardTitle}</p>
+        <h2 className="block">{cardTitle}</h2>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">{cardDescription || defaultDescription}</p>
@@ -117,7 +117,7 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       data-name="Checkins Container"
     >
       <div className="typography-h2 mb-[39px] text-[#e1ff00] text-left w-full">
-        <p className="block">{getLocalizedText(content.ui.cards.checkins)}</p>
+        <h2 className="block">{getLocalizedText(content.ui.cards.checkins)}</h2>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"

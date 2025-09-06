@@ -119,10 +119,10 @@ function CardInfo({ cardTitle, formattedDate }: { cardTitle: string; formattedDa
       data-name="Card Info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
-        <p className="typography-h2">
+        <h2 className="typography-h2">
           <span>{cardTitle} / </span>
           <span className="text-[#696969]">{formattedDate}</span>
-        </p>
+        </h2>
       </div>
       <SeparationLine />
     </div>
