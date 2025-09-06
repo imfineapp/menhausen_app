@@ -72,22 +72,22 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
       data-name="Container"
     >
       {/* Заголовок с итоговым сообщением */}
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full text-center">
-        <p className="block leading-[0.8]">
+      <div className="typography-h2 text-[#e1ff00] w-full text-center">
+        <p className="block">
           {finalMessage}
         </p>
       </div>
       
       {/* Блок с задачами и объяснением */}
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] w-full text-center">
+      <div className="typography-body text-[#ffffff] w-full text-center">
         {/* Практическое задание */}
-        <p className="block leading-none mb-0 text-[18px] sm:text-[19px] md:text-[20px]">
+        <p className="block mb-0 typography-body">
           {practiceTask}
         </p>
-        <p className="block leading-none mb-0 text-[18px] sm:text-[19px] md:text-[20px]">&nbsp;</p>
+        <p className="block mb-0 typography-body">&nbsp;</p>
         
         {/* Объяснение "Почему" */}
-        <p className="leading-none text-[18px] sm:text-[19px] md:text-[20px]">
+        <p className="typography-body">
           <span className="text-[#e1ff00]">{content.ui.cards.final.why}</span>
           <span> {whyExplanation}</span>
         </p>

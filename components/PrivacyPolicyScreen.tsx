@@ -80,12 +80,12 @@ function MainContent() {
       data-name="main_content"
     >
       {/* Заголовок страницы */}
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
-        <p className="block leading-[0.8]">{getText('Политика конфиденциальности', 'Privacy policy')}</p>
+      <div className="typography-h2 text-[#e1ff00] text-center w-full">
+        <p className="block">{getText('Политика конфиденциальности', 'Privacy policy')}</p>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="typography-caption text-[#ffffff] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="block leading-none mb-0">{getText('Дата вступления в силу: 2 августа 2025', 'Effective Date: August 2, 2025')}</p>

@@ -63,7 +63,7 @@ function TextButton({ onSkip }: { onSkip: () => void }) {
     <button
       onClick={onSkip}
       className="absolute left-1/2 transform -translate-x-1/2 bottom-[35px] 
-                font-sans font-bold text-[15px] text-[#e1ff00]
+                typography-button text-[#e1ff00]
                 hover:opacity-80 active:scale-[0.98] transition-all duration-200
                 min-h-[44px] min-w-[44px] cursor-pointer"
       data-name="Skip Button"
@@ -91,8 +91,8 @@ function NumberButton({ number, onPress }: { number: string; onPress: (num: stri
         </svg>
       </div>
       {/* Цифра */}
-      <div className="absolute font-sans font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
-        <p className="block leading-[0.8] whitespace-pre">{number}</p>
+      <div className="absolute typography-h2 inset-[35.29%_39.71%_36.77%_39.71%] text-[#ffffff] text-center text-nowrap">
+        <p className="block whitespace-pre">{number}</p>
       </div>
     </button>
   );
@@ -186,8 +186,8 @@ function PinMessage({ show }: { show: boolean }) {
   
   return (
     <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="font-sans font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
-        <p className="block leading-none">PIN code does not match, please try again</p>
+      <div className="typography-body text-[#e1ff00] text-center">
+        <p className="block">PIN code does not match, please try again</p>
       </div>
     </div>
   );
@@ -214,8 +214,8 @@ function PinSetup({
       <PinBlock4 pinLength={pinLength} />
       
       {/* Инструкция */}
-      <div className="font-sans font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
-        <p className="block leading-none">
+      <div className="typography-body text-[#ffffff] text-center w-full">
+        <p className="block">
           {mode === 'create' 
             ? content.ui.pinSetup.subtitle
             : content.ui.pinSetup.confirmPin
@@ -311,10 +311,10 @@ export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetup
             
             {/* Заголовок */}
             <div className="text-center mb-12">
-              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
+              <h1 className="typography-h1 text-white mb-6">
                 {content.ui.pinSetup.title}
               </h1>
-              <p className="font-sans text-white text-[20px]">
+              <p className="typography-body text-white">
                 {content.ui.pinSetup.subtitle}
               </p>
             </div>

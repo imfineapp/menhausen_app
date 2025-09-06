@@ -75,8 +75,8 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
       className="flex flex-col items-center justify-start p-0 w-full max-w-[351px]"
       data-name="agreement text block"
     >
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[0px] text-center w-full">
-        <p className="leading-none text-[14px]" style={{ lineHeight: '0.9' }}>
+      <div className="typography-caption text-[#ffffff] text-center w-full">
+        <p className="block">
           <span>{content.ui.onboarding.screen01.agreementText} </span>
           <a
             href="#"
@@ -84,18 +84,18 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
               e.preventDefault();
               onShowTerms();
             }}
-            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
+            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] typography-caption cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
             {content.ui.onboarding.screen01.termsText}
           </a>
-          <span className="font-sans not-italic"> и</span>
+          <span className="typography-caption"> и</span>
           <a
             href="#"
             onClick={(e) => {
               e.preventDefault();
               onShowPrivacy();
             }}
-            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] font-sans not-italic cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
+            className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] typography-caption cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
             {` ${content.ui.onboarding.screen01.privacyText}`}
           </a>
@@ -117,11 +117,11 @@ function MainContent() {
       className="flex flex-col gap-10 items-center justify-start leading-[0] text-center w-full max-w-[351px]"
       data-name="main_content"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">{content.ui.onboarding.screen01.title}</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <p className="block">{content.ui.onboarding.screen01.title}</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">{content.ui.onboarding.screen01.subtitle}</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen01.subtitle}</p>
       </div>
     </div>
   );

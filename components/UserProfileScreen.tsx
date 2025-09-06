@@ -163,8 +163,8 @@ export function UserProfileScreen({
         
         {/* Секция "Your status" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">{t('your_status')}</p>
+          <div className="typography-h2 text-[#e1ff00] text-left">
+            <p className="block">{t('your_status')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
@@ -211,16 +211,16 @@ export function UserProfileScreen({
         
         {/* Секция "Settings" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">{t('settings')}</p>
+          <div className="typography-h2 text-[#e1ff00] text-left">
+            <p className="block">{t('settings')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
               icon={<LanguageIcon />}
               title={t('language')}
               rightElement={
-                <div className="font-sans text-[18px] sm:text-[20px] text-[#ffffff] text-right">
-                  <p className="block leading-none">{language === 'en' ? t('english') : t('russian')}</p>
+                <div className="typography-body text-[#ffffff] text-right">
+                  <p className="block">{language === 'en' ? t('english') : t('russian')}</p>
                 </div>
               }
               onClick={handleLanguage}

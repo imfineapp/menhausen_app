@@ -180,7 +180,7 @@ export function SurveyScreenTemplate({
                     <div className="w-2 h-2 rounded-full bg-black" />
                   )}
                 </div>
-                <span className="text-responsive-base">{option.text}</span>
+                <span className="typography-body">{option.text}</span>
               </div>
             </button>
           );
@@ -205,9 +205,9 @@ export function SurveyScreenTemplate({
           maxLength={500}
         />
         {localizedScreen.helpText && (
-          <p className="text-sm text-[#999999]">{localizedScreen.helpText}</p>
+          <p className="typography-caption text-[#999999]">{localizedScreen.helpText}</p>
         )}
-        <div className="text-right text-xs text-[#666666]">
+        <div className="text-right typography-small text-[#666666]">
           {textInput.length}/500
         </div>
       </div>
@@ -233,11 +233,11 @@ export function SurveyScreenTemplate({
             
             {/* Заголовок и подзаголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-heading font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
+              <h1 className="typography-h1 text-white mb-4">
                 {localizedScreen.title}
               </h1>
               {localizedScreen.subtitle && (
-                <p className="text-responsive-base text-[#d4d4d4]">
+                <p className="typography-body text-[#d4d4d4]">
                   {localizedScreen.subtitle}
                 </p>
               )}
@@ -246,7 +246,7 @@ export function SurveyScreenTemplate({
             {/* Ошибка валидации */}
             {showError && (
               <div className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-xl">
-                <p className="text-red-400 text-sm text-center">
+                <p className="typography-caption text-red-400 text-center">
                   {uiText.survey.selectAtLeastOne}
                 </p>
               </div>
@@ -260,7 +260,7 @@ export function SurveyScreenTemplate({
             {/* Помощь и дополнительная информация */}
             {localizedScreen.helpText && screen.questionType !== 'text-input' && (
               <div className="mt-6 p-4 bg-[#2a2a2a] rounded-xl">
-                <p className="text-sm text-[#999999] text-center">
+                <p className="typography-caption text-[#999999] text-center">
                   {localizedScreen.helpText}
                 </p>
               </div>

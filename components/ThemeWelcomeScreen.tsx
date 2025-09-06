@@ -115,10 +115,10 @@ export function ThemeWelcomeScreen({
             
             {/* Заголовок */}
             <div className="text-center mb-12">
-              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
+              <h1 className="typography-h1 text-white mb-6">
                 {_themeTitle}
               </h1>
-              <p className="font-sans text-white text-[20px]">
+              <p className="typography-body text-white">
                 {isThemeLocked ? 'Unlock this theme to get started' : content.ui.themes.welcome.subtitle}
               </p>
             </div>

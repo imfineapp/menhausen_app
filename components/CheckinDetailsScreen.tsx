@@ -118,8 +118,8 @@ function CardInfo({ cardTitle, formattedDate }: { cardTitle: string; formattedDa
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Card Info"
     >
-      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-left w-full">
-        <p className="leading-[0.8] text-[20px] sm:text-[22px] md:text-[24px]">
+      <div className="typography-h2 text-[#e1ff00] text-left w-full">
+        <p className="typography-h2">
           <span>{cardTitle} / </span>
           <span className="text-[#696969]">{formattedDate}</span>
         </p>
@@ -145,8 +145,8 @@ function InputAnswerBlock({ answer, height = 85 }: { answer: string; height?: nu
       />
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className={`box-border content-stretch flex flex-row gap-2.5 items-center justify-center p-[20px] relative w-full`} style={{ minHeight: `${height}px` }}>
-          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full">
-            <p className="block leading-none">{answer}</p>
+          <div className="typography-body text-[#cfcfcf] text-left w-full">
+            <p className="block">{answer}</p>
           </div>
         </div>
       </div>
@@ -163,20 +163,20 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
   return (
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
       {/* Первый вопрос */}
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full">
-        <p className="block leading-none">{checkinData.question1}</p>
+      <div className="typography-body text-[#e1ff00] text-left w-full">
+        <p className="block">{checkinData.question1}</p>
       </div>
       <InputAnswerBlock answer={checkinData.answer1} height={85} />
       
       {/* Второй вопрос */}
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full">
-        <p className="block leading-none">{checkinData.question2}</p>
+      <div className="typography-body text-[#e1ff00] text-left w-full">
+        <p className="block">{checkinData.question2}</p>
       </div>
       <InputAnswerBlock answer={checkinData.answer2} height={83} />
       
       {/* Инструкции и пояснения */}
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full">
-        <p className="block leading-none mb-0">
+      <div className="typography-body text-[#ffffff] text-left w-full">
+        <p className="block mb-0">
           {checkinData.instructions}
         </p>
         <p className="block leading-none mb-0">&nbsp;</p>

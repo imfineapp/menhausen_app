@@ -25,6 +25,15 @@ export default {
         '2xl': '1280px',
       },
       fontSize: {
+        // Основные типографические размеры согласно Guidelines.md
+        'h1': 'clamp(24px, 5vw, 32px)',
+        'h2': 'clamp(20px, 4vw, 28px)',
+        'h3': 'clamp(18px, 3.5vw, 24px)',
+        'body': 'clamp(14px, 2.5vw, 18px)',
+        'button': '15px',
+        'caption': 'clamp(12px, 2vw, 14px)',
+        'small': 'clamp(10px, 1.8vw, 12px)',
+        // Обратная совместимость с существующими размерами
         'responsive-xs': 'clamp(10px, 2vw, 12px)',
         'responsive-sm': 'clamp(12px, 2.2vw, 14px)',
         'responsive-base': 'clamp(14px, 2.5vw, 16px)',

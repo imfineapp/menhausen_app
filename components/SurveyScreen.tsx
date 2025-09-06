@@ -123,7 +123,7 @@ function SurveyItem({ option, selected, onToggle }: {
       <div className="absolute box-border content-stretch flex flex-row gap-5 items-center justify-start left-[5.7%] p-0 right-[5.7%] top-1/2 translate-y-[-50%]">
         <RadioButton selected={selected} />
         <div 
-          className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[20px] text-left ${
+          className={`typography-body text-left ${
             selected ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}
         >
@@ -188,11 +188,11 @@ function HeroBlockQuestion() {
   return (
     <div className="flex flex-col gap-5 items-center justify-start leading-[0] text-center w-full">
       {/* Основной заголовок опроса */}
-      <div className="font-heading font-normal leading-[0.8] relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">How are you feeling today?</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <p className="block">How are you feeling today?</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">Select the option that best describes your current mood</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">Select the option that best describes your current mood</p>
       </div>
     </div>
   );
