@@ -22,7 +22,8 @@ export const appContent: AppContent = {
       subtitle: 'Loading...',
       buttonText: 'Start',
       privacyText: 'Privacy',
-      termsText: 'Terms'
+      termsText: 'Terms',
+      agreementText: 'By clicking the button you agree to the'
     },
     screen02: {
       title: 'Features',
@@ -90,7 +91,10 @@ export const appContent: AppContent = {
       next: 'Next',
       skip: 'Skip',
       complete: 'Complete',
-      continue: 'Continue'
+      continue: 'Continue',
+      send: 'Send',
+      start: 'Start',
+      unlock: 'Unlock'
     },
     common: {
       loading: 'Loading...',
@@ -123,6 +127,77 @@ export const appContent: AppContent = {
       selectAtLeastOne: 'Select at least one',
       optional: 'Optional',
       required: 'Required'
+    },
+    onboarding: {
+      screen01: {
+        title: 'Welcome',
+        subtitle: 'Get started',
+        buttonText: 'Next',
+        privacyText: 'Privacy',
+        termsText: 'Terms',
+        agreementText: 'By clicking'
+      },
+      screen02: {
+        title: 'Benefits',
+        benefits: ['Benefit 1'],
+        buttonText: 'Start'
+      }
+    },
+    pinSetup: {
+      title: 'PIN Setup',
+      subtitle: 'Create PIN',
+      createPin: 'Create PIN',
+      confirmPin: 'Confirm PIN',
+      pinMismatch: 'PIN mismatch',
+      pinTooShort: 'PIN too short',
+      skip: 'Skip',
+      back: 'Back'
+    },
+    checkin: {
+      title: 'Check-in',
+      subtitle: 'How are you?',
+      moodOptions: {
+        down: 'Down',
+        anxious: 'Anxious',
+        neutral: 'Neutral',
+        energized: 'Energized',
+        happy: 'Happy'
+      },
+      send: 'Send',
+      back: 'Back'
+    },
+    themes: {
+      welcome: {
+        title: 'Theme Welcome',
+        subtitle: 'Welcome to theme',
+        start: 'Start',
+        unlock: 'Unlock'
+      },
+      home: {
+        progress: 'Progress',
+        checkins: 'Check-ins',
+        level: 'Level',
+        nextLevel: 'Next Level'
+      }
+    },
+    cards: {
+      checkins: 'Check-ins',
+      welcome: {
+        subtitle: 'Welcome to card'
+      },
+      question: {
+        placeholder: 'Enter your answer',
+        encryption: 'Your answer is encrypted'
+      },
+      final: {
+        why: 'Why:'
+      },
+      rating: {
+        title: 'Rate Card',
+        subtitle: 'How was it?',
+        placeholder: 'Share your thoughts',
+        submit: 'Submit'
+      }
     }
   },
   mentalTechniques: {},

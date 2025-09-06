@@ -1,7 +1,7 @@
 // Простые тесты для проверки работы i18n системы
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { LanguageProvider, useTranslation } from '../../components/LanguageContext';
+import { LanguageProvider, useTranslation, useLanguage } from '../../components/LanguageContext';
 
 // Тестовый компонент для проверки переводов
 function TestComponent() {
@@ -37,9 +37,10 @@ describe('Simple i18n Tests', () => {
     expect(screen.getByTestId('russian-text')).toHaveTextContent('Russian');
   });
 
-  test('должен переключаться на русский язык', () => {
+  test('должен переключаться на русский язык', async () => {
     const TestComponentWithSwitch = () => {
-      const { t, language, setLanguage } = useTranslation();
+      const { t, language } = useTranslation();
+      const { setLanguage } = useLanguage();
       
       return (
         <div>
@@ -62,7 +63,10 @@ describe('Simple i18n Tests', () => {
     // Переключаем на русский
     screen.getByText('Switch to Russian').click();
     
-    expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+    // Ждем обновления состояния
+    await waitFor(() => {
+      expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+    });
     expect(screen.getByTestId('language-text')).toHaveTextContent('Язык');
   });
 
@@ -76,9 +80,9 @@ describe('Simple i18n Tests', () => {
     expect(screen.getByTestId('missing-key')).toHaveTextContent('nonexistent_key');
   });
 
-  test('должен сохранять язык в localStorage', () => {
+  test('должен сохранять язык в localStorage', async () => {
     const TestComponentWithSwitch = () => {
-      const { setLanguage } = useTranslation();
+      const { setLanguage } = useLanguage();
       
       return (
         <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
@@ -93,10 +97,13 @@ describe('Simple i18n Tests', () => {
 
     screen.getByText('Switch to Russian').click();
     
-    expect(localStorage.getItem('menhausen-language')).toBe('ru');
+    // Ждем сохранения в localStorage
+    await waitFor(() => {
+      expect(localStorage.getItem('menhausen-language')).toBe('ru');
+    });
   });
 
-  test('должен восстанавливать язык из localStorage', () => {
+  test('должен восстанавливать язык из localStorage', async () => {
     localStorage.setItem('menhausen-language', 'ru');
 
     render(
@@ -105,7 +112,10 @@ describe('Simple i18n Tests', () => {
       </LanguageProvider>
     );
 
-    expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+    // Ждем загрузки языка из localStorage
+    await waitFor(() => {
+      expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
+    });
     expect(screen.getByTestId('language-text')).toHaveTextContent('Язык');
   });
 });

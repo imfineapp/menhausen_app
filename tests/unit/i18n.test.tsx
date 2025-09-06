@@ -1,8 +1,8 @@
 // Тесты для проверки работы i18n системы
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { LanguageProvider, useTranslation } from '../../components/LanguageContext';
-import { ContentProvider } from '../../components/ContentContext';
+import { LanguageProvider, useTranslation, useLanguage } from '../../components/LanguageContext';
+import { ContentProvider, useContent } from '../../components/ContentContext';
 import { LanguageModal } from '../../components/LanguageModal';
 import { UserProfileScreen } from '../../components/UserProfileScreen';
 import { AboutAppScreen } from '../../components/AboutAppScreen';
@@ -20,9 +20,7 @@ const mockOnShowUnderConstruction = vi.fn();
 // Обертка для тестов с провайдерами
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <LanguageProvider>
-    <ContentProvider>
-      {children}
-    </ContentProvider>
+    {children}
   </LanguageProvider>
 );
 
@@ -35,30 +33,36 @@ describe('i18n System Tests', () => {
 
   describe('LanguageContext', () => {
     test('должен инициализироваться с английским языком по умолчанию', () => {
+      const TestComponent = () => {
+        const { language } = useLanguage();
+        return <span data-testid="current-language">{language}</span>;
+      };
+
       render(
         <TestWrapper>
-          <div data-testid="language-display">
-            <LanguageProvider>
-              {({ language }) => <span>{language}</span>}
-            </LanguageProvider>
-          </div>
+          <TestComponent />
         </TestWrapper>
       );
 
-      expect(screen.getByText('en')).toBeInTheDocument();
+      expect(screen.getByTestId('current-language')).toHaveTextContent('en');
     });
 
     test('должен переключаться на русский язык', async () => {
+      const TestComponent = () => {
+        const { language } = useLanguage();
+        const { setLanguage } = useLanguage();
+        
+        return (
+          <div>
+            <span data-testid="current-language">{language}</span>
+            <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
+          </div>
+        );
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ language, setLanguage }) => (
-              <div>
-                <span data-testid="current-language">{language}</span>
-                <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
-              </div>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -72,13 +76,17 @@ describe('i18n System Tests', () => {
     });
 
     test('должен сохранять выбранный язык в localStorage', async () => {
+      const TestComponent = () => {
+        const { setLanguage } = useLanguage();
+        
+        return (
+          <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
+        );
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ setLanguage }) => (
-              <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -92,16 +100,20 @@ describe('i18n System Tests', () => {
 
   describe('LanguageModal', () => {
     test('должен отображать модальное окно выбора языка', () => {
+      const TestComponent = () => {
+        const { openLanguageModal } = useLanguage();
+        
+        return (
+          <div>
+            <button onClick={openLanguageModal}>Open Language Modal</button>
+            <LanguageModal />
+          </div>
+        );
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ openLanguageModal }) => (
-              <div>
-                <button onClick={openLanguageModal}>Open Language Modal</button>
-                <LanguageModal />
-              </div>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -112,17 +124,21 @@ describe('i18n System Tests', () => {
     });
 
     test('должен переключать язык при подтверждении', async () => {
+      const TestComponent = () => {
+        const { language, openLanguageModal } = useLanguage();
+        
+        return (
+          <div>
+            <span data-testid="current-language">{language}</span>
+            <button onClick={openLanguageModal}>Open Language Modal</button>
+            <LanguageModal />
+          </div>
+        );
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ language, openLanguageModal }) => (
-              <div>
-                <span data-testid="current-language">{language}</span>
-                <button onClick={openLanguageModal}>Open Language Modal</button>
-                <LanguageModal />
-              </div>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -142,17 +158,21 @@ describe('i18n System Tests', () => {
     });
 
     test('должен отменять изменения при нажатии Cancel', () => {
+      const TestComponent = () => {
+        const { language, openLanguageModal } = useLanguage();
+        
+        return (
+          <div>
+            <span data-testid="current-language">{language}</span>
+            <button onClick={openLanguageModal}>Open Language Modal</button>
+            <LanguageModal />
+          </div>
+        );
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ language, openLanguageModal }) => (
-              <div>
-                <span data-testid="current-language">{language}</span>
-                <button onClick={openLanguageModal}>Open Language Modal</button>
-                <LanguageModal />
-              </div>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -175,17 +195,23 @@ describe('i18n System Tests', () => {
 
   describe('Content Loading', () => {
     test('должен загружать контент для выбранного языка', async () => {
+      const TestComponent = () => {
+        const { content, currentLanguage } = useContent();
+        
+        return (
+          <div>
+            <span data-testid="current-language">{currentLanguage}</span>
+            <span data-testid="ui-content">
+              {content?.ui?.home?.greeting || 'Loading...'}
+            </span>
+          </div>
+        );
+      };
+
       render(
         <TestWrapper>
           <ContentProvider>
-            {({ content, currentLanguage }) => (
-              <div>
-                <span data-testid="current-language">{currentLanguage}</span>
-                <span data-testid="ui-content">
-                  {content?.ui?.home?.greeting || 'Loading...'}
-                </span>
-              </div>
-            )}
+            <TestComponent />
           </ContentProvider>
         </TestWrapper>
       );
@@ -204,17 +230,19 @@ describe('i18n System Tests', () => {
     test('UserProfileScreen должен использовать переводы', async () => {
       render(
         <TestWrapper>
-          <UserProfileScreen
-            onBack={mockOnBack}
-            onShowAboutApp={mockOnShowAboutApp}
-            onShowPinSettings={mockOnShowPinSettings}
-            onShowPrivacy={mockOnShowPrivacy}
-            onShowTerms={mockOnShowTerms}
-            onShowDeleteAccount={mockOnShowDeleteAccount}
-            onShowPayments={mockOnShowPayments}
-            onShowUnderConstruction={mockOnShowUnderConstruction}
-            userHasPremium={false}
-          />
+          <ContentProvider>
+            <UserProfileScreen
+              onBack={mockOnBack}
+              onShowAboutApp={mockOnShowAboutApp}
+              onShowPinSettings={mockOnShowPinSettings}
+              onShowPrivacy={mockOnShowPrivacy}
+              onShowTerms={mockOnShowTerms}
+              onShowDeleteAccount={mockOnShowDeleteAccount}
+              onShowPayments={mockOnShowPayments}
+              onShowUnderConstruction={mockOnShowUnderConstruction}
+              userHasPremium={false}
+            />
+          </ContentProvider>
         </TestWrapper>
       );
 
@@ -253,13 +281,14 @@ describe('i18n System Tests', () => {
       // Устанавливаем русский язык в localStorage
       localStorage.setItem('menhausen-language', 'ru');
 
+      const TestComponent = () => {
+        const { language } = useLanguage();
+        return <span data-testid="current-language">{language}</span>;
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ language }) => (
-              <span data-testid="current-language">{language}</span>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -270,13 +299,14 @@ describe('i18n System Tests', () => {
       // Устанавливаем некорректное значение
       localStorage.setItem('menhausen-language', 'invalid');
 
+      const TestComponent = () => {
+        const { language } = useLanguage();
+        return <span data-testid="current-language">{language}</span>;
+      };
+
       render(
         <TestWrapper>
-          <LanguageProvider>
-            {({ language }) => (
-              <span data-testid="current-language">{language}</span>
-            )}
-          </LanguageProvider>
+          <TestComponent />
         </TestWrapper>
       );
 

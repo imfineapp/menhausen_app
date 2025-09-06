@@ -76,6 +76,7 @@ export interface OnboardingContent {
     buttonText: LocalizedContent;
     privacyText: LocalizedContent;
     termsText: LocalizedContent;
+    agreementText: LocalizedContent;
   };
   screen02: {
     title: LocalizedContent;
@@ -145,6 +146,9 @@ export interface UITexts {
     skip: LocalizedContent;
     complete: LocalizedContent;
     continue: LocalizedContent;
+    send: LocalizedContent;
+    start: LocalizedContent;
+    unlock: LocalizedContent;
   };
   common: {
     loading: LocalizedContent;
@@ -177,6 +181,77 @@ export interface UITexts {
     selectAtLeastOne: LocalizedContent;
     optional: LocalizedContent;
     required: LocalizedContent;
+  };
+  onboarding: {
+    screen01: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      buttonText: LocalizedContent;
+      privacyText: LocalizedContent;
+      termsText: LocalizedContent;
+      agreementText: LocalizedContent;
+    };
+    screen02: {
+      title: LocalizedContent;
+      benefits: LocalizedContent[];
+      buttonText: LocalizedContent;
+    };
+  };
+  pinSetup: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    createPin: LocalizedContent;
+    confirmPin: LocalizedContent;
+    pinMismatch: LocalizedContent;
+    pinTooShort: LocalizedContent;
+    skip: LocalizedContent;
+    back: LocalizedContent;
+  };
+  checkin: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    moodOptions: {
+      down: LocalizedContent;
+      anxious: LocalizedContent;
+      neutral: LocalizedContent;
+      energized: LocalizedContent;
+      happy: LocalizedContent;
+    };
+    send: LocalizedContent;
+    back: LocalizedContent;
+  };
+  themes: {
+    welcome: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      start: LocalizedContent;
+      unlock: LocalizedContent;
+    };
+    home: {
+      progress: LocalizedContent;
+      checkins: LocalizedContent;
+      level: LocalizedContent;
+      nextLevel: LocalizedContent;
+    };
+  };
+  cards: {
+    checkins: LocalizedContent;
+    welcome: {
+      subtitle: LocalizedContent;
+    };
+    question: {
+      placeholder: LocalizedContent;
+      encryption: LocalizedContent;
+    };
+    final: {
+      why: LocalizedContent;
+    };
+    rating: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      placeholder: LocalizedContent;
+      submit: LocalizedContent;
+    };
   };
 }
 
@@ -280,6 +355,7 @@ export interface ContentContextType {
   getThemeCards: (themeId: string) => CardData[];
   getSurveyScreen: (screenId: keyof SurveyContent) => SurveyScreenData | undefined;
   getMentalTechnique: (techniqueId: string) => MentalTechniqueData | undefined;
+  getMentalTechniques: () => MentalTechniqueData[];
   getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
   getUI: () => UITexts;
