@@ -110,5 +110,129 @@
         "content": "Start with 2-3 cycles, gradually increasing to 10. Monitor comfort - if you feel tension, slow down the pace. Best practiced sitting with straight back, but can be done standing or lying down."
       }
     ]
+  },
+  "grounding-5-4-3-2-1": {
+    "id": "grounding-5-4-3-2-1",
+    "title": "5-4-3-2-1 Grounding",
+    "subtitle": "Using senses for stabilization",
+    "duration": "3 minutes",
+    "difficulty": "beginner",
+    "emergencyLevel": "high",
+    "category": "grounding",
+    "isPremium": false,
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "Name 5 things you can see",
+        "duration": 30,
+        "visual": "grounding"
+      },
+      {
+        "step": 2,
+        "instruction": "Name 4 things you can touch",
+        "duration": 30,
+        "visual": "grounding"
+      },
+      {
+        "step": 3,
+        "instruction": "Name 3 things you can hear",
+        "duration": 30,
+        "visual": "grounding"
+      },
+      {
+        "step": 4,
+        "instruction": "Name 2 things you can smell",
+        "duration": 30,
+        "visual": "grounding"
+      },
+      {
+        "step": 5,
+        "instruction": "Name 1 thing you can taste",
+        "duration": 30,
+        "visual": "grounding"
+      }
+    ],
+    "tips": [
+      "Be specific in descriptions",
+      "Take your time, pause between steps",
+      "Repeat if necessary"
+    ],
+    "accordionItems": [
+      {
+        "title": "How it works",
+        "content": "The 5-4-3-2-1 technique activates all five senses, helping the brain switch from anxious thoughts to reality. This creates a sense of stability and presence in the moment."
+      },
+      {
+        "title": "Why it's effective",
+        "content": "Activating the senses stimulates the parasympathetic nervous system, reducing stress levels. Focusing on specific details distracts from anxious thoughts and returns you to the present moment."
+      },
+      {
+        "title": "When to use",
+        "content": "Perfect for panic attacks, anxiety, dissociation, stress. Can be used anytime and anywhere - at home, work, on public transport."
+      },
+      {
+        "title": "Practical tips",
+        "content": "Start with what's easiest to notice. Don't criticize yourself for simple answers. If you can't find something for one of the senses, skip it and move to the next."
+      }
+    ]
+  },
+  "grounding-anchor": {
+    "id": "grounding-anchor",
+    "title": "Anchor Grounding",
+    "subtitle": "Find your inner anchor",
+    "duration": "2 minutes",
+    "difficulty": "beginner",
+    "emergencyLevel": "medium",
+    "category": "grounding",
+    "isPremium": false,
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "Sit comfortably, place feet on the floor",
+        "duration": 10,
+        "visual": "grounding"
+      },
+      {
+        "step": 2,
+        "instruction": "Feel how your feet touch the ground",
+        "duration": 20,
+        "visual": "grounding"
+      },
+      {
+        "step": 3,
+        "instruction": "Imagine roots growing from your feet into the earth",
+        "duration": 30,
+        "visual": "grounding"
+      },
+      {
+        "step": 4,
+        "instruction": "Feel stability and support",
+        "duration": 30,
+        "visual": "grounding"
+      }
+    ],
+    "tips": [
+      "Breathe deeply and slowly",
+      "Visualize in detail",
+      "Repeat several times"
+    ],
+    "accordionItems": [
+      {
+        "title": "How it works",
+        "content": "Anchor grounding uses visualization and body sensations to create a sense of stability. Imagining roots helps feel connected to the earth and find inner support."
+      },
+      {
+        "title": "Psychological effect",
+        "content": "The technique activates feelings of safety and stability, reducing cortisol levels. Root visualization creates a metaphorical connection with stability and support."
+      },
+      {
+        "title": "Application",
+        "content": "Effective for anxiety, stress, feelings of instability. Helps before important events, in moments of uncertainty. Can be practiced sitting or standing."
+      },
+      {
+        "title": "Recommendations",
+        "content": "Find a quiet place for first practices. Gradually learn to use the technique in any conditions. If visualization doesn't work, just focus on the feeling of your feet on the floor."
+      }
+    ]
   }
 }

@@ -280,6 +280,24 @@ export function ContentProvider({ children }: ContentProviderProps) {
           subtitle: 'How was it?',
           placeholder: 'Share your thoughts',
           submit: 'Submit'
+        },
+        themeHome: {
+          card1: 'Card #1',
+          card2: 'Card #2',
+          card3: 'Card #3',
+          card4: 'Card #4',
+          card5: 'Card #5',
+          card6: 'Card #6',
+          card7: 'Card #7',
+          card8: 'Card #8',
+          card9: 'Card #9',
+          card10: 'Card #10',
+          level1: 'Level 1',
+          level2: 'Level 2',
+          level3: 'Level 3',
+          level4: 'Level 4',
+          level5: 'Level 5',
+          description: 'Card description'
         }
       }
     };

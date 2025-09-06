@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { useContent } from '../ContentContext';
+import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 
@@ -55,6 +56,12 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
+  
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -103,7 +110,7 @@ function InteractiveInput({
           }
         `}
       >
-        Готово
+        {getText('Готово', 'Done')}
       </button>
     </div>
   );
@@ -114,6 +121,12 @@ function InteractiveInput({
  */
 export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
+  const { currentLanguage } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return currentLanguage === 'ru' ? ruText : enText;
+  };
+  
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -128,13 +141,13 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Техника не найдена
+              {getText('Техника не найдена', 'Technique not found')}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              Назад
+              {getText('Назад', 'Back')}
             </button>
           </div>
         </div>
@@ -163,10 +176,10 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Ошибка загрузки техники
+              {getLocalizedText({ ru: 'Ошибка загрузки техники', en: 'Technique loading error' })}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              Не удалось загрузить данные техники
+              {getLocalizedText({ ru: 'Не удалось загрузить данные техники', en: 'Failed to load technique data' })}
             </p>
           </div>
         </div>
@@ -183,10 +196,10 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           {/* Заголовок завершения */}
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              Техника завершена
+              {getText('Техника завершена', 'Technique completed')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              Вы успешно выполнили упражнение заземления
+              {getText('Вы успешно выполнили упражнение заземления', 'You have successfully completed the grounding exercise')}
             </p>
           </div>
 
@@ -194,7 +207,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
             <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
             <div className="flex flex-col gap-3">
-              <h3 className="text-[#e1ff00] text-lg font-semibold">Ваши ответы</h3>
+              <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('Ваши ответы', 'Your responses')}</h3>
               {responses.map((response, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
@@ -210,7 +223,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
             <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
             <div className="flex flex-col gap-4">
-              <h3 className="text-[#e1ff00] text-lg font-semibold">О технике</h3>
+              <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
               <MentalTechniqueAccordion 
                 items={technique.accordionItems.map(item => ({
                   title: getLocalizedText(item.title),
@@ -253,7 +266,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="text-[#e1ff00] text-lg font-semibold mb-2">
-              Шаг {currentStep + 1} из {technique.steps.length}
+              {getText('Шаг', 'Step')} {currentStep + 1} {getText('из', 'of')} {technique.steps.length}
             </h3>
             <p className="text-[#cfcfcf] text-base mb-4">
               {getLocalizedText(currentStepData.instruction)}
@@ -271,7 +284,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="text-[#e1ff00] text-lg font-semibold">О технике</h3>
+            <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

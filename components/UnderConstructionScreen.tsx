@@ -2,6 +2,7 @@ import { useState } from 'react';
 import svgPaths from "../imports/svg-bamg6d8zx5";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useLanguage } from './LanguageContext';
 
 /**
  * Компонент страницы "Under Construction"
@@ -57,9 +58,15 @@ function Light() {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function Button({ onBack }: { onBack: () => void }) {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
     <BottomFixedButton onClick={onBack}>
-      Got it
+      {getText('Понятно', 'Got it')}
     </BottomFixedButton>
   );
 }
@@ -114,17 +121,26 @@ function Icon() {
  * Блок с заголовком и описанием "Under Construction"
  */
 function HeroBlockQuestion({ featureName }: { featureName?: string }) {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
       <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">Under Construction</p>
+        <p className="block leading-[0.8]">{getText('В разработке', 'Under Construction')}</p>
       </div>
       <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">
-          {featureName ? `${featureName} feature` : 'This feature'} is currently being developed by our team. We're working hard to bring you the best experience possible.
+          {featureName 
+            ? getText(`Функция "${featureName}"`, `"${featureName}" feature`)
+            : getText('Эта функция', 'This feature')
+          } {getText('в настоящее время разрабатывается нашей командой. Мы усердно работаем, чтобы предоставить вам лучший опыт.', 'is currently being developed by our team. We\'re working hard to bring you the best experience possible.')}
         </p>
       </div>
     </div>

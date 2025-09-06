@@ -680,17 +680,20 @@ function AppContent() {
           />
         );
       }
-      case 'theme-home':
+      case 'theme-home': {
+        const themeData = getTheme(currentTheme);
+        
         return (
           <ThemeHomeScreen
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
             onOpenNextLevel={handleOpenNextLevel}
-            themeTitle={currentTheme}
+            themeTitle={themeData ? getLocalizedText(themeData.title) : currentTheme}
             completedCards={completedCards}
             cardCompletionCounts={cardCompletionCounts}
           />
         );
+      }
       case 'card-details':
         return (
           <CardDetailsScreen

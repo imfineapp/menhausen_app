@@ -252,6 +252,24 @@ export interface UITexts {
       placeholder: LocalizedContent;
       submit: LocalizedContent;
     };
+    themeHome: {
+      card1: LocalizedContent;
+      card2: LocalizedContent;
+      card3: LocalizedContent;
+      card4: LocalizedContent;
+      card5: LocalizedContent;
+      card6: LocalizedContent;
+      card7: LocalizedContent;
+      card8: LocalizedContent;
+      card9: LocalizedContent;
+      card10: LocalizedContent;
+      level1: LocalizedContent;
+      level2: LocalizedContent;
+      level3: LocalizedContent;
+      level4: LocalizedContent;
+      level5: LocalizedContent;
+      description: LocalizedContent;
+    };
   };
 }
 

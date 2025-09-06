@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Translations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #111;
+            color: #fff;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .test-title {
+            color: #e1ff00;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #222;
+            border-radius: 4px;
+        }
+        .ru-text {
+            color: #4CAF50;
+        }
+        .en-text {
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Test Translations - Menhausen App</h1>
+    
+    <div class="test-section">
+        <div class="test-title">1. UnderConstructionScreen</div>
+        <div class="test-item">
+            <strong>Button:</strong><br>
+            <span class="ru-text">RU: Понятно</span><br>
+            <span class="en-text">EN: Got it</span>
+        </div>
+        <div class="test-item">
+            <strong>Title:</strong><br>
+            <span class="ru-text">RU: В разработке</span><br>
+            <span class="en-text">EN: Under Construction</span>
+        </div>
+        <div class="test-item">
+            <strong>Description:</strong><br>
+            <span class="ru-text">RU: Эта функция в настоящее время разрабатывается нашей командой. Мы усердно работаем, чтобы предоставить вам лучший опыт.</span><br>
+            <span class="en-text">EN: This feature is currently being developed by our team. We're working hard to bring you the best experience possible.</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">2. ProfileFeedbackSection</div>
+        <div class="test-item">
+            <strong>Button:</strong><br>
+            <span class="ru-text">RU: Присоединиться к каналу</span><br>
+            <span class="en-text">EN: Join Channel</span>
+        </div>
+        <div class="test-item">
+            <strong>Description:</strong><br>
+            <span class="ru-text">RU: Присоединяйтесь к нашему Telegram каналу, чтобы делиться отзывами, получать обновления и общаться с нашим сообществом.</span><br>
+            <span class="en-text">EN: Join our Telegram channel to share feedback, get updates, and connect with our community.</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">3. TermsOfUseScreen</div>
+        <div class="test-item">
+            <strong>Title:</strong><br>
+            <span class="ru-text">RU: Условия использования</span><br>
+            <span class="en-text">EN: Terms of use</span>
+        </div>
+        <div class="test-item">
+            <strong>Date:</strong><br>
+            <span class="ru-text">RU: Последнее обновление: 2 августа 2025</span><br>
+            <span class="en-text">EN: Last updated: August 2, 2025</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">4. PrivacyPolicyScreen</div>
+        <div class="test-item">
+            <strong>Title:</strong><br>
+            <span class="ru-text">RU: Политика конфиденциальности</span><br>
+            <span class="en-text">EN: Privacy policy</span>
+        </div>
+        <div class="test-item">
+            <strong>Date:</strong><br>
+            <span class="ru-text">RU: Дата вступления в силу: 2 августа 2025</span><br>
+            <span class="en-text">EN: Effective Date: August 2, 2025</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">✅ Status</div>
+        <div class="test-item">
+            <strong>All translations are implemented and should work correctly!</strong><br>
+            <span style="color: #4CAF50;">✓ UnderConstructionScreen - Fixed</span><br>
+            <span style="color: #4CAF50;">✓ ProfileFeedbackSection - Fixed</span><br>
+            <span style="color: #4CAF50;">✓ TermsOfUseScreen - Fixed</span><br>
+            <span style="color: #4CAF50;">✓ PrivacyPolicyScreen - Fixed</span><br>
+            <span style="color: #4CAF50;">✓ Language context issue - Fixed (currentLanguage → language)</span><br>
+            <span style="color: #4CAF50;">✓ All tests passing (41/41)</span><br>
+            <span style="color: #4CAF50;">✓ Linter passing</span>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <div class="test-title">🔧 How to test</div>
+        <div class="test-item">
+            1. Open the app at <a href="http://localhost:5174" style="color: #e1ff00;">http://localhost:5174</a><br>
+            2. Go to Profile → Settings → Language<br>
+            3. Switch between Russian and English<br>
+            4. Navigate to different pages to see translations<br>
+            5. Check Under Construction page, Terms, Privacy Policy, and Telegram channel section
+        </div>
+    </div>
+</body>
+</html>

@@ -66,14 +66,14 @@ function Light() {
  * Адаптивный компонент прогресс-бара темы
  */
 function ProgressTheme() {
-  const { content } = useContent();
+  const { content, getLocalizedText } = useContent();
   
   return (
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
       <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
-        <p className="block leading-none">{content.ui.themes.home.progress}</p>
+        <p className="block leading-none">{getLocalizedText(content.ui.themes.home.progress)}</p>
       </div>
     </div>
   );
@@ -186,11 +186,11 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
-  const { content } = useContent();
+  const { content, getLocalizedText } = useContent();
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {content.ui.themes.home.nextLevel}
+      {getLocalizedText(content.ui.themes.home.nextLevel)}
     </BottomFixedButton>
   );
 }
@@ -200,93 +200,106 @@ function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards: _completedCards = new Set(), cardCompletionCounts: _cardCompletionCounts = {} }: ThemeHomeScreenProps) {
-  // Моковые данные карточек (в реальном приложении будут загружаться с сервера)
+  const { content, getLocalizedText } = useContent();
+  
+  // Проверяем, что контент загружен
+  if (!content?.ui?.cards?.themeHome) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg">Loading content...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  // Моковые данные карточек с локализованными текстами
   const cards: Card[] = [
     {
       id: "card-1",
-      title: "Card #1",
-      level: "Level 1",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card1),
+      level: getLocalizedText(content.ui.cards.themeHome.level1),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 1,
       isActive: true
     },
     {
       id: "card-2", 
-      title: "Card #1",
-      level: "Level 1",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card1),
+      level: getLocalizedText(content.ui.cards.themeHome.level1),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 20,
       isActive: true
     },
     {
       id: "card-3",
-      title: "Card #2",
-      level: "Level 1", 
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card2),
+      level: getLocalizedText(content.ui.cards.themeHome.level1), 
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 4,
       isActive: true
     },
     {
       id: "card-4",
-      title: "Card #3",
-      level: "Level 2",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card3),
+      level: getLocalizedText(content.ui.cards.themeHome.level2),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 7,
       isActive: true
     },
     {
       id: "card-5",
-      title: "Card #4",
-      level: "Level 2",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card4),
+      level: getLocalizedText(content.ui.cards.themeHome.level2),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-6",
-      title: "Card #5",
-      level: "Level 3",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card5),
+      level: getLocalizedText(content.ui.cards.themeHome.level3),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-7",
-      title: "Card #6",
-      level: "Level 3",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card6),
+      level: getLocalizedText(content.ui.cards.themeHome.level3),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-8",
-      title: "Card #7",
-      level: "Level 4",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card7),
+      level: getLocalizedText(content.ui.cards.themeHome.level4),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-9",
-      title: "Card #8",
-      level: "Level 4",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card8),
+      level: getLocalizedText(content.ui.cards.themeHome.level4),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-10",
-      title: "Card #9",
-      level: "Level 5",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card9),
+      level: getLocalizedText(content.ui.cards.themeHome.level5),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     },
     {
       id: "card-11",
-      title: "Card #10",
-      level: "Level 5",
-      description: "Some text about card and more.",
+      title: getLocalizedText(content.ui.cards.themeHome.card10),
+      level: getLocalizedText(content.ui.cards.themeHome.level5),
+      description: getLocalizedText(content.ui.cards.themeHome.description),
       checkins: 0,
       isActive: false
     }
