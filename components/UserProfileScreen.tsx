@@ -1,6 +1,7 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
 import { useState } from 'react';
 import { useLanguage, useTranslation } from './LanguageContext';
+import { useContent } from './ContentContext';
 import { LanguageModal } from './LanguageModal';
 import { Switch } from './ui/switch';
 
@@ -59,8 +60,12 @@ export function UserProfileScreen({
   
   // Хуки для управления языком и шарингом
   const { language, openLanguageModal } = useLanguage();
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
+  const { getUI } = useContent();
   const { handleShare } = useAppShare();
+  
+  // Получаем переводы UI
+  const _ui = getUI();
 
   /**
    * Обработчики для различных действий профиля
@@ -159,42 +164,42 @@ export function UserProfileScreen({
         {/* Секция "Your status" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
           <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Your status</p>
+            <p className="block leading-[0.8]">{t('your_status')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
               icon={<BadgeIcon />}
-              title="Badges"
+              title={t('badges')}
               onClick={handleBadges}
             />
             <SettingsItem
               icon={<LevelIcon />}
-              title="Your level"
+              title={t('your_level')}
               onClick={handleYourLevel}
             />
             <SettingsItem
               icon={<MentalStatusIcon />}
-              title="How are you status"
+              title={t('how_are_you_status')}
               onClick={handleMentalStatus}
             />
             <SettingsItem
               icon={<UnlockIcon />}
-              title="Unlock all themes & cards"
+              title={t('unlock_all_themes')}
               onClick={handleUnlockThemes}
             />
             <SettingsItem
               icon={<DonationIcon />}
-              title="Make donation"
+              title={t('make_donation')}
               onClick={handleDonation}
             />
             <SettingsItem
               icon={<ActivityIcon />}
-              title="Your activity"
+              title={t('your_activity')}
               onClick={handleActivity}
             />
             <SettingsItem
               icon={<ShareIcon />}
-              title="Share app to friend"
+              title={t('share_app_to_friend')}
               onClick={handleShare}
               isHighlighted={true}
             />
@@ -207,22 +212,22 @@ export function UserProfileScreen({
         {/* Секция "Settings" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
           <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Settings</p>
+            <p className="block leading-[0.8]">{t('settings')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
               icon={<LanguageIcon />}
-              title="Language"
+              title={t('language')}
               rightElement={
                 <div className="font-sans text-[18px] sm:text-[20px] text-[#ffffff] text-right">
-                  <p className="block leading-none">{language === 'en' ? 'English' : 'Русский'}</p>
+                  <p className="block leading-none">{language === 'en' ? t('english') : t('russian')}</p>
                 </div>
               }
               onClick={handleLanguage}
             />
             <SettingsItem
               icon={<ReminderIcon />}
-              title="Daily reminder"
+              title={t('daily_reminder')}
               rightElement={
                 <Switch 
                   checked={notificationsEnabled} 
@@ -234,27 +239,27 @@ export function UserProfileScreen({
             />
             <SettingsItem
               icon={<SecurityIcon />}
-              title="Security PIN"
+              title={t('security_pin')}
               onClick={handleSecurityPin}
             />
             <SettingsItem
               icon={<InfoIcon />}
-              title="About app"
+              title={t('about_app')}
               onClick={handleAboutApp}
             />
             <SettingsItem
               icon={<PrivacyIcon />}
-              title="Privacy policy"
+              title={t('privacy_policy')}
               onClick={handlePrivacyPolicy}
             />
             <SettingsItem
               icon={<TermsIcon />}
-              title="Terms of use"
+              title={t('terms_of_use')}
               onClick={handleTermsOfUse}
             />
             <SettingsItem
               icon={<DeleteIcon />}
-              title="Delete account"
+              title={t('delete_account')}
               onClick={handleDeleteAccount}
               isHighlighted={true}
             />

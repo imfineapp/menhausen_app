@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -107,13 +108,15 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
  * Адаптивный контейнер списка чекинов
  */
 function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; onCheckinClick?: (checkinId: string) => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="relative shrink-0 w-full"
       data-name="Checkins Container"
     >
       <div className="font-heading font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">Checkins</p>
+        <p className="block leading-[0.8]">{content.ui.cards.checkins}</p>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"

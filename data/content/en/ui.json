@@ -4,7 +4,10 @@
     "next": "Next",
     "skip": "Skip",
     "complete": "Complete",
-    "continue": "Continue"
+    "continue": "Continue",
+    "send": "Send",
+    "start": "Start",
+    "unlock": "Unlock"
   },
   "common": {
     "loading": "Loading...",
@@ -37,5 +40,83 @@
     "selectAtLeastOne": "Please select at least one option",
     "optional": "Optional",
     "required": "Required"
+  },
+  "onboarding": {
+    "screen01": {
+      "title": "Welcome to Menhausen",
+      "subtitle": "Your personal mental health companion. Let's start your journey to better emotional well-being.",
+      "buttonText": "Get Started",
+      "privacyText": "Privacy Policy",
+      "termsText": "Terms of Use",
+      "agreementText": "By clicking the button you agree to the"
+    },
+    "screen02": {
+      "title": "What makes Menhausen special?",
+      "benefits": [
+        "Personalized exercises based on your needs",
+        "Evidence-based techniques from psychology",
+        "Daily check-ins to track your progress",
+        "Emergency support when you need it most"
+      ],
+      "buttonText": "Continue"
+    }
+  },
+  "pinSetup": {
+    "title": "PIN Setup",
+    "subtitle": "Create a 4-digit PIN to protect your data",
+    "createPin": "Create PIN",
+    "confirmPin": "Confirm PIN",
+    "pinMismatch": "PINs don't match",
+    "pinTooShort": "PIN must be 4 digits",
+    "skip": "Skip",
+    "back": "Back"
+  },
+  "checkin": {
+    "title": "How are you?",
+    "subtitle": "Check in with yourself — it's the first step to self-care! Do it everyday.",
+    "moodOptions": {
+      "down": "I'm feeling down...",
+      "anxious": "I'm anxious",
+      "neutral": "I'm neutral",
+      "energized": "I'm energized",
+      "happy": "I'm happy!"
+    },
+    "send": "Send",
+    "back": "Back"
+  },
+  "themes": {
+    "welcome": {
+      "title": "Welcome to Theme",
+      "subtitle": "Ready to start working on yourself?",
+      "start": "Start",
+      "unlock": "Unlock"
+    },
+    "home": {
+      "progress": "Progress",
+      "checkins": "Checkins",
+      "level": "Level",
+      "nextLevel": "Next Level"
+    }
+  },
+  "cards": {
+    "checkins": "Checkins",
+    "welcome": {
+      "title": "Card",
+      "subtitle": "Ready to start the exercise?"
+    },
+    "question": {
+      "placeholder": "Enter your answer here...",
+      "encryption": "Your answers are fully protected with AES-256 encryption"
+    },
+    "final": {
+      "why": "Why:"
+    },
+    "rating": {
+      "title": "Please rate the card",
+      "subtitle": "Your rating will help us to be more useful",
+      "placeholder": "Leave feedback (optional)...",
+      "submit": "Submit",
+      "back": "Back"
+    }
   }
 }

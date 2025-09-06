@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -56,6 +57,8 @@ function Light() {
  * Текстовая кнопка без фона и рамки
  */
 function TextButton({ onSkip }: { onSkip: () => void }) {
+  const { content } = useContent();
+  
   return (
     <button
       onClick={onSkip}
@@ -65,7 +68,7 @@ function TextButton({ onSkip }: { onSkip: () => void }) {
                 min-h-[44px] min-w-[44px] cursor-pointer"
       data-name="Skip Button"
     >
-      Skip
+      {content.ui.pinSetup.skip}
     </button>
   );
 }
@@ -203,6 +206,8 @@ function PinSetup({
   showError: boolean; 
   mode: PinMode;
 }) {
+  const { content } = useContent();
+  
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-[351px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0" data-name="Pin setup">
       {/* Блоки для отображения пин-кода */}
@@ -212,8 +217,8 @@ function PinSetup({
       <div className="font-sans font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
         <p className="block leading-none">
           {mode === 'create' 
-            ? 'For more privacy you can set a pin code to log in'
-            : 'Please confirm your PIN code'
+            ? content.ui.pinSetup.subtitle
+            : content.ui.pinSetup.confirmPin
           }
         </p>
       </div>
@@ -230,6 +235,7 @@ function PinSetup({
  * Управляет состоянием ввода, валидацией и навигацией
  */
 export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetupScreenProps) {
+  const { content } = useContent();
   // Состояние для текущего пин-кода
   const [currentPin, setCurrentPin] = useState<string>('');
   // Состояние для сохраненного пин-кода (при подтверждении)
@@ -306,10 +312,10 @@ export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetup
             {/* Заголовок */}
             <div className="text-center mb-12">
               <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
-                Set up your PIN
+                {content.ui.pinSetup.title}
               </h1>
               <p className="font-sans text-white text-[20px]">
-                Create a 4-digit PIN to secure your account
+                {content.ui.pinSetup.subtitle}
               </p>
             </div>
             

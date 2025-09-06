@@ -8,7 +8,7 @@ import { useContent } from './ContentContext';
 interface HomeScreenProps {
   onGoToCheckIn: () => void; // Функция для перехода к чекину
   onGoToProfile: () => void; // Функция для перехода к профилю пользователя
-  onGoToTheme: (themeTitle: string) => void; // Функция для перехода к теме
+  onGoToTheme: (themeId: string) => void; // Функция для перехода к теме
   onOpenMentalTechnique: (techniqueId: string) => void; // Функция для открытия ментальной техники
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
@@ -454,16 +454,16 @@ function ThemeCard({
 /**
  * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
-function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => void }) {
-  const { getAllThemes } = useContent();
+function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
+  const { getAllThemes, getLocalizedText } = useContent();
   
   // Получаем все темы из контента
   const themes = getAllThemes();
   
   // Создаем массив для отображения с фиктивными данными прогресса
   const worries = themes.map((theme) => ({
-    title: theme.title,
-    description: theme.description,
+    title: getLocalizedText(theme.title),
+    description: getLocalizedText(theme.description),
     progress: Math.floor(Math.random() * 100), // Фиктивный прогресс для демонстрации
     isPremium: theme.isPremium,
     isAvailable: true,
@@ -502,7 +502,7 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => voi
 /**
  * Адаптивный контейнер блока "What worries you?"
  */
-function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeTitle: string) => void }) {
+function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
   const { getUI } = useContent();
   
   return (
@@ -573,7 +573,7 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
 function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium }: { 
   onGoToCheckIn: () => void; 
   onGoToProfile: () => void;
-  onGoToTheme: (themeTitle: string) => void;
+  onGoToTheme: (themeId: string) => void;
   userHasPremium: boolean;
 }) {
   return (

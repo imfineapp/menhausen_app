@@ -1,7 +1,9 @@
 // Импортируем необходимые хуки и SVG пути
 // import { useState } from 'react';
+import { useTranslation } from './LanguageContext';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface FinalCardMessageScreenProps {
@@ -62,6 +64,8 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
   practiceTask: string; 
   whyExplanation: string; 
 }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="absolute box-border content-stretch flex flex-col gap-5 items-center justify-center leading-[0] left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[241px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
@@ -84,7 +88,7 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
         
         {/* Объяснение "Почему" */}
         <p className="leading-none text-[18px] sm:text-[19px] md:text-[20px]">
-          <span className="text-[#e1ff00]">Why:</span>
+          <span className="text-[#e1ff00]">{content.ui.cards.final.why}</span>
           <span> {whyExplanation}</span>
         </p>
       </div>
@@ -107,6 +111,7 @@ export function FinalCardMessageScreen({
   practiceTask, 
   whyExplanation 
 }: FinalCardMessageScreenProps) {
+  const { t } = useTranslation();
   
   // Сообщения по умолчанию, если не переданы
   const defaultFinalMessage = "Awareness of expectations reduces the automaticity of emotional reactions.";
@@ -151,7 +156,7 @@ export function FinalCardMessageScreen({
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton onClick={handleNext}>
-        Next
+        {t('next')}
       </BottomFixedButton>
     </div>
   );

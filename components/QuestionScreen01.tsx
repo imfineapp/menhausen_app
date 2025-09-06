@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import svgPaths from "../imports/svg-c5dzwxr04w";
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface QuestionScreen01Props {
@@ -72,6 +73,8 @@ function LockShieldFilled() {
  * Адаптивный блок информации о шифровании
  */
 function EncryptInfoBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -79,7 +82,7 @@ function EncryptInfoBlock() {
     >
       <LockShieldFilled />
       <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
-        <p className="block leading-none">Your answers are fully protected with AES-256 encryption</p>
+        <p className="block leading-none">{content.ui.cards.question.encryption}</p>
       </div>
     </div>
   );
@@ -135,6 +138,8 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
  * Адаптивный блок ответа с полем ввода и информацией о шифровании
  */
 function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChange: (value: string) => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -143,7 +148,7 @@ function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChang
       <InputAnswerBlock 
         value={answer}
         onChange={onAnswerChange}
-        placeholder="Share your thoughts here..."
+        placeholder={content.ui.cards.question.placeholder}
       />
       <EncryptInfoBlock />
     </div>

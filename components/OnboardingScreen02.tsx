@@ -2,6 +2,7 @@
 import svgPaths from "../imports/svg-vn1j3wuqix";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -54,9 +55,11 @@ function Light() {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function GetStartedButton({ onClick }: { onClick: () => void }) {
+  const { content } = useContent();
+  
   return (
     <BottomFixedButton onClick={onClick}>
-      Get Started
+      {content.ui.onboarding.screen02.buttonText}
     </BottomFixedButton>
   );
 }
@@ -99,6 +102,8 @@ function LockIcon() {
  * Описывает анонимность приложения
  */
 function NoLoginTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
@@ -106,7 +111,7 @@ function NoLoginTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
-        <p className="block leading-[0.8]">No sign-up, no traces</p>
+        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[0]}</p>
       </div>
       {/* Описание преимущества */}
       <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
@@ -172,6 +177,8 @@ function ShieldIcon() {
  * Описывает защиту данных пользователя
  */
 function EncryptionTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
@@ -183,7 +190,7 @@ function EncryptionTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Data encryption</p>
+        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[1]}</p>
       </div>
     </div>
   );
@@ -243,6 +250,8 @@ function MobileIcon() {
  * Описывает доступность приложения
  */
 function AlwaysWithYouTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
@@ -254,7 +263,7 @@ function AlwaysWithYouTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Always with you</p>
+        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[2]}</p>
       </div>
     </div>
   );
@@ -362,6 +371,8 @@ function ScienceIcon() {
  * Самый подробный блок с описанием методологии
  */
 function ScienceTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
@@ -375,7 +386,7 @@ function ScienceTextBlock() {
       </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Based on science-backed methods</p>
+        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[3]}</p>
       </div>
     </div>
   );

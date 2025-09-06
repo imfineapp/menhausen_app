@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface ThemeWelcomeScreenProps {
@@ -57,18 +58,20 @@ function Light() {
 function ActionButton({ 
   onClick, 
   isLocked, 
-  buttonText 
+  buttonText: _buttonText 
 }: { 
   onClick: () => void; 
   isLocked: boolean; 
   buttonText: string; 
 }) {
+  const { content } = useContent();
+  
   return (
     <BottomFixedButton 
       onClick={onClick}
       className={isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : ''}
     >
-      {buttonText}
+      {isLocked ? content.ui.themes.welcome.unlock : content.ui.themes.welcome.start}
     </BottomFixedButton>
   );
 }
@@ -88,6 +91,7 @@ export function ThemeWelcomeScreen({
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {
+  const { content } = useContent();
   
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;
@@ -115,7 +119,7 @@ export function ThemeWelcomeScreen({
                 {_themeTitle}
               </h1>
               <p className="font-sans text-white text-[20px]">
-                {isThemeLocked ? 'Unlock this theme to get started' : 'Ready to begin your journey?'}
+                {isThemeLocked ? 'Unlock this theme to get started' : content.ui.themes.welcome.subtitle}
               </p>
             </div>
 
