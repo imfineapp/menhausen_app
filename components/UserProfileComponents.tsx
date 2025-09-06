@@ -29,7 +29,7 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
       }`}
       data-name="User account status"
     >
-      <div className={`font-sans text-[14px] sm:text-[15px] text-center tracking-[-0.43px] ${
+      <div className={`typography-caption text-center ${
         isPremium ? 'text-[#2d2b2b]' : 'text-[#696969]'
       }`}>
         <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">
@@ -46,11 +46,11 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
 export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
   return (
     <div className="flex flex-col gap-2.5 items-center justify-start w-full" data-name="User info block">
-      <div className="font-['Kreon:Regular',_sans-serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-center">
-        <p className="block leading-[0.8]">Hero #1275</p>
+      <div className="typography-h2 text-[#e1ff00] text-center">
+        <p className="block">Hero #1275</p>
       </div>
       <div className="flex items-center gap-4 sm:gap-5">
-        <div className="font-sans text-[18px] sm:text-[20px] text-[#696969] text-left">
+        <div className="typography-body text-[#696969] text-left">
           <p className="block leading-none">Level 25</p>
         </div>
         <UserAccountStatus isPremium={userHasPremium} />
@@ -151,7 +151,7 @@ export function SettingsItem({
         <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
           <div className="flex items-center gap-2.5">
             {icon}
-            <div className={`font-sans text-[18px] sm:text-[20px] text-left ${
+            <div className={`typography-body text-left ${
               isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
             }`}>
               <p className="block leading-none">{title}</p>
@@ -179,7 +179,7 @@ export function SettingsItem({
       <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
         <div className="flex items-center gap-2.5">
           {icon}
-          <div className={`font-sans text-[18px] sm:text-[20px] text-left ${
+          <div className={`typography-body text-left ${
             isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}>
             <p className="block leading-none">{title}</p>

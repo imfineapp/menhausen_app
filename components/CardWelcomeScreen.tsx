@@ -76,8 +76,8 @@ function CardDescription({ description: _description }: { description: string })
       className="absolute left-1/2 top-[310px] sm:top-[330px] md:top-[347px] translate-x-[-50%] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Card Description"
     >
-      <div className="font-sans h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center">
-        <p className="block leading-none">{content.ui.cards.welcome.subtitle}</p>
+      <div className="typography-body h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] text-[#ffffff] text-center">
+        <p className="block">{content.ui.cards.welcome.subtitle}</p>
       </div>
     </div>
   );

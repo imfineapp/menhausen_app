@@ -70,7 +70,7 @@ function _MenhausenBeta() {
     <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
         <g id="Menhausen beta">
-          <text x="0" y="9" fill="var(--fill-0, #E1FF00)" fontSize="9" fontFamily="Kreon, serif">
+          <text x="0" y="9" fill="var(--fill-0, #E1FF00)" fontSize="9" fontFamily="Roboto Slab, serif">
             Menhausen
           </text>
           <text x="70" y="7" fill="var(--fill-0, #CFCFCF)" fontSize="6" fontFamily="PT Sans, sans-serif">
@@ -252,35 +252,35 @@ function TechnicalInfoSection({ t }: { t: (key: string) => string }) {
           />
           <div className="flex flex-col gap-3">
             <div className="flex justify-between">
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Version:</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Version:</p>
               </div>
-              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
-                <p className="block leading-[1.5]">1.0.0 Beta</p>
-              </div>
-            </div>
-            <div className="flex justify-between">
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Platform:</p>
-              </div>
-              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
-                <p className="block leading-[1.5]">Telegram Mini App</p>
+              <div className="typography-body text-[#ffffff] text-right">
+                <p className="block">1.0.0 Beta</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Built with:</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Platform:</p>
               </div>
-              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
-                <p className="block leading-[1.5]">React & TypeScript</p>
+              <div className="typography-body text-[#ffffff] text-right">
+                <p className="block">Telegram Mini App</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Last updated:</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Built with:</p>
               </div>
-              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
-                <p className="block leading-[1.5]">December 2024</p>
+              <div className="typography-body text-[#ffffff] text-right">
+                <p className="block">React & TypeScript</p>
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Last updated:</p>
+              </div>
+              <div className="typography-body text-[#ffffff] text-right">
+                <p className="block">December 2024</p>
               </div>
             </div>
           </div>
@@ -333,18 +333,18 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
           />
           <div className="flex flex-col gap-3">
-            <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-              <h2 className="block leading-[0.8]">{t('important_note')}</h2>
+            <div className="typography-h2 text-[#e1ff00] text-left">
+              <h2 className="block">{t('important_note')}</h2>
             </div>
-            <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-              <p className="block leading-[1.5]">
+            <div className="typography-body text-[#cfcfcf] text-left">
+              <p className="block">
                 Menhausen is designed to support your mental wellness journey, but it is not a substitute for 
                 professional medical advice, diagnosis, or treatment. If you're experiencing serious mental health 
                 concerns, please consult with qualified healthcare professionals.
               </p>
             </div>
-            <div className="font-sans text-responsive-sm text-[#696969] text-left">
-              <p className="block leading-[1.5]">
+            <div className="typography-caption text-[#696969] text-left">
+              <p className="block">
                 For emergencies, please contact your local emergency services or mental health crisis hotline.
               </p>
             </div>

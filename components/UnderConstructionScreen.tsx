@@ -132,10 +132,10 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">{getText('В разработке', 'Under Construction')}</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <p className="block">{getText('В разработке', 'Under Construction')}</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="typography-body text-[#ffffff] w-full">
         <p className="block leading-none">
           {featureName 
             ? getText(`Функция "${featureName}"`, `"${featureName}" feature`)

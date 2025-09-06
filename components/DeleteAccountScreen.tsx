@@ -83,8 +83,8 @@ function DeleteButton({ onDelete, isLoading }: { onDelete: () => void; isLoading
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
+          <div className="typography-button text-[#2d2b2b] text-center">
+            <p className="block">
               {isLoading ? 'Deleting...' : 'Delete'}
             </p>
           </div>
@@ -103,8 +103,8 @@ function ButtonBlock({ onDelete, isLoading }: { onDelete: () => void; isLoading:
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-1/2 -translate-x-1/2 p-0 bottom-4 sm:bottom-6 md:bottom-8 w-[351px]"
       data-name="button block"
     >
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[14px] text-center w-full">
-        <p className="block leading-none">
+      <div className="typography-caption text-[#e1ff00] text-center w-full">
+        <p className="block">
           By clicking the button I understand that all data about me will be deleted without the possibility of return
         </p>
       </div>
@@ -165,11 +165,11 @@ function MainContent() {
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[470px] w-[351px]"
       data-name="main_content"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">Danger zone</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <p className="block">Danger zone</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">
           In this section you can delete all information about yourself and your account from the application
         </p>
       </div>

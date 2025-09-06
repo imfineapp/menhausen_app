@@ -126,8 +126,8 @@ function UserInfo() {
       className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0 w-full"
       data-name="User info"
     >
-      <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <p className="block leading-[0.8]">Hero #1275</p>
+      <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
+        <p className="block">Hero #1275</p>
       </div>
     </div>
   );
@@ -146,12 +146,12 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
       }`}
       data-name="User_account_status"
     >
-      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px] ${
+      <div className={`typography-button text-center text-nowrap tracking-[-0.43px] ${
         isPremium 
           ? 'text-[#2d2b2b]' 
           : 'text-[#696969]'
       }`}>
-        <p className="adjustLetterSpacing block leading-[14px] sm:leading-[15px] md:leading-[16px] whitespace-pre">
+        <p className="adjustLetterSpacing block whitespace-pre">
           {isPremium ? 'Premium' : 'Free'}
         </p>
       </div>
@@ -168,8 +168,8 @@ function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[18px] sm:text-[19px] md:text-[20px] text-left text-nowrap">
-        <p className="block leading-none whitespace-pre">Level 25</p>
+      <div className="typography-body text-[#696969] text-left text-nowrap">
+        <p className="block whitespace-pre">Level 25</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>
@@ -417,11 +417,11 @@ function ThemeCard({
       
       {/* Контент карточки */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
-        <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-          <p className="block leading-[0.8]">{title}</p>
+        <div className="typography-h2 text-[#e1ff00] text-left w-full">
+          <p className="block">{title}</p>
         </div>
-        <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
-          <p className="block leading-none">{description}</p>
+        <div className="typography-body text-[#ffffff] text-left w-full">
+          <p className="block">{description}</p>
         </div>
       </div>
       
@@ -435,15 +435,15 @@ function ThemeCard({
             data-name="Block" 
           />
         )}
-        <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[14px] sm:text-[15px] md:text-[16px] text-right">
-          <p className="block leading-none">Progress</p>
+        <div className="absolute typography-caption inset-[12.5%_4.56%_20.83%_4.56%] text-[#696969] text-right">
+          <p className="block">Progress</p>
         </div>
       </div>
       
       {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
       <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
-        <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] md:text-[16px] text-left">
-          <p className="block leading-none">Use 80% users</p>
+        <div className="typography-button text-[#2d2b2b] text-left">
+          <p className="block">Use 80% users</p>
         </div>
         <UserAccountStatus isPremium={isPremium} />
       </div>
@@ -510,8 +510,8 @@ function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => v
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
     >
-      <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">{getUI().home.whatWorriesYou}</p>
+      <div className="typography-h2 text-[#e1ff00] text-left w-full">
+        <p className="block">{getUI().home.whatWorriesYou}</p>
       </div>
       <WorriesList onGoToTheme={onGoToTheme} />
     </div>
@@ -535,16 +535,16 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
     >
       <div className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-[230px] sm:w-[242px] md:w-[249px]">
         <div
-          className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] min-w-full relative shrink-0 text-[#313131] text-[20px] sm:text-[22px] md:text-[24px] text-left"
+          className="typography-h2 min-w-full text-[#313131] text-left"
           style={{ width: "min-content" }}
         >
-          <p className="block leading-[0.8]">{card.title}</p>
+          <p className="block">{card.title}</p>
         </div>
         <div
-          className="font-sans font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#333333] text-[16px] sm:text-[18px] md:text-[20px] text-left"
+          className="typography-body min-w-full text-[#333333] text-left"
           style={{ width: "min-content" }}
         >
-          <p className="block leading-none">{card.description}</p>
+          <p className="block">{card.description}</p>
         </div>
         <div
           className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-start justify-center p-0 relative rounded-xl shrink-0 ${
@@ -554,12 +554,12 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
           }`}
           data-name="Card_anons_status"
         >
-          <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center tracking-[-0.43px] w-[60px] sm:w-[63px] md:w-[66px] ${
+          <div className={`typography-button text-center tracking-[-0.43px] w-[60px] sm:w-[63px] md:w-[66px] ${
             card.isAvailable 
               ? 'text-[#e1ff00]' 
               : 'text-[#e1ff00]'
           }`}>
-            <p className="adjustLetterSpacing block leading-[14px] sm:leading-[15px] md:leading-[16px]">{card.status}</p>
+            <p className="adjustLetterSpacing block">{card.status}</p>
           </div>
         </div>
       </div>
@@ -655,8 +655,8 @@ function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (tec
     <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Emergency_block_container">
       {/* Заголовок с отступами как у основного контента */}
       <div className="px-[16px] sm:px-[20px] md:px-[21px] max-w-[calc(351px+32px)] sm:max-w-[calc(351px+40px)] md:max-w-[calc(351px+42px)] mx-auto w-full mb-4 sm:mb-5">
-        <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-left w-full">
-          <p className="block leading-[0.8]">{getUI().home.quickHelpTitle}</p>
+        <div className="typography-h2 text-[#e1ff00] text-left w-full">
+          <p className="block">{getUI().home.quickHelpTitle}</p>
         </div>
       </div>
       
@@ -731,8 +731,8 @@ function FollowButton({
         <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" />
         <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-center p-0">
           {icon}
-          <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap text-right">
-            <p className="block leading-[0.8] whitespace-pre">Follow</p>
+          <div className="typography-h2 text-[#2d2b2b] text-nowrap text-right">
+            <p className="block whitespace-pre">Follow</p>
           </div>
         </div>
       </div>

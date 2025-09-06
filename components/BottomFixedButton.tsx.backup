@@ -39,7 +39,7 @@ export function BottomFixedButton({
       } ${className}`}
       data-name="Bottom Fixed CTA Button"
     >
-      <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{children}</p>
       </div>
     </button>

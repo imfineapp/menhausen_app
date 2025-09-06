@@ -320,7 +320,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
             
             {/* Заголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-heading font-normal text-white text-[36px] mb-4 leading-[0.8]">
+              <h1 className="typography-h1 text-white mb-4">
                 {themeTitle}
               </h1>
             </div>

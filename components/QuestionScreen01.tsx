@@ -81,8 +81,8 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
-        <p className="block leading-none">{content.ui.cards.question.encryption}</p>
+      <div className="typography-caption text-[#696969] text-left flex-1">
+        <p className="block">{content.ui.cards.question.encryption}</p>
       </div>
     </div>
   );

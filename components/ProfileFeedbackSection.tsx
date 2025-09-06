@@ -19,7 +19,7 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
       data-name="Feedback button"
     >
       <div className="flex items-center justify-center w-full h-full px-4">
-        <div className="font-sans text-[14px] sm:text-[15px] text-[#2d2b2b] text-center tracking-[-0.43px]">
+        <div className="typography-caption text-[#2d2b2b] text-center">
           <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">{getText('Присоединиться к каналу', 'Join Channel')}</p>
         </div>
       </div>
@@ -106,7 +106,7 @@ export function FeedbackSection() {
         />
         <div className="flex items-start gap-4 mb-4">
           <FeedbackIcon />
-          <div className="font-sans text-[18px] sm:text-[20px] text-[#cfcfcf] text-left flex-1">
+          <div className="typography-body text-[#cfcfcf] text-left flex-1">
             <p className="block leading-none">{getText('Присоединяйтесь к нашему Telegram каналу, чтобы делиться отзывами, получать обновления и общаться с нашим сообществом.', 'Join our Telegram channel to share feedback, get updates, and connect with our community.')}</p>
           </div>
         </div>

@@ -77,11 +77,11 @@ function PlanInfo() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center text-nowrap"
       data-name="Plan Info"
     >
-      <div className="[grid-area:1_/_1] font-sans ml-[74px] mt-0 not-italic relative text-[#ffffff] text-[20px] translate-x-[-50%]">
-        <p className="block leading-none">Your current plan</p>
+      <div className="[grid-area:1_/_1] typography-body ml-[74px] mt-0 text-[#ffffff] translate-x-[-50%]">
+        <p className="block">Your current plan</p>
       </div>
-      <div className="[grid-area:1_/_1] font-heading font-normal ml-[74px] mt-[30px] relative text-[#e1ff00] text-[24px] translate-x-[-50%]">
-        <p className="block leading-[0.8] text-nowrap whitespace-pre">FREE</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-[74px] mt-[30px] text-[#e1ff00] translate-x-[-50%]">
+        <p className="block text-nowrap whitespace-pre">FREE</p>
       </div>
     </div>
   );
@@ -129,11 +129,11 @@ function PremiumContainer() {
       data-name="Container"
     >
       <ThemeBlockBackground1 />
-      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-center text-nowrap">
-        <p className="block leading-[0.8] whitespace-pre">Premium</p>
+      <div className="typography-h2 text-[#e1ff00] text-center text-nowrap">
+        <p className="block whitespace-pre">Premium</p>
       </div>
-      <div className="font-sans h-[131px] leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[310px]">
-        <p className="block leading-none mb-0">Opened all themes and cards</p>
+      <div className="typography-body h-[131px] text-[#ffffff] text-left w-[310px]">
+        <p className="block mb-0">Opened all themes and cards</p>
         <ul className="css-ed5n1g list-disc">
           <li className="mb-0 ms-[30px]">
             <span className="leading-none">Angry</span>
@@ -227,8 +227,8 @@ function PlanPriceContainer({ price, color }: { price: string; color: string }) 
       className="box-border content-stretch flex flex-row gap-[5px] items-center justify-start p-0 relative shrink-0"
       data-name="Plan Price Container"
     >
-      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
-        <p className="block leading-none whitespace-pre">{price}</p>
+      <div className={`typography-body text-[${color}] text-left text-nowrap`}>
+        <p className="block whitespace-pre">{price}</p>
       </div>
       <div className="relative shrink-0 size-6" data-name="Plan Icon">
         <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
@@ -258,8 +258,8 @@ function PlanCost({ price, period, color }: { price: string; period: string; col
       data-name="Plan Cost"
     >
       <PlanPriceContainer price={price} color={color} />
-      <div className={`font-sans font-bold leading-[0] not-italic relative shrink-0 text-[${color}] text-[20px] text-left text-nowrap`}>
-        <p className="block leading-none whitespace-pre">{period}</p>
+      <div className={`typography-body text-[${color}] text-left text-nowrap`}>
+        <p className="block whitespace-pre">{period}</p>
       </div>
     </div>
   );
@@ -275,10 +275,10 @@ function PlanDetails({ title, price, period, color }: { title: string; price: st
       data-name="Plan Details"
     >
       <div
-        className={`font-heading font-normal leading-[0] min-w-full relative shrink-0 text-[${color}] text-[20px] text-left`}
+        className={`typography-body min-w-full text-[${color}] text-left`}
         style={{ width: "min-content" }}
       >
-        <p className="block leading-[0.8]">{title}</p>
+        <p className="block">{title}</p>
       </div>
       <PlanCost price={price} period={period} color={color} />
     </div>
