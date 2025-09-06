@@ -304,14 +304,14 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
       <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
         {/* Заголовок */}
         <div className="text-center">
-          <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
+          <h1 className="typography-h1 text-[#e1ff00] mb-2">
             {getLocalizedText(technique.title)}
           </h1>
-          <p className="text-[#cfcfcf] text-lg">
+          <p className="typography-body text-[#cfcfcf]">
             {getLocalizedText(technique.subtitle)}
           </p>
           <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg text-sm font-semibold">
+            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg typography-caption">
               {getLocalizedText(technique.duration)}
             </span>
           </div>
@@ -324,10 +324,10 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
-            <h3 className="text-[#e1ff00] text-lg font-semibold mb-2">
+            <h3 className="typography-h3 text-[#e1ff00] mb-2">
               {getText('Шаг', 'Step')} {currentStep + 1} {getText('из', 'of')} {technique.steps.length}
             </h3>
-            <p className="text-[#cfcfcf] text-base mb-4">
+            <p className="typography-body text-[#cfcfcf] mb-4">
               {getLocalizedText(currentStepData.instruction)}
             </p>
           </div>
@@ -346,7 +346,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
           />
         ) : (
           <div className="text-center">
-            <p className="text-[#cfcfcf] text-sm">
+            <p className="typography-caption text-[#cfcfcf]">
               {getText('Выполните инструкцию выше', 'Follow the instruction above')}
             </p>
           </div>
@@ -356,7 +356,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
+            <h3 className="typography-h3 text-[#e1ff00]">{getText('О технике', 'About the technique')}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

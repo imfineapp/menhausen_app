@@ -480,10 +480,110 @@ html, body {
   .md-only-hidden { display: none; }
 }
 
-/* Apply heading font to common heading pattern used in components */
+/* ========================================================================================
+   TYPOGRAPHY SYSTEM - Menhausen App
+   ======================================================================================== */
+
+/* Основные типографические классы согласно Guidelines.md */
 @layer base {
+  /* H1 Заголовки - clamp(24px, 5vw, 32px) с leading-[0.8] */
+  .typography-h1 {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
+    font-size: clamp(24px, 5vw, 32px);
+    line-height: 0.8;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* H2 Заголовки - clamp(20px, 4vw, 28px) с leading-[0.8] */
+  .typography-h2 {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
+    font-size: clamp(20px, 4vw, 28px);
+    line-height: 0.8;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* H3 Заголовки - clamp(18px, 3.5vw, 24px) с leading-[0.8] */
+  .typography-h3 {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
+    font-size: clamp(18px, 3.5vw, 24px);
+    line-height: 0.8;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Body Text - clamp(14px, 2.5vw, 18px) с leading-[1.5] */
+  .typography-body {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.5;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Button Text - 15px с leading-[1.4] и font-weight 500 */
+  .typography-button {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Caption Text - clamp(12px, 2vw, 14px) с leading-[1.4] */
+  .typography-caption {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(12px, 2vw, 14px);
+    line-height: 1.4;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Small Text - clamp(10px, 1.8vw, 12px) с leading-[1.3] */
+  .typography-small {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(10px, 1.8vw, 12px);
+    line-height: 1.3;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Утилитарные классы для специальных случаев */
+  .typography-responsive {
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.5;
+  }
+
+  .typography-compact {
+    line-height: 1.2;
+  }
+
+  .typography-tight {
+    line-height: 1.1;
+  }
+
+  .typography-loose {
+    line-height: 1.6;
+  }
+
+  /* Обратная совместимость с существующими классами */
   .leading-\[0\.8\] {
-    font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
     font-weight: 400;
   }
 }

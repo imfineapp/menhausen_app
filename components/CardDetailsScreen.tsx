@@ -72,11 +72,11 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
       data-name="Card Header"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
-        <p className="block leading-[0.8]">{cardTitle}</p>
+      <div className="typography-h2 text-[#e1ff00] w-full">
+        <p className="block">{cardTitle}</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">{cardDescription || defaultDescription}</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{cardDescription || defaultDescription}</p>
       </div>
     </div>
   );
@@ -98,8 +98,8 @@ function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checki
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       </div>
-      <div className="absolute font-sans inset-[33.33%_4.84%_33.33%_3.7%] leading-[0] not-italic text-[#ffffff] text-[20px] text-left">
-        <p className="block leading-none">{checkin.formattedDate}</p>
+      <div className="absolute inset-[33.33%_4.84%_33.33%_3.7%] text-[#ffffff] text-left">
+        <p className="typography-body block">{checkin.formattedDate}</p>
       </div>
     </button>
   );
@@ -116,8 +116,8 @@ function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; 
       className="relative shrink-0 w-full"
       data-name="Checkins Container"
     >
-      <div className="font-heading font-normal leading-[0] mb-[39px] relative text-[#e1ff00] text-[24px] text-left w-full">
-        <p className="block leading-[0.8]">{getLocalizedText(content.ui.cards.checkins)}</p>
+      <div className="typography-h2 mb-[39px] text-[#e1ff00] text-left w-full">
+        <p className="block">{getLocalizedText(content.ui.cards.checkins)}</p>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"

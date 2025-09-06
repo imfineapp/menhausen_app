@@ -257,8 +257,8 @@ function InfoGroup() {
       className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
       data-name="Info_group"
     >
-      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[20px] sm:text-[22px] md:text-[24px] text-left text-nowrap">
-        <p className="block leading-[0.8] whitespace-pre">{getUI().home.howAreYou}</p>
+      <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
+        <p className="block whitespace-pre">{getUI().home.howAreYou}</p>
       </div>
       <InfoIcon />
     </div>
@@ -277,8 +277,8 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
-          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px] whitespace-pre">Send</p>
+          <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
+            <p className="adjustLetterSpacing block whitespace-pre">Send</p>
           </div>
         </div>
       </div>
@@ -298,8 +298,8 @@ function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
       data-name="Info container"
     >
       <InfoGroup />
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[16px] sm:text-[18px] md:text-[20px] text-left w-full">
-        <p className="block leading-none">{getUI().home.checkInDescription}</p>
+      <div className="typography-body text-[#2d2b2b] text-left w-full">
+        <p className="block">{getUI().home.checkInDescription}</p>
       </div>
       <CheckInButton onClick={onGoToCheckIn} />
     </div>
@@ -347,14 +347,14 @@ function ActivityProgress() {
 function ActivityHeader() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-row font-['Kreon:Regular',_sans-serif] font-normal items-center justify-between leading-[0] inset-x-3 sm:inset-x-4 p-0 text-[#e1ff00] text-[20px] sm:text-[22px] md:text-[24px] text-nowrap top-3 sm:top-4"
+      className="absolute box-border content-stretch flex flex-row items-center justify-between inset-x-3 sm:inset-x-4 p-0 text-[#e1ff00] text-nowrap top-3 sm:top-4"
       data-name="Activity header"
     >
-      <div className="relative shrink-0 text-left">
-        <p className="block leading-[0.8] text-nowrap whitespace-pre">Activity</p>
+      <div className="typography-h2 text-left">
+        <p className="block text-nowrap whitespace-pre">Activity</p>
       </div>
-      <div className="relative shrink-0 text-right">
-        <p className="block leading-[0.8] text-nowrap whitespace-pre">4 days</p>
+      <div className="typography-h2 text-right">
+        <p className="block text-nowrap whitespace-pre">4 days</p>
       </div>
     </div>
   );
@@ -377,8 +377,8 @@ function ActivityBlock() {
       </div>
       <ActivityProgress />
       <ActivityHeader />
-      <div className="absolute font-sans font-bold leading-[0] inset-x-4 sm:inset-x-5 not-italic text-[#ffffff] text-[16px] sm:text-[18px] md:text-[20px] text-left top-[75px] sm:top-[78px] md:top-[81px]">
-        <p className="block leading-none">Only by doing exercises regularly will you achieve results.</p>
+      <div className="absolute inset-x-4 sm:inset-x-5 text-[#ffffff] text-left top-[75px] sm:top-[78px] md:top-[81px]">
+        <p className="typography-body block">Only by doing exercises regularly will you achieve results.</p>
       </div>
     </div>
   );

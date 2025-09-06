@@ -110,12 +110,12 @@ function NoLoginTextBlock() {
       data-name="Text block"
     >
       {/* Заголовок преимущества */}
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
-        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[0]}</p>
+      <div className="typography-h2 text-[#e1ff00] w-full">
+        <p className="block">{content.ui.onboarding.screen02.benefits[0]}</p>
       </div>
       {/* Описание преимущества */}
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">Works directly in Telegram. No accounts, no email required</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">Works directly in Telegram. No accounts, no email required</p>
       </div>
     </div>
   );
@@ -185,12 +185,12 @@ function EncryptionTextBlock() {
       data-name="Container"
     >
       {/* Описание шифрования (располагается ниже заголовка) */}
-      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
+      <div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]">
+        <p className="block">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[1]}</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <p className="block">{content.ui.onboarding.screen02.benefits[1]}</p>
       </div>
     </div>
   );
@@ -258,12 +258,12 @@ function AlwaysWithYouTextBlock() {
       data-name="Container"
     >
       {/* Описание доступности */}
-      <div className="[grid-area:1_/_1] font-sans ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">In your pocket, in Telegram. Help available 24/7, when you need it</p>
+      <div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]">
+        <p className="block">In your pocket, in Telegram. Help available 24/7, when you need it</p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[2]}</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <p className="block">{content.ui.onboarding.screen02.benefits[2]}</p>
       </div>
     </div>
   );
@@ -379,14 +379,14 @@ function ScienceTextBlock() {
       data-name="Container"
     >
       {/* Подробное описание методов */}
-      <div className="[grid-area:1_/_1] font-sans ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">
+      <div className="[grid-area:1_/_1] typography-body ml-px mt-12 text-[#ffffff] w-[247px]">
+        <p className="block">
           CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
         </p>
       </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-heading font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">{content.ui.onboarding.screen02.benefits[3]}</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <p className="block">{content.ui.onboarding.screen02.benefits[3]}</p>
       </div>
     </div>
   );

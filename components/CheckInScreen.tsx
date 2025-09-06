@@ -72,11 +72,11 @@ function HeroBlockQuestion() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">{content.ui.checkin.title}</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <p className="block">{content.ui.checkin.title}</p>
       </div>
-      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">{content.ui.checkin.subtitle}</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.checkin.subtitle}</p>
       </div>
     </div>
   );
@@ -148,7 +148,7 @@ function MoodDisplay({ selectedMood, moodOptions }: { selectedMood: number | nul
   if (selectedMood === null || !moodOptions[selectedMood]) {
     return (
       <div className="text-center">
-        <div className="text-white text-lg">Выберите настроение</div>
+        <div className="typography-body text-white">Выберите настроение</div>
       </div>
     );
   }
@@ -161,7 +161,7 @@ function MoodDisplay({ selectedMood, moodOptions }: { selectedMood: number | nul
         className="w-8 h-8 rounded-full mx-auto mb-2"
         style={{ backgroundColor: mood.color }}
       />
-      <div className="text-white text-lg font-medium">{mood.label}</div>
+      <div className="typography-body text-white">{mood.label}</div>
     </div>
   );
 }

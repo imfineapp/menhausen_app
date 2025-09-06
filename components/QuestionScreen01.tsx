@@ -126,7 +126,7 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-sans leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -168,8 +168,8 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[130px] sm:top-[140px] md:top-[151px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Content block"
     >
-      <div className="font-sans min-h-[40px] sm:min-h-[44px] leading-[22px] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-center w-full">
-        <p className="block leading-[22px]">{questionText}</p>
+      <div className="typography-body min-h-[40px] sm:min-h-[44px] text-[#e1ff00] text-center w-full">
+        <p className="block">{questionText}</p>
       </div>
       <AnswerBlock answer={answer} onAnswerChange={onAnswerChange} />
     </div>

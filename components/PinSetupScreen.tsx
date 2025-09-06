@@ -214,8 +214,8 @@ function PinSetup({
       <PinBlock4 pinLength={pinLength} />
       
       {/* Инструкция */}
-      <div className="font-sans font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
-        <p className="block leading-none">
+      <div className="typography-body text-[#ffffff] text-center w-full">
+        <p className="block">
           {mode === 'create' 
             ? content.ui.pinSetup.subtitle
             : content.ui.pinSetup.confirmPin
@@ -311,10 +311,10 @@ export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetup
             
             {/* Заголовок */}
             <div className="text-center mb-12">
-              <h1 className="font-heading font-normal text-white text-[36px] mb-6 leading-[0.8]">
+              <h1 className="typography-h1 text-white mb-6">
                 {content.ui.pinSetup.title}
               </h1>
-              <p className="font-sans text-white text-[20px]">
+              <p className="typography-body text-white">
                 {content.ui.pinSetup.subtitle}
               </p>
             </div>

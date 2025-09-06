@@ -95,14 +95,14 @@ function BreathingTimer({
     <div className="text-center space-y-4">
       <button
         onClick={onToggle}
-        className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
+        className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg typography-button hover:bg-[#d4e600] transition-colors"
       >
         {isRunning ? getText('Пауза', 'Pause') : getText('Старт', 'Start')}
       </button>
       
       <button
         onClick={onComplete}
-        className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg hover:bg-[#444] transition-colors"
+        className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg typography-button hover:bg-[#444] transition-colors"
       >
         {getText('Сброс', 'Reset')}
       </button>
@@ -125,7 +125,7 @@ function AdditionalInfo({ technique }: { technique: any }) {
     <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
       <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
       <div className="space-y-4">
-        <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('О технике', 'About the technique')}</h3>
+        <h3 className="typography-h3 text-[#e1ff00]">{getText('О технике', 'About the technique')}</h3>
         <MentalTechniqueAccordion 
           items={technique?.accordionItems?.map((item: any) => ({
             title: getLocalizedText(item.title),
@@ -211,14 +211,14 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
       <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
         {/* Заголовок */}
         <div className="text-center">
-          <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
+          <h1 className="typography-h1 text-[#e1ff00] mb-2">
             {getLocalizedText(technique.title)}
           </h1>
-          <p className="text-[#cfcfcf] text-lg">
+          <p className="typography-body text-[#cfcfcf]">
             {getLocalizedText(technique.subtitle)}
           </p>
           <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg text-sm font-semibold">
+            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg typography-caption">
               {getLocalizedText(technique.duration)}
             </span>
           </div>
@@ -231,7 +231,7 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
-            <p className="text-white text-lg mb-2">
+            <p className="typography-body text-white mb-2">
               {getText('Цикл', 'Cycle')} {Math.floor(position / 4) + 1} - {getText('Шаг', 'Step')} {position + 1} {getText('из', 'of')} 4
             </p>
           </div>

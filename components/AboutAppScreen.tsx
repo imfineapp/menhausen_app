@@ -98,12 +98,12 @@ function AppLogoSection() {
         </svg>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <div className="font-['Kreon:Regular',_sans-serif] text-responsive-3xl text-[#e1ff00] text-center">
-          <h1 className="block leading-[0.8]">Menhausen</h1>
+        <div className="typography-h1 text-[#e1ff00] text-center">
+          <h1 className="block">Menhausen</h1>
         </div>
         <div className="bg-[#e1ff00] px-3 py-1 rounded-xl">
-          <div className="font-sans text-responsive-sm text-[#2d2b2b] text-center tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">Beta Version 1.0.0</p>
+          <div className="typography-caption text-[#2d2b2b] text-center tracking-[-0.43px]">
+            <p className="adjustLetterSpacing block">Beta Version 1.0.0</p>
           </div>
         </div>
       </div>
@@ -123,11 +123,11 @@ function AppInfoSection({ t }: { t: (key: string) => string }) {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">{t('about_menhausen')}</h2>
+          <div className="typography-h2 text-[#e1ff00] text-left">
+            <h2 className="block">{t('about_menhausen')}</h2>
           </div>
-          <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
-            <p className="block leading-[1.5]">
+          <div className="typography-body text-[#cfcfcf] text-left">
+            <p className="block">
               Menhausen is your personal mental health companion designed to help you track your mood, 
               build healthy habits, and support your emotional well-being through daily check-ins and mindful exercises.
             </p>
@@ -141,38 +141,38 @@ function AppInfoSection({ t }: { t: (key: string) => string }) {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">{t('key_features')}</h2>
+          <div className="typography-h2 text-[#e1ff00] text-left">
+            <h2 className="block">{t('key_features')}</h2>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Daily mood tracking and emotional check-ins</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Daily mood tracking and emotional check-ins</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Personalized mental health exercises and activities</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Personalized mental health exercises and activities</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Progress tracking with levels and achievements</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Progress tracking with levels and achievements</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Secure and private - your data stays yours</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Secure and private - your data stays yours</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-                <p className="block leading-[1.5]">Built specifically for Telegram Mini Apps</p>
+              <div className="typography-body text-[#cfcfcf] text-left">
+                <p className="block">Built specifically for Telegram Mini Apps</p>
               </div>
             </div>
           </div>
@@ -193,21 +193,21 @@ function TeamSection({ t }: { t: (key: string) => string }) {
         className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
       />
       <div className="flex flex-col gap-4">
-        <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-          <h2 className="block leading-[0.8]">{t('development_team')}</h2>
+        <div className="typography-h2 text-[#e1ff00] text-left">
+          <h2 className="block">{t('development_team')}</h2>
         </div>
-        <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
-          <p className="block leading-[1.5]">
+        <div className="typography-body text-[#cfcfcf] text-left">
+          <p className="block">
             Created with care by a dedicated team of developers and mental health advocates. 
             Our mission is to make mental wellness accessible and engaging for everyone.
           </p>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
-            <p className="block leading-[1.5]">Made with ❤️ for the Telegram community</p>
+          <div className="typography-body text-[#cfcfcf] text-left">
+            <p className="block">Made with ❤️ for the Telegram community</p>
           </div>
-          <div className="font-sans text-responsive-sm text-[#696969] text-left">
-            <p className="block leading-[1.5]">© 2024 Menhausen Team. All rights reserved.</p>
+          <div className="typography-caption text-[#696969] text-left">
+            <p className="block">© 2024 Menhausen Team. All rights reserved.</p>
           </div>
         </div>
       </div>
@@ -233,8 +233,8 @@ function TechnicalInfoSection({ t }: { t: (key: string) => string }) {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex items-center justify-between">
-          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">{t('technical_information')}</h2>
+          <div className="typography-h2 text-[#e1ff00] text-left">
+            <h2 className="block">{t('technical_information')}</h2>
           </div>
           <div className={`transform transition-transform duration-200 ${showTechnicalInfo ? 'rotate-180' : ''}`}>
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="#e1ff00">

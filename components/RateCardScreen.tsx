@@ -88,11 +88,11 @@ function RatingTextContainer() {
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center w-full"
       data-name="Rating text container"
     >
-      <div className="[grid-area:1_/_1] font-heading font-normal relative text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full">
-        <p className="block leading-[0.8]">{content.ui.cards.rating.title}</p>
+      <div className="[grid-area:1_/_1] typography-h2 text-[#e1ff00] w-full">
+        <p className="block">{content.ui.cards.rating.title}</p>
       </div>
-      <div className="[grid-area:1_/_1] font-sans mt-[35px] sm:mt-[37px] md:mt-[39px] not-italic relative text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] w-full">
-        <p className="block leading-none">{content.ui.cards.rating.subtitle}</p>
+      <div className="[grid-area:1_/_1] typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
+        <p className="block">{content.ui.cards.rating.subtitle}</p>
       </div>
     </div>
   );
@@ -128,8 +128,8 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
-        <p className="block leading-none">Your feedback is fully protected with AES-256 encryption</p>
+      <div className="typography-caption text-[#696969] text-left flex-1">
+        <p className="block">Your feedback is fully protected with AES-256 encryption</p>
       </div>
     </div>
   );
@@ -173,7 +173,7 @@ function InputTextMessageBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-sans leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[16px] sm:text-[17px] md:text-[18px] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -228,10 +228,10 @@ function RatingMark({
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       )}
-      <div className={`absolute font-sans inset-[32.61%_36.96%] leading-[0] not-italic text-[20px] text-center text-nowrap tracking-[-0.43px] ${
+      <div className={`absolute inset-[32.61%_36.96%] text-center text-nowrap tracking-[-0.43px] ${
         isSelected ? 'text-[#2d2b2b]' : 'text-[#ffffff]'
       }`}>
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{number}</p>
+        <p className="typography-body adjustLetterSpacing block whitespace-pre">{number}</p>
       </div>
     </button>
   );
@@ -285,10 +285,10 @@ function RatingCardContainer({
       <RatingOptions selectedRating={selectedRating} onRatingChange={onRatingChange} />
       {showThankYou && (
         <div
-          className="font-sans font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center"
+          className="typography-body min-w-full text-[#ffffff] text-center"
           style={{ width: "min-content" }}
         >
-          <p className="block leading-none">Thank you!</p>
+          <p className="block">Thank you!</p>
         </div>
       )}
       <div className="mt-5">
