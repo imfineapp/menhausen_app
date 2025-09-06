@@ -1,0 +1,26 @@
+{
+  "title": "Быстрые техники",
+  "subtitle": "Инструменты для экстренной помощи",
+  "categories": {
+    "emergency": {
+      "title": "Экстренная помощь",
+      "description": "1-2 минуты",
+      "techniqueIds": ["grounding-5-4-3-2-1", "grounding-anchor"]
+    },
+    "breathing": {
+      "title": "Дыхание",
+      "description": "3-5 минут",
+      "techniqueIds": ["breathing-4-7-8", "breathing-square"]
+    },
+    "stabilization": {
+      "title": "Стабилизация",
+      "description": "5-10 минут",
+      "techniqueIds": []
+    },
+    "recovery": {
+      "title": "Восстановление",
+      "description": "10-20 минут",
+      "techniqueIds": []
+    }
+  }
+}

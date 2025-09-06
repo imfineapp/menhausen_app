@@ -12,6 +12,10 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        heading: ['"Roboto Slab"', '"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', '"Helvetica Neue"', 'Arial', 'serif'],
+        sans: ['"PT Sans"', '"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+      },
       screens: {
         'xs': '320px',
         'sm': '375px',

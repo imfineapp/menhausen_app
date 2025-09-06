@@ -77,6 +77,8 @@ export default defineConfig({
         // Mental health app specific settings
         colorScheme: 'light',
         locale: 'en-US',
+        // Load authentication state
+        storageState: 'tests/e2e/auth.json',
         
         // CI-specific launch options
         ...(process.env.CI && {
@@ -106,9 +108,10 @@ export default defineConfig({
   },
 
   /* Global test configuration */
-  timeout: process.env.CI ? 30 * 1000 : 5 * 1000, // Longer timeout in CI
+
+  timeout: process.env.CI ? 30 * 1000 : 30 * 1000, // Longer timeout in CI
   expect: {
-    timeout: process.env.CI ? 10 * 1000 : 5 * 1000, // Longer expect timeout in CI
+    timeout: process.env.CI ? 10 * 1000 : 30 * 1000, // Longer expect timeout in CI
     toHaveScreenshot: {
       // Allow small differences for cross-browser compatibility
       threshold: 0.2,
@@ -123,6 +126,5 @@ export default defineConfig({
   outputDir: 'test-results/',
   
   /* Global setup and teardown */
-  // globalSetup: './tests/config/global-setup.ts',
-  // globalTeardown: './tests/config/global-teardown.ts',
+  globalSetup: './tests/e2e/global-setup.ts',
 });

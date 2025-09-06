@@ -46,7 +46,7 @@ export function BackButton({ onClick }: { onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
-      className="size-10 sm:size-12 cursor-pointer touch-friendly hover:opacity-80" 
+      className="size-10 sm:size-12 cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80" 
       data-name="Back Button"
       aria-label="Go back"
     >
@@ -113,7 +113,7 @@ export function MenhausenBeta() {
  */
 export function MiniStripeLogo() {
   return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
+          <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
       <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
         <div className="flex-none rotate-[180deg]">
           <SymbolBig />

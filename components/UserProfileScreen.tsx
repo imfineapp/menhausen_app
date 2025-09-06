@@ -1,6 +1,7 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
 import { useState } from 'react';
 import { useLanguage, useTranslation } from './LanguageContext';
+import { useContent } from './ContentContext';
 import { LanguageModal } from './LanguageModal';
 import { Switch } from './ui/switch';
 
@@ -23,7 +24,7 @@ import {
 } from './UserProfileIcons';
 import { UserInfoSection, SeparationLine, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
-import { Light, BackButton, MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
 
 // Типы для пропсов компонента
@@ -41,10 +42,10 @@ interface UserProfileScreenProps {
 
 /**
  * Главный компонент страницы профиля пользователя
- * Полностью адаптивный с поддержкой всех устройств и touch-friendly элементами
+ * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
 export function UserProfileScreen({ 
-  onBack, 
+  onBack: _onBack, 
   onShowAboutApp, 
   onShowPinSettings, 
   onShowPrivacy, 
@@ -59,8 +60,12 @@ export function UserProfileScreen({
   
   // Хуки для управления языком и шарингом
   const { language, openLanguageModal } = useLanguage();
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
+  const { getUI } = useContent();
   const { handleShare } = useAppShare();
+  
+  // Получаем переводы UI
+  const _ui = getUI();
 
   /**
    * Обработчики для различных действий профиля
@@ -142,14 +147,11 @@ export function UserProfileScreen({
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <div className="absolute left-4 sm:left-6 md:left-[21px] top-[53px] z-10">
-        <BackButton onClick={onBack} />
-      </div>
+      {/* Логотип */}
       <MiniStripeLogo />
       
       {/* Основной контент */}
-      <div className="absolute flex flex-col gap-8 sm:gap-10 left-4 sm:left-6 md:left-[21px] top-[120px] sm:top-[130px] md:top-[142px] w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[351px] max-w-[351px] pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Информация о пользователе */}
         <UserInfoSection userHasPremium={userHasPremium} />
@@ -161,43 +163,43 @@ export function UserProfileScreen({
         
         {/* Секция "Your status" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Your status</p>
+          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
+            <p className="block leading-[0.8]">{t('your_status')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
               icon={<BadgeIcon />}
-              title="Badges"
+              title={t('badges')}
               onClick={handleBadges}
             />
             <SettingsItem
               icon={<LevelIcon />}
-              title="Your level"
+              title={t('your_level')}
               onClick={handleYourLevel}
             />
             <SettingsItem
               icon={<MentalStatusIcon />}
-              title="How are you status"
+              title={t('how_are_you_status')}
               onClick={handleMentalStatus}
             />
             <SettingsItem
               icon={<UnlockIcon />}
-              title="Unlock all themes & cards"
+              title={t('unlock_all_themes')}
               onClick={handleUnlockThemes}
             />
             <SettingsItem
               icon={<DonationIcon />}
-              title="Make donation"
+              title={t('make_donation')}
               onClick={handleDonation}
             />
             <SettingsItem
               icon={<ActivityIcon />}
-              title="Your activity"
+              title={t('your_activity')}
               onClick={handleActivity}
             />
             <SettingsItem
               icon={<ShareIcon />}
-              title="Share app to friend"
+              title={t('share_app_to_friend')}
               onClick={handleShare}
               isHighlighted={true}
             />
@@ -209,55 +211,55 @@ export function UserProfileScreen({
         
         {/* Секция "Settings" */}
         <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Settings</p>
+          <div className="font-heading text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
+            <p className="block leading-[0.8]">{t('settings')}</p>
           </div>
           <div className="flex flex-col w-full">
             <SettingsItem
               icon={<LanguageIcon />}
-              title="Language"
+              title={t('language')}
               rightElement={
-                <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#ffffff] text-right">
-                  <p className="block leading-none">{language === 'en' ? 'English' : 'Русский'}</p>
+                <div className="font-sans text-[18px] sm:text-[20px] text-[#ffffff] text-right">
+                  <p className="block leading-none">{language === 'en' ? t('english') : t('russian')}</p>
                 </div>
               }
               onClick={handleLanguage}
             />
             <SettingsItem
               icon={<ReminderIcon />}
-              title="Daily reminder"
+              title={t('daily_reminder')}
               rightElement={
                 <Switch 
                   checked={notificationsEnabled} 
                   onCheckedChange={handleNotificationToggle}
-                  className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 touch-friendly"
+                  className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 min-h-[44px] min-w-[44px]"
                   data-testid="notifications-switch"
                 />
               }
             />
             <SettingsItem
               icon={<SecurityIcon />}
-              title="Security PIN"
+              title={t('security_pin')}
               onClick={handleSecurityPin}
             />
             <SettingsItem
               icon={<InfoIcon />}
-              title="About app"
+              title={t('about_app')}
               onClick={handleAboutApp}
             />
             <SettingsItem
               icon={<PrivacyIcon />}
-              title="Privacy policy"
+              title={t('privacy_policy')}
               onClick={handlePrivacyPolicy}
             />
             <SettingsItem
               icon={<TermsIcon />}
-              title="Terms of use"
+              title={t('terms_of_use')}
               onClick={handleTermsOfUse}
             />
             <SettingsItem
               icon={<DeleteIcon />}
-              title="Delete account"
+              title={t('delete_account')}
               onClick={handleDeleteAccount}
               isHighlighted={true}
             />

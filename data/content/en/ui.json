@@ -1,0 +1,140 @@
+{
+  "navigation": {
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "complete": "Complete",
+    "continue": "Continue",
+    "send": "Send",
+    "start": "Start",
+    "unlock": "Unlock"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "tryAgain": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit"
+  },
+  "home": {
+    "greeting": "Good morning",
+    "checkInPrompt": "How are you feeling today?",
+    "quickHelpTitle": "Quick mental help",
+    "themesTitle": "Choose what bothers you",
+    "howAreYou": "How are you?",
+    "checkInDescription": "Check in with yourself — it's the first step to self-care! Do it everyday.",
+    "whatWorriesYou": "What worries you?"
+  },
+  "profile": {
+    "title": "Profile",
+    "aboutApp": "About app",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "deleteAccount": "Delete account",
+    "payments": "Subscription"
+  },
+  "survey": {
+    "progress": "Step {current} of {total}",
+    "selectAtLeastOne": "Please select at least one option",
+    "optional": "Optional",
+    "required": "Required"
+  },
+  "onboarding": {
+    "screen01": {
+      "title": "Welcome to Menhausen",
+      "subtitle": "Your personal mental health companion. Let's start your journey to better emotional well-being.",
+      "buttonText": "Get Started",
+      "privacyText": "Privacy Policy",
+      "termsText": "Terms of Use",
+      "agreementText": "By clicking the button you agree to the"
+    },
+    "screen02": {
+      "title": "What makes Menhausen special?",
+      "benefits": [
+        "Personalized exercises based on your needs",
+        "Evidence-based techniques from psychology",
+        "Daily check-ins to track your progress",
+        "Emergency support when you need it most"
+      ],
+      "buttonText": "Continue"
+    }
+  },
+  "pinSetup": {
+    "title": "PIN Setup",
+    "subtitle": "Create a 4-digit PIN to protect your data",
+    "createPin": "Create PIN",
+    "confirmPin": "Confirm PIN",
+    "pinMismatch": "PINs don't match",
+    "pinTooShort": "PIN must be 4 digits",
+    "skip": "Skip",
+    "back": "Back"
+  },
+  "checkin": {
+    "title": "How are you?",
+    "subtitle": "Check in with yourself — it's the first step to self-care! Do it everyday.",
+    "moodOptions": {
+      "down": "I'm feeling down...",
+      "anxious": "I'm anxious",
+      "neutral": "I'm neutral",
+      "energized": "I'm energized",
+      "happy": "I'm happy!"
+    },
+    "send": "Send",
+    "back": "Back"
+  },
+  "themes": {
+    "welcome": {
+      "title": "Welcome to Theme",
+      "subtitle": "Ready to start working on yourself?",
+      "start": "Start",
+      "unlock": "Unlock"
+    },
+    "home": {
+      "progress": "Progress",
+      "checkins": "Checkins",
+      "level": "Level",
+      "nextLevel": "Next Level"
+    }
+  },
+  "cards": {
+    "checkins": "Checkins",
+    "welcome": {
+      "title": "Card",
+      "subtitle": "Ready to start the exercise?"
+    },
+    "question": {
+      "placeholder": "Enter your answer here...",
+      "encryption": "Your answers are fully protected with AES-256 encryption"
+    },
+    "final": {
+      "why": "Why:"
+    },
+    "rating": {
+      "title": "Please rate the card",
+      "subtitle": "Your rating will help us to be more useful",
+      "placeholder": "Leave feedback (optional)...",
+      "submit": "Submit",
+      "back": "Back"
+    },
+    "themeHome": {
+      "card1": "Card #1",
+      "card2": "Card #2",
+      "card3": "Card #3",
+      "card4": "Card #4",
+      "card5": "Card #5",
+      "card6": "Card #6",
+      "card7": "Card #7",
+      "card8": "Card #8",
+      "card9": "Card #9",
+      "card10": "Card #10",
+      "level1": "Level 1",
+      "level2": "Level 2",
+      "level3": "Level 3",
+      "level4": "Level 4",
+      "level5": "Level 5",
+      "description": "Some text about card and more."
+    }
+  }
+}

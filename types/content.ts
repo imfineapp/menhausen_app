@@ -3,12 +3,10 @@
 // ========================================================================================
 
 /**
- * Базовый интерфейс для локализованного контента
+ * Базовый тип для локализованного контента
+ * Теперь это просто строка, так как каждый язык в отдельном файле
  */
-export interface LocalizedContent {
-  en: string;
-  // Добавить другие языки по мере необходимости: ru, es, fr и т.д.
-}
+export type LocalizedContent = string;
 
 /**
  * Данные темы (категории упражнений)
@@ -78,6 +76,7 @@ export interface OnboardingContent {
     buttonText: LocalizedContent;
     privacyText: LocalizedContent;
     termsText: LocalizedContent;
+    agreementText: LocalizedContent;
   };
   screen02: {
     title: LocalizedContent;
@@ -147,6 +146,9 @@ export interface UITexts {
     skip: LocalizedContent;
     complete: LocalizedContent;
     continue: LocalizedContent;
+    send: LocalizedContent;
+    start: LocalizedContent;
+    unlock: LocalizedContent;
   };
   common: {
     loading: LocalizedContent;
@@ -162,6 +164,9 @@ export interface UITexts {
     checkInPrompt: LocalizedContent;
     quickHelpTitle: LocalizedContent;
     themesTitle: LocalizedContent;
+    howAreYou: LocalizedContent;
+    checkInDescription: LocalizedContent;
+    whatWorriesYou: LocalizedContent;
   };
   profile: {
     title: LocalizedContent;
@@ -177,6 +182,162 @@ export interface UITexts {
     optional: LocalizedContent;
     required: LocalizedContent;
   };
+  onboarding: {
+    screen01: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      buttonText: LocalizedContent;
+      privacyText: LocalizedContent;
+      termsText: LocalizedContent;
+      agreementText: LocalizedContent;
+    };
+    screen02: {
+      title: LocalizedContent;
+      benefits: LocalizedContent[];
+      buttonText: LocalizedContent;
+    };
+  };
+  pinSetup: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    createPin: LocalizedContent;
+    confirmPin: LocalizedContent;
+    pinMismatch: LocalizedContent;
+    pinTooShort: LocalizedContent;
+    skip: LocalizedContent;
+    back: LocalizedContent;
+  };
+  checkin: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    moodOptions: {
+      down: LocalizedContent;
+      anxious: LocalizedContent;
+      neutral: LocalizedContent;
+      energized: LocalizedContent;
+      happy: LocalizedContent;
+    };
+    send: LocalizedContent;
+    back: LocalizedContent;
+  };
+  themes: {
+    welcome: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      start: LocalizedContent;
+      unlock: LocalizedContent;
+    };
+    home: {
+      progress: LocalizedContent;
+      checkins: LocalizedContent;
+      level: LocalizedContent;
+      nextLevel: LocalizedContent;
+    };
+  };
+  cards: {
+    checkins: LocalizedContent;
+    welcome: {
+      subtitle: LocalizedContent;
+    };
+    question: {
+      placeholder: LocalizedContent;
+      encryption: LocalizedContent;
+    };
+    final: {
+      why: LocalizedContent;
+    };
+    rating: {
+      title: LocalizedContent;
+      subtitle: LocalizedContent;
+      placeholder: LocalizedContent;
+      submit: LocalizedContent;
+    };
+    themeHome: {
+      card1: LocalizedContent;
+      card2: LocalizedContent;
+      card3: LocalizedContent;
+      card4: LocalizedContent;
+      card5: LocalizedContent;
+      card6: LocalizedContent;
+      card7: LocalizedContent;
+      card8: LocalizedContent;
+      card9: LocalizedContent;
+      card10: LocalizedContent;
+      level1: LocalizedContent;
+      level2: LocalizedContent;
+      level3: LocalizedContent;
+      level4: LocalizedContent;
+      level5: LocalizedContent;
+      description: LocalizedContent;
+    };
+  };
+}
+
+/**
+ * Шаг ментальной техники
+ */
+export interface TechniqueStep {
+  step: number;
+  instruction: LocalizedContent;
+  duration: number; // в секундах
+  visual?: 'breathing' | 'square' | 'grounding' | 'body-scan';
+  input?: 'text' | 'checkbox' | 'none';
+  placeholder?: LocalizedContent;
+}
+
+/**
+ * Элемент аккордеона с дополнительной информацией
+ */
+export interface AccordionItem {
+  title: LocalizedContent;
+  content: LocalizedContent;
+}
+
+/**
+ * Данные ментальной техники
+ */
+export interface MentalTechniqueData {
+  id: string;
+  title: LocalizedContent;
+  subtitle: LocalizedContent;
+  duration: LocalizedContent; // "5 минут"
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  emergencyLevel: 'critical' | 'high' | 'medium' | 'low';
+  category: 'breathing' | 'grounding' | 'meditation' | 'relaxation';
+  steps: TechniqueStep[];
+  tips: LocalizedContent[];
+  accordionItems: AccordionItem[];
+  isPremium: boolean;
+}
+
+/**
+ * Контент для меню ментальных техник
+ */
+export interface MentalTechniquesMenuData {
+  title: LocalizedContent;
+  subtitle: LocalizedContent;
+  categories: {
+    emergency: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    breathing: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    stabilization: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+    recovery: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+      techniqueIds: string[];
+    };
+  };
 }
 
 /**
@@ -189,12 +350,14 @@ export interface AppContent {
   onboarding: OnboardingContent;
   survey: SurveyContent;
   ui: UITexts;
+  mentalTechniques: Record<string, MentalTechniqueData>;
+  mentalTechniquesMenu: MentalTechniquesMenuData;
 }
 
 /**
  * Поддерживаемые языки
  */
-export type SupportedLanguage = 'en'; // | 'ru' | 'es' | 'fr' - добавить по мере необходимости
+export type SupportedLanguage = 'en' | 'ru';
 
 /**
  * Контекст для управления языком и контентом
@@ -209,4 +372,10 @@ export interface ContentContextType {
   getEmergencyCard: (cardId: string) => EmergencyCardData | undefined;
   getThemeCards: (themeId: string) => CardData[];
   getSurveyScreen: (screenId: keyof SurveyContent) => SurveyScreenData | undefined;
+  getMentalTechnique: (techniqueId: string) => MentalTechniqueData | undefined;
+  getMentalTechniques: () => MentalTechniqueData[];
+  getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
+  getMentalTechniquesMenu: () => MentalTechniquesMenuData;
+  getUI: () => UITexts;
+  getAllThemes: () => ThemeData[];
 }

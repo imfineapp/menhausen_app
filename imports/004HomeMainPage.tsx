@@ -144,7 +144,7 @@ function UserAccountStatus() {
       className="bg-[#e1ff00] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[69px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Premium</p>
       </div>
     </div>
@@ -157,7 +157,7 @@ function UserLevelAndPaidStatus() {
       className="box-border content-stretch flex flex-row gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Level 25</p>
       </div>
       <UserAccountStatus />
@@ -230,7 +230,7 @@ function InfoGroup() {
       className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
       data-name="Info_group"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-left text-nowrap">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-left text-nowrap">
         <p className="block leading-[0.8] whitespace-pre">How are you?</p>
       </div>
       <InfoIcon />
@@ -243,7 +243,7 @@ function StartMining() {
     <div className="bg-[#2d2b2b] h-[46px] relative rounded-xl shrink-0 w-full" data-name="Start Mining">
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+          <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
             <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Send</p>
           </div>
         </div>
@@ -259,7 +259,7 @@ function InfoContainer() {
       data-name="Info container"
     >
       <InfoGroup />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[20px] text-left w-full">
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
       </div>
       <StartMining />
@@ -329,7 +329,7 @@ function ActivityBlock() {
       </div>
       <ActivityProgress />
       <ActivityHeader />
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-5 mt-[81px] not-italic relative text-[#ffffff] text-[20px] text-left w-[311px]">
+      <div className="[grid-area:1_/_1] font-sans ml-5 mt-[81px] not-italic relative text-[#ffffff] text-[20px] text-left w-[311px]">
         <p className="block leading-none">Only by doing exercises regularly will you achieve results.</p>
       </div>
     </div>
@@ -342,7 +342,7 @@ function UserAccountStatus1() {
       className="bg-[#2d2b2b] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[62px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Free</p>
       </div>
     </div>
@@ -355,7 +355,7 @@ function MotivationAndStatusBlock() {
       className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
       <UserAccountStatus1 />
@@ -369,10 +369,10 @@ function ContentBlockThemeCard() {
       className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Stress</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock />
@@ -397,7 +397,7 @@ function ProgressTheme() {
   return (
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -431,7 +431,7 @@ function UserAccountStatus2() {
       className="bg-[#2d2b2b] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[62px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Free</p>
       </div>
     </div>
@@ -444,7 +444,7 @@ function MotivationAndStatusBlock1() {
       className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
       <UserAccountStatus2 />
@@ -458,10 +458,10 @@ function ContentBlockThemeCard1() {
       className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Angry</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock1 />
@@ -487,7 +487,7 @@ function ProgressTheme1() {
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[80.06%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -534,7 +534,7 @@ function UserAccountStatus3() {
       className="bg-[#e1ff00] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[69px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Premium</p>
       </div>
     </div>
@@ -547,7 +547,7 @@ function MotivationAndStatusBlock2() {
       className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
       <UserAccountStatus3 />
@@ -561,10 +561,10 @@ function ContentBlockThemeCard2() {
       className="absolute box-border content-stretch flex flex-col gap-2.5 items-start justify-start left-[13px] p-0 top-[17px] w-[327px]"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Sadness and apathy</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock2 />
@@ -587,7 +587,7 @@ function MotivationAndStatusBlock3() {
       className="box-border content-stretch flex flex-row gap-1 items-end justify-start p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
     </div>
@@ -600,10 +600,10 @@ function ContentBlockThemeCard3() {
       className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Anxiety</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock3 />
@@ -629,7 +629,7 @@ function ProgressTheme2() {
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[40.17%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -663,7 +663,7 @@ function UserAccountStatus4() {
       className="bg-[#2d2b2b] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[62px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Free</p>
       </div>
     </div>
@@ -676,7 +676,7 @@ function MotivationAndStatusBlock4() {
       className="box-border content-stretch flex flex-row items-end justify-between p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
       <UserAccountStatus4 />
@@ -690,10 +690,10 @@ function ContentBlockThemeCard4() {
       className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Lack and self-confidence</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock4 />
@@ -719,7 +719,7 @@ function ProgressTheme3() {
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[10.26%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-left">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-left">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -753,7 +753,7 @@ function MotivationAndStatusBlock5() {
       className="box-border content-stretch flex flex-row gap-1 items-end justify-start p-0 relative shrink-0 w-full"
       data-name="Motivation_and_status_block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[16px] text-left w-[235px]">
         <p className="block leading-none">Use 80% users</p>
       </div>
     </div>
@@ -766,10 +766,10 @@ function ContentBlockThemeCard5() {
       className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Content_block_theme_card"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Relationships an family</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-full">
         <p className="block leading-none">Some text about theme. Some text about theme.</p>
       </div>
       <MotivationAndStatusBlock5 />
@@ -795,7 +795,7 @@ function ProgressTheme4() {
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-left">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-left">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -859,7 +859,7 @@ function CardAnonsStatus() {
       className="bg-[#2d2b2b] box-border content-stretch flex flex-row h-[18px] items-start justify-center p-0 relative rounded-xl shrink-0"
       data-name="Card_anons_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center tracking-[-0.43px] w-[66px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center tracking-[-0.43px] w-[66px]">
         <p className="adjustLetterSpacing block leading-[16px]">Soon</p>
       </div>
     </div>
@@ -876,7 +876,7 @@ function Frame27() {
         <p className="block leading-[0.8]">Emergency breathing patterns</p>
       </div>
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#333333] text-[20px] text-left"
+        className="font-sans font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#333333] text-[20px] text-left"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">{`Check in with yourself — it's the first step to self-care! Do it everyday.`}</p>
@@ -951,7 +951,7 @@ function Frame42() {
   return (
     <div className="absolute box-border content-stretch flex flex-row gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-start p-0">
       <SocialIcons />
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">Follow</p>
       </div>
     </div>
@@ -991,7 +991,7 @@ function Frame43() {
   return (
     <div className="absolute box-border content-stretch flex flex-row gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-start p-0">
       <SocialIcons1 />
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#2d2b2b] text-[24px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">Follow</p>
       </div>
     </div>

@@ -89,7 +89,7 @@ function ProgressTheme() {
     <div className="h-6 relative shrink-0 w-[351px]" data-name="Progress_theme">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
       <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
-      <div className="absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
+      <div className="absolute font-sans inset-[12.5%_4.56%_20.83%_4.56%] leading-[0] not-italic text-[#696969] text-[16px] text-right">
         <p className="block leading-none">Progress</p>
       </div>
     </div>
@@ -142,7 +142,7 @@ function CheckinIcon() {
 function Frame22() {
   return (
     <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">{`1 `}</p>
       </div>
       <CheckinIcon />
@@ -153,7 +153,7 @@ function Frame22() {
 function Frame23() {
   return (
     <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
         <p className="block leading-[0.8]">Card #1</p>
       </div>
       <Frame22 />
@@ -165,7 +165,7 @@ function Frame44() {
   return (
     <div className="box-border content-stretch flex flex-col gap-[5px] items-start justify-start p-0 relative shrink-0 w-[321px]">
       <Frame23 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
         <p className="block leading-none">Level 1</p>
       </div>
     </div>
@@ -176,7 +176,7 @@ function Frame24() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0">
       <Frame44 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
         <p className="block leading-none">Some text about card and more.</p>
       </div>
     </div>
@@ -245,7 +245,7 @@ function CheckinIcon1() {
 function Frame25() {
   return (
     <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">20</p>
       </div>
       <CheckinIcon1 />
@@ -256,7 +256,7 @@ function Frame25() {
 function Frame26() {
   return (
     <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
         <p className="block leading-[0.8]">Card #1</p>
       </div>
       <Frame25 />
@@ -268,7 +268,7 @@ function Frame46() {
   return (
     <div className="box-border content-stretch flex flex-col gap-[5px] items-start justify-start p-0 relative shrink-0 w-[321px]">
       <Frame26 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
         <p className="block leading-none">Level 1</p>
       </div>
     </div>
@@ -279,7 +279,7 @@ function Frame27() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0">
       <Frame46 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
         <p className="block leading-none">Some text about card and more.</p>
       </div>
     </div>
@@ -348,7 +348,7 @@ function CheckinIcon2() {
 function Frame28() {
   return (
     <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">4</p>
       </div>
       <CheckinIcon2 />
@@ -359,7 +359,7 @@ function Frame28() {
 function Frame29() {
   return (
     <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
         <p className="block leading-[0.8]">Card #2</p>
       </div>
       <Frame28 />
@@ -371,7 +371,7 @@ function Frame47() {
   return (
     <div className="box-border content-stretch flex flex-col gap-[5px] items-start justify-start p-0 relative shrink-0 w-[321px]">
       <Frame29 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
         <p className="block leading-none">Level 1</p>
       </div>
     </div>
@@ -382,7 +382,7 @@ function Frame30() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0">
       <Frame47 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
         <p className="block leading-none">Some text about card and more.</p>
       </div>
     </div>
@@ -451,7 +451,7 @@ function CheckinIcon3() {
 function Frame31() {
   return (
     <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[20px] text-nowrap text-right">
         <p className="block leading-[0.8] whitespace-pre">7</p>
       </div>
       <CheckinIcon3 />
@@ -462,7 +462,7 @@ function Frame31() {
 function Frame32() {
   return (
     <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[158px]">
         <p className="block leading-[0.8]">Card #3</p>
       </div>
       <Frame31 />
@@ -474,7 +474,7 @@ function Frame48() {
   return (
     <div className="box-border content-stretch flex flex-col gap-[5px] items-start justify-start p-0 relative shrink-0 w-[321px]">
       <Frame32 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left w-full">
         <p className="block leading-none">Level 2</p>
       </div>
     </div>
@@ -485,7 +485,7 @@ function Frame33() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0">
       <Frame48 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left w-[321px]">
         <p className="block leading-none">Some text about card and more.</p>
       </div>
     </div>
@@ -511,10 +511,10 @@ function Group19() {
 function Frame34() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #4</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 2</p>
       </div>
     </div>
@@ -526,7 +526,7 @@ function Frame45() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame34 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -554,10 +554,10 @@ function Group20() {
 function Frame35() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #5</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 3</p>
       </div>
     </div>
@@ -569,7 +569,7 @@ function Frame49() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame35 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -597,10 +597,10 @@ function Group21() {
 function Frame36() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #6</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 3</p>
       </div>
     </div>
@@ -612,7 +612,7 @@ function Frame50() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame36 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -640,10 +640,10 @@ function Group22() {
 function Frame37() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #7</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 4</p>
       </div>
     </div>
@@ -655,7 +655,7 @@ function Frame51() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame37 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -683,10 +683,10 @@ function Group23() {
 function Frame38() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #8</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 4</p>
       </div>
     </div>
@@ -698,7 +698,7 @@ function Frame52() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame38 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -726,10 +726,10 @@ function Group24() {
 function Frame39() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #9</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 5</p>
       </div>
     </div>
@@ -741,7 +741,7 @@ function Frame53() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame39 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -769,10 +769,10 @@ function Group25() {
 function Frame40() {
   return (
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-0 relative shrink-0 w-[244px]">
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[24px] w-full">
         <p className="block leading-[0.8]">Card #10</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[20px] w-full">
         <p className="block leading-none">Level 5</p>
       </div>
     </div>
@@ -784,7 +784,7 @@ function Frame54() {
     <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start leading-[0] p-0 relative shrink-0 text-[#696969] text-left w-[321px]">
       <Frame40 />
       <div
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-w-full not-italic relative shrink-0 text-[20px]"
+        className="font-sans min-w-full not-italic relative shrink-0 text-[20px]"
         style={{ width: "min-content" }}
       >
         <p className="block leading-none">Some text about card and more.</p>
@@ -839,7 +839,7 @@ function Container() {
       <div className="font-['Kreon:Regular',_sans-serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-[351px]">
         <p className="block leading-[0.8]">Stress</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-[347px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left w-[347px]">
         <p className="block leading-none">{`Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.`}</p>
       </div>
       <ProgressTheme />
@@ -854,7 +854,7 @@ function Button() {
       className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[21px] px-[126px] py-[15px] rounded-xl top-[758px] w-[351px]"
       data-name="Button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Open next level</p>
       </div>
     </div>

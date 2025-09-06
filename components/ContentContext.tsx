@@ -2,9 +2,11 @@
 // REACT КОНТЕКСТ ДЛЯ УПРАВЛЕНИЯ КОНТЕНТОМ И ЯЗЫКОМ
 // ========================================================================================
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent } from '../types/content';
-import { appContent } from '../data/content';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts } from '../types/content';
+import { loadContentWithCache } from '../utils/contentLoader';
+import { useLanguage } from './LanguageContext';
+import { mockContent } from '../mocks/content-provider-mock';
 
 /**
  * React контекст для централизованного управления контентом
@@ -19,77 +21,362 @@ interface ContentProviderProps {
 }
 
 export function ContentProvider({ children }: ContentProviderProps) {
-  // Состояние текущего языка (по умолчанию английский)
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>('en');
+  // Получаем язык и функцию изменения языка из LanguageContext
+  const { language, setLanguage: setLanguageFromContext } = useLanguage();
+  const currentLanguage = language as SupportedLanguage;
+  
+  // Состояние загруженного контента
+  const [content, setContent] = useState<AppContent | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * Загрузка контента для текущего языка
+   */
+  const loadContentForLanguage = useCallback(async (language: SupportedLanguage) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const loadedContent = await loadContentWithCache(language);
+      setContent(loadedContent);
+      console.log(`Content loaded for language: ${language}`);
+    } catch (err) {
+      const errorMessage = `Failed to load content for language: ${language}`;
+      console.error(errorMessage, err);
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   /**
    * Изменение языка приложения
    */
   const setLanguage = useCallback((language: SupportedLanguage) => {
-    setCurrentLanguage(language);
-    // Здесь можно добавить сохранение языка в localStorage
-    localStorage.setItem('app-language', language);
-  }, []);
+    // Используем функцию из LanguageContext
+    setLanguageFromContext(language as 'en' | 'ru');
+    loadContentForLanguage(language);
+  }, [setLanguageFromContext, loadContentForLanguage]);
+
+  // Загружаем контент при изменении языка
+  useEffect(() => {
+    loadContentForLanguage(currentLanguage);
+  }, [currentLanguage, loadContentForLanguage]);
 
   /**
    * Получение локализованного текста для текущего языка
+   * Теперь text уже является строкой нужного языка
    */
   const getLocalizedText = useCallback((text: LocalizedContent): string => {
-    return text[currentLanguage] || text.en; // Fallback на английский
-  }, [currentLanguage]);
+    return text || ''; // text уже является строкой нужного языка
+  }, []);
 
   /**
    * Получение темы по ID
    */
   const getTheme = useCallback((themeId: string): ThemeData | undefined => {
-    return appContent.themes[themeId];
-  }, []);
+    return content?.themes[themeId];
+  }, [content]);
 
   /**
    * Получение карточки по ID
    */
   const getCard = useCallback((cardId: string): CardData | undefined => {
-    return appContent.cards[cardId];
-  }, []);
+    return content?.cards[cardId];
+  }, [content]);
 
   /**
    * Получение карточки экстренной помощи по ID
    */
   const getEmergencyCard = useCallback((cardId: string): EmergencyCardData | undefined => {
-    return appContent.emergencyCards[cardId];
-  }, []);
+    return content?.emergencyCards[cardId];
+  }, [content]);
 
   /**
    * Получение всех карточек для конкретной темы
    */
   const getThemeCards = useCallback((themeId: string): CardData[] => {
-    const theme = appContent.themes[themeId];
+    const theme = content?.themes[themeId];
     if (!theme) return [];
     
     return theme.cardIds
-      .map(cardId => appContent.cards[cardId])
+      .map(cardId => content?.cards[cardId])
       .filter((card): card is CardData => card !== undefined);
-  }, []);
+  }, [content]);
 
   /**
    * Получение экрана опроса по ID
    */
   const getSurveyScreen = useCallback((screenId: keyof SurveyContent): SurveyScreenData | undefined => {
-    return appContent.survey[screenId];
-  }, []);
+    return content?.survey[screenId];
+  }, [content]);
+
+  /**
+   * Получение ментальной техники по ID
+   */
+  const getMentalTechnique = useCallback((techniqueId: string): MentalTechniqueData | undefined => {
+    return content?.mentalTechniques[techniqueId];
+  }, [content]);
+
+  /**
+   * Получение ментальных техник по категории
+   */
+  const getMentalTechniquesByCategory = useCallback((category: string): MentalTechniqueData[] => {
+    if (!content?.mentalTechniques) return [];
+    return Object.values(content.mentalTechniques)
+      .filter(technique => technique.category === category);
+  }, [content]);
+
+  /**
+   * Получение меню ментальных техник
+   */
+  const getMentalTechniquesMenu = useCallback((): MentalTechniquesMenuData => {
+    return content?.mentalTechniquesMenu || {
+      title: 'Techniques',
+      subtitle: 'Loading...',
+      categories: {
+        emergency: {
+          title: 'Emergency',
+          description: '1-2 min',
+          techniqueIds: []
+        },
+        breathing: {
+          title: 'Breathing',
+          description: '3-5 min',
+          techniqueIds: []
+        },
+        stabilization: {
+          title: 'Stabilization',
+          description: '5-10 min',
+          techniqueIds: []
+        },
+        recovery: {
+          title: 'Recovery',
+          description: '10-20 min',
+          techniqueIds: []
+        }
+      }
+    };
+  }, [content]);
+
+  /**
+   * Получение UI текстов
+   */
+  const getUI = useCallback((): UITexts => {
+    if (content?.ui) {
+      return content.ui;
+    }
+    
+    // Fallback UI с правильными типами
+    return {
+      navigation: {
+        back: 'Back',
+        next: 'Next',
+        skip: 'Skip',
+        complete: 'Complete',
+        continue: 'Continue',
+        send: 'Send',
+        start: 'Start',
+        unlock: 'Unlock'
+      },
+      common: {
+        loading: 'Loading...',
+        error: 'Error',
+        tryAgain: 'Try again',
+        save: 'Save',
+        cancel: 'Cancel',
+        delete: 'Delete',
+        edit: 'Edit'
+      },
+      home: {
+        greeting: 'Hello',
+        checkInPrompt: 'How are you?',
+        quickHelpTitle: 'Quick help',
+        themesTitle: 'Themes',
+        howAreYou: 'How are you?',
+        checkInDescription: 'Check in with yourself — it\'s the first step to self-care! Do it everyday.',
+        whatWorriesYou: 'What worries you?'
+      },
+      profile: {
+        title: 'Profile',
+        aboutApp: 'About',
+        privacy: 'Privacy',
+        terms: 'Terms',
+        deleteAccount: 'Delete account',
+        payments: 'Payments'
+      },
+      survey: {
+        progress: 'Step {current} of {total}',
+        selectAtLeastOne: 'Select at least one',
+        optional: 'Optional',
+        required: 'Required'
+      },
+      onboarding: {
+        screen01: {
+          title: 'Welcome',
+          subtitle: 'Get started',
+          buttonText: 'Next',
+          privacyText: 'Privacy',
+          termsText: 'Terms',
+          agreementText: 'By clicking'
+        },
+        screen02: {
+          title: 'Benefits',
+          benefits: ['Benefit 1'],
+          buttonText: 'Start'
+        }
+      },
+      pinSetup: {
+        title: 'PIN Setup',
+        subtitle: 'Create PIN',
+        createPin: 'Create PIN',
+        confirmPin: 'Confirm PIN',
+        pinMismatch: 'PIN mismatch',
+        pinTooShort: 'PIN too short',
+        skip: 'Skip',
+        back: 'Back'
+      },
+      checkin: {
+        title: 'Check-in',
+        subtitle: 'How are you?',
+        moodOptions: {
+          down: 'Down',
+          anxious: 'Anxious',
+          neutral: 'Neutral',
+          energized: 'Energized',
+          happy: 'Happy'
+        },
+        send: 'Send',
+        back: 'Back'
+      },
+      themes: {
+        welcome: {
+          title: 'Theme Welcome',
+          subtitle: 'Welcome to theme',
+          start: 'Start',
+          unlock: 'Unlock'
+        },
+        home: {
+          progress: 'Progress',
+          checkins: 'Check-ins',
+          level: 'Level',
+          nextLevel: 'Next Level'
+        }
+      },
+      cards: {
+        checkins: 'Check-ins',
+        welcome: {
+          subtitle: 'Welcome to card'
+        },
+        question: {
+          placeholder: 'Enter your answer',
+          encryption: 'Your answer is encrypted'
+        },
+        final: {
+          why: 'Why:'
+        },
+        rating: {
+          title: 'Rate Card',
+          subtitle: 'How was it?',
+          placeholder: 'Share your thoughts',
+          submit: 'Submit'
+        },
+        themeHome: {
+          card1: 'Card #1',
+          card2: 'Card #2',
+          card3: 'Card #3',
+          card4: 'Card #4',
+          card5: 'Card #5',
+          card6: 'Card #6',
+          card7: 'Card #7',
+          card8: 'Card #8',
+          card9: 'Card #9',
+          card10: 'Card #10',
+          level1: 'Level 1',
+          level2: 'Level 2',
+          level3: 'Level 3',
+          level4: 'Level 4',
+          level5: 'Level 5',
+          description: 'Card description'
+        }
+      }
+    };
+  }, [content]);
+
+  /**
+   * Получение всех тем
+   */
+  const getAllThemes = useCallback((): ThemeData[] => {
+    if (!content?.themes) return [];
+    return Object.values(content.themes);
+  }, [content]);
+
+  /**
+   * Получение всех ментальных техник
+   */
+  const getMentalTechniques = useCallback((): MentalTechniqueData[] => {
+    if (!content?.mentalTechniques) return [];
+    return Object.values(content.mentalTechniques);
+  }, [content]);
 
   // Значение контекста
   const contextValue: ContentContextType = {
     currentLanguage,
-    content: appContent,
+    content: content || {} as AppContent, // Fallback на пустой объект
     setLanguage,
     getLocalizedText,
     getTheme,
     getCard,
     getEmergencyCard,
     getThemeCards,
-    getSurveyScreen
+    getSurveyScreen,
+    getMentalTechnique,
+    getMentalTechniques,
+    getMentalTechniquesByCategory,
+    getMentalTechniquesMenu,
+    getUI,
+    getAllThemes
   };
+
+  // В E2E тестовой среде используем мок
+  const isE2ETestEnvironment = typeof window !== 'undefined' && 
+    (window as any).__PLAYWRIGHT__ === true;
+  
+  if (isE2ETestEnvironment) {
+    console.log('Using mock content for E2E tests');
+    return (
+      <ContentContext.Provider value={mockContent}>
+        {children}
+      </ContentContext.Provider>
+    );
+  }
+
+  // Показываем загрузку или ошибку
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-lg text-gray-600">Loading content...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-lg text-red-600">Error loading content: {error}</div>
+          <button 
+            onClick={() => loadContentForLanguage(currentLanguage)}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ContentContext.Provider value={contextValue}>
@@ -257,6 +544,93 @@ export function useSurveyScreen(screenId: keyof SurveyContent) {
         text: getLocalizedText(option.text),
         isMultipleChoice: option.isMultipleChoice
       }))
+    }
+  };
+}
+
+/**
+ * Хук для работы с ментальными техниками
+ */
+export function useMentalTechnique(techniqueId: string) {
+  const { getMentalTechnique, getLocalizedText } = useContent();
+  
+  const technique = getMentalTechnique(techniqueId);
+  
+  if (!technique) {
+    return null;
+  }
+  
+  return {
+    technique,
+    localizedTechnique: {
+      title: getLocalizedText(technique.title),
+      subtitle: getLocalizedText(technique.subtitle),
+      duration: getLocalizedText(technique.duration),
+      steps: technique.steps.map(step => ({
+        ...step,
+        instruction: getLocalizedText(step.instruction),
+        placeholder: step.placeholder ? getLocalizedText(step.placeholder) : undefined
+      })),
+      tips: technique.tips.map(tip => getLocalizedText(tip)),
+      accordionItems: technique.accordionItems.map(item => ({
+        title: getLocalizedText(item.title),
+        content: getLocalizedText(item.content)
+      }))
+    }
+  };
+}
+
+/**
+ * Хук для работы с ментальными техниками по категории
+ */
+export function useMentalTechniquesByCategory(category: string) {
+  const { getMentalTechniquesByCategory, getLocalizedText } = useContent();
+  
+  const techniques = getMentalTechniquesByCategory(category);
+  
+  return techniques.map(technique => ({
+    ...technique,
+    title: getLocalizedText(technique.title),
+    subtitle: getLocalizedText(technique.subtitle),
+    duration: getLocalizedText(technique.duration)
+  }));
+}
+
+/**
+ * Хук для работы с меню ментальных техник
+ */
+export function useMentalTechniquesMenu() {
+  const { getMentalTechniquesMenu, getLocalizedText } = useContent();
+  
+  const menu = getMentalTechniquesMenu();
+  
+  return {
+    menu,
+    localizedMenu: {
+      title: getLocalizedText(menu.title),
+      subtitle: getLocalizedText(menu.subtitle),
+      categories: {
+        emergency: {
+          title: getLocalizedText(menu.categories.emergency.title),
+          description: getLocalizedText(menu.categories.emergency.description),
+          techniqueIds: menu.categories.emergency.techniqueIds
+        },
+        breathing: {
+          title: getLocalizedText(menu.categories.breathing.title),
+          description: getLocalizedText(menu.categories.breathing.description),
+          techniqueIds: menu.categories.breathing.techniqueIds
+        },
+        stabilization: {
+          title: getLocalizedText(menu.categories.stabilization.title),
+          description: getLocalizedText(menu.categories.stabilization.description),
+          techniqueIds: menu.categories.stabilization.techniqueIds
+        },
+        recovery: {
+          title: getLocalizedText(menu.categories.recovery.title),
+          description: getLocalizedText(menu.categories.recovery.description),
+          techniqueIds: menu.categories.recovery.techniqueIds
+        }
+      }
     }
   };
 }

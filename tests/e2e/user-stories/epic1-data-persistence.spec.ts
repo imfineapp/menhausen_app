@@ -28,22 +28,22 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
     
     test('should complete basic navigation flow', async ({ page }) => {
       // Start the onboarding flow
-      await page.getByRole('button', { name: /next/i }).click();
+      await page.getByText('Next').click();
       
       // Continue from onboarding screen 2
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Get Started').click();
       
       // Complete first survey screen
-      await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+      await expect(page.getByText('What challenges do you face?')).toBeVisible();
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Verify we moved to second survey screen
       await expect(page.getByText('How long have you been experiencing these challenges?')).toBeVisible();
       
       // Complete second survey screen
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Verify we moved to third survey screen
       await expect(page.getByText('What time of day do you feel most motivated?')).toBeVisible();
@@ -51,22 +51,22 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
     
     test('should persist survey results immediately after each screen completion', async ({ page }) => {
       // Start survey and complete first two screens
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Simulate app interruption by refreshing page
       await page.reload();
       await page.waitForLoadState('networkidle');
       
       // Navigate back to survey (need to go through onboarding again in current implementation)
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // Verify previous answers are preserved
       const recoveredData = await page.evaluate(() => {
@@ -87,8 +87,8 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
       });
       
       // Navigate to app
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // App should handle corruption gracefully and allow fresh start
       await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
@@ -96,24 +96,24 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
 
     test('should complete full survey flow with data persistence', async ({ page }) => {
       // Complete the full survey flow
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // Screen 1: Challenges
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Screen 2: Duration
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Screen 3: Time preference
       await page.getByText('Morning (8-11 AM)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Screen 4: Time commitment
       await page.getByText('10 minutes daily').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Screen 5: Main goal
       await page.getByText('Reduce anxiety and worry').click();
@@ -161,17 +161,17 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
       const nextButton = page.getByRole('button', { name: /next/i });
       await expect(nextButton).toBeVisible();
       await nextButton.click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Get Started').click();
       
       // Quick survey completion
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Morning (8-11 AM)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('10 minutes daily').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Reduce anxiety and worry').click();
       await page.getByRole('button', { name: /complete setup/i }).click();
       
@@ -209,18 +209,18 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
 
     test('should complete survey flow and verify final state', async ({ page }) => {
       // Complete flow to reach final state
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // Complete survey quickly
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Morning (8-11 AM)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('10 minutes daily').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       await page.getByText('Reduce anxiety and worry').click();
       await page.getByRole('button', { name: /complete setup/i }).click();
       
@@ -284,12 +284,12 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
 
     test('should maintain data consistency through navigation', async ({ page }) => {
       // Start survey
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // Complete first screen
       await page.getByText('I struggle with anxiety').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Check data persistence before navigation (while still on same origin)
       const persistedData = await page.evaluate(() => {
@@ -311,7 +311,7 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
       
       // Complete second screen to ensure data is saved
       await page.getByText('Recently (within the last month)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       // Verify updated data
       const updatedData = await page.evaluate(() => {
@@ -334,22 +334,22 @@ test.describe('Epic 1: Enhanced Data Persistence & API Integration', () => {
     
     test('should maintain state throughout complete user journey', async ({ page }) => {
       // Complete the entire user journey
-      await page.getByRole('button', { name: /next/i }).click();
-      await page.getByRole('button', { name: /get started/i }).click();
+      await page.getByText('Next').click();
+      await page.getByText('Get Started').click();
       
       // Complete survey with multiple selections on first screen
       await page.getByText('I struggle with anxiety').click();
       await page.getByText('I have trouble managing stress').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       await page.getByText('A few months').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       await page.getByText('Evening (6-9 PM)').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       await page.getByText('15 minutes daily').click();
-      await page.getByRole('button', { name: /continue/i }).click();
+      await page.getByText('Next').click();
       
       await page.getByText('Better stress management').click();
       await page.getByRole('button', { name: /complete setup/i }).click();

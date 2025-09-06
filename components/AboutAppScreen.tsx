@@ -1,5 +1,7 @@
 // Импортируем необходимые хуки
 import { useState } from 'react';
+import { useTranslation } from './LanguageContext';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 // Типы для пропсов компонента
 interface AboutAppScreenProps {
@@ -44,37 +46,11 @@ function Light() {
   );
 }
 
-/**
- * Адаптивная кнопка назад
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="size-10 sm:size-12 cursor-pointer hover:opacity-80 touch-friendly" 
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
 
 /**
  * Адаптивный компонент символа логотипа
  */
-function SymbolBig() {
+function _SymbolBig() {
   return (
     <div className="h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2" data-name="Symbol_big">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
@@ -89,7 +65,7 @@ function SymbolBig() {
 /**
  * Адаптивный компонент названия приложения с версией beta
  */
-function MenhausenBeta() {
+function _MenhausenBeta() {
   return (
     <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
@@ -106,21 +82,6 @@ function MenhausenBeta() {
   );
 }
 
-/**
- * Адаптивный мини-логотип с символом и названием - центрированный
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
-    </div>
-  );
-}
 
 /**
  * Адаптивная секция с логотипом приложения
@@ -141,7 +102,7 @@ function AppLogoSection() {
           <h1 className="block leading-[0.8]">Menhausen</h1>
         </div>
         <div className="bg-[#e1ff00] px-3 py-1 rounded-xl">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#2d2b2b] text-center tracking-[-0.43px]">
+          <div className="font-sans text-responsive-sm text-[#2d2b2b] text-center tracking-[-0.43px]">
             <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">Beta Version 1.0.0</p>
           </div>
         </div>
@@ -153,7 +114,7 @@ function AppLogoSection() {
 /**
  * Адаптивная секция информации о приложении
  */
-function AppInfoSection() {
+function AppInfoSection({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex flex-col gap-6 sm:gap-8 w-full" data-name="App info section">
       <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative" data-name="Description container">
@@ -162,10 +123,10 @@ function AppInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">About Menhausen</h2>
+          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
+            <h2 className="block leading-[0.8]">{t('about_menhausen')}</h2>
           </div>
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
+          <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
             <p className="block leading-[1.5]">
               Menhausen is your personal mental health companion designed to help you track your mood, 
               build healthy habits, and support your emotional well-being through daily check-ins and mindful exercises.
@@ -180,37 +141,37 @@ function AppInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex flex-col gap-4">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">Key Features</h2>
+          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
+            <h2 className="block leading-[0.8]">{t('key_features')}</h2>
           </div>
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Daily mood tracking and emotional check-ins</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Personalized mental health exercises and activities</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Progress tracking with levels and achievements</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Secure and private - your data stays yours</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Built specifically for Telegram Mini Apps</p>
               </div>
             </div>
@@ -224,7 +185,7 @@ function AppInfoSection() {
 /**
  * Адаптивная секция команды разработчиков
  */
-function TeamSection() {
+function TeamSection({ t }: { t: (key: string) => string }) {
   return (
     <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="Team container">
       <div
@@ -232,20 +193,20 @@ function TeamSection() {
         className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
       />
       <div className="flex flex-col gap-4">
-        <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
-          <h2 className="block leading-[0.8]">Development Team</h2>
+        <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
+          <h2 className="block leading-[0.8]">{t('development_team')}</h2>
         </div>
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-[#cfcfcf] text-left">
+        <div className="font-sans text-responsive-lg text-[#cfcfcf] text-left">
           <p className="block leading-[1.5]">
             Created with care by a dedicated team of developers and mental health advocates. 
             Our mission is to make mental wellness accessible and engaging for everyone.
           </p>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+          <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
             <p className="block leading-[1.5]">Made with ❤️ for the Telegram community</p>
           </div>
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#696969] text-left">
+          <div className="font-sans text-responsive-sm text-[#696969] text-left">
             <p className="block leading-[1.5]">© 2024 Menhausen Team. All rights reserved.</p>
           </div>
         </div>
@@ -257,14 +218,14 @@ function TeamSection() {
 /**
  * Адаптивная секция технической информации
  */
-function TechnicalInfoSection() {
+function TechnicalInfoSection({ t }: { t: (key: string) => string }) {
   const [showTechnicalInfo, setShowTechnicalInfo] = useState(false);
 
   return (
     <div className="flex flex-col gap-4 w-full" data-name="Technical info section">
       <button
         onClick={() => setShowTechnicalInfo(!showTechnicalInfo)}
-        className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative hover:bg-[rgba(217,217,217,0.06)] cursor-pointer touch-friendly"
+        className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative hover:bg-[rgba(217,217,217,0.06)] cursor-pointer min-h-[44px] min-w-[44px]"
         data-name="Technical info toggle"
       >
         <div
@@ -272,8 +233,8 @@ function TechnicalInfoSection() {
           className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
         />
         <div className="flex items-center justify-between">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
-            <h2 className="block leading-[0.8]">Technical Information</h2>
+          <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
+            <h2 className="block leading-[0.8]">{t('technical_information')}</h2>
           </div>
           <div className={`transform transition-transform duration-200 ${showTechnicalInfo ? 'rotate-180' : ''}`}>
             <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="#e1ff00">
@@ -291,34 +252,34 @@ function TechnicalInfoSection() {
           />
           <div className="flex flex-col gap-3">
             <div className="flex justify-between">
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Version:</p>
               </div>
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">1.0.0 Beta</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Platform:</p>
               </div>
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">Telegram Mini App</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Built with:</p>
               </div>
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">React & TypeScript</p>
               </div>
             </div>
             <div className="flex justify-between">
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+              <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
                 <p className="block leading-[1.5]">Last updated:</p>
               </div>
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#ffffff] text-right">
+              <div className="font-sans text-responsive-base text-[#ffffff] text-right">
                 <p className="block leading-[1.5]">December 2024</p>
               </div>
             </div>
@@ -331,9 +292,10 @@ function TechnicalInfoSection() {
 
 /**
  * Главный компонент страницы "О приложении"
- * Полностью адаптивный с поддержкой всех устройств и touch-friendly элементами
+ * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
-export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
+export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
+  const { t } = useTranslation();
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
@@ -346,26 +308,23 @@ export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <div className="absolute left-4 sm:left-6 md:left-[21px] top-[53px] z-10">
-        <BackButton onClick={onBack} />
-      </div>
+      {/* Логотип */}
       <MiniStripeLogo />
       
       {/* Основной контент */}
-      <div className="absolute flex flex-col gap-8 sm:gap-10 left-4 sm:left-6 md:left-[21px] top-[120px] sm:top-[130px] md:top-[142px] w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[351px] max-w-[351px] pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Логотип и название приложения */}
         <AppLogoSection />
         
         {/* Информация о приложении */}
-        <AppInfoSection />
+        <AppInfoSection t={t} />
         
         {/* Техническая информация */}
-        <TechnicalInfoSection />
+        <TechnicalInfoSection t={t} />
         
         {/* Команда разработчиков */}
-        <TeamSection />
+        <TeamSection t={t} />
         
         {/* Дополнительная информация */}
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="Additional info">
@@ -374,17 +333,17 @@ export function AboutAppScreen({ onBack }: AboutAppScreenProps) {
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
           />
           <div className="flex flex-col gap-3">
-            <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-2xl text-[#e1ff00] text-left">
-              <h2 className="block leading-[0.8]">Important Note</h2>
+            <div className="font-heading text-responsive-2xl text-[#e1ff00] text-left">
+              <h2 className="block leading-[0.8]">{t('important_note')}</h2>
             </div>
-            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-left">
+            <div className="font-sans text-responsive-base text-[#cfcfcf] text-left">
               <p className="block leading-[1.5]">
                 Menhausen is designed to support your mental wellness journey, but it is not a substitute for 
                 professional medical advice, diagnosis, or treatment. If you're experiencing serious mental health 
                 concerns, please consult with qualified healthcare professionals.
               </p>
             </div>
-            <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-sm text-[#696969] text-left">
+            <div className="font-sans text-responsive-sm text-[#696969] text-left">
               <p className="block leading-[1.5]">
                 For emergencies, please contact your local emergency services or mental health crisis hotline.
               </p>

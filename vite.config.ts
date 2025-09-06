@@ -22,6 +22,9 @@ export default defineConfig({
     hmr: {
       port: 5173,
     },
+    headers: {
+      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org; connect-src 'self' https://telegram.org https://*.telegram.org; object-src 'none';"
+    }
   },
   build: {
     target: 'esnext',
@@ -102,5 +105,8 @@ export default defineConfig({
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
+  esbuild: {
+    target: 'esnext',
   },
 })

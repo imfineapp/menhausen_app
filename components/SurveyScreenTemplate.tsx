@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import { useSurveyScreen, useUIText } from './ContentContext';
 import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
-import BackButton from '../imports/BackButton-25-362';
-import MiniStripeLogo from '../imports/MiniStripeLogo-26-92';
+import { Light } from './ProfileLayoutComponents';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 interface SurveyScreenTemplateProps {
   screenId: keyof SurveyContent;
@@ -23,7 +23,7 @@ interface SurveyScreenTemplateProps {
 export function SurveyScreenTemplate({ 
   screenId, 
   onNext, 
-  onBack, 
+  onBack: _onBack, 
   initialSelections = [] 
 }: SurveyScreenTemplateProps) {
   // =====================================================================================
@@ -92,6 +92,36 @@ export function SurveyScreenTemplate({
       answers = selectedOptions;
     }
 
+    // Отправляем данные опроса в аналитику через глобальный объект
+    if (window.TwaAnalytics) {
+      // Подготовка данных для аналитики
+      const analyticsData: Record<string, any> = {
+        screen_id: screenId,
+        question_type: surveyData.screen.questionType,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Добавляем ответы в зависимости от типа вопроса
+      if (surveyData.screen.questionType === 'text-input') {
+        analyticsData.answer_text = textInput.trim();
+      } else {
+        // Преобразуем выбранные варианты в строковое представление для аналитики
+        analyticsData.selected_options = answers;
+        analyticsData.option_count = answers.length;
+        
+        // Добавляем текстовое представление выбранных опций
+        if (localizedScreen.options) {
+          const selectedTexts = answers.map(id => {
+            const option = localizedScreen.options?.find(opt => opt.id === id);
+            return option?.text || id;
+          });
+          analyticsData.selected_texts = selectedTexts;
+        }
+      }
+      
+      window.TwaAnalytics.trackEvent('survey_answer', analyticsData);
+    }
+
     onNext(answers);
   };
 
@@ -134,7 +164,7 @@ export function SurveyScreenTemplate({
             <button
               key={option.id}
               onClick={() => handleOptionSelect(option.id)}
-              className={`w-full min-h-[56px] px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left touch-friendly ${
+              className={`w-full min-h-[56px] px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left min-h-[44px] min-w-[44px] ${
                 isSelected 
                   ? 'border-[#e1ff00] bg-[#e1ff00]/10 text-white' 
                   : 'border-[#3a3a3a] bg-[#2a2a2a] text-[#d4d4d4] hover:border-[#4a4a4a] hover:bg-[#333333]'
@@ -190,38 +220,20 @@ export function SurveyScreenTemplate({
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
-      {/* Header с логотипом */}
-      <div className="flex-shrink-0 px-[16px] sm:px-[20px] md:px-[21px] pt-[60px] pb-[24px]">
-        <div className="flex items-center justify-between mb-6">
-          {/* Обновленная кнопка назад в стиле guidelines */}
-          <button
-            onClick={onBack}
-            className="touch-friendly flex items-center justify-center w-12 h-12 transition-transform duration-200 hover:scale-105 active:scale-95"
-          >
-            <div className="w-12 h-12">
-              <BackButton />
-            </div>
-          </button>
-          
-          {/* Центрированный логотип */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <div className="h-[13px] w-[89px]">
-              <MiniStripeLogo />
-            </div>
-          </div>
-          
-          <div className="w-12" /> {/* Spacer для симметрии */}
-        </div>
-      </div>
-
+      {/* Световые эффекты */}
+      <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок и подзаголовок */}
             <div className="text-center mb-8">
-              <h1 className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
+              <h1 className="font-heading font-normal text-white text-responsive-3xl mb-4 leading-[0.8]">
                 {localizedScreen.title}
               </h1>
               {localizedScreen.subtitle && (

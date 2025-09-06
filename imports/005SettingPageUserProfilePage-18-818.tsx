@@ -126,7 +126,7 @@ function SurveyItem() {
       data-name="Survey_item"
     >
       <BadgeIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Bages</p>
       </div>
     </div>
@@ -243,7 +243,7 @@ function SurveyItem1() {
       data-name="Survey_item"
     >
       <LevelIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Your level</p>
       </div>
     </div>
@@ -344,7 +344,7 @@ function SurveyItem2() {
       data-name="Survey_item"
     >
       <MentalStatusIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">How are you status</p>
       </div>
     </div>
@@ -445,7 +445,7 @@ function SurveyItem3() {
       data-name="Survey_item"
     >
       <UnlockIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">{`Unlock all themes & cards`}</p>
       </div>
     </div>
@@ -570,7 +570,7 @@ function SurveyItem4() {
       data-name="Survey_item"
     >
       <DonationIconV1 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Make donation</p>
       </div>
     </div>
@@ -695,7 +695,7 @@ function SurveyItem5() {
       data-name="Survey_item"
     >
       <ActivityIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Your activity</p>
       </div>
     </div>
@@ -820,7 +820,7 @@ function SurveyItem6() {
       data-name="Survey_item"
     >
       <ShareIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Share app to friend</p>
       </div>
     </div>
@@ -910,7 +910,7 @@ function StatusSection() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Status section"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Your status</p>
       </div>
       <StatusItems />
@@ -937,7 +937,7 @@ function SmallButton() {
       className="[grid-area:1_/_1] bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center ml-[21px] mt-[98px] px-[126px] py-[15px] relative rounded-xl w-[310px]"
       data-name="Small button"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Tell</p>
       </div>
     </div>
@@ -978,7 +978,7 @@ function FeedbackContent() {
       data-name="Feedback content"
     >
       <Frame />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[269px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#cfcfcf] text-[20px] text-left w-[269px]">
         <p className="block leading-none">Tell us how we can make the app better. Or you can just say thank you.</p>
       </div>
     </div>
@@ -1040,7 +1040,7 @@ function SurveyItem7() {
       data-name="Survey_item"
     >
       <LanguageIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Language</p>
       </div>
     </div>
@@ -1054,7 +1054,7 @@ function SettingsItemContent() {
       data-name="Settings item content"
     >
       <SurveyItem7 />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">English</p>
       </div>
     </div>
@@ -1112,7 +1112,7 @@ function SurveyItem8() {
       data-name="Survey_item"
     >
       <ReminderIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Daily reminder</p>
       </div>
     </div>
@@ -1199,7 +1199,7 @@ function SurveyItem9() {
       data-name="Survey_item"
     >
       <EncryptIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Security PIN</p>
       </div>
     </div>
@@ -1308,7 +1308,7 @@ function SurveyItem10() {
       data-name="Survey_item"
     >
       <InfoIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">About app</p>
       </div>
     </div>
@@ -1433,7 +1433,7 @@ function SurveyItem11() {
       data-name="Survey_item"
     >
       <PrivacyIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Privacy policy</p>
       </div>
     </div>
@@ -1550,7 +1550,7 @@ function SurveyItem12() {
       data-name="Survey_item"
     >
       <TermsIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#ffffff] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Terms of use</p>
       </div>
     </div>
@@ -1675,7 +1675,7 @@ function SurveyItem13() {
       data-name="Survey_item"
     >
       <DeleteIcon />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Delete account</p>
       </div>
     </div>
@@ -1765,7 +1765,7 @@ function SettingsSection() {
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Settings section"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
+      <div className="font-heading font-normal leading-[0] relative shrink-0 text-[#e1ff00] text-[24px] text-left w-full">
         <p className="block leading-[0.8]">Settings</p>
       </div>
       <SettingsItems />
@@ -1805,7 +1805,7 @@ function UserAccountStatus() {
       className="bg-[#e1ff00] box-border content-stretch flex flex-row h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 w-[69px]"
       data-name="User_account_status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Premium</p>
       </div>
     </div>
@@ -1818,7 +1818,7 @@ function UserLevelAndPaidStatus() {
       className="box-border content-stretch flex flex-row gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left text-nowrap">
+      <div className="font-sans font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[20px] text-left text-nowrap">
         <p className="block leading-none whitespace-pre">Level 25</p>
       </div>
       <UserAccountStatus />

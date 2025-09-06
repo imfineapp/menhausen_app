@@ -81,10 +81,10 @@ function Container() {
       className="box-border content-stretch flex flex-col gap-2.5 items-end justify-start leading-[0] p-0 relative shrink-0 text-left w-[248px]"
       data-name="Container"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
+      <div className="font-heading font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
         <p className="block leading-[0.8]">Based on evidence-based practices</p>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="font-sans not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
         <p className="block leading-none">
           CBT, ACT, MBCT, positive psychology — scientifically proven methods No sugarcoating. Direct, honest, to the
           point. Man to man
