@@ -168,6 +168,15 @@ export interface UITexts {
     howAreYou: LocalizedContent;
     checkInDescription: LocalizedContent;
     whatWorriesYou: LocalizedContent;
+    heroTitle: LocalizedContent;
+    level: LocalizedContent;
+    progress: LocalizedContent;
+    use80PercentUsers: LocalizedContent;
+    activity: {
+      title: LocalizedContent;
+      streak: LocalizedContent;
+      description: LocalizedContent;
+    };
   };
   profile: {
     title: LocalizedContent;
@@ -176,6 +185,8 @@ export interface UITexts {
     terms: LocalizedContent;
     deleteAccount: LocalizedContent;
     payments: LocalizedContent;
+    heroTitle: LocalizedContent;
+    level: LocalizedContent;
   };
   survey: {
     progress: LocalizedContent; // "Step {current} of {total}"

@@ -185,7 +185,16 @@ describe('Final Theme Cards Tests', () => {
             themesTitle: 'Themes',
             howAreYou: 'How are you?',
             checkInDescription: 'Check in with yourself',
-            whatWorriesYou: language === 'ru' ? 'Что вас беспокоит?' : 'What worries you?'
+            whatWorriesYou: language === 'ru' ? 'Что вас беспокоит?' : 'What worries you?',
+            heroTitle: 'Hero #1275',
+            level: 'Level',
+            progress: 'Progress',
+            use80PercentUsers: 'Use 80% users',
+            activity: {
+              title: 'Activity',
+              streak: '4 days',
+              description: 'Only by doing exercises regularly will you achieve results.'
+            }
           },
           profile: {
             title: 'Profile',
@@ -193,7 +202,9 @@ describe('Final Theme Cards Tests', () => {
             privacy: 'Privacy',
             terms: 'Terms',
             deleteAccount: 'Delete account',
-            payments: 'Payments'
+            payments: 'Payments',
+            heroTitle: 'Hero #1275',
+            level: 'Level'
           },
           survey: {
             progress: 'Step {current} of {total}',

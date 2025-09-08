@@ -25,7 +25,16 @@
     "themesTitle": "Choose what bothers you",
     "howAreYou": "How are you?",
     "checkInDescription": "Check in with yourself — it's the first step to self-care! Do it everyday.",
-    "whatWorriesYou": "What worries you?"
+    "whatWorriesYou": "What worries you?",
+    "heroTitle": "Hero #1275",
+    "level": "Level",
+    "progress": "Progress",
+    "use80PercentUsers": "Use 80% users",
+    "activity": {
+      "title": "Activity",
+      "streak": "4 days",
+      "description": "Only by doing exercises regularly will you achieve results."
+    }
   },
   "profile": {
     "title": "Profile",
@@ -33,7 +42,9 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Use",
     "deleteAccount": "Delete account",
-    "payments": "Subscription"
+    "payments": "Subscription",
+    "heroTitle": "Hero #1275",
+    "level": "Level"
   },
   "survey": {
     "progress": "Step {current} of {total}",
@@ -43,7 +54,7 @@
   },
   "onboarding": {
     "screen01": {
-      "title": "Welcome to Menhausen",
+      "title": "You don't have to cope alone.",
       "subtitle": "Your personal mental health companion. Let's start your journey to better emotional well-being.",
       "buttonText": "Get Started",
       "privacyText": "Privacy Policy",
