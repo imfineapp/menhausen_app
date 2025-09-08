@@ -602,17 +602,17 @@ html, body {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
   }
 
-  /* Дополнительные правила для принудительного применения Roboto Slab */
-  .text-\[#e1ff00\],
-  .text-\[#e1ff00\] * {
-    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
-  }
-
   /* Принудительное применение для всех заголовков */
   div[class*="typography-h"],
   div[class*="typography-h"] *,
   p[class*="typography-h"],
   p[class*="typography-h"] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Дополнительные правила для принудительного применения Roboto Slab */
+  .text-\[#e1ff00\],
+  .text-\[#e1ff00\] * {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
   }
 

@@ -54,7 +54,9 @@ module.exports = {
     // Allow zero without units
     'length-zero-no-unit': null,
     // Allow comments without empty lines
-    'comment-empty-line-before': null
+    'comment-empty-line-before': null,
+    // Disable ID selector pattern check for Tailwind classes with brackets
+    'selector-id-pattern': null
   },
   ignoreFiles: [
     'dist/**/*',
