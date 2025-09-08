@@ -121,13 +121,15 @@ function UserAvatar() {
  * Адаптивная инфо��мация о пользователе с именем
  */
 function UserInfo() {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0 w-full"
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <h2 className="block">Hero #1275</h2>
+        <h2 className="block">{getUI().home.heroTitle}</h2>
       </div>
     </div>
   );
@@ -163,13 +165,15 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  * Адаптивный уровень пользователя и статус подписки
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
       <div className="typography-body text-[#696969] text-left text-nowrap">
-        <p className="block whitespace-pre">Level 25</p>
+        <p className="block whitespace-pre">{getUI().home.level} 25</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>
@@ -345,16 +349,18 @@ function ActivityProgress() {
  * Адаптивный заголовок блока активности на основе Figma дизайна
  */
 function ActivityHeader() {
+  const { getUI } = useContent();
+  
   return (
     <div
       className="absolute box-border content-stretch flex flex-row items-center justify-between inset-x-3 sm:inset-x-4 p-0 text-[#e1ff00] text-nowrap top-3 sm:top-4"
       data-name="Activity header"
     >
       <div className="typography-h2 text-left">
-        <h2 className="block text-nowrap whitespace-pre">Activity</h2>
+        <h2 className="block text-nowrap whitespace-pre">{getUI().home.activity.title}</h2>
       </div>
       <div className="typography-h2 text-right">
-        <h2 className="block text-nowrap whitespace-pre">4 days</h2>
+        <h2 className="block text-nowrap whitespace-pre">{getUI().home.activity.streak}</h2>
       </div>
     </div>
   );
@@ -364,6 +370,8 @@ function ActivityHeader() {
  * Адаптивный блок активности пользователя на основе Figma дизайна
  */
 function ActivityBlock() {
+  const { getUI } = useContent();
+  
   return (
     <div className="relative w-full h-[130px] sm:h-[135px] md:h-[141px]" data-name="Activity block">
       <div
@@ -378,7 +386,7 @@ function ActivityBlock() {
       <ActivityProgress />
       <ActivityHeader />
       <div className="absolute inset-x-4 sm:inset-x-5 text-[#ffffff] text-left top-[75px] sm:top-[78px] md:top-[81px]">
-        <p className="typography-body block">Only by doing exercises regularly will you achieve results.</p>
+        <p className="typography-body block">{getUI().home.activity.description}</p>
       </div>
     </div>
   );
@@ -400,6 +408,8 @@ function ThemeCard({
   isPremium?: boolean;
   onClick?: () => void;
 }) {
+  const { getUI } = useContent();
+  
   return (
     <button
       onClick={onClick}
@@ -436,14 +446,14 @@ function ThemeCard({
           />
         )}
         <div className="absolute typography-caption inset-[12.5%_4.56%_20.83%_4.56%] text-[#696969] text-right">
-          <p className="block">Progress</p>
+          <p className="block">{getUI().home.progress}</p>
         </div>
       </div>
       
       {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
       <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
-        <div className="typography-button text-[#2d2b2b] text-left">
-          <p className="block">Use 80% users</p>
+        <div className="typography-button text-[#696969] text-left">
+          <p className="block">{getUI().home.use80PercentUsers}</p>
         </div>
         <UserAccountStatus isPremium={isPremium} />
       </div>
@@ -482,7 +492,7 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }
 
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full"
+      className="box-border content-stretch flex flex-col gap-8 sm:gap-10 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries list"
     >
       {worries.map((worry) => (

@@ -1,38 +1,79 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🔨 **IMPLEMENT MODE**: OnboardingScreen02 Spacing Consistency - COMPLETE
+🔨 **IMPLEMENT MODE**: HomeScreen Russian Translation - COMPLETE
 
 ## Implementation Progress
-**Status**: OnboardingScreen02 Spacing Consistency COMPLETE - All text blocks now have uniform spacing between headers and descriptions
+**Status**: HomeScreen Russian Translation COMPLETE - All hardcoded English texts in HomeScreen replaced with localized content
 
-### ✅ **COMPLETED**: OnboardingScreen02 Spacing Consistency
-**Status**: COMPLETE - All text blocks now have consistent spacing between headers and descriptions
+### ✅ **COMPLETED**: HomeScreen Russian Translation
+**Status**: COMPLETE - All hardcoded English texts in HomeScreen replaced with localized content
 
 **Problem Identified:**
-- User reported: "В блоках странные и неодинаковые отступы между заголовками блоков и описанием блоков"
-- Root cause: Inconsistent spacing between headers and descriptions across different benefit blocks
-- Different spacing values: `gap-2.5` (10px), `mt-[29px]` (29px), `mt-12` (48px)
+- User reported: "Перврдим в шапке Hero #..., Level, В блоках с темами "Progress", Use 80% users"
+- Root cause: Hardcoded English texts in HomeScreen.tsx component
+- 4 text elements were not using the translation system
 
 **Solution Implemented:**
-1. **Standardized Layout Structure**: Converted all text blocks to use consistent flexbox layout
-2. **Uniform Spacing**: Applied `gap-2.5` (10px) spacing between headers and descriptions for all blocks
-3. **Consistent Ordering**: Ensured all blocks follow the same pattern: header first, then description
-4. **Maintained Grid Structure**: Preserved the grid container structure for proper alignment
+1. **Added Russian Translations**: Updated `data/content/ru/ui.json` with new home section fields
+2. **Added English Translations**: Updated `data/content/en/ui.json` with corresponding English texts
+3. **Updated TypeScript Types**: Added new fields to `home` interface in `UITexts`
+4. **Updated Component**: Replaced all hardcoded texts with `content.ui.home.*` references
+5. **Updated All References**: Fixed all mock files and test files to include new fields
 
-**Changes Made:**
-- **NoLoginTextBlock**: Already had correct `gap-2.5` spacing ✅
-- **EncryptionTextBlock**: Changed from `mt-[29px]` to `gap-2.5` + reordered elements
-- **AlwaysWithYouTextBlock**: Changed from `mt-[29px]` to `gap-2.5` + reordered elements  
-- **ScienceTextBlock**: Changed from `mt-12` (48px) to `gap-2.5` + reordered elements
+**Texts Translated:**
+1. "Hero #1275" → "Герой #1275" (heroTitle)
+2. "Level" → "Уровень" (level)
+3. "Progress" → "Прогресс" (progress)
+4. "Use 80% users" → "Используют 80% пользователей" (use80PercentUsers)
 
-**Technical Improvements:**
-- All text blocks now use identical CSS classes: `flex flex-col gap-2.5`
-- Consistent element ordering: header → description
-- Uniform width: `w-[248px]` for all text blocks
-- Proper grid container structure maintained for alignment
+**Technical Changes:**
+- Updated `types/content.ts` - Added new fields to `home` interface
+- Updated `data/content/ru/ui.json` - Added Russian translations
+- Updated `data/content/en/ui.json` - Added English translations
+- Updated `components/HomeScreen.tsx` - Replaced hardcoded texts with localized content
+- Updated `components/ContentContext.tsx` - Added new fields to fallback content
+- Updated `data/content.ts` - Added new fields to fallback content
+- Updated `mocks/content-provider-mock.ts` - Added new fields
+- Updated `tests/unit/final-theme-cards.test.tsx` - Added new fields
 
-**Result**: All benefit blocks on OnboardingScreen02 now have consistent, professional spacing between headers and descriptions
+**Result**: All texts in HomeScreen now properly use the translation system and display in Russian when language is set to Russian
+
+**Additional Fix**: Updated text color for "Use 80% users" text in theme cards to match "Progress" text color (`#696969`)
+
+### ✅ **COMPLETED**: OnboardingScreen01 Title Update + UserProfileScreen I18N
+**Status**: COMPLETE - Updated onboarding title and added I18N support to user profile screen
+
+**Problem Identified:**
+- User requested: "Поменяй текст на 1 онбординге "Добро пожаловать...." на "Ты не должен справляться один." и сделай соответствующий перевод. Потом смотрим на страницу пользовательских настроек и в шапе соответственно делаем надпись Hero И Level в I18N"
+- Root cause: Hardcoded texts in onboarding screen and user profile screen
+
+**Solution Implemented:**
+1. **Updated Onboarding Title**: Changed first onboarding screen title from "Добро пожаловать в Menhausen" to "Ты не должен справляться один."
+2. **Added English Translation**: Updated English version from "Welcome to Menhausen" to "You don't have to cope alone."
+3. **Added Profile I18N**: Added Russian translations for "Hero #1275" and "Level" in user profile screen
+4. **Updated TypeScript Types**: Added new fields to `profile` interface in `UITexts`
+5. **Updated All References**: Fixed all mock files and test files to include new fields
+
+**Texts Updated:**
+1. Onboarding title: "Добро пожаловать в Menhausen" → "Ты не должен справляться один."
+2. English onboarding: "Welcome to Menhausen" → "You don't have to cope alone."
+3. Profile hero title: "Hero #1275" → "Герой #1275" (heroTitle)
+4. Profile level: "Level" → "Уровень" (level)
+
+**Technical Changes:**
+- Updated `data/content/ru/ui.json` - Changed onboarding title and added profile translations
+- Updated `data/content/en/ui.json` - Changed onboarding title and added profile translations
+- Updated `types/content.ts` - Added new fields to `profile` interface
+- Updated `components/UserProfileComponents.tsx` - Replaced hardcoded texts with localized content
+- Updated `components/ContentContext.tsx` - Added new fields to fallback content
+- Updated `data/content.ts` - Added new fields to fallback content
+- Updated `mocks/content-provider-mock.ts` - Added new fields
+- Updated `tests/unit/final-theme-cards.test.tsx` - Added new fields
+
+**Result**: Onboarding screen now has more empathetic title and user profile screen fully supports I18N with Russian translations for hero title and level
+
+### ✅ **PREVIOUS COMPLETED**: OnboardingScreen02 Spacing Consistency
 
 ### ✅ **PREVIOUS COMPLETED**: OnboardingScreen02 Russian Translation
 

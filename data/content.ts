@@ -115,7 +115,16 @@ export const appContent: AppContent = {
       themesTitle: 'Themes',
       howAreYou: 'How are you?',
       checkInDescription: 'Check in with yourself — it\'s the first step to self-care! Do it everyday.',
-      whatWorriesYou: 'What worries you?'
+      whatWorriesYou: 'What worries you?',
+      heroTitle: 'Hero #1275',
+      level: 'Level',
+      progress: 'Progress',
+      use80PercentUsers: 'Use 80% users',
+      activity: {
+        title: 'Activity',
+        streak: '4 days',
+        description: 'Only by doing exercises regularly will you achieve results.'
+      }
     },
     profile: {
       title: 'Profile',
@@ -123,7 +132,9 @@ export const appContent: AppContent = {
       privacy: 'Privacy',
       terms: 'Terms',
       deleteAccount: 'Delete account',
-      payments: 'Payments'
+      payments: 'Payments',
+      heroTitle: 'Hero #1275',
+      level: 'Level'
     },
     survey: {
       progress: 'Step {current} of {total}',
