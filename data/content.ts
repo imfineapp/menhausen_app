@@ -30,7 +30,10 @@ export const appContent: AppContent = {
       benefits: [
         'Loading...'
       ],
-      buttonText: 'Continue'
+      buttonText: 'Continue',
+      descriptions: [
+        'Loading...'
+      ]
     }
   },
   survey: {
@@ -140,7 +143,8 @@ export const appContent: AppContent = {
       screen02: {
         title: 'Benefits',
         benefits: ['Benefit 1'],
-        buttonText: 'Start'
+        buttonText: 'Start',
+        descriptions: ['Description 1']
       }
     },
     pinSetup: {

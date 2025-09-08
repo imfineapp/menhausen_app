@@ -30,5 +30,21 @@
     "welcomeMessage": "Navigate through difficult emotions. Rediscover your motivation and emotional well-being.",
     "isPremium": true,
     "cardIds": ["card-10", "card-11"]
+  },
+  "anxiety-panic": {
+    "id": "anxiety-panic",
+    "title": "Anxiety and panic",
+    "description": "Managing anxiety attacks, panic disorders, and overwhelming worry.",
+    "welcomeMessage": "Take control of your anxiety. Learn proven techniques to manage panic and reduce worry.",
+    "isPremium": false,
+    "cardIds": ["card-12", "card-13", "card-14"]
+  },
+  "self-esteem": {
+    "id": "self-esteem",
+    "title": "Self-esteem",
+    "description": "Building confidence, self-worth, and positive self-image.",
+    "welcomeMessage": "Boost your self-esteem and confidence. Develop a healthy relationship with yourself.",
+    "isPremium": true,
+    "cardIds": ["card-15", "card-16"]
   }
 }

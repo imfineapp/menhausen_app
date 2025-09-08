@@ -82,6 +82,7 @@ export interface OnboardingContent {
     title: LocalizedContent;
     benefits: LocalizedContent[];
     buttonText: LocalizedContent;
+    descriptions: LocalizedContent[];
   };
 }
 
@@ -195,6 +196,7 @@ export interface UITexts {
       title: LocalizedContent;
       benefits: LocalizedContent[];
       buttonText: LocalizedContent;
+      descriptions: LocalizedContent[];
     };
   };
   pinSetup: {

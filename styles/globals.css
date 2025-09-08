@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Принудительное применение Roboto Slab - должно быть в начале */
+* {
+  font-family: inherit;
+}
+
+/* Принудительное применение Roboto Slab для всех заголовков */
+.typography-h1, .typography-h1 *,
+.typography-h2, .typography-h2 *,
+.typography-h3, .typography-h3 *,
+.typography-h4, .typography-h4 *,
+.typography-h5, .typography-h5 *,
+.typography-h6, .typography-h6 * {
+  font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+}
+
 :root {
   /* Адаптивные размеры шрифтов */
   --font-size-xs: 10px;
@@ -351,9 +366,10 @@
  * Base typography with responsive scaling - iOS Safari optimized
  */
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
-    font-weight: 400;
+  h1, h2, h3, h4, h5, h6,
+  h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizelegibility;
@@ -487,33 +503,36 @@ html, body {
 /* Основные типографические классы согласно Guidelines.md */
 @layer base {
   /* H1 Заголовки - clamp(24px, 5vw, 32px) с leading-[0.8] */
-  .typography-h1 {
-    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
-    font-size: clamp(24px, 5vw, 32px);
-    line-height: 0.8;
-    font-weight: 400;
+  .typography-h1,
+  .typography-h1 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(24px, 5vw, 32px) !important;
+    line-height: 0.8 !important;
+    font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizelegibility;
   }
 
   /* H2 Заголовки - clamp(20px, 4vw, 28px) с leading-[0.8] */
-  .typography-h2 {
-    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
-    font-size: clamp(20px, 4vw, 28px);
-    line-height: 0.8;
-    font-weight: 400;
+  .typography-h2,
+  .typography-h2 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(20px, 4vw, 28px) !important;
+    line-height: 0.8 !important;
+    font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizelegibility;
   }
 
   /* H3 Заголовки - clamp(18px, 3.5vw, 24px) с leading-[0.8] */
-  .typography-h3 {
-    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
-    font-size: clamp(18px, 3.5vw, 24px);
-    line-height: 0.8;
-    font-weight: 400;
+  .typography-h3,
+  .typography-h3 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(18px, 3.5vw, 24px) !important;
+    line-height: 0.8 !important;
+    font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizelegibility;
@@ -567,6 +586,34 @@ html, body {
   .typography-responsive {
     font-size: clamp(14px, 2.5vw, 18px);
     line-height: 1.5;
+  }
+
+  /* Принудительное применение Roboto Slab для отладки */
+  .font-roboto-slab {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Принудительное применение Roboto Slab ко всем элементам с typography классами */
+  [class*="typography-h"] {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  [class*="typography-h"] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Дополнительные правила для принудительного применения Roboto Slab */
+  .text-\[#e1ff00\],
+  .text-\[#e1ff00\] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Принудительное применение для всех заголовков */
+  div[class*="typography-h"],
+  div[class*="typography-h"] *,
+  p[class*="typography-h"],
+  p[class*="typography-h"] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
   }
 
   .typography-compact {

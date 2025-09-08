@@ -25,7 +25,13 @@ const mockContent: ContentContextType = {
           'Privacy-focused approach',
           '24/7 availability'
         ],
-        buttonText: 'Get Started'
+        buttonText: 'Get Started',
+        descriptions: [
+          'Works directly in Telegram. No accounts, no email required',
+          'AES-256, Web3 technology. Your data is protected at banking-grade level',
+          'In your pocket, in Telegram. Help available 24/7, when you need it',
+          'CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.'
+        ]
       }
     },
     survey: {
@@ -152,7 +158,13 @@ const mockContent: ContentContextType = {
             'Privacy-focused approach',
             '24/7 availability'
           ],
-          buttonText: 'Get Started'
+          buttonText: 'Get Started',
+          descriptions: [
+            'Works directly in Telegram. No accounts, no email required',
+            'AES-256, Web3 technology. Your data is protected at banking-grade level',
+            'In your pocket, in Telegram. Help available 24/7, when you need it',
+            'CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.'
+          ]
         }
       },
       pinSetup: {
