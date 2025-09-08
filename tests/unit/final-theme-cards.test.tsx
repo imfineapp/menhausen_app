@@ -112,7 +112,8 @@ describe('Final Theme Cards Tests', () => {
           screen02: {
             title: 'Benefits',
             benefits: ['Benefit 1'],
-            buttonText: 'Start'
+            buttonText: 'Start',
+            descriptions: ['Description 1']
           }
         },
         survey: {
@@ -212,7 +213,8 @@ describe('Final Theme Cards Tests', () => {
             screen02: {
               title: 'Benefits',
               benefits: ['Benefit 1'],
-              buttonText: 'Start'
+              buttonText: 'Start',
+              descriptions: ['Description 1']
             }
           },
           pinSetup: {

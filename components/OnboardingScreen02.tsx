@@ -115,7 +115,7 @@ function NoLoginTextBlock() {
       </div>
       {/* Описание преимущества */}
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">Works directly in Telegram. No accounts, no email required</p>
+        <p className="block">{content.ui.onboarding.screen02.descriptions[0]}</p>
       </div>
     </div>
   );
@@ -181,16 +181,16 @@ function EncryptionTextBlock() {
   
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Описание шифрования (располагается ниже заголовка) */}
-      <div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]">
-        <p className="block">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
-      </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
         <h2 className="block">{content.ui.onboarding.screen02.benefits[1]}</h2>
+      </div>
+      {/* Описание шифрования */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen02.descriptions[1]}</p>
       </div>
     </div>
   );
@@ -207,7 +207,9 @@ function EncryptionContainer() {
       data-name="Container"
     >
       <ShieldIcon />
-      <EncryptionTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <EncryptionTextBlock />
+      </div>
     </div>
   );
 }
@@ -254,16 +256,16 @@ function AlwaysWithYouTextBlock() {
   
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Описание доступности */}
-      <div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]">
-        <p className="block">In your pocket, in Telegram. Help available 24/7, when you need it</p>
-      </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
         <h2 className="block">{content.ui.onboarding.screen02.benefits[2]}</h2>
+      </div>
+      {/* Описание доступности */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen02.descriptions[2]}</p>
       </div>
     </div>
   );
@@ -280,7 +282,9 @@ function AlwaysWithYouContainer() {
       data-name="Container"
     >
       <MobileIcon />
-      <AlwaysWithYouTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <AlwaysWithYouTextBlock />
+      </div>
     </div>
   );
 }
@@ -375,18 +379,18 @@ function ScienceTextBlock() {
   
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Подробное описание методов */}
-      <div className="[grid-area:1_/_1] typography-body ml-px mt-12 text-[#ffffff] w-[247px]">
-        <p className="block">
-          CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
-        </p>
-      </div>
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
         <h2 className="block">{content.ui.onboarding.screen02.benefits[3]}</h2>
+      </div>
+      {/* Подробное описание методов */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">
+          {content.ui.onboarding.screen02.descriptions[3]}
+        </p>
       </div>
     </div>
   );
@@ -403,7 +407,9 @@ function ScienceContainer() {
       data-name="Container"
     >
       <ScienceIcon />
-      <ScienceTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <ScienceTextBlock />
+      </div>
     </div>
   );
 }

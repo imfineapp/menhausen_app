@@ -223,7 +223,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
         screen02: {
           title: 'Benefits',
           benefits: ['Benefit 1'],
-          buttonText: 'Start'
+          buttonText: 'Start',
+          descriptions: ['Description 1']
         }
       },
       pinSetup: {
