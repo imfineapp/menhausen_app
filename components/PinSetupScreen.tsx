@@ -177,21 +177,6 @@ function PinBlock4({ pinLength }: { pinLength: number }) {
   );
 }
 
-/**
- * Сообщение об ошибке при несовпадении пин-кодов
- * Показывается только при ошибке валидации
- */
-function PinMessage({ show }: { show: boolean }) {
-  if (!show) return null;
-  
-  return (
-    <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="typography-body text-[#e1ff00] text-center">
-        <p className="block">PIN code does not match, please try again</p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * Блок с инструкциями и отображением пин-кода
@@ -213,18 +198,19 @@ function PinSetup({
       {/* Блоки для отображения пин-кода */}
       <PinBlock4 pinLength={pinLength} />
       
-      {/* Инструкция */}
-      <div className="typography-body text-[#ffffff] text-center w-full">
-        <p className="block">
-          {mode === 'create' 
-            ? content.ui.pinSetup.subtitle
-            : content.ui.pinSetup.confirmPin
-          }
-        </p>
+      {/* Сообщение под квадратами - фиксированная высота для предотвращения "прыжков" */}
+      <div className="min-h-[40px] flex items-center justify-center w-full">
+        {(mode === 'confirm' || showError) && (
+          <div className={`typography-body text-center w-full ${showError ? 'text-[#e1ff00]' : 'text-[#ffffff]'}`}>
+            <p className="block">
+              {showError 
+                ? content.ui.pinSetup.pinMismatch
+                : content.ui.pinSetup.confirmPin
+              }
+            </p>
+          </div>
+        )}
       </div>
-      
-      {/* Сообщение об ошибке */}
-      <PinMessage show={showError} />
     </div>
   );
 }

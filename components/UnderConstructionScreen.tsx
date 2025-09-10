@@ -203,15 +203,13 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
       {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[90px] pb-[200px]">
-          <div className="max-w-[351px] mx-auto">
-            
-            {/* Контейнер с иконкой и текстом */}
-            <IconContainer featureName={featureName} />
+      {/* Контент с вертикальным центрированием */}
+      <div className="flex-1 flex items-center justify-center px-[16px] sm:px-[20px] md:px-[21px]">
+        <div className="max-w-[351px] w-full">
+          
+          {/* Контейнер с иконкой и текстом */}
+          <IconContainer featureName={featureName} />
 
-          </div>
         </div>
       </div>
 

@@ -167,6 +167,11 @@ export interface UITexts {
     themesTitle: LocalizedContent;
     howAreYou: LocalizedContent;
     checkInDescription: LocalizedContent;
+    checkInButton: LocalizedContent;
+    checkInInfo: {
+      title: LocalizedContent;
+      content: LocalizedContent;
+    };
     whatWorriesYou: LocalizedContent;
     heroTitle: LocalizedContent;
     level: LocalizedContent;

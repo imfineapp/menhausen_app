@@ -103,42 +103,83 @@ function MoodProgressBar({
     return Math.round(percentage * (moodOptions.length - 1));
   }, [moodOptions.length]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleStart = useCallback((clientX: number) => {
     setIsDragging(true);
-    const moodIndex = calculateMoodFromPosition(e.clientX);
+    const moodIndex = calculateMoodFromPosition(clientX);
     onMoodChange(moodIndex);
-  };
+  }, [onMoodChange, calculateMoodFromPosition]);
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const handleMove = useCallback((clientX: number) => {
     if (!isDragging) return;
-    const moodIndex = calculateMoodFromPosition(e.clientX);
+    const moodIndex = calculateMoodFromPosition(clientX);
     onMoodChange(moodIndex);
   }, [isDragging, onMoodChange, calculateMoodFromPosition]);
 
-  const handleMouseUp = useCallback(() => {
+  const handleEnd = useCallback(() => {
     setIsDragging(false);
   }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    handleStart(e.clientX);
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    handleMove(e.clientX);
+  }, [handleMove]);
+
+  const handleMouseUp = useCallback((e: MouseEvent) => {
+    e.preventDefault();
+    handleEnd();
+  }, [handleEnd]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleStart(touch.clientX);
+  };
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleMove(touch.clientX);
+  }, [handleMove]);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    handleEnd();
+  }, [handleEnd]);
 
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
 
   return (
     <div
       ref={trackRef}
       onMouseDown={handleMouseDown}
-      className="relative h-2 w-full bg-[rgba(217,217,217,0.1)] rounded-full cursor-pointer"
+      onTouchStart={handleTouchStart}
+      className="relative h-6 w-full bg-[rgba(217,217,217,0.1)] rounded-full cursor-pointer select-none overflow-hidden"
+      style={{ touchAction: 'none' }}
     >
       <div 
-        className="absolute h-full bg-gradient-to-r from-[#666666] via-[#ff6b6b] via-[#ffd93d] via-[#6bcf7f] to-[#4ecdc4] rounded-full"
-        style={{ width: selectedMood !== null ? `${((selectedMood + 1) / moodOptions.length) * 100}%` : '0%' }}
+        className="absolute h-full rounded-full"
+        style={{ 
+          width: selectedMood !== null ? `${((selectedMood + 1) / moodOptions.length) * 100}%` : '0%',
+          background: 'repeating-linear-gradient(-45deg, #e1ff00 0px, #e1ff00 16px, #d1ef00 16px, #d1ef00 32px)'
+        }}
       />
     </div>
   );
@@ -157,10 +198,6 @@ function MoodDisplay({ selectedMood, moodOptions }: { selectedMood: number | nul
   
   return (
     <div className="text-center">
-      <div 
-        className="w-8 h-8 rounded-full mx-auto mb-2"
-        style={{ backgroundColor: mood.color }}
-      />
       <div className="typography-body text-white">{mood.label}</div>
     </div>
   );
@@ -177,11 +214,11 @@ function MoodContainer({
 }) {
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-10 items-center justify-start p-0 relative shrink-0 w-full"
+      className="box-border content-stretch flex flex-col gap-10 items-center justify-center p-0 relative shrink-0 w-full min-h-[200px]"
       data-name="Container"
     >
       <MoodDisplay selectedMood={selectedMood} moodOptions={moodOptions} />
-      <div className="h-[30px] w-full">
+      <div className="h-[30px] w-full max-w-[300px]">
         <MoodProgressBar selectedMood={selectedMood} onMoodChange={onMoodChange} moodOptions={moodOptions} />
       </div>
     </div>
@@ -199,7 +236,7 @@ function ContentContainer({
 }) {
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-20 items-center justify-start p-0 relative size-full"
+      className="box-border content-stretch flex flex-col gap-20 items-center justify-center p-0 relative size-full"
       data-name="Container"
     >
       <HeroBlockQuestion />
@@ -253,8 +290,8 @@ export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps)
       <MiniStripeLogo />
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
+      <div className="flex-1 overflow-y-auto flex items-center justify-center">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] py-[100px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контент */}
