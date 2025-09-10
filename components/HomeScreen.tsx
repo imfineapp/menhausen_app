@@ -69,7 +69,7 @@ const _EMERGENCY_CARDS: EmergencyCard[] = [
 function Light() {
   return (
     <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px]"
+      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >
@@ -543,23 +543,21 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
     <button
       onClick={onClick}
       disabled={!card.isAvailable}
-      className={`bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[180px] sm:h-[190px] md:h-[197px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-[270px] sm:w-[283px] md:w-[296px] min-h-[44px] min-w-[44px] ${
+      className={`bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[180px] sm:h-[190px] md:h-[197px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-[260px] sm:w-[270px] md:w-[280px] min-h-[44px] min-w-[44px] ${
         card.isAvailable 
           ? 'cursor-pointer hover:bg-[#d1ef00]' 
           : 'opacity-75 cursor-not-allowed'
       }`}
       data-name="Emergency card"
     >
-      <div className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-[230px] sm:w-[242px] md:w-[249px]">
+      <div className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full">
           <div
-            className="typography-h2 min-w-full text-[#313131] text-left"
-            style={{ width: "min-content" }}
+            className="typography-h2 w-full text-[#313131] text-left"
           >
             <h2 className="block">{card.title}</h2>
           </div>
         <div
-          className="typography-body min-w-full text-[#333333] text-left"
-          style={{ width: "min-content" }}
+          className="typography-body w-full text-[#333333] text-left"
         >
           <p className="block">{card.description}</p>
         </div>
@@ -678,8 +676,8 @@ function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (tec
         </div>
       </div>
       
-      {/* Слайдер с отступом слева как у основного контента и без отступа справа */}
-      <div className="px-[16px] sm:px-[20px] md:px-[21px] pr-0">
+      {/* Слайдер с отступом слева как у основного контента и с правым отступом */}
+      <div className="px-[16px] sm:px-[20px] md:px-[21px]">
         <EmergencySlider onOpenMentalTechnique={onOpenMentalTechnique} />
       </div>
     </div>
@@ -809,7 +807,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
 
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
+      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="004_Home (Main page)"
       style={{
         msOverflowStyle: 'none',

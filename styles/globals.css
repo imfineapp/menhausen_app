@@ -6,12 +6,66 @@
 }
 
 /* Принудительное применение Roboto Slab для всех заголовков */
-.typography-h1, .typography-h1 *,
-.typography-h2, .typography-h2 *,
-.typography-h3, .typography-h3 *,
-.typography-h4, .typography-h4 *,
-.typography-h5, .typography-h5 *,
-.typography-h6, .typography-h6 * {
+.typography-h1,
+.typography-h1 h1,
+.typography-h1 h2,
+.typography-h1 h3,
+.typography-h1 h4,
+.typography-h1 h5,
+.typography-h1 h6,
+.typography-h1 p,
+.typography-h1 span,
+.typography-h1 div,
+.typography-h2,
+.typography-h2 h1,
+.typography-h2 h2,
+.typography-h2 h3,
+.typography-h2 h4,
+.typography-h2 h5,
+.typography-h2 h6,
+.typography-h2 p,
+.typography-h2 span,
+.typography-h2 div,
+.typography-h3,
+.typography-h3 h1,
+.typography-h3 h2,
+.typography-h3 h3,
+.typography-h3 h4,
+.typography-h3 h5,
+.typography-h3 h6,
+.typography-h3 p,
+.typography-h3 span,
+.typography-h3 div,
+.typography-h4,
+.typography-h4 h1,
+.typography-h4 h2,
+.typography-h4 h3,
+.typography-h4 h4,
+.typography-h4 h5,
+.typography-h4 h6,
+.typography-h4 p,
+.typography-h4 span,
+.typography-h4 div,
+.typography-h5,
+.typography-h5 h1,
+.typography-h5 h2,
+.typography-h5 h3,
+.typography-h5 h4,
+.typography-h5 h5,
+.typography-h5 h6,
+.typography-h5 p,
+.typography-h5 span,
+.typography-h5 div,
+.typography-h6,
+.typography-h6 h1,
+.typography-h6 h2,
+.typography-h6 h3,
+.typography-h6 h4,
+.typography-h6 h5,
+.typography-h6 h6,
+.typography-h6 p,
+.typography-h6 span,
+.typography-h6 div {
   font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
 }
 
@@ -455,6 +509,17 @@ html {
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+/* Additional overflow prevention */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure no element can cause horizontal overflow */
+body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Safe area handling for notch devices */

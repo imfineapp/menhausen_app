@@ -26,7 +26,7 @@ interface Checkin {
 function Light() {
   return (
     <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px]"
+      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >
@@ -192,7 +192,7 @@ export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, 
   };
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Световые эффекты */}
       <Light />
       
@@ -205,10 +205,12 @@ export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, 
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок карточки */}
-            <CardHeader 
-              cardTitle={cardTitle} 
-              cardDescription={cardDescription}
-            />
+            <div className="mb-8">
+              <CardHeader 
+                cardTitle={cardTitle} 
+                cardDescription={cardDescription}
+              />
+            </div>
             
             {/* Контейнер чекинов */}
             <CheckinsContainer 

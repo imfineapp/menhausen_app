@@ -30,7 +30,7 @@ interface Card {
 function Light() {
   return (
     <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px]"
+      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >
@@ -205,7 +205,23 @@ function OpenNextLevelButton({ onClick }: { onClick: () => void }) {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards: _completedCards = new Set(), cardCompletionCounts: _cardCompletionCounts = {} }: ThemeHomeScreenProps) {
-  const { content, getLocalizedText } = useContent();
+  const { content, getLocalizedText, getTheme } = useContent();
+  
+  // Получаем данные темы
+  const themeData = themeTitle ? getTheme(themeTitle) : null;
+  
+  // Отладочная информация
+  console.log('ThemeHomeScreen Debug:', {
+    themeTitle,
+    themeData,
+    hasDescription: !!themeData?.description,
+    description: themeData?.description,
+    content: content,
+    hasContent: !!content,
+    hasUI: !!content?.ui,
+    hasCards: !!content?.ui?.cards,
+    hasThemeHome: !!content?.ui?.cards?.themeHome
+  });
   
   // Проверяем, что контент загружен
   if (!content?.ui?.cards?.themeHome) {
@@ -213,6 +229,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
           <div className="text-lg">Loading content...</div>
+          <div className="text-sm mt-2">Theme: {themeTitle}</div>
         </div>
       </div>
     );
@@ -311,7 +328,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   ];
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Световые эффекты */}
       <Light />
       
@@ -324,10 +341,17 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок */}
-            <div className="text-center mb-8">
-              <h1 className="typography-h1 text-white mb-4">
-                {themeTitle}
+            <div className="text-center mb-6">
+              <h1 className="typography-h1 text-[#e1ff00] mb-4">
+                {themeData ? themeData.title : themeTitle}
               </h1>
+            </div>
+            
+            {/* Описание темы */}
+            <div className="mb-6">
+              <p className="typography-body text-white text-center">
+                {themeData?.description || 'Описание темы будет доступно в ближайшее время.'}
+              </p>
             </div>
             
             {/* Прогресс темы */}
