@@ -183,6 +183,8 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle, questionText }: QuestionScreen01Props) {
+  const { content } = useContent();
+  
   // Состояние для хранения ответа пользователя
   const [answer, setAnswer] = useState('');
   
@@ -236,10 +238,10 @@ export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton 
-        onClick={handleNext} 
+        onClick={handleNext}
         disabled={!answer.trim()}
       >
-        Next
+        {content?.ui?.navigation?.next || 'Далее'}
       </BottomFixedButton>
     </div>
   );

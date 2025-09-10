@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">84.61% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>40/48</span>
+                <span class='fraction'>44/52</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">83.33% </span>
+                <span class="strong">84.61% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>40/48</span>
+                <span class='fraction'>44/52</span>
             </div>
         
             
@@ -146,7 +146,12 @@
 <a name='L81'></a><a href='#L81'>81</a>
 <a name='L82'></a><a href='#L82'>82</a>
 <a name='L83'></a><a href='#L83'>83</a>
-<a name='L84'></a><a href='#L84'>84</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -172,8 +177,10 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -186,6 +193,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
@@ -217,6 +225,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">20x</span>
 <span class="cline-any cline-yes">20x</span>
@@ -244,22 +254,24 @@ export function detectTelegramLanguage(): SupportedLanguage {
     const telegramWebApp = window.Telegram?.WebApp;
     
     if (!telegramWebApp?.initDataUnsafe?.user?.language_code) {
-      console.log('Telegram language not available, using English fallback');
+      console.log('detectTelegramLanguage: Telegram language not available, using English fallback');
       return 'en';
     }
     
     const langCode = telegramWebApp.initDataUnsafe.user.language_code;
-    console.log('Detected Telegram language code:', langCode);
+    console.log('detectTelegramLanguage: Detected Telegram language code:', langCode);
     
     // Если язык начинается с 'ru', возвращаем русский
     if (langCode.startsWith('ru')) {
+      console.log('detectTelegramLanguage: Returning Russian language');
       return 'ru';
     }
     
     // Для всех остальных языков возвращаем английский
+    console.log('detectTelegramLanguage: Returning English language');
     return 'en';
 <span class="branch-0 cbranch-no" title="branch not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.warn('Error detecting Telegram language:', error);</span>
+<span class="cstat-no" title="statement not covered" >    console.warn('detectTelegramLanguage: Error detecting Telegram language:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return 'en';</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 }
@@ -271,12 +283,13 @@ export function detectTelegramLanguage(): SupportedLanguage {
 export function getSavedLanguage(): SupportedLanguage | null {
   try {
     const saved = localStorage.getItem('menhausen-language');
+    console.log('getSavedLanguage: Saved language from localStorage:', saved);
     if (saved &amp;&amp; (saved === 'en' || saved === 'ru')) {
       return saved as SupportedLanguage;
     }
     return null;
 <span class="branch-0 cbranch-no" title="branch not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.warn('Error loading saved language:', error);</span>
+<span class="cstat-no" title="statement not covered" >    console.warn('getSavedLanguage: Error loading saved language:', error);</span>
 <span class="cstat-no" title="statement not covered" >    return null;</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 }
@@ -288,9 +301,9 @@ export function getSavedLanguage(): SupportedLanguage | null {
 export function saveLanguage(language: SupportedLanguage): void {
   try {
     localStorage.setItem('menhausen-language', language);
-    console.log('Language saved:', language);
+    console.log('saveLanguage: Language saved to localStorage:', language);
 <span class="branch-0 cbranch-no" title="branch not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.warn('Error saving language:', error);</span>
+<span class="cstat-no" title="statement not covered" >    console.warn('saveLanguage: Error saving language:', error);</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 }
 &nbsp;
@@ -300,16 +313,18 @@ export function saveLanguage(language: SupportedLanguage): void {
  * @returns Начальный язык для приложения
  */
 export function getInitialLanguage(): SupportedLanguage {
+  console.log('getInitialLanguage: Starting language detection...');
+  
   // 1. Проверяем сохраненный язык
   const savedLanguage = getSavedLanguage();
   if (savedLanguage) {
-    console.log('Using saved language:', savedLanguage);
+    console.log('getInitialLanguage: Using saved language:', savedLanguage);
     return savedLanguage;
   }
   
   // 2. Определяем из Telegram
   const telegramLanguage = detectTelegramLanguage();
-  console.log('Using Telegram language:', telegramLanguage);
+  console.log('getInitialLanguage: Using Telegram language:', telegramLanguage);
   return telegramLanguage;
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -319,7 +334,7 @@ export function getInitialLanguage(): SupportedLanguage {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-10T11:43:10.094Z
+                at 2025-09-10T19:32:59.069Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -28,7 +28,11 @@ interface LanguageProviderProps {
  */
 export function LanguageProvider({ children }: LanguageProviderProps) {
   // Состояние для текущего языка (определяется автоматически)
-  const [language, setLanguageState] = useState<Language>(() => getInitialLanguage());
+  const [language, setLanguageState] = useState<Language>(() => {
+    const initialLanguage = getInitialLanguage();
+    console.log('LanguageProvider: Initial language set to:', initialLanguage);
+    return initialLanguage;
+  });
   
   // Состояние для модального окна выбора языка
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
@@ -36,10 +40,13 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   /**
    * Функция для изменения языка приложения
    * Сохраняет выбор в localStorage для постоянства
+   * ContentContext будет автоматически обновлен через useEffect
    */
   const setLanguage = (lang: Language) => {
+    console.log('LanguageProvider: setLanguage called with:', lang);
     setLanguageState(lang);
     saveLanguage(lang);
+    console.log('LanguageProvider: Language changed to:', lang);
   };
 
   /**

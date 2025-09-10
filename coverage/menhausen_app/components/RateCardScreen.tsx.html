@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/242</span>
+                <span class='fraction'>0/244</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/242</span>
+                <span class='fraction'>0/244</span>
             </div>
         
             
@@ -444,7 +444,10 @@
 <a name='L379'></a><a href='#L379'>379</a>
 <a name='L380'></a><a href='#L380'>380</a>
 <a name='L381'></a><a href='#L381'>381</a>
-<a name='L382'></a><a href='#L382'>382</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -569,9 +572,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -721,6 +726,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -949,6 +955,8 @@ interface RateCardScreenProps {
  * Адаптивный блок информации о шифровании
  */
 <span class="cstat-no" title="statement not covered" >function EncryptInfoBlock() {</span>
+<span class="cstat-no" title="statement not covered" >  const { content } = useContent();</span>
+  
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div</span>
 <span class="cstat-no" title="statement not covered" >      className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"</span>
@@ -956,7 +964,7 @@ interface RateCardScreenProps {
     &gt;
 <span class="cstat-no" title="statement not covered" >      &lt;LockShieldFilled /&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className="typography-caption text-[#696969] text-left flex-1"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;Your feedback is fully protected with AES-256 encryption&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;{content?.ui?.cards?.question?.encryption || 'Ваши ответы полностью защищены шифрованием AES-256'}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
@@ -1103,6 +1111,7 @@ interface RateCardScreenProps {
   textMessage: string;
   onTextMessageChange: (value: string) =&gt; void;
 <span class="cstat-no" title="statement not covered" >}) {</span>
+<span class="cstat-no" title="statement not covered" >  const { content } = useContent();</span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div</span>
 <span class="cstat-no" title="statement not covered" >      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"</span>
@@ -1115,7 +1124,7 @@ interface RateCardScreenProps {
 <span class="cstat-no" title="statement not covered" >          className="typography-body min-w-full text-[#ffffff] text-center"</span>
 <span class="cstat-no" title="statement not covered" >          style={{ width: "min-content" }}</span>
         &gt;
-<span class="cstat-no" title="statement not covered" >          &lt;p className="block"&gt;Thank you!&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;p className="block"&gt;{content?.ui?.cards?.rating?.thankYou || 'Спасибо!'}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
       )}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="mt-5"&gt;</span>
@@ -1213,7 +1222,7 @@ interface RateCardScreenProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-10T11:43:10.094Z
+                at 2025-09-10T19:32:59.069Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

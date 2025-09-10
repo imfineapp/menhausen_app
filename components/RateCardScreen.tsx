@@ -122,6 +122,8 @@ function LockShieldFilled() {
  * Адаптивный блок информации о шифровании
  */
 function EncryptInfoBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -129,7 +131,7 @@ function EncryptInfoBlock() {
     >
       <LockShieldFilled />
       <div className="typography-caption text-[#696969] text-left flex-1">
-        <p className="block">Your feedback is fully protected with AES-256 encryption</p>
+        <p className="block">{content?.ui?.cards?.question?.encryption || 'Ваши ответы полностью защищены шифрованием AES-256'}</p>
       </div>
     </div>
   );
@@ -276,6 +278,7 @@ function RatingCardContainer({
   textMessage: string;
   onTextMessageChange: (value: string) => void;
 }) {
+  const { content } = useContent();
   return (
     <div
       className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
@@ -288,7 +291,7 @@ function RatingCardContainer({
           className="typography-body min-w-full text-[#ffffff] text-center"
           style={{ width: "min-content" }}
         >
-          <p className="block">Thank you!</p>
+          <p className="block">{content?.ui?.cards?.rating?.thankYou || 'Спасибо!'}</p>
         </div>
       )}
       <div className="mt-5">
