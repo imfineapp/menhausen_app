@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for menhausen_app/components/ui/hover-card.tsx</title>
+    <title>Code coverage report for menhausen_app/components/ui/StripedProgressBar.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">menhausen_app/components/ui</a> hover-card.tsx</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">menhausen_app/components/ui</a> StripedProgressBar.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/33</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/33</span>
+                <span class='fraction'>0/25</span>
             </div>
         
             
@@ -107,36 +107,24 @@
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -149,52 +137,70 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">"use client";
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 &nbsp;
-import * as React from "react";
-<span class="cstat-no" title="statement not covered" >import * as HoverCardPrimitive from "@radix-ui/react-hover-card";</span>
+interface StripedProgressBarProps {
+  progress: number; // Процент прогресса от 0 до 100
+  className?: string; // Дополнительные CSS классы
+  size?: 'sm' | 'md' | 'lg' | 'xl'; // Размер прогресс-бара
+  showBackground?: boolean; // Показывать ли фон
+  backgroundVariant?: 'light' | 'dark' | 'gray'; // Вариант фона
+  animated?: boolean; // Анимированные полосы
+  active?: boolean; // Активное состояние
+}
 &nbsp;
-<span class="cstat-no" title="statement not covered" >import { cn } from "./utils";</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >function HoverCard({</span>
-<span class="cstat-no" title="statement not covered" >  ...props</span>
-<span class="cstat-no" title="statement not covered" >}: React.ComponentProps&lt;typeof HoverCardPrimitive.Root&gt;) {</span>
-<span class="cstat-no" title="statement not covered" >  return &lt;HoverCardPrimitive.Root data-slot="hover-card" {...props} /&gt;;</span>
-<span class="cstat-no" title="statement not covered" >}</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >function HoverCardTrigger({</span>
-<span class="cstat-no" title="statement not covered" >  ...props</span>
-<span class="cstat-no" title="statement not covered" >}: React.ComponentProps&lt;typeof HoverCardPrimitive.Trigger&gt;) {</span>
+/**
+ * Универсальный компонент полосатого прогресс-бара
+ * Использует CSS классы для консистентного дизайна
+ */
+<span class="cstat-no" title="statement not covered" >export function StripedProgressBar({ </span>
+<span class="cstat-no" title="statement not covered" >  progress, </span>
+<span class="cstat-no" title="statement not covered" >  className = "", </span>
+<span class="cstat-no" title="statement not covered" >  size = 'md',</span>
+<span class="cstat-no" title="statement not covered" >  showBackground = true,</span>
+<span class="cstat-no" title="statement not covered" >  backgroundVariant = 'light',</span>
+<span class="cstat-no" title="statement not covered" >  animated = false,</span>
+<span class="cstat-no" title="statement not covered" >  active = false</span>
+<span class="cstat-no" title="statement not covered" >}: StripedProgressBarProps) {</span>
+<span class="cstat-no" title="statement not covered" >  const clampedProgress = Math.max(0, Math.min(100, progress));</span>
+  
+<span class="cstat-no" title="statement not covered" >  const sizeClass = `striped-progress-bar-${size}`;</span>
+<span class="cstat-no" title="statement not covered" >  const backgroundClass = showBackground ? `striped-progress-bar-bg-${backgroundVariant}` : '';</span>
+<span class="cstat-no" title="statement not covered" >  const animatedClass = animated ? 'striped-progress-bar-animated' : '';</span>
+<span class="cstat-no" title="statement not covered" >  const activeClass = active ? 'striped-progress-bar-active' : '';</span>
+  
 <span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} /&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className={`striped-progress-bar ${sizeClass} ${animatedClass} ${activeClass} ${className}`}&gt;</span>
+<span class="cstat-no" title="statement not covered" >      {showBackground &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className={`striped-progress-bar-bg ${backgroundClass}`} /&gt;</span>
+      )}
+<span class="cstat-no" title="statement not covered" >      {clampedProgress &gt; 0 &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div </span>
+<span class="cstat-no" title="statement not covered" >          className="striped-progress-bar-fill"</span>
+<span class="cstat-no" title="statement not covered" >          style={{ width: `${clampedProgress}%` }}</span>
+<span class="cstat-no" title="statement not covered" >        /&gt;</span>
+      )}
+<span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
 <span class="cstat-no" title="statement not covered" >}</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >function HoverCardContent({</span>
-<span class="cstat-no" title="statement not covered" >  className,</span>
-<span class="cstat-no" title="statement not covered" >  align = "center",</span>
-<span class="cstat-no" title="statement not covered" >  sideOffset = 4,</span>
-<span class="cstat-no" title="statement not covered" >  ...props</span>
-<span class="cstat-no" title="statement not covered" >}: React.ComponentProps&lt;typeof HoverCardPrimitive.Content&gt;) {</span>
-<span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;HoverCardPrimitive.Portal data-slot="hover-card-portal"&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;HoverCardPrimitive.Content</span>
-<span class="cstat-no" title="statement not covered" >        data-slot="hover-card-content"</span>
-<span class="cstat-no" title="statement not covered" >        align={align}</span>
-<span class="cstat-no" title="statement not covered" >        sideOffset={sideOffset}</span>
-<span class="cstat-no" title="statement not covered" >        className={cn(</span>
-<span class="cstat-no" title="statement not covered" >          "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-64 origin-(--radix-hover-card-content-transform-origin) rounded-md border p-4 shadow-md outline-hidden",</span>
-<span class="cstat-no" title="statement not covered" >          className,</span>
-<span class="cstat-no" title="statement not covered" >        )}</span>
-<span class="cstat-no" title="statement not covered" >        {...props}</span>
-<span class="cstat-no" title="statement not covered" >      /&gt;</span>
-<span class="cstat-no" title="statement not covered" >    &lt;/HoverCardPrimitive.Portal&gt;</span>
-  );
-<span class="cstat-no" title="statement not covered" >}</span>
-&nbsp;
-export { HoverCard, HoverCardTrigger, HoverCardContent };
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

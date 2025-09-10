@@ -708,17 +708,18 @@ html, body {
   0% {
     background-position: 0 0;
   }
+
   100% {
     background-position: 32px 0;
   }
 }
 
-/* Hover эффекты */
-.striped-progress-bar:hover .striped-progress-bar-fill {
-  filter: brightness(1.1);
-}
-
 /* Активное состояние */
 .striped-progress-bar-active .striped-progress-bar-fill {
   box-shadow: 0 0 8px rgba(225, 255, 0, 0.3);
+}
+
+/* Hover эффекты */
+.striped-progress-bar:hover .striped-progress-bar-fill {
+  filter: brightness(1.1);
 }

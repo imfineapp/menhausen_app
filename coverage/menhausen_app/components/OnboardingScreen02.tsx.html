@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/311</span>
+                <span class='fraction'>0/318</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/311</span>
+                <span class='fraction'>0/318</span>
             </div>
         
             
@@ -525,7 +525,13 @@
 <a name='L460'></a><a href='#L460'>460</a>
 <a name='L461'></a><a href='#L461'>461</a>
 <a name='L462'></a><a href='#L462'>462</a>
-<a name='L463'></a><a href='#L463'>463</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L463'></a><a href='#L463'>463</a>
+<a name='L464'></a><a href='#L464'>464</a>
+<a name='L465'></a><a href='#L465'>465</a>
+<a name='L466'></a><a href='#L466'>466</a>
+<a name='L467'></a><a href='#L467'>467</a>
+<a name='L468'></a><a href='#L468'>468</a>
+<a name='L469'></a><a href='#L469'>469</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -736,6 +742,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -806,6 +814,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -908,10 +918,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -929,6 +939,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -1104,7 +1116,7 @@ interface OnboardingScreen02Props {
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
       {/* Описание преимущества */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="typography-body text-[#ffffff] w-full"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;Works directly in Telegram. No accounts, no email required&lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;{content.ui.onboarding.screen02.descriptions[0]}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
@@ -1170,16 +1182,16 @@ interface OnboardingScreen02Props {
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div</span>
-<span class="cstat-no" title="statement not covered" >      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"</span>
-<span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
+<span class="cstat-no" title="statement not covered" >      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"</span>
+<span class="cstat-no" title="statement not covered" >      data-name="Text block"</span>
     &gt;
-      {/* Описание шифрования (располагается ниже заголовка) */}
-<span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;AES-256, Web3 technology. Your data is protected at banking-grade level&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
       {/* Заголовок преимущества */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;h2 className="block"&gt;{content.ui.onboarding.screen02.benefits[1]}&lt;/h2&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+      {/* Описание шифрования */}
+<span class="cstat-no" title="statement not covered" >      &lt;div className="typography-body text-[#ffffff] w-full"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;{content.ui.onboarding.screen02.descriptions[1]}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
@@ -1196,7 +1208,9 @@ interface OnboardingScreen02Props {
 <span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
     &gt;
 <span class="cstat-no" title="statement not covered" >      &lt;ShieldIcon /&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;EncryptionTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;EncryptionTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -1243,16 +1257,16 @@ interface OnboardingScreen02Props {
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div</span>
-<span class="cstat-no" title="statement not covered" >      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"</span>
-<span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
+<span class="cstat-no" title="statement not covered" >      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"</span>
+<span class="cstat-no" title="statement not covered" >      data-name="Text block"</span>
     &gt;
-      {/* Описание доступности */}
-<span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-body ml-px mt-[29px] text-[#ffffff] w-[247px]"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;In your pocket, in Telegram. Help available 24/7, when you need it&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
       {/* Заголовок преимущества */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;h2 className="block"&gt;{content.ui.onboarding.screen02.benefits[2]}&lt;/h2&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+      {/* Описание доступности */}
+<span class="cstat-no" title="statement not covered" >      &lt;div className="typography-body text-[#ffffff] w-full"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;{content.ui.onboarding.screen02.descriptions[2]}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
@@ -1269,7 +1283,9 @@ interface OnboardingScreen02Props {
 <span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
     &gt;
 <span class="cstat-no" title="statement not covered" >      &lt;MobileIcon /&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;AlwaysWithYouTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;AlwaysWithYouTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -1364,18 +1380,18 @@ interface OnboardingScreen02Props {
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div</span>
-<span class="cstat-no" title="statement not covered" >      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"</span>
-<span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
+<span class="cstat-no" title="statement not covered" >      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"</span>
+<span class="cstat-no" title="statement not covered" >      data-name="Text block"</span>
     &gt;
-      {/* Подробное описание методов */}
-<span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-body ml-px mt-12 text-[#ffffff] w-[247px]"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;</span>
-          CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
-<span class="cstat-no" title="statement not covered" >        &lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
       {/* Заголовок преимущества */}
 <span class="cstat-no" title="statement not covered" >      &lt;div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;h2 className="block"&gt;{content.ui.onboarding.screen02.benefits[3]}&lt;/h2&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
+      {/* Подробное описание методов */}
+<span class="cstat-no" title="statement not covered" >      &lt;div className="typography-body text-[#ffffff] w-full"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;p className="block"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          {content.ui.onboarding.screen02.descriptions[3]}</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
@@ -1392,7 +1408,9 @@ interface OnboardingScreen02Props {
 <span class="cstat-no" title="statement not covered" >      data-name="Container"</span>
     &gt;
 <span class="cstat-no" title="statement not covered" >      &lt;ScienceIcon /&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;ScienceTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;ScienceTextBlock /&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
   );
 <span class="cstat-no" title="statement not covered" >}</span>
@@ -1436,8 +1454,8 @@ interface OnboardingScreen02Props {
 <span class="cstat-no" title="statement not covered" >      &lt;MiniStripeLogo /&gt;</span>
       
       {/* Контент с прокруткой */}
-<span class="cstat-no" title="statement not covered" >      &lt;div className="flex-1 overflow-y-auto"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="flex-1 overflow-y-auto flex items-center justify-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="px-[16px] sm:px-[20px] md:px-[21px] w-full"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className="max-w-[351px] mx-auto flex flex-col items-center"&gt;</span>
             {/* Блок с контентом всех преимуществ */}
 <span class="cstat-no" title="statement not covered" >            &lt;ContentBlock onComplete={onComplete} /&gt;</span>
@@ -1456,7 +1474,7 @@ interface OnboardingScreen02Props {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-06T20:53:11.975Z
+                at 2025-09-10T10:43:45.954Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

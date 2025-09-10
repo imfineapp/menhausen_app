@@ -22,7 +22,6 @@ function GroundingVisualization({
   currentStep: number; 
 }) {
   const steps = [5, 4, 3, 2, 1];
-  const colors = ['#e1ff00', '#d4e600', '#c7cc00', '#b8b300', '#a8a600'];
   
   return (
     <div className="flex flex-col gap-4 w-full max-w-sm mx-auto">
