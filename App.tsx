@@ -674,21 +674,19 @@ function AppContent() {
             onBack={handleBackToHomeFromTheme}
             onStart={handleStartTheme}
             onUnlock={handleShowPayments}
-            themeTitle={themeData ? getLocalizedText(themeData.title) : currentTheme}
+            themeTitle={currentTheme}
             isPremiumTheme={themeData?.isPremium || false}
             userHasPremium={userHasPremium}
           />
         );
       }
       case 'theme-home': {
-        const themeData = getTheme(currentTheme);
-        
         return (
           <ThemeHomeScreen
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
             onOpenNextLevel={handleOpenNextLevel}
-            themeTitle={themeData ? getLocalizedText(themeData.title) : currentTheme}
+            themeTitle={currentTheme}
             completedCards={completedCards}
             cardCompletionCounts={cardCompletionCounts}
           />
@@ -868,8 +866,8 @@ function AppContent() {
   };
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
-      <div className="flex-1 relative w-full h-full overflow-hidden">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+      <div className="flex-1 relative w-full h-full overflow-hidden overflow-x-hidden">
         {/* Глобальная кнопка Back для Telegram WebApp */}
         <BackButton isHomePage={isHomePage} onBack={goBack} />
         

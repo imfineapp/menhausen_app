@@ -11,6 +11,7 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
+import React from 'react';
 
 // Cleanup after each test
 afterEach(() => {
@@ -97,7 +98,38 @@ beforeEach(() => {
 
   // Mock content loading
   vi.mock('../components/ContentContext', () => ({
-    ContentProvider: ({ children }: { children: React.ReactNode }) => children,
+    ContentProvider: ({ children }: { children: React.ReactNode }) => {
+      const { createContext, useContext } = require('react');
+      const ContentContext = createContext({
+        currentLanguage: 'en',
+        content: {
+          ui: {
+            home: {
+              greeting: 'Good morning'
+            },
+            language: 'Language',
+            english: 'English',
+            russian: 'Russian'
+          }
+        },
+        setLanguage: vi.fn(),
+        getLocalizedText: vi.fn((key: string) => key),
+        getUI: vi.fn(() => ({
+          language: 'Language',
+          english: 'English',
+          russian: 'Russian'
+        })),
+        getTheme: vi.fn(),
+        getCard: vi.fn(),
+        getSurvey: vi.fn(),
+        getMentalTechnique: vi.fn(),
+        getMentalTechniquesMenu: vi.fn(),
+        isLoading: false,
+        error: null
+      });
+      
+      return React.createElement(ContentContext.Provider, { value: ContentContext._currentValue }, children);
+    },
     useContent: vi.fn(() => ({
       currentLanguage: 'en',
       content: {
@@ -116,7 +148,14 @@ beforeEach(() => {
         language: 'Language',
         english: 'English',
         russian: 'Russian'
-      }))
+      })),
+      getTheme: vi.fn(),
+      getCard: vi.fn(),
+      getSurvey: vi.fn(),
+      getMentalTechnique: vi.fn(),
+      getMentalTechniquesMenu: vi.fn(),
+      isLoading: false,
+      error: null
     }))
   }));
 

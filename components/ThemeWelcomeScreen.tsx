@@ -19,7 +19,7 @@ interface ThemeWelcomeScreenProps {
 function Light() {
   return (
     <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px]"
+      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >
@@ -87,11 +87,14 @@ export function ThemeWelcomeScreen({
   onBack: _onBack, 
   onStart, 
   onUnlock, 
-  themeTitle: _themeTitle, 
+  themeTitle, 
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {
-  const { content } = useContent();
+  const { content, getTheme, getLocalizedText } = useContent();
+  
+  // Получаем данные темы
+  const themeData = themeTitle ? getTheme(themeTitle) : null;
   
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;
@@ -100,8 +103,19 @@ export function ThemeWelcomeScreen({
   const buttonText = isThemeLocked ? 'Unlock' : 'Start';
   const handleButtonClick = isThemeLocked ? onUnlock : onStart;
   
+  // Получаем приветственное сообщение темы или используем общий текст
+  const welcomeMessage = themeData?.welcomeMessage || getLocalizedText(content.ui.themes.welcome.subtitle);
+  
+  // Отладочная информация
+  console.log('ThemeWelcomeScreen Debug:', {
+    themeTitle,
+    themeData,
+    welcomeMessage,
+    isThemeLocked
+  });
+  
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Световые эффекты */}
       <Light />
       
@@ -110,16 +124,16 @@ export function ThemeWelcomeScreen({
       
       {/* Контент с прокруткой */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px] h-full flex items-center justify-center">
           <div className="max-w-[351px] mx-auto">
             
             {/* Заголовок */}
-            <div className="text-center mb-12">
-              <h1 className="typography-h1 text-white mb-6">
-                {_themeTitle}
+            <div className="text-center">
+              <h1 className="typography-h1 text-[#e1ff00] mb-6">
+                {themeData ? themeData.title : themeTitle}
               </h1>
               <p className="typography-body text-white">
-                {isThemeLocked ? 'Unlock this theme to get started' : content.ui.themes.welcome.subtitle}
+                {isThemeLocked ? 'Unlock this theme to get started' : welcomeMessage}
               </p>
             </div>
 

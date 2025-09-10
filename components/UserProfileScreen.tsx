@@ -137,7 +137,7 @@ export function UserProfileScreen({
 
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
+      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="User Profile Page"
       style={{
         msOverflowStyle: 'none',

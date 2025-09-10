@@ -32,7 +32,7 @@ interface CheckinData {
 function Light() {
   return (
     <div
-      className="absolute h-[917px] sm:h-[1000px] md:h-[1100px] left-1/2 top-[-65px] translate-x-[-50%] w-[211px] sm:w-[240px] md:w-[280px]"
+      className="absolute h-[917px] sm:h-[1000px] md:h-[1100px] left-1/2 top-[-65px] translate-x-[-50%] w-[211px] sm:w-[240px] md:w-[280px] overflow-hidden"
       data-name="Light"
     >
       <div className="absolute inset-[-27.81%_-120.85%]">
@@ -176,15 +176,13 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
       
       {/* Инструкции и пояснения */}
       <div className="typography-body text-[#ffffff] text-left w-full">
-        <p className="block mb-0">
+        <p className="block mb-4">
           {checkinData.instructions}
         </p>
-        <p className="block leading-none mb-0">&nbsp;</p>
-        <p className="block leading-none mb-0">
+        <p className="block mb-4">
           {checkinData.practiceTask}
         </p>
-        <p className="block leading-none mb-0">&nbsp;</p>
-        <p className="leading-none">
+        <p className="block">
           <span className="text-[#e1ff00]">{getLocalizedText(content.ui.cards.final.why)}</span>
           <span> {checkinData.whyNote}</span>
         </p>
@@ -271,7 +269,7 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Card #1",
 
   return (
     <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
+      className="bg-[#111111] relative size-full min-h-screen overflow-x-hidden" 
       data-name="Checkin Details Page"
     >
       {/* Световые эффекты фона */}
