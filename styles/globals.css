@@ -514,12 +514,12 @@ html, body {
     text-rendering: optimizelegibility;
   }
 
-  /* H2 Заголовки - clamp(20px, 4vw, 28px) с leading-[0.8] */
+  /* H2 Заголовки - clamp(20px, 4vw, 28px) с leading-[0.96] (увеличен на 20%) */
   .typography-h2,
   .typography-h2 * {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
     font-size: clamp(20px, 4vw, 28px) !important;
-    line-height: 0.8 !important;
+    line-height: 0.96 !important;
     font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -633,4 +633,93 @@ html, body {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
     font-weight: 400;
   }
+}
+
+/* ========================================================================================
+   ПОЛОСАТЫЕ ПРОГРЕСС-БАРЫ
+   ======================================================================================== */
+
+/* Базовый класс для полосатого прогресс-бара */
+.striped-progress-bar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem; /* rounded-xl */
+}
+
+/* Фон прогресс-бара */
+.striped-progress-bar-bg {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(217, 217, 217, 0.04);
+  border-radius: 0.75rem;
+}
+
+/* Полосатый прогресс */
+.striped-progress-bar-fill {
+  position: absolute;
+  height: 100%;
+  border-radius: 0.75rem;
+  background: repeating-linear-gradient(
+    -45deg,
+    #e1ff00 0px,
+    #e1ff00 16px,
+    #d1ef00 16px,
+    #d1ef00 32px
+  );
+  transition: width 0.3s ease-in-out;
+}
+
+/* Варианты размеров */
+.striped-progress-bar-sm {
+  height: 0.625rem; /* h-2.5 */
+}
+
+.striped-progress-bar-md {
+  height: 1rem; /* h-4 */
+}
+
+.striped-progress-bar-lg {
+  height: 1.5rem; /* h-6 */
+}
+
+.striped-progress-bar-xl {
+  height: 2rem; /* h-8 */
+}
+
+/* Варианты фона */
+.striped-progress-bar-bg-dark {
+  background-color: #313131;
+}
+
+.striped-progress-bar-bg-gray {
+  background-color: #212121;
+}
+
+.striped-progress-bar-bg-light {
+  background-color: rgba(217, 217, 217, 0.04);
+}
+
+/* Анимация загрузки */
+.striped-progress-bar-animated .striped-progress-bar-fill {
+  animation: striped-progress-shift 2s linear infinite;
+}
+
+@keyframes striped-progress-shift {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 32px 0;
+  }
+}
+
+/* Активное состояние */
+.striped-progress-bar-active .striped-progress-bar-fill {
+  box-shadow: 0 0 8px rgba(225, 255, 0, 0.3);
+}
+
+/* Hover эффекты */
+.striped-progress-bar:hover .striped-progress-bar-fill {
+  filter: brightness(1.1);
 }

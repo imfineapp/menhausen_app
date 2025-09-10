@@ -1,8 +1,10 @@
 // Импортируем необходимые хуки и SVG пути
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { StripedProgressBar } from './ui/StripedProgressBar';
+import { InfoModal } from './ui/InfoModal';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -215,10 +217,15 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
 /**
  * Адаптивная иконка информации для блока чекина
  */
-function InfoIcon() {
+function InfoIcon({ onClick }: { onClick: () => void }) {
   return (
-    <div className="relative shrink-0 size-5 sm:size-6" data-name="Info icon">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+    <button
+      onClick={onClick}
+      className="relative shrink-0 size-10 sm:size-12 cursor-pointer hover:opacity-70 transition-opacity duration-200 p-2"
+      data-name="Info icon"
+      aria-label="Показать информацию о чекине"
+    >
+      <svg className="block size-full" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
         <g id="Info icon">
           <path
             d={svgPaths.pace200}
@@ -246,14 +253,14 @@ function InfoIcon() {
           />
         </g>
       </svg>
-    </div>
+    </button>
   );
 }
 
 /**
  * Адаптивный заголовок блока чекина
  */
-function InfoGroup() {
+function InfoGroup({ onInfoClick }: { onInfoClick: () => void }) {
   const { getUI } = useContent();
   
   return (
@@ -264,7 +271,7 @@ function InfoGroup() {
       <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
         <h2 className="block whitespace-pre">{getUI().home.howAreYou}</h2>
       </div>
-      <InfoIcon />
+      <InfoIcon onClick={onInfoClick} />
     </div>
   );
 }
@@ -273,6 +280,8 @@ function InfoGroup() {
  * Адаптивная кнопка для перехода к чекину
  */
 function CheckInButton({ onClick }: { onClick: () => void }) {
+  const { getUI } = useContent();
+  
   return (
     <button
       onClick={onClick}
@@ -281,8 +290,8 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
-          <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block whitespace-pre">Send</p>
+          <div className="typography-button text-[#696969] text-center text-nowrap tracking-[-0.43px]">
+            <p className="adjustLetterSpacing block whitespace-pre">{getUI().home.checkInButton}</p>
           </div>
         </div>
       </div>
@@ -293,15 +302,15 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
 /**
  * Адаптивный контейнер блока чекина
  */
-function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
+function CheckInContainer({ onGoToCheckIn, onInfoClick }: { onGoToCheckIn: () => void; onInfoClick: () => void }) {
   const { getUI } = useContent();
   
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full max-w-[311px]"
+      className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Info container"
     >
-      <InfoGroup />
+      <InfoGroup onInfoClick={onInfoClick} />
       <div className="typography-body text-[#2d2b2b] text-left w-full">
         <p className="block">{getUI().home.checkInDescription}</p>
       </div>
@@ -313,13 +322,13 @@ function CheckInContainer({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
 /**
  * Адаптивный главный блок "How are you?" для чекина
  */
-function CheckInBlock({ onGoToCheckIn }: { onGoToCheckIn: () => void }) {
+function CheckInBlock({ onGoToCheckIn, onInfoClick }: { onGoToCheckIn: () => void; onInfoClick: () => void }) {
   return (
     <div
       className="bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-full"
       data-name="HAYOU_block"
     >
-      <CheckInContainer onGoToCheckIn={onGoToCheckIn} />
+      <CheckInContainer onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
     </div>
   );
 }
@@ -333,14 +342,14 @@ function ActivityProgress() {
       className="absolute box-border content-stretch flex flex-row h-[11px] items-center justify-between inset-x-4 sm:inset-x-5 p-0 top-[50px] sm:top-[53px] md:top-[55px]"
       data-name="Activity progress"
     >
-      <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#313131] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#313131] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#313131] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
-      <div className="bg-[#e1ff00] h-2.5 rounded-xl shrink-0 w-6 sm:w-7 md:w-8" data-name="Progress bar" />
+      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
+      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
+      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
+      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
+      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
+      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
+      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
+      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
     </div>
   );
 }
@@ -437,15 +446,13 @@ function ThemeCard({
       
       {/* Индикатор прогресса */}
       <div className="absolute bottom-0 left-0 right-0 h-5 sm:h-6 z-10" data-name="Progress_theme">
-        <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
-        {progress > 0 && (
-          <div 
-            className="absolute bg-[#e1ff00] bottom-0 left-0 rounded-xl top-0" 
-            style={{ width: `${progress}%` }}
-            data-name="Block" 
-          />
-        )}
-        <div className="absolute typography-caption inset-[12.5%_4.56%_20.83%_4.56%] text-[#696969] text-right">
+        <StripedProgressBar 
+          progress={progress} 
+          size="lg" 
+          className="w-full"
+          showBackground={true}
+        />
+        <div className="absolute typography-caption top-1/2 left-0 right-0 -translate-y-1/2 text-[#696969] text-right pr-2">
           <p className="block">{getUI().home.progress}</p>
         </div>
       </div>
@@ -580,11 +587,12 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
 /**
  * Адаптивный основной контейнер контента главной страницы
  */
-function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium }: { 
+function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium, onInfoClick }: { 
   onGoToCheckIn: () => void; 
   onGoToProfile: () => void;
   onGoToTheme: (themeId: string) => void;
   userHasPremium: boolean;
+  onInfoClick: () => void;
 }) {
   return (
     <div
@@ -592,7 +600,7 @@ function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userH
       data-name="Main_page_contenct_block"
     >
       <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
-      <CheckInBlock onGoToCheckIn={onGoToCheckIn} />
+      <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
       <ActivityBlock />
       <WorriesContainer onGoToTheme={onGoToTheme} />
     </div>
@@ -788,6 +796,17 @@ function SocialFollowBlock() {
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
 export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMentalTechnique, userHasPremium }: HomeScreenProps) {
+  const { getUI } = useContent();
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
+  const handleInfoClick = () => {
+    setIsInfoModalOpen(true);
+  };
+
+  const handleCloseInfoModal = () => {
+    setIsInfoModalOpen(false);
+  };
+
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
@@ -812,6 +831,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
             onGoToProfile={onGoToProfile} 
             onGoToTheme={onGoToTheme}
             userHasPremium={userHasPremium}
+            onInfoClick={handleInfoClick}
           />
         </div>
         
@@ -829,6 +849,14 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
           </div>
         </div>
       </div>
+
+      {/* Модальное окно с информацией о чекине */}
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={handleCloseInfoModal}
+        title={getUI().home.checkInInfo.title}
+        content={getUI().home.checkInInfo.content}
+      />
     </div>
   );
 }

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/228</span>
+                <span class='fraction'>0/227</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/228</span>
+                <span class='fraction'>0/227</span>
             </div>
         
             
@@ -362,8 +362,7 @@
 <a name='L297'></a><a href='#L297'>297</a>
 <a name='L298'></a><a href='#L298'>298</a>
 <a name='L299'></a><a href='#L299'>299</a>
-<a name='L300'></a><a href='#L300'>300</a>
-<a name='L301'></a><a href='#L301'>301</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L300'></a><a href='#L300'>300</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -372,6 +371,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -386,9 +386,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -672,6 +670,7 @@
 <span class="cstat-no" title="statement not covered" >import { useLanguage } from '../LanguageContext';</span>
 <span class="cstat-no" title="statement not covered" >import { MiniStripeLogo } from '../ProfileLayoutComponents';</span>
 <span class="cstat-no" title="statement not covered" >import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';</span>
+<span class="cstat-no" title="statement not covered" >import { StripedProgressBar } from '../ui/StripedProgressBar';</span>
 &nbsp;
 interface Grounding54321ScreenProps {
   onBack: () =&gt; void;
@@ -686,7 +685,6 @@ interface Grounding54321ScreenProps {
   currentStep: number; 
 <span class="cstat-no" title="statement not covered" >}) {</span>
 <span class="cstat-no" title="statement not covered" >  const steps = [5, 4, 3, 2, 1];</span>
-<span class="cstat-no" title="statement not covered" >  const colors = ['#e1ff00', '#d4e600', '#c7cc00', '#b8b300', '#a8a600'];</span>
   
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div className="flex flex-col gap-4 w-full max-w-sm mx-auto"&gt;</span>
@@ -695,14 +693,13 @@ interface Grounding54321ScreenProps {
 <span class="cstat-no" title="statement not covered" >          &lt;div className="w-8 h-8 rounded-full border-2 border-[#e1ff00] flex items-center justify-center"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;span className="text-[#e1ff00] font-bold text-sm"&gt;{count}&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="flex-1 h-2 bg-[#212121] rounded-full overflow-hidden"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;div </span>
-<span class="cstat-no" title="statement not covered" >              className={`h-full transition-all duration-500 ease-out ${</span>
-<span class="cstat-no" title="statement not covered" >                index &lt;= currentStep ? colors[index] : 'bg-transparent'</span>
-<span class="cstat-no" title="statement not covered" >              }`}</span>
-<span class="cstat-no" title="statement not covered" >              style={{ width: index &lt;= currentStep ? '100%' : '0%' }}</span>
-<span class="cstat-no" title="statement not covered" >            /&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;StripedProgressBar </span>
+<span class="cstat-no" title="statement not covered" >            progress={index &lt;= currentStep ? 100 : 0}</span>
+<span class="cstat-no" title="statement not covered" >            size="sm"</span>
+<span class="cstat-no" title="statement not covered" >            className="flex-1"</span>
+<span class="cstat-no" title="statement not covered" >            showBackground={true}</span>
+<span class="cstat-no" title="statement not covered" >            backgroundVariant="gray"</span>
+<span class="cstat-no" title="statement not covered" >          /&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >      ))}</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
@@ -970,7 +967,7 @@ interface Grounding54321ScreenProps {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-06T20:53:11.975Z
+                at 2025-09-10T10:43:45.954Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

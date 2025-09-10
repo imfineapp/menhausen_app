@@ -7,6 +7,7 @@ import { useContent } from '../ContentContext';
 import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
+import { StripedProgressBar } from '../ui/StripedProgressBar';
 
 interface Grounding54321ScreenProps {
   onBack: () => void;
@@ -21,7 +22,6 @@ function GroundingVisualization({
   currentStep: number; 
 }) {
   const steps = [5, 4, 3, 2, 1];
-  const colors = ['#e1ff00', '#d4e600', '#c7cc00', '#b8b300', '#a8a600'];
   
   return (
     <div className="flex flex-col gap-4 w-full max-w-sm mx-auto">
@@ -30,14 +30,13 @@ function GroundingVisualization({
           <div className="w-8 h-8 rounded-full border-2 border-[#e1ff00] flex items-center justify-center">
             <span className="text-[#e1ff00] font-bold text-sm">{count}</span>
           </div>
-          <div className="flex-1 h-2 bg-[#212121] rounded-full overflow-hidden">
-            <div 
-              className={`h-full transition-all duration-500 ease-out ${
-                index <= currentStep ? colors[index] : 'bg-transparent'
-              }`}
-              style={{ width: index <= currentStep ? '100%' : '0%' }}
-            />
-          </div>
+          <StripedProgressBar 
+            progress={index <= currentStep ? 100 : 0}
+            size="sm"
+            className="flex-1"
+            showBackground={true}
+            backgroundVariant="gray"
+          />
         </div>
       ))}
     </div>

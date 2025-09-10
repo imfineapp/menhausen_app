@@ -2,6 +2,7 @@
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { StripedProgressBar } from './ui/StripedProgressBar';
 
 // Типы для пропсов компонента
 interface ThemeHomeScreenProps {
@@ -70,8 +71,12 @@ function ProgressTheme() {
   
   return (
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
-      <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block" />
-      <div className="absolute bg-[#e1ff00] bottom-0 left-0 right-[70.08%] rounded-xl top-0" data-name="Block" />
+      <StripedProgressBar 
+        progress={30} // Примерно 30% прогресса (100% - 70.08% = 29.92%)
+        size="lg" 
+        className="w-full"
+        showBackground={true}
+      />
       <div className="absolute inset-[12.5%_4.56%_20.83%_4.56%] text-[#696969] text-right">
         <p className="typography-caption block">{getLocalizedText(content.ui.themes.home.progress)}</p>
       </div>

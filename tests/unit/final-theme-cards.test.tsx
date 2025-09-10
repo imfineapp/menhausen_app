@@ -185,6 +185,11 @@ describe('Final Theme Cards Tests', () => {
             themesTitle: 'Themes',
             howAreYou: 'How are you?',
             checkInDescription: 'Check in with yourself',
+            checkInButton: 'Send',
+            checkInInfo: {
+              title: 'Why daily check-in matters?',
+              content: 'Daily check-in is a simple yet powerful tool for improving your mental health.'
+            },
             whatWorriesYou: language === 'ru' ? 'Что вас беспокоит?' : 'What worries you?',
             heroTitle: 'Hero #1275',
             level: 'Level',

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/234</span>
+                <span class='fraction'>0/254</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/234</span>
+                <span class='fraction'>0/254</span>
             </div>
         
             
@@ -310,7 +310,27 @@
 <a name='L245'></a><a href='#L245'>245</a>
 <a name='L246'></a><a href='#L246'>246</a>
 <a name='L247'></a><a href='#L247'>247</a>
-<a name='L248'></a><a href='#L248'>248</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -324,6 +344,26 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -589,7 +629,10 @@ import { AppContent } from '../types/content';
 <span class="cstat-no" title="statement not covered" >      benefits: [</span>
 <span class="cstat-no" title="statement not covered" >        'Loading...'</span>
 <span class="cstat-no" title="statement not covered" >      ],</span>
-<span class="cstat-no" title="statement not covered" >      buttonText: 'Continue'</span>
+<span class="cstat-no" title="statement not covered" >      buttonText: 'Continue',</span>
+<span class="cstat-no" title="statement not covered" >      descriptions: [</span>
+<span class="cstat-no" title="statement not covered" >        'Loading...'</span>
+<span class="cstat-no" title="statement not covered" >      ]</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
 <span class="cstat-no" title="statement not covered" >  },</span>
 <span class="cstat-no" title="statement not covered" >  survey: {</span>
@@ -671,7 +714,21 @@ import { AppContent } from '../types/content';
 <span class="cstat-no" title="statement not covered" >      themesTitle: 'Themes',</span>
 <span class="cstat-no" title="statement not covered" >      howAreYou: 'How are you?',</span>
 <span class="cstat-no" title="statement not covered" >      checkInDescription: 'Check in with yourself — it\'s the first step to self-care! Do it everyday.',</span>
-<span class="cstat-no" title="statement not covered" >      whatWorriesYou: 'What worries you?'</span>
+<span class="cstat-no" title="statement not covered" >      checkInButton: 'Send',</span>
+<span class="cstat-no" title="statement not covered" >      checkInInfo: {</span>
+<span class="cstat-no" title="statement not covered" >        title: 'Why daily check-in matters?',</span>
+<span class="cstat-no" title="statement not covered" >        content: 'Daily check-in is a simple yet powerful tool for improving your mental health. Here\'s why it\'s important:\n\n• Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\n• Early detection: Allows you to notice mood changes before they become serious problems\n\n• Care habit: Forms a beneficial habit of paying attention to your psychological state\n\n• Progress tracking: Helps track changes in your emotional state over time\n\n• Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being.'</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >      whatWorriesYou: 'What worries you?',</span>
+<span class="cstat-no" title="statement not covered" >      heroTitle: 'Hero #1275',</span>
+<span class="cstat-no" title="statement not covered" >      level: 'Level',</span>
+<span class="cstat-no" title="statement not covered" >      progress: 'Progress',</span>
+<span class="cstat-no" title="statement not covered" >      use80PercentUsers: 'Use 80% users',</span>
+<span class="cstat-no" title="statement not covered" >      activity: {</span>
+<span class="cstat-no" title="statement not covered" >        title: 'Activity',</span>
+<span class="cstat-no" title="statement not covered" >        streak: '4 days',</span>
+<span class="cstat-no" title="statement not covered" >        description: 'Only by doing exercises regularly will you achieve results.'</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    profile: {</span>
 <span class="cstat-no" title="statement not covered" >      title: 'Profile',</span>
@@ -679,7 +736,9 @@ import { AppContent } from '../types/content';
 <span class="cstat-no" title="statement not covered" >      privacy: 'Privacy',</span>
 <span class="cstat-no" title="statement not covered" >      terms: 'Terms',</span>
 <span class="cstat-no" title="statement not covered" >      deleteAccount: 'Delete account',</span>
-<span class="cstat-no" title="statement not covered" >      payments: 'Payments'</span>
+<span class="cstat-no" title="statement not covered" >      payments: 'Payments',</span>
+<span class="cstat-no" title="statement not covered" >      heroTitle: 'Hero #1275',</span>
+<span class="cstat-no" title="statement not covered" >      level: 'Level'</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    survey: {</span>
 <span class="cstat-no" title="statement not covered" >      progress: 'Step {current} of {total}',</span>
@@ -699,7 +758,8 @@ import { AppContent } from '../types/content';
 <span class="cstat-no" title="statement not covered" >      screen02: {</span>
 <span class="cstat-no" title="statement not covered" >        title: 'Benefits',</span>
 <span class="cstat-no" title="statement not covered" >        benefits: ['Benefit 1'],</span>
-<span class="cstat-no" title="statement not covered" >        buttonText: 'Start'</span>
+<span class="cstat-no" title="statement not covered" >        buttonText: 'Start',</span>
+<span class="cstat-no" title="statement not covered" >        descriptions: ['Description 1']</span>
 <span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >    pinSetup: {</span>
@@ -811,7 +871,7 @@ import { AppContent } from '../types/content';
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-09-06T20:53:11.975Z
+                at 2025-09-10T10:43:45.954Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
