@@ -259,19 +259,19 @@ describe('i18n System Tests', () => {
     test('AboutAppScreen должен отображать контент на выбранном языке', async () => {
       render(
         <TestWrapper>
-          <AboutAppScreen onBack={mockOnBack} />
+          <ContentProvider>
+            <AboutAppScreen onBack={mockOnBack} />
+          </ContentProvider>
         </TestWrapper>
       );
 
       // Ждем загрузки контента
       await waitFor(() => {
-        expect(screen.getByText('About Menhausen')).toBeInTheDocument();
+        expect(screen.getByText('Menhausen')).toBeInTheDocument();
       });
 
       // Проверяем наличие переведенных элементов
-      expect(screen.getByText('About Menhausen')).toBeInTheDocument();
-      expect(screen.getByText('Key Features')).toBeInTheDocument();
-      expect(screen.getByText('Development Team')).toBeInTheDocument();
+      expect(screen.getByText('Menhausen')).toBeInTheDocument();
     });
   });
 

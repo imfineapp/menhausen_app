@@ -11,7 +11,7 @@ import { AppContent, SupportedLanguage } from '../types/content';
  */
 export async function loadContent(language: SupportedLanguage): Promise<AppContent> {
   try {
-    console.log(`Loading content for language: ${language}`);
+    console.log(`loadContent: Loading content for language: ${language}`);
     
     // Загружаем все секции контента параллельно
     const [themes, cards, ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards] = await Promise.all([
@@ -33,17 +33,44 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       mentalTechniquesMenu: mentalTechniquesMenu.default,
       survey: survey.default,
       onboarding: onboarding.default,
-      emergencyCards: emergencyCards.default
+      emergencyCards: emergencyCards.default,
+      about: ui.default.about || {
+        title: 'About Menhausen',
+        description: 'Your personal mental health companion',
+        keyFeatures: 'Key Features',
+        features: {
+          moodTracking: 'Mood Tracking',
+          exercises: 'Mental Exercises',
+          progress: 'Progress Tracking',
+          privacy: 'Privacy First',
+          telegram: 'Telegram Integration'
+        },
+        developmentTeam: 'Development Team',
+        teamDescription: 'Built by mental health professionals',
+        madeWithLove: 'Made with ❤️',
+        copyright: '© 2024 Menhausen',
+        technicalInformation: 'Technical Information',
+        importantNote: 'Important Note',
+        disclaimer: 'This app is designed to support your mental wellness journey, but it is not a substitute for professional medical advice.',
+        emergency: 'For emergencies, please contact your local emergency services.',
+        version: 'Version 1.0.0',
+        platform: 'Platform',
+        builtWith: 'Built with',
+        lastUpdated: 'Last Updated',
+        betaVersion: 'Beta Version'
+      }
     };
     
-    console.log(`Content loaded successfully for language: ${language}`);
+    console.log(`loadContent: Content loaded successfully for language: ${language}`);
+    console.log(`loadContent: UI content:`, ui.default);
+    console.log(`loadContent: About content:`, content.about);
     return content;
   } catch (error) {
-    console.error(`Error loading content for language ${language}:`, error);
+    console.error(`loadContent: Error loading content for language ${language}:`, error);
     
     // Fallback на английский язык
     if (language !== 'en') {
-      console.log('Falling back to English content');
+      console.log('loadContent: Falling back to English content');
       return loadContent('en');
     }
     
@@ -65,13 +92,15 @@ const contentCache = new Map<SupportedLanguage, AppContent>();
 export async function loadContentWithCache(language: SupportedLanguage): Promise<AppContent> {
   // Проверяем кэш
   if (contentCache.has(language)) {
-    console.log(`Using cached content for language: ${language}`);
+    console.log(`loadContentWithCache: Using cached content for language: ${language}`);
     return contentCache.get(language)!;
   }
   
   // Загружаем и кэшируем
+  console.log(`loadContentWithCache: Loading new content for language: ${language}`);
   const content = await loadContent(language);
   contentCache.set(language, content);
+  console.log(`loadContentWithCache: Content cached for language: ${language}`);
   
   return content;
 }

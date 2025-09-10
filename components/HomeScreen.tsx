@@ -5,6 +5,7 @@ import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { InfoModal } from './ui/InfoModal';
+import { ActivityBlockNew } from './ActivityBlockNew';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -277,7 +278,7 @@ function InfoGroup({ onInfoClick }: { onInfoClick: () => void }) {
 }
 
 /**
- * Адаптивная кнопка для перехода к чекину
+ * Адаптивный кнопка для перехода к чекину
  */
 function CheckInButton({ onClick }: { onClick: () => void }) {
   const { getUI } = useContent();
@@ -333,73 +334,8 @@ function CheckInBlock({ onGoToCheckIn, onInfoClick }: { onGoToCheckIn: () => voi
   );
 }
 
-/**
- * Адаптивный индикатор активности (прогресс-бар) на основе Figma дизайна
- */
-function ActivityProgress() {
-  return (
-    <div
-      className="absolute box-border content-stretch flex flex-row h-[11px] items-center justify-between inset-x-4 sm:inset-x-5 p-0 top-[50px] sm:top-[53px] md:top-[55px]"
-      data-name="Activity progress"
-    >
-      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
-      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
-      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
-      <StripedProgressBar progress={0} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} backgroundVariant="dark" />
-      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
-      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
-      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
-      <StripedProgressBar progress={100} size="sm" className="shrink-0 w-6 sm:w-7 md:w-8" showBackground={false} />
-    </div>
-  );
-}
 
-/**
- * Адаптивный заголовок блока активности на основе Figma дизайна
- */
-function ActivityHeader() {
-  const { getUI } = useContent();
-  
-  return (
-    <div
-      className="absolute box-border content-stretch flex flex-row items-center justify-between inset-x-3 sm:inset-x-4 p-0 text-[#e1ff00] text-nowrap top-3 sm:top-4"
-      data-name="Activity header"
-    >
-      <div className="typography-h2 text-left">
-        <h2 className="block text-nowrap whitespace-pre">{getUI().home.activity.title}</h2>
-      </div>
-      <div className="typography-h2 text-right">
-        <h2 className="block text-nowrap whitespace-pre">{getUI().home.activity.streak}</h2>
-      </div>
-    </div>
-  );
-}
 
-/**
- * Адаптивный блок активности пользователя на основе Figma дизайна
- */
-function ActivityBlock() {
-  const { getUI } = useContent();
-  
-  return (
-    <div className="relative w-full h-[130px] sm:h-[135px] md:h-[141px]" data-name="Activity block">
-      <div
-        className="absolute bg-[rgba(217,217,217,0.04)] h-[130px] sm:h-[135px] md:h-[141px] inset-x-0 rounded-xl top-0 w-full"
-        data-name="Activity container"
-      >
-        <div
-          aria-hidden="true"
-          className="absolute border border-[#e1ff00] border-solid inset-0 pointer-events-none rounded-xl"
-        />
-      </div>
-      <ActivityProgress />
-      <ActivityHeader />
-      <div className="absolute inset-x-4 sm:inset-x-5 text-[#ffffff] text-left top-[75px] sm:top-[78px] md:top-[81px]">
-        <p className="typography-body block">{getUI().home.activity.description}</p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * Адаптивная карточка темы с прогрессом и обработкой кликов
@@ -599,7 +535,7 @@ function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userH
     >
       <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
       <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
-      <ActivityBlock />
+      <ActivityBlockNew />
       <WorriesContainer onGoToTheme={onGoToTheme} />
     </div>
   );

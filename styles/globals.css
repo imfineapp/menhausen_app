@@ -788,3 +788,16 @@ body, #root {
 .striped-progress-bar:hover .striped-progress-bar-fill {
   filter: brightness(1.1);
 }
+
+/* Эффекты свечения для блока активности */
+.flame-glow {
+  filter: drop-shadow(0 0 15px rgba(225, 255, 0, 0.8));
+}
+
+.progress-glow {
+  box-shadow: 0 0 8px rgba(225, 255, 0, 0.3);
+}
+
+.checkin-glow {
+  box-shadow: 0 0 6px rgba(225, 255, 0, 0.4);
+}

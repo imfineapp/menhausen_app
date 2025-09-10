@@ -99,8 +99,7 @@ beforeEach(() => {
   // Mock content loading
   vi.mock('../components/ContentContext', () => ({
     ContentProvider: ({ children }: { children: React.ReactNode }) => {
-      const { createContext, useContext } = require('react');
-      const ContentContext = createContext({
+      const ContentContext = React.createContext({
         currentLanguage: 'en',
         content: {
           ui: {
@@ -128,18 +127,126 @@ beforeEach(() => {
         error: null
       });
       
-      return React.createElement(ContentContext.Provider, { value: ContentContext._currentValue }, children);
+      return React.createElement(ContentContext.Provider, { value: {
+        currentLanguage: 'en',
+        content: {
+          ui: {
+            home: {
+              greeting: 'Good morning',
+              activity: {
+                streakLabel: 'days',
+                weeklyCheckins: 'Check-ins',
+                points: 'points',
+                target: 'target'
+              }
+            },
+            language: 'Language',
+            english: 'English',
+            russian: 'Russian',
+            profile: {
+              yourStatus: 'Your status',
+              settings: 'Settings'
+            },
+            about: {
+              title: 'About Menhausen',
+              description: 'Menhausen is your personal mental health companion',
+              keyFeatures: 'Key Features',
+              features: {
+                moodTracking: 'Daily mood tracking',
+                exercises: 'Personalized exercises',
+                progress: 'Progress tracking',
+                privacy: 'Secure and private',
+                telegram: 'Built for Telegram'
+              },
+              developmentTeam: 'Development Team',
+              teamDescription: 'Created with care',
+              madeWithLove: 'Made with ❤️',
+              copyright: '© 2024 Menhausen Team',
+              technicalInformation: 'Technical Information',
+              importantNote: 'Important Note',
+              disclaimer: 'Disclaimer text',
+              emergency: 'Emergency text',
+              version: 'Version:',
+              platform: 'Platform:',
+              builtWith: 'Built with:',
+              lastUpdated: 'Last updated:',
+              betaVersion: 'Beta Version 1.0.0'
+            }
+          }
+        } as any,
+        setLanguage: vi.fn(),
+        getLocalizedText: vi.fn((key: string) => key),
+        getUI: vi.fn(() => ({
+          language: 'Language',
+          english: 'English',
+          russian: 'Russian',
+          home: {
+            activity: {
+              streakLabel: 'days',
+              weeklyCheckins: 'Check-ins',
+              points: 'points',
+              target: 'target'
+            }
+          },
+          profile: {
+            yourStatus: 'Your status',
+            settings: 'Settings'
+          }
+        })),
+        getTheme: vi.fn(),
+        getCard: vi.fn(),
+        getSurvey: vi.fn(),
+        getMentalTechnique: vi.fn(),
+        getMentalTechniquesMenu: vi.fn(),
+        isLoading: false,
+        error: null
+      } }, children);
     },
     useContent: vi.fn(() => ({
       currentLanguage: 'en',
       content: {
         ui: {
           home: {
-            greeting: 'Good morning'
+            greeting: 'Good morning',
+            activity: {
+              streakLabel: 'days',
+              weeklyCheckins: 'Check-ins',
+              points: 'points',
+              target: 'target'
+            }
           },
           language: 'Language',
           english: 'English',
-          russian: 'Russian'
+          russian: 'Russian',
+          profile: {
+            yourStatus: 'Your status',
+            settings: 'Settings'
+          }
+        },
+        about: {
+          title: 'About Menhausen',
+          description: 'Menhausen is your personal mental health companion',
+          keyFeatures: 'Key Features',
+          features: {
+            moodTracking: 'Daily mood tracking',
+            exercises: 'Personalized exercises',
+            progress: 'Progress tracking',
+            privacy: 'Secure and private',
+            telegram: 'Built for Telegram'
+          },
+          developmentTeam: 'Development Team',
+          teamDescription: 'Created with care',
+          madeWithLove: 'Made with ❤️',
+          copyright: '© 2024 Menhausen Team',
+          technicalInformation: 'Technical Information',
+          importantNote: 'Important Note',
+          disclaimer: 'Disclaimer text',
+          emergency: 'Emergency text',
+          version: 'Version:',
+          platform: 'Platform:',
+          builtWith: 'Built with:',
+          lastUpdated: 'Last updated:',
+          betaVersion: 'Beta Version 1.0.0'
         }
       },
       setLanguage: vi.fn(),
@@ -147,7 +254,19 @@ beforeEach(() => {
       getUI: vi.fn(() => ({
         language: 'Language',
         english: 'English',
-        russian: 'Russian'
+        russian: 'Russian',
+        home: {
+          activity: {
+            streakLabel: 'days',
+            weeklyCheckins: 'Check-ins',
+            points: 'points',
+            target: 'target'
+          }
+        },
+        profile: {
+          yourStatus: 'Your status',
+          settings: 'Settings'
+        }
       })),
       getTheme: vi.fn(),
       getCard: vi.fn(),

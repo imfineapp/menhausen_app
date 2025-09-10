@@ -181,6 +181,9 @@ export interface UITexts {
       title: LocalizedContent;
       streak: LocalizedContent;
       description: LocalizedContent;
+      streakLabel: LocalizedContent;
+      progressLabel: LocalizedContent;
+      weeklyCheckins: LocalizedContent;
     };
   };
   profile: {
@@ -192,6 +195,31 @@ export interface UITexts {
     payments: LocalizedContent;
     heroTitle: LocalizedContent;
     level: LocalizedContent;
+  };
+  about: {
+    title: LocalizedContent;
+    description: LocalizedContent;
+    keyFeatures: LocalizedContent;
+    features: {
+      moodTracking: LocalizedContent;
+      exercises: LocalizedContent;
+      progress: LocalizedContent;
+      privacy: LocalizedContent;
+      telegram: LocalizedContent;
+    };
+    developmentTeam: LocalizedContent;
+    teamDescription: LocalizedContent;
+    madeWithLove: LocalizedContent;
+    copyright: LocalizedContent;
+    technicalInformation: LocalizedContent;
+    importantNote: LocalizedContent;
+    disclaimer: LocalizedContent;
+    emergency: LocalizedContent;
+    version: LocalizedContent;
+    platform: LocalizedContent;
+    builtWith: LocalizedContent;
+    lastUpdated: LocalizedContent;
+    betaVersion: LocalizedContent;
   };
   survey: {
     progress: LocalizedContent; // "Step {current} of {total}"
@@ -269,6 +297,7 @@ export interface UITexts {
       subtitle: LocalizedContent;
       placeholder: LocalizedContent;
       submit: LocalizedContent;
+      thankYou: LocalizedContent;
     };
     themeHome: {
       card1: LocalizedContent;
@@ -359,6 +388,35 @@ export interface MentalTechniquesMenuData {
 }
 
 /**
+ * Контент для страницы "О приложении"
+ */
+export interface AboutContent {
+  title: LocalizedContent;
+  description: LocalizedContent;
+  keyFeatures: LocalizedContent;
+  features: {
+    moodTracking: LocalizedContent;
+    exercises: LocalizedContent;
+    progress: LocalizedContent;
+    privacy: LocalizedContent;
+    telegram: LocalizedContent;
+  };
+  developmentTeam: LocalizedContent;
+  teamDescription: LocalizedContent;
+  madeWithLove: LocalizedContent;
+  copyright: LocalizedContent;
+  technicalInformation: LocalizedContent;
+  importantNote: LocalizedContent;
+  disclaimer: LocalizedContent;
+  emergency: LocalizedContent;
+  version: LocalizedContent;
+  platform: LocalizedContent;
+  builtWith: LocalizedContent;
+  lastUpdated: LocalizedContent;
+  betaVersion: LocalizedContent;
+}
+
+/**
  * Полная структура контента приложения
  */
 export interface AppContent {
@@ -370,6 +428,8 @@ export interface AppContent {
   ui: UITexts;
   mentalTechniques: Record<string, MentalTechniqueData>;
   mentalTechniquesMenu: MentalTechniquesMenuData;
+  about: AboutContent;
+  activityData?: ActivityData;
 }
 
 /**
@@ -396,4 +456,13 @@ export interface ContentContextType {
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
   getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
+}
+
+export interface ActivityData {
+  streakDays: number;
+  currentPoints: number;
+  targetPoints: number;
+  weeklyCheckins: {
+    [key: string]: boolean;
+  };
 }

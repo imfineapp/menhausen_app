@@ -88,6 +88,8 @@ function CardDescription({ description: _description }: { description: string })
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function CardWelcomeScreen({ onBack, onNext, cardId, cardTitle: _cardTitle, cardDescription }: CardWelcomeScreenProps) {
+  const { content } = useContent();
+  
   // Описание по умолчанию, если не передано
   const defaultDescription = "Difficulties with others often start with uncertainty in oneself. Let's figure out what exactly is bothering us.";
   
@@ -127,7 +129,7 @@ export function CardWelcomeScreen({ onBack, onNext, cardId, cardTitle: _cardTitl
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton onClick={handleNext}>
-        Next
+        {content?.ui?.themes?.welcome?.start || 'Начать'}
       </BottomFixedButton>
     </div>
   );

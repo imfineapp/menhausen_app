@@ -13,22 +13,24 @@ export function detectTelegramLanguage(): SupportedLanguage {
     const telegramWebApp = window.Telegram?.WebApp;
     
     if (!telegramWebApp?.initDataUnsafe?.user?.language_code) {
-      console.log('Telegram language not available, using English fallback');
+      console.log('detectTelegramLanguage: Telegram language not available, using English fallback');
       return 'en';
     }
     
     const langCode = telegramWebApp.initDataUnsafe.user.language_code;
-    console.log('Detected Telegram language code:', langCode);
+    console.log('detectTelegramLanguage: Detected Telegram language code:', langCode);
     
     // Если язык начинается с 'ru', возвращаем русский
     if (langCode.startsWith('ru')) {
+      console.log('detectTelegramLanguage: Returning Russian language');
       return 'ru';
     }
     
     // Для всех остальных языков возвращаем английский
+    console.log('detectTelegramLanguage: Returning English language');
     return 'en';
   } catch (error) {
-    console.warn('Error detecting Telegram language:', error);
+    console.warn('detectTelegramLanguage: Error detecting Telegram language:', error);
     return 'en';
   }
 }
@@ -40,12 +42,13 @@ export function detectTelegramLanguage(): SupportedLanguage {
 export function getSavedLanguage(): SupportedLanguage | null {
   try {
     const saved = localStorage.getItem('menhausen-language');
+    console.log('getSavedLanguage: Saved language from localStorage:', saved);
     if (saved && (saved === 'en' || saved === 'ru')) {
       return saved as SupportedLanguage;
     }
     return null;
   } catch (error) {
-    console.warn('Error loading saved language:', error);
+    console.warn('getSavedLanguage: Error loading saved language:', error);
     return null;
   }
 }
@@ -57,9 +60,9 @@ export function getSavedLanguage(): SupportedLanguage | null {
 export function saveLanguage(language: SupportedLanguage): void {
   try {
     localStorage.setItem('menhausen-language', language);
-    console.log('Language saved:', language);
+    console.log('saveLanguage: Language saved to localStorage:', language);
   } catch (error) {
-    console.warn('Error saving language:', error);
+    console.warn('saveLanguage: Error saving language:', error);
   }
 }
 
@@ -69,15 +72,17 @@ export function saveLanguage(language: SupportedLanguage): void {
  * @returns Начальный язык для приложения
  */
 export function getInitialLanguage(): SupportedLanguage {
+  console.log('getInitialLanguage: Starting language detection...');
+  
   // 1. Проверяем сохраненный язык
   const savedLanguage = getSavedLanguage();
   if (savedLanguage) {
-    console.log('Using saved language:', savedLanguage);
+    console.log('getInitialLanguage: Using saved language:', savedLanguage);
     return savedLanguage;
   }
   
   // 2. Определяем из Telegram
   const telegramLanguage = detectTelegramLanguage();
-  console.log('Using Telegram language:', telegramLanguage);
+  console.log('getInitialLanguage: Using Telegram language:', telegramLanguage);
   return telegramLanguage;
 }

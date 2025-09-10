@@ -16,6 +16,31 @@ export const appContent: AppContent = {
   themes: {},
   cards: {},
   emergencyCards: {},
+      about: {
+        title: 'About Menhausen',
+        description: 'Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\n• Daily mood tracking and emotional state monitoring\n• Personalized mental health exercises\n• Progress tracking with levels and achievements\n• Complete privacy — your data stays yours\n• Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with ❤️ for the Telegram community.',
+        keyFeatures: 'Key Features',
+        features: {
+          moodTracking: 'Mood Tracking',
+          exercises: 'Mental Exercises',
+          progress: 'Progress Tracking',
+          privacy: 'Privacy First',
+          telegram: 'Telegram Integration'
+        },
+        developmentTeam: 'Development Team',
+        teamDescription: 'Loading...',
+        madeWithLove: 'Made with ❤️',
+        copyright: '© 2024 Menhausen',
+        technicalInformation: 'Technical Information',
+        importantNote: 'Important Note',
+        disclaimer: 'This app is designed to support your mental wellness journey, but it is not a substitute for professional medical advice.',
+        emergency: 'For emergencies, please contact your local emergency services.',
+        version: 'Version 1.0.0',
+        platform: 'Platform',
+        builtWith: 'Built with',
+        lastUpdated: 'Last Updated',
+        betaVersion: 'Beta Version'
+      },
   onboarding: {
     screen01: {
       title: 'Welcome',
@@ -125,11 +150,14 @@ export const appContent: AppContent = {
       level: 'Level',
       progress: 'Progress',
       use80PercentUsers: 'Use 80% users',
-      activity: {
-        title: 'Activity',
-        streak: '4 days',
-        description: 'Only by doing exercises regularly will you achieve results.'
-      }
+            activity: {
+              title: 'Activity',
+              streak: '4 days',
+              description: 'Only by doing exercises regularly will you achieve results.',
+              streakLabel: 'days streak',
+              progressLabel: 'Progress',
+              weeklyCheckins: 'Weekly check-ins'
+            }
     },
     profile: {
       title: 'Profile',
@@ -216,7 +244,8 @@ export const appContent: AppContent = {
         title: 'Rate Card',
         subtitle: 'How was it?',
         placeholder: 'Share your thoughts',
-        submit: 'Submit'
+        submit: 'Submit',
+        thankYou: 'Thank you!'
       },
       themeHome: {
         card1: 'Card #1',
@@ -236,6 +265,31 @@ export const appContent: AppContent = {
         level5: 'Level 5',
         description: 'Some text about card and more.'
       }
+    },
+    about: {
+      title: 'About Menhausen',
+      description: 'Menhausen is your personal mental health companion designed to help you track your mood, build healthy habits, and support your emotional well-being through daily check-ins and mindful exercises.',
+      keyFeatures: 'Key Features',
+      features: {
+        moodTracking: 'Daily mood tracking and emotional check-ins',
+        exercises: 'Personalized mental health exercises and activities',
+        progress: 'Progress tracking with levels and achievements',
+        privacy: 'Secure and private - your data stays yours',
+        telegram: 'Built specifically for Telegram Mini Apps'
+      },
+      developmentTeam: 'Development Team',
+      teamDescription: 'Created with care by a dedicated team of developers and mental health advocates. Our mission is to make mental wellness accessible and engaging for everyone.',
+      madeWithLove: 'Made with ❤️ for the Telegram community',
+      copyright: '© 2024 Menhausen Team. All rights reserved.',
+      technicalInformation: 'Technical Information',
+      importantNote: 'Important Note',
+      disclaimer: 'Menhausen is designed to support your mental wellness journey, but it is not a substitute for professional medical advice, diagnosis, or treatment. If you\'re experiencing serious mental health concerns, please consult with qualified healthcare professionals.',
+      emergency: 'For emergencies, please contact your local emergency services or mental health crisis hotline.',
+      version: 'Version:',
+      platform: 'Platform:',
+      builtWith: 'Built with:',
+      lastUpdated: 'Last updated:',
+      betaVersion: 'Beta Version 1.0.0'
     }
   },
   mentalTechniques: {},
