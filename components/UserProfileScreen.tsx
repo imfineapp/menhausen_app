@@ -24,6 +24,7 @@ import { FeedbackSection } from './ProfileFeedbackSection';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
 import { StatusBlocksRow } from './StatusBlocksRow';
+import { ProgressBlock } from './ProgressBlock';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -165,6 +166,11 @@ export function UserProfileScreen({
                 onLevelClick={handleStatusBlockLevel}
                 onStatusClick={handleStatusBlockStatus}
               />
+            </div>
+            
+            {/* Блок прогресса */}
+            <div className="w-full mt-3 sm:mt-4">
+              <ProgressBlock />
             </div>
             
             {/* Меню без заголовка с отступом 40px */}

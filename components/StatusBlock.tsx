@@ -34,7 +34,7 @@ export function StatusBlock({ icon, title, value, subtitle, onClick }: StatusBlo
         {/* Иконка с эффектом свечения */}
         <div className="relative mb-1">
           <div className="absolute inset-0 bg-[#e1ff00]/30 rounded-full blur-lg scale-150"></div>
-          <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center">
+          <div className="relative w-14 h-14 sm:w-15 sm:h-15 flex items-center justify-center">
             {icon}
           </div>
         </div>
