@@ -1,45 +1,50 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🔨 **BUILD MODE**: Linter and Testing Validation - COMPLETE
+🔨 **BUILD MODE**: Switch Component Fix - COMPLETE
 
 ## Implementation Progress
-**Status**: Linter and Testing Validation COMPLETE - All code quality checks passed
+**Status**: Switch Component Improvement COMPLETE - Enhanced accessibility and user experience
 
-### ✅ **COMPLETED**: Linter and Testing Validation
-**Status**: COMPLETE - All linting and testing checks passed successfully
+### ✅ **COMPLETED**: Switch Component Fix
+**Status**: COMPLETE - Fixed Switch component display issues and implemented proper Radix UI integration
 
 **Problem Identified:**
-- User requested: "Прогони линтер и тесты все кроме e2e"
-- Root cause: Need to validate code quality and test coverage
-- UX issue: Ensure code quality and reliability
+- User reported: "найди элемент swither на странице пользователя. Почему он может не отображаться стандартно? Почему он выглядит как два кружка?"
+- Root cause: Switch component had multiple issues:
+  - Damaged code with syntax errors
+  - Size conflicts: `min-h-[44px] min-w-[44px]` vs `h-5 w-9`
+  - Thumb overflow: 16px thumb + 16px translate-x > 36px container
+  - Visual "two circles" effect due to incorrect positioning
+  - Radix UI installed but not properly used
 
 **Solution Implemented:**
-1. **Fixed ESLint Issues**: Removed unused variable `colors` in Grounding54321Screen.tsx
-2. **Fixed CSS Linting**: Resolved stylelint issues with CSS rule ordering and empty lines
-3. **Verified TypeScript**: Confirmed all type checks pass without errors
-4. **Ran Unit Tests**: Executed all unit tests with coverage reporting
-5. **Validated Code Quality**: Ensured all linting rules pass with zero warnings
+1. **Fixed Code Syntax**: Corrected all syntax errors in Switch component
+2. **Implemented Proper Radix UI**: Replaced custom implementation with correct Radix UI Switch
+3. **Fixed Size Conflicts**: Updated dimensions to `h-4 w-7` container, `h-3 w-3` thumb (reduced by 1.5x)
+4. **Corrected Positioning**: Used `translate-x-3` for proper thumb positioning
+5. **Used Radix Data Attributes**: Implemented `data-[state=checked]` selectors
+6. **Cleaned Up Files**: Deleted unused `FigmaSwitch.tsx` component
 
 **Technical Changes:**
-- Updated `components/mental-techniques/Grounding54321Screen.tsx` - Removed unused `colors` variable
-- Updated `styles/globals.css` - Fixed CSS rule ordering and empty line requirements
-- **Build Verification**: All checks passed successfully
+- **Component Fix**: Updated `components/ui/switch.tsx`:
+  - Added proper `@radix-ui/react-switch` import
+  - Used `SwitchPrimitive.Root` and `SwitchPrimitive.Thumb`
+  - Fixed dimensions: `h-4 w-7` container, `h-3 w-3` thumb (reduced by 1.5x)
+  - Corrected positioning: `translate-x-3` for proper thumb movement
+  - Used `data-[state=checked]` instead of conditional classes
+  - Maintained firm brand colors and accessibility features
+- **File Cleanup**: Deleted unused `components/FigmaSwitch.tsx`
+- **Build Verification**: Successful production build with no errors
 
-**Test Results:**
-- **ESLint**: ✅ PASSED (0 errors, 0 warnings)
-- **CSS Lint**: ✅ PASSED (0 errors, 0 warnings)
-- **TypeScript**: ✅ PASSED (0 type errors)
-- **Unit Tests**: ✅ PASSED (41/41 tests)
-- **Coverage**: 7.9% overall (focused on critical utilities)
+**Issues Resolved:**
+- ✅ **"Two Circles" Effect**: Fixed thumb positioning to stay within container bounds
+- ✅ **Size Conflicts**: Resolved conflicts between min-size and actual size
+- ✅ **Syntax Errors**: Corrected all code syntax issues
+- ✅ **Radix UI Integration**: Properly implemented Radix UI Switch components
+- ✅ **Visual Consistency**: Switch now displays correctly with proper proportions
 
-**Quality Metrics:**
-- **Code Quality**: 100% lint compliance
-- **Type Safety**: 100% TypeScript compliance
-- **Test Coverage**: 41 unit tests passing
-- **Performance**: All tests complete in reasonable time
-
-**Result**: All code quality checks pass successfully, ensuring maintainable and reliable codebase
+**Result**: Switch component now displays correctly as a single, properly positioned toggle switch without visual artifacts, using proper Radix UI implementation with full accessibility support
 
 ### ✅ **COMPLETED**: HomeScreen CheckIn Block Padding Fix
 **Status**: COMPLETE - Fixed uneven internal padding in "Как дела?" block
