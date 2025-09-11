@@ -1,10 +1,63 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🔨 **BUILD MODE**: Switch Component Fix - COMPLETE
+🔨 **BUILD MODE**: HomeScreen Badges Block Removal & Navigation Fix - COMPLETE
 
 ## Implementation Progress
-**Status**: Switch Component Improvement COMPLETE - Enhanced accessibility and user experience
+**Status**: HomeScreen Badges Block Removal & Navigation Fix COMPLETE - Enhanced user experience and navigation
+
+### ✅ **COMPLETED**: HomeScreen Badges Block Removal & Navigation Fix
+**Status**: COMPLETE - Removed badges block from HomeScreen and implemented proper navigation to badges page
+
+**Problem Identified:**
+- User requested: "Убери блок "Ваши достижения" на странице Home. На странице профиля пользователя сделай, что бы при нажатии на плитку с текстом "12 достижения" пользователь переходил на страницу достижений с карточками достижений. Так же при нажатии на строку в блоке ниже на странице пользователя (блок с иконкой достижений и прогрессбаром.) так же уходил на страницу достижений. И следом обрати внимание на бейдж "Получено" на карточке открытой достижений. Он не переведен. А должен быть I18N."
+
+**Solution Implemented:**
+1. **Removed Badges Block**: Completely removed "Ваши достижения" block from HomeScreen
+2. **Added Navigation to StatusBlocksRow**: Updated StatusBlocksRow to navigate to badges page when "12 достижения" tile is clicked
+3. **Added Navigation to ProgressBlock**: Updated ProgressBlock to navigate to badges page when achievements row is clicked
+4. **Fixed I18N for "Получено" Badge**: Added proper localization for "Получено" badge text in BadgeCard component
+5. **Updated All Content Files**: Added "unlocked" field to all content files and type definitions
+
+**Technical Changes:**
+- **HomeScreen.tsx**: 
+  - Removed BadgesButton component and its usage
+  - Removed onGoToBadges prop from HomeScreenProps and MainPageContentBlock
+  - Updated component interfaces to remove unused props
+- **UserProfileScreen.tsx**:
+  - Added onGoToBadges prop to interface and component
+  - Updated handleStatusBlockBadges to navigate to badges page instead of Under Construction
+- **StatusBlocksRow.tsx**: No changes needed (already had onClick handler)
+- **ProgressBlock.tsx**:
+  - Added ProgressBlockProps interface with onBadgesClick handler
+  - Made achievements row clickable with proper hover effects
+  - Added min-h-[44px] min-w-[44px] for accessibility
+- **BadgeCard.tsx**:
+  - Added useContent hook import
+  - Replaced hardcoded "Получено" with getLocalizedBadges().unlocked
+- **Content Files**: Added "unlocked" field to all content files:
+  - data/content/ru/ui.json: "Получено"
+  - data/content/en/ui.json: "Unlocked"
+  - types/content.ts: Added unlocked: LocalizedContent
+  - data/content.ts: Added fallback content
+  - components/ContentContext.tsx: Added to both fallback and localized content
+  - mocks/content-provider-mock.ts: Added mock content
+  - tests/unit/final-theme-cards.test.tsx: Added test content
+- **App.tsx**: Updated UserProfileScreen call to include onGoToBadges prop
+
+**Issues Resolved:**
+- ✅ **Badges Block Removed**: "Ваши достижения" block completely removed from HomeScreen
+- ✅ **Status Block Navigation**: Clicking "12 достижения" tile now navigates to badges page
+- ✅ **Progress Block Navigation**: Clicking achievements row in progress block now navigates to badges page
+- ✅ **I18N for Badge Text**: "Получено" badge text now properly localized as "Получено" (RU) / "Unlocked" (EN)
+- ✅ **Type Safety**: All TypeScript interfaces updated with proper type definitions
+- ✅ **Build Success**: All changes compile successfully with no errors
+- ✅ **Test Success**: All 48 tests pass successfully
+
+**Result**: HomeScreen now has cleaner interface without badges block, profile page provides proper navigation to badges page from both status blocks and progress block, and all badge text is properly localized with full I18N support
+
+### ✅ **COMPLETED**: Switch Component Fix
+**Status**: COMPLETE - Fixed Switch component display issues and implemented proper Radix UI integration
 
 ### ✅ **COMPLETED**: Switch Component Fix
 **Status**: COMPLETE - Fixed Switch component display issues and implemented proper Radix UI integration

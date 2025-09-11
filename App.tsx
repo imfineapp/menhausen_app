@@ -27,6 +27,7 @@ import { QuestionScreen02 } from './components/QuestionScreen02';
 import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
+import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
 
 // Импорты ментальных техник
 import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
@@ -40,7 +41,7 @@ import { LanguageProvider } from './components/LanguageContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges';
 
 /**
  * Основной компонент приложения с навигацией
@@ -261,6 +262,10 @@ function AppContent() {
 
   const handleGoToProfile = () => {
     navigateTo('profile');
+  };
+
+  const handleGoToBadges = () => {
+    navigateTo('badges');
   };
 
   /**
@@ -787,6 +792,7 @@ function AppContent() {
             onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
             onShowUnderConstruction={handleShowUnderConstruction}
+            onGoToBadges={handleGoToBadges}
             userHasPremium={userHasPremium}
           />
         );
@@ -857,6 +863,13 @@ function AppContent() {
         return (
           <GroundingAnchorScreen 
             onBack={handleBackFromMentalTechnique}
+          />
+        );
+      
+      case 'badges':
+        return (
+          <BadgesScreen 
+            onBack={goBack}
           />
         );
       

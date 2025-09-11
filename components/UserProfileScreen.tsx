@@ -36,6 +36,7 @@ interface UserProfileScreenProps {
   onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
   onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
+  onGoToBadges: () => void; // Функция для перехода к странице достижений
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -52,6 +53,7 @@ export function UserProfileScreen({
   onShowDeleteAccount, 
   onShowPayments, 
   onShowUnderConstruction, 
+  onGoToBadges,
   userHasPremium 
 }: UserProfileScreenProps) {
   // Состояние для настроек
@@ -121,8 +123,8 @@ export function UserProfileScreen({
   };
 
   const handleStatusBlockBadges = () => {
-    console.log('Status block badges clicked - redirecting to Under Construction');
-    onShowUnderConstruction('Badges');
+    console.log('Status block badges clicked - navigating to badges');
+    onGoToBadges();
   };
 
   const handleStatusBlockLevel = () => {
@@ -170,7 +172,7 @@ export function UserProfileScreen({
             
             {/* Блок прогресса */}
             <div className="w-full mt-3 sm:mt-4">
-              <ProgressBlock />
+              <ProgressBlock onBadgesClick={handleStatusBlockBadges} />
             </div>
             
             {/* Меню без заголовка с отступом 40px */}

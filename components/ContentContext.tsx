@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
 import { mockContent } from '../mocks/content-provider-mock';
@@ -369,6 +369,138 @@ export function ContentProvider({ children }: ContentProviderProps) {
     return Object.values(content.mentalTechniques);
   }, [content]);
 
+  /**
+   * Получение контента достижений
+   */
+  const getBadges = useCallback((): BadgesContent => {
+    if (!content?.badges) {
+      // Fallback контент для достижений
+      return {
+        title: 'Achievements',
+        subtitle: 'Your mental health progress',
+        congratulations: 'Congratulations!',
+        unlockedBadge: 'You unlocked a new achievement!',
+        shareButton: 'Share',
+        shareMessage: 'I got a new achievement in Menhausen! 🎉',
+        shareDescription: 'Join me in caring for mental health',
+        appLink: 'https://t.me/menhausen_bot/app',
+        lockedBadge: 'Locked',
+        unlockCondition: 'Unlock condition:',
+        progress: 'Progress',
+        totalBadges: 'Total achievements',
+        unlockedCount: 'Unlocked',
+        inProgress: 'In Progress',
+        points: 'points',
+        motivatingText: 'Your dedication helped you get a new achievement! Keep up the great work!',
+        motivatingTextNoBadges: 'Start your journey to mental well-being. Every day is a new opportunity for growth.',
+        received: 'Received',
+        locked: 'Locked',
+        cancel: 'Cancel',
+        unlocked: 'Unlocked',
+        achievements: {
+          first_checkin: {
+            title: 'First Step',
+            description: 'Complete your first check-in'
+          },
+          week_streak: {
+            title: 'Week of Strength',
+            description: 'Check-ins for 7 days in a row'
+          },
+          month_streak: {
+            title: 'Month of Discipline',
+            description: 'Check-ins for 30 days in a row'
+          },
+          first_exercise: {
+            title: 'First Lesson',
+            description: 'Complete your first exercise'
+          },
+          exercise_master: {
+            title: 'Practice Master',
+            description: 'Complete 50 exercises'
+          },
+          mood_tracker: {
+            title: 'Mood Tracker',
+            description: 'Track your mood for 14 days'
+          },
+          early_bird: {
+            title: 'Early Bird',
+            description: 'Check-ins at 6 AM for 5 days in a row'
+          },
+          night_owl: {
+            title: 'Night Owl',
+            description: 'Check-ins at 11 PM for 5 days in a row'
+          }
+        }
+      };
+    }
+    return content.badges;
+  }, [content]);
+
+  /**
+   * Получение локализованных текстов достижений
+   */
+  const getLocalizedBadges = useCallback(() => {
+    const badgesContent = getBadges();
+    
+    return {
+      title: getLocalizedText(badgesContent.title),
+      subtitle: getLocalizedText(badgesContent.subtitle),
+      congratulations: getLocalizedText(badgesContent.congratulations),
+      unlockedBadge: getLocalizedText(badgesContent.unlockedBadge),
+      shareButton: getLocalizedText(badgesContent.shareButton),
+      shareMessage: getLocalizedText(badgesContent.shareMessage),
+      shareDescription: getLocalizedText(badgesContent.shareDescription),
+      appLink: getLocalizedText(badgesContent.appLink),
+      lockedBadge: getLocalizedText(badgesContent.lockedBadge),
+      unlockCondition: getLocalizedText(badgesContent.unlockCondition),
+      progress: getLocalizedText(badgesContent.progress),
+      totalBadges: getLocalizedText(badgesContent.totalBadges),
+      unlockedCount: getLocalizedText(badgesContent.unlockedCount),
+      inProgress: getLocalizedText(badgesContent.inProgress),
+      points: getLocalizedText(badgesContent.points),
+      motivatingText: getLocalizedText(badgesContent.motivatingText),
+      motivatingTextNoBadges: getLocalizedText(badgesContent.motivatingTextNoBadges),
+      received: getLocalizedText(badgesContent.received),
+      locked: getLocalizedText(badgesContent.locked),
+      cancel: getLocalizedText(badgesContent.cancel),
+      unlocked: getLocalizedText(badgesContent.unlocked),
+      achievements: {
+        first_checkin: {
+          title: getLocalizedText(badgesContent.achievements.first_checkin.title),
+          description: getLocalizedText(badgesContent.achievements.first_checkin.description)
+        },
+        week_streak: {
+          title: getLocalizedText(badgesContent.achievements.week_streak.title),
+          description: getLocalizedText(badgesContent.achievements.week_streak.description)
+        },
+        month_streak: {
+          title: getLocalizedText(badgesContent.achievements.month_streak.title),
+          description: getLocalizedText(badgesContent.achievements.month_streak.description)
+        },
+        first_exercise: {
+          title: getLocalizedText(badgesContent.achievements.first_exercise.title),
+          description: getLocalizedText(badgesContent.achievements.first_exercise.description)
+        },
+        exercise_master: {
+          title: getLocalizedText(badgesContent.achievements.exercise_master.title),
+          description: getLocalizedText(badgesContent.achievements.exercise_master.description)
+        },
+        mood_tracker: {
+          title: getLocalizedText(badgesContent.achievements.mood_tracker.title),
+          description: getLocalizedText(badgesContent.achievements.mood_tracker.description)
+        },
+        early_bird: {
+          title: getLocalizedText(badgesContent.achievements.early_bird.title),
+          description: getLocalizedText(badgesContent.achievements.early_bird.description)
+        },
+        night_owl: {
+          title: getLocalizedText(badgesContent.achievements.night_owl.title),
+          description: getLocalizedText(badgesContent.achievements.night_owl.description)
+        }
+      }
+    };
+  }, [getBadges, getLocalizedText]);
+
   // Значение контекста
   const contextValue: ContentContextType = {
     currentLanguage,
@@ -385,7 +517,9 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getMentalTechniquesByCategory,
     getMentalTechniquesMenu,
     getUI,
-    getAllThemes
+    getAllThemes,
+    getBadges,
+    getLocalizedBadges
   };
 
   // В E2E тестовой среде используем мок
