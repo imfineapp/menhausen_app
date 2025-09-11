@@ -247,11 +247,10 @@ describe('i18n System Tests', () => {
 
       // Ждем загрузки контента
       await waitFor(() => {
-        expect(screen.getByText('Your status')).toBeInTheDocument();
+        expect(screen.getByText('Settings')).toBeInTheDocument();
       });
 
       // Проверяем наличие переведенных элементов
-      expect(screen.getByText('Your status')).toBeInTheDocument();
       expect(screen.getByText('Settings')).toBeInTheDocument();
       expect(screen.getByText('Language')).toBeInTheDocument();
     });

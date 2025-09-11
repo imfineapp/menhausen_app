@@ -52,10 +52,7 @@ export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
       <div className="typography-h2 text-[#e1ff00] text-center">
         <h2 className="block">{getUI().profile.heroTitle}</h2>
       </div>
-      <div className="flex items-center gap-4 sm:gap-5">
-        <div className="typography-body text-[#696969] text-left">
-          <p className="block leading-none">{getUI().profile.level} 25</p>
-        </div>
+      <div className="flex items-center justify-center">
         <UserAccountStatus isPremium={userHasPremium} />
       </div>
     </div>

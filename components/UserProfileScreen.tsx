@@ -7,9 +7,6 @@ import { Switch } from './ui/switch';
 
 // Импортируем выделенные компоненты
 import { 
-  BadgeIcon, 
-  LevelIcon, 
-  MentalStatusIcon, 
   UnlockIcon, 
   DonationIcon, 
   ActivityIcon, 
@@ -22,10 +19,11 @@ import {
   TermsIcon, 
   DeleteIcon
 } from './UserProfileIcons';
-import { UserInfoSection, SeparationLine, SettingsItem } from './UserProfileComponents';
+import { UserInfoSection, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
+import { StatusBlocksRow } from './StatusBlocksRow';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -70,20 +68,6 @@ export function UserProfileScreen({
   /**
    * Обработчики для различных действий профиля
    */
-  const handleBadges = () => {
-    console.log('Opening badges - redirecting to Under Construction');
-    onShowUnderConstruction('Badges');
-  };
-
-  const handleYourLevel = () => {
-    console.log('Opening level details - redirecting to Under Construction');  
-    onShowUnderConstruction('Your level');
-  };
-
-  const handleMentalStatus = () => {
-    console.log('Opening mental status - redirecting to Under Construction');
-    onShowUnderConstruction('How are you status');
-  };
 
   const handleUnlockThemes = () => {
     console.log('Opening unlock themes - redirecting to Premium purchase');
@@ -135,6 +119,21 @@ export function UserProfileScreen({
     console.log('Notifications', enabled ? 'enabled' : 'disabled');
   };
 
+  const handleStatusBlockBadges = () => {
+    console.log('Status block badges clicked - redirecting to Under Construction');
+    onShowUnderConstruction('Badges');
+  };
+
+  const handleStatusBlockLevel = () => {
+    console.log('Status block level clicked - redirecting to Under Construction');
+    onShowUnderConstruction('Your level');
+  };
+
+  const handleStatusBlockStatus = () => {
+    console.log('Status block status clicked - redirecting to Under Construction');
+    onShowUnderConstruction('How are you status');
+  };
+
   return (
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
@@ -159,34 +158,23 @@ export function UserProfileScreen({
             {/* Информация о пользователе */}
             <UserInfoSection userHasPremium={userHasPremium} />
             
-            {/* Разделительная линия */}
-            <div className="w-full mt-8 sm:mt-10">
-              <SeparationLine />
+            {/* Ряд статусных блоков */}
+            <div className="w-full mt-6 sm:mt-8">
+              <StatusBlocksRow 
+                onBadgesClick={handleStatusBlockBadges}
+                onLevelClick={handleStatusBlockLevel}
+                onStatusClick={handleStatusBlockStatus}
+              />
             </div>
             
-            {/* Секция "Your status" */}
-            <div className="flex flex-col gap-4 sm:gap-5 w-full">
-              <h2 className="typography-h2 text-[#e1ff00] text-left">{t('your_status')}</h2>
+            {/* Меню без заголовка с отступом 40px */}
+            <div className="flex flex-col gap-4 sm:gap-5 w-full mt-10">
               <div className="flex flex-col w-full">
-                <SettingsItem
-                  icon={<BadgeIcon />}
-                  title={t('badges')}
-                  onClick={handleBadges}
-                />
-                <SettingsItem
-                  icon={<LevelIcon />}
-                  title={t('your_level')}
-                  onClick={handleYourLevel}
-                />
-                <SettingsItem
-                  icon={<MentalStatusIcon />}
-                  title={t('how_are_you_status')}
-                  onClick={handleMentalStatus}
-                />
                 <SettingsItem
                   icon={<UnlockIcon />}
                   title={t('unlock_all_themes')}
                   onClick={handleUnlockThemes}
+                  isHighlighted={true}
                 />
                 <SettingsItem
                   icon={<DonationIcon />}
