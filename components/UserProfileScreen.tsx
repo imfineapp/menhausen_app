@@ -231,7 +231,6 @@ export function UserProfileScreen({
                     <Switch 
                       checked={notificationsEnabled} 
                       onCheckedChange={handleNotificationToggle}
-                      className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 min-h-[44px] min-w-[44px]"
                       data-testid="notifications-switch"
                     />
                   }
