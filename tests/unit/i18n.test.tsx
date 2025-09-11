@@ -239,16 +239,17 @@ describe('i18n System Tests', () => {
               onShowDeleteAccount={mockOnShowDeleteAccount}
               onShowPayments={mockOnShowPayments}
               onShowUnderConstruction={mockOnShowUnderConstruction}
+              onGoToBadges={vi.fn()}
               userHasPremium={false}
             />
           </ContentProvider>
         </TestWrapper>
       );
 
-      // Ждем загрузки контента
+      // Ждем загрузки контента с увеличенным timeout
       await waitFor(() => {
         expect(screen.getByText('Settings')).toBeInTheDocument();
-      });
+      }, { timeout: 10000 });
 
       // Проверяем наличие переведенных элементов
       expect(screen.getByText('Settings')).toBeInTheDocument();

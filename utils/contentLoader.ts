@@ -25,6 +25,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       import(`../data/content/${language}/emergency-cards.json`)
     ]);
     
+    
     const content: AppContent = {
       themes: themes.default,
       cards: cards.default,
@@ -34,6 +35,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       survey: survey.default,
       onboarding: onboarding.default,
       emergencyCards: emergencyCards.default,
+      badges: ui.default.badges,
       about: ui.default.about || {
         title: 'About Menhausen',
         description: 'Your personal mental health companion',

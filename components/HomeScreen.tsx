@@ -518,6 +518,7 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
   );
 }
 
+
 /**
  * Адаптивный основной контейнер контента главной страницы
  */

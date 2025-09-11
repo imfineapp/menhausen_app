@@ -429,6 +429,7 @@ export interface AppContent {
   mentalTechniques: Record<string, MentalTechniqueData>;
   mentalTechniquesMenu: MentalTechniquesMenuData;
   about: AboutContent;
+  badges: BadgesContent;
   activityData?: ActivityData;
 }
 
@@ -456,6 +457,64 @@ export interface ContentContextType {
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
   getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
+  getBadges: () => BadgesContent;
+  getLocalizedBadges: () => {
+    title: string;
+    subtitle: string;
+    congratulations: string;
+    unlockedBadge: string;
+    shareButton: string;
+    shareMessage: string;
+    shareDescription: string;
+    appLink: string;
+    lockedBadge: string;
+    unlockCondition: string;
+    progress: string;
+    totalBadges: string;
+    unlockedCount: string;
+    inProgress: string;
+    points: string;
+    motivatingText: string;
+    motivatingTextNoBadges: string;
+    received: string;
+    locked: string;
+    cancel: string;
+    unlocked: string;
+    achievements: {
+      first_checkin: {
+        title: string;
+        description: string;
+      };
+      week_streak: {
+        title: string;
+        description: string;
+      };
+      month_streak: {
+        title: string;
+        description: string;
+      };
+      first_exercise: {
+        title: string;
+        description: string;
+      };
+      exercise_master: {
+        title: string;
+        description: string;
+      };
+      mood_tracker: {
+        title: string;
+        description: string;
+      };
+      early_bird: {
+        title: string;
+        description: string;
+      };
+      night_owl: {
+        title: string;
+        description: string;
+      };
+    };
+  };
 }
 
 export interface ActivityData {
@@ -464,5 +523,66 @@ export interface ActivityData {
   targetPoints: number;
   weeklyCheckins: {
     [key: string]: boolean;
+  };
+}
+
+/**
+ * Данные для страницы достижений
+ */
+export interface BadgesContent {
+  title: LocalizedContent;
+  subtitle: LocalizedContent;
+  congratulations: LocalizedContent;
+  unlockedBadge: LocalizedContent;
+  shareButton: LocalizedContent;
+  shareMessage: LocalizedContent;
+  shareDescription: LocalizedContent;
+  appLink: LocalizedContent;
+  lockedBadge: LocalizedContent;
+  unlockCondition: LocalizedContent;
+  progress: LocalizedContent;
+  totalBadges: LocalizedContent;
+  unlockedCount: LocalizedContent;
+  inProgress: LocalizedContent;
+  points: LocalizedContent;
+  motivatingText: LocalizedContent;
+  motivatingTextNoBadges: LocalizedContent;
+  received: LocalizedContent;
+  locked: LocalizedContent;
+  cancel: LocalizedContent;
+  unlocked: LocalizedContent;
+  achievements: {
+    first_checkin: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    week_streak: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    month_streak: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    first_exercise: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    exercise_master: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    mood_tracker: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    early_bird: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
+    night_owl: {
+      title: LocalizedContent;
+      description: LocalizedContent;
+    };
   };
 }
