@@ -317,6 +317,17 @@ export interface UITexts {
       level5: LocalizedContent;
       description: LocalizedContent;
     };
+    levels: {
+      title: LocalizedContent;
+      yourLevel: LocalizedContent;
+      toNextLevel: LocalizedContent;
+      pointsHistory: LocalizedContent;
+      actions: {
+        dailyCheckin: LocalizedContent;
+        exerciseComplete: LocalizedContent;
+        achievementEarned: LocalizedContent;
+      };
+    };
   };
 }
 
@@ -514,6 +525,14 @@ export interface ContentContextType {
         description: string;
       };
     };
+    reward: {
+      title: string;
+      subtitle: string;
+      continueButton: string;
+      nextAchievement: string;
+      congratulations: string;
+      earnedAchievement: string;
+    };
   };
 }
 
@@ -551,6 +570,14 @@ export interface BadgesContent {
   locked: LocalizedContent;
   cancel: LocalizedContent;
   unlocked: LocalizedContent;
+  reward: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    continueButton: LocalizedContent;
+    nextAchievement: LocalizedContent;
+    congratulations: LocalizedContent;
+    earnedAchievement: LocalizedContent;
+  };
   achievements: {
     first_checkin: {
       title: LocalizedContent;

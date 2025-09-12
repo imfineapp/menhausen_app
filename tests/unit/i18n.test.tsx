@@ -240,6 +240,7 @@ describe('i18n System Tests', () => {
               onShowPayments={mockOnShowPayments}
               onShowUnderConstruction={mockOnShowUnderConstruction}
               onGoToBadges={vi.fn()}
+              onGoToLevels={vi.fn()}
               userHasPremium={false}
             />
           </ContentProvider>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ProgressRow } from './ProgressRow';
-import { BadgeIcon, LevelIcon } from './UserProfileIcons';
+import { LevelIcon } from './UserProfileIcons';
+import { useContent } from './ContentContext';
 
 interface ProgressBlockProps {
   onBadgesClick?: () => void;
@@ -10,7 +11,10 @@ interface ProgressBlockProps {
  * Блок прогресса для страницы пользователя
  * Содержит две строки: достижения и уровень
  */
-export function ProgressBlock({ onBadgesClick }: ProgressBlockProps) {
+export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockProps) {
+  const { getUI } = useContent();
+  const _uiContent = getUI();
+
   return (
     <div className="w-full">
       <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
@@ -26,17 +30,28 @@ export function ProgressBlock({ onBadgesClick }: ProgressBlockProps) {
         
         {/* Контент блока */}
         <div className="relative z-10 flex flex-col gap-4 w-full">
-          {/* Первая строка - Достижения */}
-          <button 
-            onClick={onBadgesClick}
-            className="bg-black/50 rounded-lg p-3 w-full cursor-pointer hover:bg-black/60 transition-colors min-h-[44px] min-w-[44px]"
-          >
-            <ProgressRow
-              icon={<div className="text-[#e1ff00]"><BadgeIcon /></div>}
-              value="+1"
-              progress={33} // 1/3 заполнения
-            />
-          </button>
+          {/* Строка с блоками статуса */}
+          <div className="flex flex-row gap-3 sm:gap-4 w-full">
+            {/* Блок "Твой уровень" - увеличенный */}
+            <div className="flex-1">
+              <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-[#e1ff00] text-3xl font-bold">25</span>
+                  <span className="text-gray-400 text-sm">Твой уровень</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Блок "До следующего уровня" */}
+            <div className="flex-1">
+              <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-white text-2xl font-semibold">2500/8000</span>
+                  <span className="text-gray-400 text-sm">До следующего уровня</span>
+                </div>
+              </div>
+            </div>
+          </div>
           
           {/* Вторая строка - Уровень */}
           <div className="bg-black/50 rounded-lg p-3">

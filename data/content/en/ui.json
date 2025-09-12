@@ -212,6 +212,14 @@
     "locked": "Locked",
     "cancel": "Cancel",
     "unlocked": "Unlocked",
+    "reward": {
+      "title": "Congratulations!",
+      "subtitle": "You earned an achievement!",
+      "continueButton": "Continue",
+      "nextAchievement": "Next Achievement",
+      "congratulations": "Great!",
+      "earnedAchievement": "Now you can earn rewards and points for your actions. You can view all your rewards in your profile."
+    },
     "achievements": {
       "first_checkin": {
         "title": "First Step",
@@ -245,6 +253,17 @@
         "title": "Night Owl",
         "description": "Check-ins at 11 PM for 5 days in a row"
       }
+    }
+  },
+  "levels": {
+    "title": "Levels",
+    "yourLevel": "Your Level",
+    "toNextLevel": "To Next Level",
+    "pointsHistory": "Points History",
+    "actions": {
+      "dailyCheckin": "Daily Check-in",
+      "exerciseComplete": "Exercise Complete",
+      "achievementEarned": "Achievement Earned"
     }
   }
 }

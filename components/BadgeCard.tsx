@@ -77,14 +77,14 @@ export function BadgeCard({
   return (
     <div
       className={`
-        relative w-64 h-80 rounded-2xl p-6 transition-all duration-300
+        relative w-64 h-80 rounded-3xl p-6 transition-all duration-300
         ${isActive ? 'scale-105' : 'scale-100'}
         hover:scale-105
       `}
       data-name="Badge Card"
     >
       {/* Сплошной фон */}
-      <div className={`absolute inset-0 rounded-2xl ${unlocked ? 'bg-[#E1FF00]' : 'bg-[#2D2B2B]'}`} />
+      <div className={`absolute inset-0 rounded-3xl ${unlocked ? 'bg-[#E1FF00]' : 'bg-[#2D2B2B]'}`} />
       
       {/* Контент карточки */}
       <div className="relative z-10 h-full flex flex-col">
@@ -160,14 +160,14 @@ export function BadgeCard({
                </div>
              )}
              
-             {/* Блок с количеством получений для разблокированных карточек */}
+             {/* Блок с баллами для разблокированных карточек */}
              {unlocked && (
                <div className="mt-3">
                  <div className="text-lg font-bold text-gray-600">
-                   x3
+                   +500
                  </div>
                  <div className="text-xs text-gray-500">
-                   раз получено
+                   баллов за награду
                  </div>
                </div>
              )}

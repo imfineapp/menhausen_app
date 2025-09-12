@@ -284,6 +284,17 @@ const mockContent: ContentContextType = {
           level4: 'Expert',
           level5: 'Master',
           description: 'Choose a theme to start your journey'
+        },
+        levels: {
+          title: 'Levels',
+          yourLevel: 'Your Level',
+          toNextLevel: 'To Next Level',
+          pointsHistory: 'Points History',
+          actions: {
+            dailyCheckin: 'Daily Check-in',
+            exerciseComplete: 'Exercise Complete',
+            achievementEarned: 'Achievement Earned'
+          }
         }
       },
       about: {
@@ -361,6 +372,14 @@ const mockContent: ContentContextType = {
       locked: 'Locked',
       cancel: 'Cancel',
       unlocked: 'Unlocked',
+      reward: {
+        title: 'Congratulations!',
+        subtitle: 'You earned an achievement!',
+        continueButton: 'Continue',
+        nextAchievement: 'Next Achievement',
+        congratulations: 'Great!',
+        earnedAchievement: 'You earned an achievement'
+      },
       achievements: {
         first_checkin: {
           title: 'First Step',
@@ -446,6 +465,14 @@ const mockContent: ContentContextType = {
     locked: 'Locked',
     cancel: 'Cancel',
     unlocked: 'Unlocked',
+    reward: {
+      title: 'Congratulations!',
+      subtitle: 'You earned an achievement!',
+      continueButton: 'Continue',
+      nextAchievement: 'Next Achievement',
+      congratulations: 'Great!',
+      earnedAchievement: 'You earned an achievement'
+    },
     achievements: {
       first_checkin: {
         title: 'First Step',

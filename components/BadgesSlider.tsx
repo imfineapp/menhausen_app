@@ -37,18 +37,34 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
     setIsDragging(true);
     setStartX(e.pageX - sliderRef.current.offsetLeft);
     setScrollLeft(sliderRef.current.scrollLeft);
+    // Отключаем snap во время перетаскивания
+    sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !sliderRef.current) return;
     e.preventDefault();
     const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
+    const walk = (x - startX) * 1.5; // Уменьшили множитель для более плавного движения
     sliderRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleMouseUp = () => {
+    if (!sliderRef.current) return;
     setIsDragging(false);
+    // Включаем snap обратно
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+    
+    // Плавно переходим к ближайшей карточке
+    const cardWidth = getCardWidth();
+    const currentScroll = sliderRef.current.scrollLeft;
+    const targetIndex = Math.round(currentScroll / cardWidth);
+    const targetScroll = targetIndex * cardWidth;
+    
+    sliderRef.current.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth'
+    });
   };
 
   // Обработка касаний для мобильных устройств
@@ -57,33 +73,68 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
     setIsDragging(true);
     setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
     setScrollLeft(sliderRef.current.scrollLeft);
+    // Отключаем snap во время перетаскивания
+    sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
     const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
+    const walk = (x - startX) * 1.5; // Уменьшили множитель для более плавного движения
     sliderRef.current.scrollLeft = scrollLeft - walk;
   };
 
   const handleTouchEnd = () => {
+    if (!sliderRef.current) return;
     setIsDragging(false);
+    // Включаем snap обратно
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+    
+    // Плавно переходим к ближайшей карточке
+    const cardWidth = getCardWidth();
+    const currentScroll = sliderRef.current.scrollLeft;
+    const targetIndex = Math.round(currentScroll / cardWidth);
+    const targetScroll = targetIndex * cardWidth;
+    
+    sliderRef.current.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth'
+    });
   };
 
-  // Обновление текущего индекса при скролле
+  // Обновление текущего индекса при скролле с debounce
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
 
+    let timeoutId: NodeJS.Timeout;
+    
     const handleScroll = () => {
-      const cardWidth = 272; // 64 * 4 + gap (w-64 + gap-4)
-      const newIndex = Math.round(slider.scrollLeft / cardWidth);
-      setCurrentIndex(newIndex);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        // Получаем реальную ширину карточки с учетом gap
+        const firstCard = slider.querySelector('.flex-shrink-0') as HTMLElement;
+        if (firstCard) {
+          const cardWidth = firstCard.offsetWidth + 16; // 16px gap
+          const newIndex = Math.round(slider.scrollLeft / cardWidth);
+          setCurrentIndex(newIndex);
+        }
+      }, 100); // Debounce 100ms
     };
 
     slider.addEventListener('scroll', handleScroll);
-    return () => slider.removeEventListener('scroll', handleScroll);
+    return () => {
+      slider.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeoutId);
+    };
   }, []);
+
+  // Получение реальной ширины карточки
+  const getCardWidth = () => {
+    if (!sliderRef.current) return 272;
+    const firstCard = sliderRef.current.querySelector('.flex-shrink-0') as HTMLElement;
+    return firstCard ? firstCard.offsetWidth + 16 : 272; // 16px gap
+  };
 
   // Переход к следующей карточке
   const goToNext = () => {
@@ -91,8 +142,9 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       if (sliderRef.current) {
+        const cardWidth = getCardWidth();
         sliderRef.current.scrollTo({
-          left: nextIndex * 272,
+          left: nextIndex * cardWidth,
           behavior: 'smooth'
         });
       }
@@ -105,8 +157,9 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
       const prevIndex = currentIndex - 1;
       setCurrentIndex(prevIndex);
       if (sliderRef.current) {
+        const cardWidth = getCardWidth();
         sliderRef.current.scrollTo({
-          left: prevIndex * 272,
+          left: prevIndex * cardWidth,
           behavior: 'smooth'
         });
       }
@@ -165,8 +218,9 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
             onClick={() => {
               setCurrentIndex(index);
               if (sliderRef.current) {
+                const cardWidth = getCardWidth();
                 sliderRef.current.scrollTo({
-                  left: index * 272,
+                  left: index * cardWidth,
                   behavior: 'smooth'
                 });
               }

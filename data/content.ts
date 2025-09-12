@@ -264,6 +264,17 @@ export const appContent: AppContent = {
         level4: 'Level 4',
         level5: 'Level 5',
         description: 'Some text about card and more.'
+      },
+      levels: {
+        title: 'Levels',
+        yourLevel: 'Your Level',
+        toNextLevel: 'To Next Level',
+        pointsHistory: 'Points History',
+        actions: {
+          dailyCheckin: 'Daily Check-in',
+          exerciseComplete: 'Exercise Complete',
+          achievementEarned: 'Achievement Earned'
+        }
       }
     },
     about: {
@@ -341,6 +352,14 @@ export const appContent: AppContent = {
     locked: 'Locked',
     cancel: 'Cancel',
     unlocked: 'Unlocked',
+    reward: {
+      title: 'Congratulations!',
+      subtitle: 'You earned an achievement!',
+      continueButton: 'Continue',
+      nextAchievement: 'Next Achievement',
+      congratulations: 'Great!',
+      earnedAchievement: 'Now you can earn rewards and points for your actions. You can view all your rewards in your profile.'
+    },
     achievements: {
       first_checkin: {
         title: 'First Step',
