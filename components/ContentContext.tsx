@@ -323,6 +323,17 @@ export function ContentProvider({ children }: ContentProviderProps) {
           level4: 'Level 4',
           level5: 'Level 5',
           description: 'Card description'
+        },
+        levels: {
+          title: 'Levels',
+          yourLevel: 'Your Level',
+          toNextLevel: 'To Next Level',
+          pointsHistory: 'Points History',
+          actions: {
+            dailyCheckin: 'Daily Check-in',
+            exerciseComplete: 'Exercise Complete',
+            achievementEarned: 'Achievement Earned'
+          }
         }
       },
         about: {
@@ -397,6 +408,14 @@ export function ContentProvider({ children }: ContentProviderProps) {
         locked: 'Locked',
         cancel: 'Cancel',
         unlocked: 'Unlocked',
+        reward: {
+          title: 'Congratulations!',
+          subtitle: 'You earned an achievement!',
+          continueButton: 'Continue',
+          nextAchievement: 'Next Achievement',
+          congratulations: 'Great!',
+          earnedAchievement: 'You earned an achievement'
+        },
         achievements: {
           first_checkin: {
             title: 'First Step',
@@ -464,6 +483,14 @@ export function ContentProvider({ children }: ContentProviderProps) {
       locked: getLocalizedText(badgesContent.locked),
       cancel: getLocalizedText(badgesContent.cancel),
       unlocked: getLocalizedText(badgesContent.unlocked),
+      reward: {
+        title: getLocalizedText(badgesContent.reward.title),
+        subtitle: getLocalizedText(badgesContent.reward.subtitle),
+        continueButton: getLocalizedText(badgesContent.reward.continueButton),
+        nextAchievement: getLocalizedText(badgesContent.reward.nextAchievement),
+        congratulations: getLocalizedText(badgesContent.reward.congratulations),
+        earnedAchievement: getLocalizedText(badgesContent.reward.earnedAchievement)
+      },
       achievements: {
         first_checkin: {
           title: getLocalizedText(badgesContent.achievements.first_checkin.title),

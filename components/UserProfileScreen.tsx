@@ -37,6 +37,7 @@ interface UserProfileScreenProps {
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
   onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
   onGoToBadges: () => void; // Функция для перехода к странице достижений
+  onGoToLevels: () => void; // Функция для перехода к странице уровней
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -54,6 +55,7 @@ export function UserProfileScreen({
   onShowPayments, 
   onShowUnderConstruction, 
   onGoToBadges,
+  onGoToLevels,
   userHasPremium 
 }: UserProfileScreenProps) {
   // Состояние для настроек
@@ -128,8 +130,8 @@ export function UserProfileScreen({
   };
 
   const handleStatusBlockLevel = () => {
-    console.log('Status block level clicked - redirecting to Under Construction');
-    onShowUnderConstruction('Your level');
+    console.log('Status block level clicked - navigating to levels');
+    onGoToLevels();
   };
 
   const handleStatusBlockStatus = () => {

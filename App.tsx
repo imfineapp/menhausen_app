@@ -28,6 +28,8 @@ import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
+import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
+import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 
 // Импорты ментальных техник
 import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
@@ -41,7 +43,7 @@ import { LanguageProvider } from './components/LanguageContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
 /**
  * Основной компонент приложения с навигацией
@@ -71,6 +73,7 @@ function AppContent() {
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
   const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
+  const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
 
   // =====================================================================================
   // НОВОЕ СОСТОЯНИЕ ДЛЯ СИСТЕМЫ ОПРОСА
@@ -85,6 +88,8 @@ function AppContent() {
 
   // Получение системы контента
   const { getCard, getTheme, getLocalizedText } = useContent();
+  
+  // Логируем изменения currentScreen
   
   // Проверка, является ли текущий экран главной страницей
   // На первой странице онбординга кнопка Back должна закрывать приложение
@@ -159,6 +164,114 @@ function AppContent() {
     }
   };
 
+  /**
+   * Проверка полученных достижений после чекина
+   * В реальном приложении здесь будет логика проверки достижений
+   */
+  const _checkForEarnedAchievements = (mood: string): string[] => {
+    const earnedAchievements: string[] = [];
+    
+    // Получаем данные о чекинах из localStorage
+    const checkinData = localStorage.getItem('checkin-data');
+    let checkinHistory: any[] = [];
+    
+    if (checkinData) {
+      try {
+        checkinHistory = JSON.parse(checkinData);
+      } catch (error) {
+        console.error('Failed to parse checkin data:', error);
+      }
+    }
+    
+    // Добавляем текущий чекин
+    const currentCheckin = {
+      mood,
+      timestamp: new Date().toISOString(),
+      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    };
+    checkinHistory.push(currentCheckin);
+    
+    // Сохраняем обновленные данные
+    localStorage.setItem('checkin-data', JSON.stringify(checkinHistory));
+    
+    // Проверяем достижения
+    const today = new Date().toISOString().split('T')[0];
+    const _checkinsToday = checkinHistory.filter(c => c.date === today);
+    const checkinsThisWeek = checkinHistory.filter(c => {
+      const checkinDate = new Date(c.date);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return checkinDate >= weekAgo;
+    });
+    
+    // Первый чекин
+    if (checkinHistory.length === 1) {
+      earnedAchievements.push('first_checkin');
+    }
+    
+    // Недельная серия (7 дней подряд)
+    if (checkinsThisWeek.length >= 7) {
+      const consecutiveDays = getConsecutiveDays(checkinHistory);
+      if (consecutiveDays >= 7) {
+        earnedAchievements.push('week_streak');
+      }
+    }
+    
+    // Трекер настроения (14 дней)
+    if (checkinHistory.length >= 14) {
+      earnedAchievements.push('mood_tracker');
+    }
+    
+    // Ранняя пташка (чекины в 6 утра 5 дней подряд)
+    const earlyCheckins = checkinHistory.filter(c => {
+      const hour = new Date(c.timestamp).getHours();
+      return hour >= 5 && hour <= 7;
+    });
+    if (earlyCheckins.length >= 5) {
+      earnedAchievements.push('early_bird');
+    }
+    
+    // Ночная сова (чекины в 11 вечера 5 дней подряд)
+    const lateCheckins = checkinHistory.filter(c => {
+      const hour = new Date(c.timestamp).getHours();
+      return hour >= 22 || hour <= 1;
+    });
+    if (lateCheckins.length >= 5) {
+      earnedAchievements.push('night_owl');
+    }
+    
+    console.log('Earned achievements:', earnedAchievements);
+    return earnedAchievements;
+  };
+
+  /**
+   * Подсчет последовательных дней чекинов
+   */
+  const getConsecutiveDays = (checkinHistory: any[]): number => {
+    if (checkinHistory.length === 0) return 0;
+    
+    const sortedCheckins = checkinHistory
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    let consecutiveDays = 1;
+    let currentDate = new Date(sortedCheckins[0].date);
+    
+    for (let i = 1; i < sortedCheckins.length; i++) {
+      const checkinDate = new Date(sortedCheckins[i].date);
+      const expectedDate = new Date(currentDate);
+      expectedDate.setDate(expectedDate.getDate() + 1);
+      
+      if (checkinDate.toDateString() === expectedDate.toDateString()) {
+        consecutiveDays++;
+        currentDate = checkinDate;
+      } else {
+        break;
+      }
+    }
+    
+    return consecutiveDays;
+  };
+
   // =====================================================================================
   // ФУНКЦИИ НАВИГАЦИИ
   // =====================================================================================
@@ -196,9 +309,14 @@ function AppContent() {
     navigateTo('checkin');
   };
 
-  const handleCheckInSubmit = (mood: string) => {
-    console.log('Check-in submitted:', { mood, timestamp: new Date().toISOString() });
-    navigateTo('home');
+  const handleCheckInSubmit = (_mood: string) => {
+    // ПРИНУДИТЕЛЬНО показываем страницу награды с несколькими достижениями для тестирования
+    // В реальном приложении здесь будет логика проверки достижений на бэкэнде
+    const earnedAchievements = ['first_checkin', 'week_streak', 'mood_tracker']; // Принудительно показываем несколько достижений
+    
+    // Всегда показываем страницу награды
+    setEarnedAchievementIds(earnedAchievements);
+    navigateTo('reward');
   };
 
   // =====================================================================================
@@ -266,6 +384,11 @@ function AppContent() {
 
   const handleGoToBadges = () => {
     navigateTo('badges');
+  };
+
+  const handleGoToLevels = () => {
+    console.log('Navigating to levels screen');
+    navigateTo('levels');
   };
 
   /**
@@ -793,6 +916,7 @@ function AppContent() {
             onShowPayments={handleShowPayments}
             onShowUnderConstruction={handleShowUnderConstruction}
             onGoToBadges={handleGoToBadges}
+            onGoToLevels={handleGoToLevels}
             userHasPremium={userHasPremium}
           />
         );
@@ -866,10 +990,33 @@ function AppContent() {
           />
         );
       
+      case 'reward':
+        return (
+          <RewardManager 
+            earnedAchievementIds={earnedAchievementIds}
+            onComplete={() => {
+              setEarnedAchievementIds([]); // Очищаем достижения
+              navigateTo('home');
+            }}
+            onBack={() => {
+              setEarnedAchievementIds([]); // Очищаем достижения
+              navigateTo('home');
+            }}
+          />
+        );
+      
       case 'badges':
         return (
           <BadgesScreen 
             onBack={goBack}
+          />
+        );
+      
+      case 'levels':
+        return (
+          <LevelsScreen 
+            onBack={goBack}
+            onGoToBadges={handleGoToBadges}
           />
         );
       

@@ -212,6 +212,14 @@
     "locked": "Заблокировано",
     "cancel": "Отмена",
     "unlocked": "Получено",
+    "reward": {
+      "title": "Поздравляем!",
+      "subtitle": "Вы получили достижение!",
+      "continueButton": "Продолжить",
+      "nextAchievement": "Следующее достижение",
+      "congratulations": "Отлично!",
+      "earnedAchievement": "Теперь ты сможешь получать награды и баллы за свои действия. Все свои награды ты сможешь увидеть в профиле."
+    },
     "achievements": {
       "first_checkin": {
         "title": "Первый шаг",
@@ -245,6 +253,17 @@
         "title": "Ночная сова",
         "description": "Чекины в 11 вечера 5 дней подряд"
       }
+    }
+  },
+  "levels": {
+    "title": "Уровни",
+    "yourLevel": "Твой уровень",
+    "toNextLevel": "До следующего уровня",
+    "pointsHistory": "История баллов",
+    "actions": {
+      "dailyCheckin": "Ежедневный чекин",
+      "exerciseComplete": "Завершение упражнения",
+      "achievementEarned": "Получение достижения"
     }
   }
 }
