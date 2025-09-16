@@ -58,7 +58,7 @@ function GetStartedButton({ onClick }: { onClick: () => void }) {
   const { content } = useContent();
   
   return (
-    <BottomFixedButton onClick={onClick}>
+    <BottomFixedButton onClick={onClick} dataName="Next button" ariaLabel="Get Started">
       {content.ui.onboarding.screen02.buttonText}
     </BottomFixedButton>
   );

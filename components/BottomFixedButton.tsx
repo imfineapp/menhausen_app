@@ -7,6 +7,8 @@ interface BottomFixedButtonProps {
   disabled?: boolean; // Состояние блокировки кнопки
   children: React.ReactNode; // Текст кнопки
   className?: string; // Дополнительные CSS классы
+  dataName?: string; // Тестовый атрибут data-name
+  ariaLabel?: string; // Дополнительная aria-метка
 }
 
 /**
@@ -26,7 +28,9 @@ export function BottomFixedButton({
   onClick, 
   disabled = false, 
   children, 
-  className = '' 
+  className = '',
+  dataName,
+  ariaLabel
 }: BottomFixedButtonProps) {
   return (
     <button
@@ -37,7 +41,8 @@ export function BottomFixedButton({
           ? 'opacity-50 cursor-not-allowed' 
           : 'cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200'
       } ${className}`}
-      data-name="Bottom Fixed CTA Button"
+      data-name={dataName || 'Bottom Fixed CTA Button'}
+      aria-label={ariaLabel}
     >
       <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
         <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{children}</p>

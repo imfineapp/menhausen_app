@@ -57,7 +57,7 @@ function NextButton({ onClick }: { onClick: () => void }) {
   const { content } = useContent();
   
   return (
-    <BottomFixedButton onClick={onClick}>
+    <BottomFixedButton onClick={onClick} dataName="Next button" ariaLabel="Next">
       {content.ui.onboarding.screen01.buttonText}
     </BottomFixedButton>
   );

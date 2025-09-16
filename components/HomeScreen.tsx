@@ -746,6 +746,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
     <div 
       className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="004_Home (Main page)"
+      data-testid="home-ready"
       style={{
         msOverflowStyle: 'none',
         scrollbarWidth: 'none'

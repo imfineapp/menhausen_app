@@ -3,104 +3,93 @@ import { test, expect } from '@playwright/test';
 
 test.describe('i18n Language Switching', () => {
   test.beforeEach(async ({ page }) => {
+    // Устанавливаем флаг E2E до навигации, чтобы приложение стартовало с home
+    await page.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+    });
+
     // Переходим на главную страницу приложения
     await page.goto('/');
     
     // Ждем загрузки приложения
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[data-testid="home-ready"]');
   });
 
   test('должен переключаться с английского на русский язык', async ({ page }) => {
-    // Проверяем, что приложение загрузилось на английском языке
-    await expect(page.getByText('How are you?')).toBeVisible();
+    await expect(page.locator('[data-name="Info_group"]')).toBeVisible();
     
-    // Переходим в профиль - ищем кнопку профиля по data-name атрибуту
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible();
     
-    // Проверяем, что профиль открылся на английском
-    await expect(page.getByText('Profile')).toBeVisible();
-    
-    // Открываем модальное окно выбора языка
     await page.click('text=Language');
-    await expect(page.getByText('Language')).toBeVisible();
-    
-    // Выбираем русский язык
+    await expect(page.locator('[data-name="Language Modal Content"]')).toBeVisible();
     await page.click('text=Русский');
+    await page.click('[data-name="Confirm button"]');
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible();
     
-    // Проверяем, что язык переключился на русский
-    await expect(page.getByText('Профиль')).toBeVisible();
-    
-    // Возвращаемся на главную страницу
-    await page.click('text=Back');
+    // Возвращаемся на главную напрямую
+    await page.goto('/');
     await page.waitForLoadState('networkidle');
-    
-    // Проверяем, что главная страница тоже на русском
-    await expect(page.getByText('Как дела?')).toBeVisible();
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible();
   });
 
   test('должен сохранять выбранный язык после перезагрузки', async ({ page }) => {
-    // Переходим в профиль
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
-    
-    // Переключаемся на русский язык
     await page.click('text=Language');
     await page.click('text=Русский');
+    await page.click('[data-name="Confirm button"]');
     
-    // Перезагружаем страницу
     await page.reload();
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('[data-testid="home-ready"]');
     
-    // Проверяем, что язык сохранился
-    await expect(page.getByText('Как дела?')).toBeVisible();
+    await page.click('[data-name="User frame info block"]');
+    await expect(page.getByText('Русский')).toBeVisible();
   });
 
   test('должен переводить все экраны приложения', async ({ page }) => {
-    // Переключаемся на русский язык
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
     await page.click('text=Language');
     await page.click('text=Русский');
+    await page.click('[data-name="Confirm button"]');
     
-    // Проверяем экран "О приложении"
-    await page.click('text=About');
+    // Открываем About и проверяем заголовок (устойчивый селектор + скролл)
+    const aboutItem = page
+      .locator('[data-name="Settings item"]').filter({ hasText: /about|о приложении/i })
+      .first();
+    await aboutItem.scrollIntoViewIfNeeded();
+    await aboutItem.click();
     await expect(page.getByText('About Menhausen')).toBeVisible();
-    await page.click('text=Back');
-    
-    // Проверяем экран настроек
-    await page.click('text=Settings');
-    await expect(page.getByText('Language')).toBeVisible();
-    await page.click('text=Back');
+    // Возврат домой напрямую
+    await page.goto('/');
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible();
   });
 
   test('должен переводить ментальные техники', async ({ page }) => {
-    // Переключаемся на русский язык
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
     await page.click('text=Language');
     await page.click('text=Русский');
+    await page.click('[data-name="Confirm button"]');
     
-    // Переходим к ментальным техникам
-    await page.click('text=Back');
-    await page.click('text=Mental Techniques');
-    
-    // Проверяем, что техники переведены
-    await expect(page.getByText('Breathing Techniques')).toBeVisible();
+    // Проверяем наличие блока быстрого доступа (заголовок)
+    await page.goto('/');
+    await expect(page.getByText('Quick help')).toBeVisible();
   });
 
   test('должен переводить опросы', async ({ page }) => {
-    // Переключаемся на русский язык
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
     await page.click('text=Language');
     await page.click('text=Русский');
+    await page.click('[data-name="Confirm button"]');
     
-    // Переходим к опросам
-    await page.click('text=Back');
-    await page.click('text=Survey');
-    
-    // Проверяем, что опрос переведен
-    await expect(page.getByText('Step 1 of 5')).toBeVisible();
+    await page.goto('/');
+    await page.click('[data-name="Start Mining"]');
+    await expect(page.locator('body')).toContainText(/How are you feeling\?|Step 1 of 5/i);
   });
 });

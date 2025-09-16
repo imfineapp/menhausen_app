@@ -169,6 +169,8 @@ export function SurveyScreenTemplate({
                   ? 'border-[#e1ff00] bg-[#e1ff00]/10 text-white' 
                   : 'border-[#3a3a3a] bg-[#2a2a2a] text-[#d4d4d4] hover:border-[#4a4a4a] hover:bg-[#333333]'
               }`}
+              data-name="Survey option"
+              data-id={option.id}
             >
               <div className="flex items-center space-x-3">
                 <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
@@ -275,6 +277,8 @@ export function SurveyScreenTemplate({
         onClick={handleContinue}
         disabled={!canContinue}
         className={!canContinue ? 'opacity-50 cursor-not-allowed' : ''}
+        dataName="Next button"
+        ariaLabel="Next"
       >
         {localizedScreen.buttonText}
       </BottomFixedButton>
