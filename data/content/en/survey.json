@@ -1,0 +1,186 @@
+{
+  "screen01": {
+    "id": "screen01",
+    "step": 1,
+    "totalSteps": 5,
+    "title": "What challenges are you facing right now?",
+    "subtitle": "Select all that apply. This helps us personalize your experience.",
+    "questionType": "multiple-choice",
+    "options": [
+      {
+        "id": "anxiety",
+        "text": "I struggle with anxiety"
+      },
+      {
+        "id": "stress",
+        "text": "I have trouble managing stress"
+      },
+      {
+        "id": "mood",
+        "text": "My mood feels unstable"
+      },
+      {
+        "id": "relationships",
+        "text": "I have relationship difficulties"
+      },
+      {
+        "id": "motivation",
+        "text": "I lack motivation or purpose"
+      },
+      {
+        "id": "sleep",
+        "text": "I have sleep problems"
+      }
+    ],
+    "buttonText": "Continue",
+    "skipAllowed": false
+  },
+  "screen02": {
+    "id": "screen02",
+    "step": 2,
+    "totalSteps": 5,
+    "title": "How long have you been experiencing these challenges?",
+    "subtitle": "This helps us understand your current situation better.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "recent",
+        "text": "Recently (within the last month)"
+      },
+      {
+        "id": "few-months",
+        "text": "A few months"
+      },
+      {
+        "id": "half-year",
+        "text": "About 6 months"
+      },
+      {
+        "id": "year-plus",
+        "text": "Over a year"
+      },
+      {
+        "id": "always",
+        "text": "As long as I can remember"
+      }
+    ],
+    "buttonText": "Continue",
+    "skipAllowed": false
+  },
+  "screen03": {
+    "id": "screen03",
+    "step": 3,
+    "totalSteps": 5,
+    "title": "What time of day do you feel most motivated?",
+    "subtitle": "We'll suggest the best times for your practice sessions.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "early-morning",
+        "text": "Early morning (6-8 AM)"
+      },
+      {
+        "id": "morning",
+        "text": "Morning (8-11 AM)"
+      },
+      {
+        "id": "midday",
+        "text": "Midday (11 AM-2 PM)"
+      },
+      {
+        "id": "afternoon",
+        "text": "Afternoon (2-6 PM)"
+      },
+      {
+        "id": "evening",
+        "text": "Evening (6-9 PM)"
+      },
+      {
+        "id": "night",
+        "text": "Late night (9 PM+)"
+      },
+      {
+        "id": "varies",
+        "text": "It varies day to day"
+      }
+    ],
+    "buttonText": "Continue",
+    "skipAllowed": false
+  },
+  "screen04": {
+    "id": "screen04",
+    "step": 4,
+    "totalSteps": 5,
+    "title": "How much time can you dedicate to mental health exercises?",
+    "subtitle": "Be honest - consistency matters more than duration.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "5-min",
+        "text": "5 minutes daily"
+      },
+      {
+        "id": "10-min",
+        "text": "10 minutes daily"
+      },
+      {
+        "id": "15-min",
+        "text": "15 minutes daily"
+      },
+      {
+        "id": "20-min",
+        "text": "20+ minutes daily"
+      },
+      {
+        "id": "few-times",
+        "text": "A few times per week"
+      },
+      {
+        "id": "when-needed",
+        "text": "Only when I really need it"
+      }
+    ],
+    "buttonText": "Continue",
+    "skipAllowed": false
+  },
+  "screen05": {
+    "id": "screen05",
+    "step": 5,
+    "totalSteps": 5,
+    "title": "What's your main goal with mental health support?",
+    "subtitle": "This helps us prioritize what matters most to you.",
+    "questionType": "single-choice",
+    "options": [
+      {
+        "id": "reduce-anxiety",
+        "text": "Reduce anxiety and worry"
+      },
+      {
+        "id": "manage-stress",
+        "text": "Better stress management"
+      },
+      {
+        "id": "improve-mood",
+        "text": "Improve my overall mood"
+      },
+      {
+        "id": "better-relationships",
+        "text": "Build better relationships"
+      },
+      {
+        "id": "find-purpose",
+        "text": "Find motivation and purpose"
+      },
+      {
+        "id": "daily-support",
+        "text": "Just need daily emotional support"
+      },
+      {
+        "id": "crisis-help",
+        "text": "Help during difficult moments"
+      }
+    ],
+    "buttonText": "Complete Setup",
+    "skipAllowed": false
+  }
+}

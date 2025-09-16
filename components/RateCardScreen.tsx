@@ -1,7 +1,8 @@
 // Импортируем необходимые хуки и SVG пути
 import { useState, useRef, useEffect } from 'react';
-import svgPaths from "../imports/svg-ywzsj5fg64";
 import { BottomFixedButton } from "./BottomFixedButton";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface RateCardScreenProps {
@@ -67,75 +68,31 @@ function Light() {
 /**
  * Адаптивный символ логотипа
  */
-function SymbolBig() {
-  return (
-    <div className="h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
 
 /**
  * Адаптивный компонент названия приложения с версией beta
  */
-function MenhausenBeta() {
-  return (
-    <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
-        <g id="Menhausen beta">
-          <path d={svgPaths.p25a36300} fill="var(--fill-0, #E1FF00)" id="Vector" />
-          <path d={svgPaths.p1120ed00} fill="var(--fill-0, #E1FF00)" id="Vector_2" />
-          <path d={svgPaths.p33898780} fill="var(--fill-0, #E1FF00)" id="Vector_3" />
-          <path d={svgPaths.p9060800} fill="var(--fill-0, #E1FF00)" id="Vector_4" />
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_10" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_11" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_12" />
-          <path d={svgPaths.p296762f0} fill="var(--fill-0, #CFCFCF)" id="Vector_13" />
-        </g>
-      </svg>
-    </div>
-  );
-}
 
 /**
  * Адаптивный мини-логотип с символом и названием
  */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
-    </div>
-  );
-}
 
 /**
  * Адаптивный компонент заголовка рейтинга
  */
 function RatingTextContainer() {
+  const { content } = useContent();
+  
   return (
     <div
       className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center w-full"
       data-name="Rating text container"
     >
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative text-[#e1ff00] text-[22px] sm:text-[23px] md:text-[24px] w-full">
-        <p className="block leading-[0.8]">Please rate the card.</p>
+      <div className="[grid-area:1_/_1] typography-h2 text-[#e1ff00] w-full">
+        <h2 className="block">{content.ui.cards.rating.title}</h2>
       </div>
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] mt-[35px] sm:mt-[37px] md:mt-[39px] not-italic relative text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] w-full">
-        <p className="block leading-none">Your rating will help us to be more useful.</p>
+      <div className="[grid-area:1_/_1] typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
+        <p className="block">{content.ui.cards.rating.subtitle}</p>
       </div>
     </div>
   );
@@ -165,14 +122,16 @@ function LockShieldFilled() {
  * Адаптивный блок информации о шифровании
  */
 function EncryptInfoBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
-        <p className="block leading-none">Your feedback is fully protected with AES-256 encryption</p>
+      <div className="typography-caption text-[#696969] text-left flex-1">
+        <p className="block">{content?.ui?.cards?.question?.encryption || 'Ваши ответы полностью защищены шифрованием AES-256'}</p>
       </div>
     </div>
   );
@@ -216,7 +175,7 @@ function InputTextMessageBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[16px] sm:text-[17px] md:text-[18px] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -228,6 +187,8 @@ function InputTextMessageBlock({ value, onChange, placeholder }: {
  * Адаптивный блок сообщения с полем ввода и информацией о шифровании
  */
 function TextMessageBlock({ textMessage, onTextMessageChange }: { textMessage: string; onTextMessageChange: (value: string) => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -236,7 +197,7 @@ function TextMessageBlock({ textMessage, onTextMessageChange }: { textMessage: s
       <InputTextMessageBlock 
         value={textMessage}
         onChange={onTextMessageChange}
-        placeholder="Share additional thoughts about this card (optional)..."
+        placeholder={content.ui.cards.rating.placeholder}
       />
       <EncryptInfoBlock />
     </div>
@@ -258,7 +219,7 @@ function RatingMark({
   return (
     <button
       onClick={onClick}
-      className={`relative shrink-0 size-[46px] cursor-pointer touch-friendly transition-all duration-200 hover:scale-105 active:scale-95 ${
+      className={`relative shrink-0 size-[46px] cursor-pointer min-h-[44px] min-w-[44px] transition-all duration-200 hover:scale-105 active:scale-95 ${
         isSelected ? 'bg-[#e1ff00]' : 'bg-[rgba(217,217,217,0.04)]'
       } rounded-xl`}
       data-name="Mark"
@@ -269,10 +230,10 @@ function RatingMark({
           className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
         />
       )}
-      <div className={`absolute font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] inset-[32.61%_36.96%] leading-[0] not-italic text-[20px] text-center text-nowrap tracking-[-0.43px] ${
+      <div className={`absolute inset-[32.61%_36.96%] text-center text-nowrap tracking-[-0.43px] ${
         isSelected ? 'text-[#2d2b2b]' : 'text-[#ffffff]'
       }`}>
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{number}</p>
+        <p className="typography-body adjustLetterSpacing block whitespace-pre">{number}</p>
       </div>
     </button>
   );
@@ -317,19 +278,20 @@ function RatingCardContainer({
   textMessage: string;
   onTextMessageChange: (value: string) => void;
 }) {
+  const { content } = useContent();
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[200px] sm:top-[220px] md:top-[254px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Rating card container"
     >
       <RatingTextContainer />
       <RatingOptions selectedRating={selectedRating} onRatingChange={onRatingChange} />
       {showThankYou && (
         <div
-          className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] min-w-full not-italic relative shrink-0 text-[#ffffff] text-[18px] sm:text-[19px] md:text-[20px] text-center"
+          className="typography-body min-w-full text-[#ffffff] text-center"
           style={{ width: "min-content" }}
         >
-          <p className="block leading-none">Thank you!</p>
+          <p className="block">{content?.ui?.cards?.rating?.thankYou || 'Спасибо!'}</p>
         </div>
       )}
       <div className="mt-5">
@@ -346,6 +308,7 @@ function RatingCardContainer({
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }: RateCardScreenProps) {
+  const { content } = useContent();
   // Состояние для хранения выбранного рейтинга (по умолчанию 5, как в дизайне)
   const [selectedRating, setSelectedRating] = useState(5);
   
@@ -415,7 +378,7 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
         onClick={handleNext}
         disabled={false} // Кнопка всегда активна, так как по умолчанию выбран рейтинг 5
       >
-        Next
+        {content.ui.cards.rating.submit}
       </BottomFixedButton>
     </div>
   );

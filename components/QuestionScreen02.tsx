@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from 'react';
 import svgPaths from "../imports/svg-umu7uxnce6";
 import { BottomFixedButton } from "./BottomFixedButton";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface QuestionScreen02Props {
@@ -51,89 +53,7 @@ function Light() {
   );
 }
 
-/**
- * Адаптивный символ логотипа
- */
-function SymbolBig() {
-  return (
-    <div className="h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
 
-/**
- * Адаптивный компонент названия приложения с версией beta
- */
-function MenhausenBeta() {
-  return (
-    <div className="absolute inset-[2.21%_6.75%_7.2%_10.77%]" data-name="Menhausen beta">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 106 12">
-        <g id="Menhausen beta">
-          <path d={svgPaths.p25a36300} fill="var(--fill-0, #E1FF00)" id="Vector" />
-          <path d={svgPaths.p1120ed00} fill="var(--fill-0, #E1FF00)" id="Vector_2" />
-          <path d={svgPaths.p33898780} fill="var(--fill-0, #E1FF00)" id="Vector_3" />
-          <path d={svgPaths.p9060800} fill="var(--fill-0, #E1FF00)" id="Vector_4" />
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_10" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_11" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_12" />
-          <path d={svgPaths.p296762f0} fill="var(--fill-0, #CFCFCF)" id="Vector_13" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивный мини-логотип с символом и названием
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] sm:top-[65px] md:top-[69px] w-[80px] sm:w-[100px] md:w-32" data-name="Mini_stripe_logo">
-      <div className="absolute flex h-[10px] sm:h-[12px] md:h-[13px] items-center justify-center left-0 top-1/2 translate-y-[-50%] w-[6px] sm:w-[7px] md:w-2">
-        <div className="flex-none rotate-[180deg]">
-          <SymbolBig />
-        </div>
-      </div>
-      <MenhausenBeta />
-    </div>
-  );
-}
-
-/**
- * Адаптивная кнопка возврата к предыдущему экрану
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80 touch-friendly"
-      data-name="Back button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
 
 /**
  * Адаптивная иконка замка для блока шифрования
@@ -160,8 +80,8 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#696969] text-[14px] text-left flex-1">
-        <p className="block leading-none">Your answers are fully protected with AES-256 encryption</p>
+      <div className="typography-caption text-[#696969] text-left flex-1">
+        <p className="block">Your answers are fully protected with AES-256 encryption</p>
       </div>
     </div>
   );
@@ -205,7 +125,7 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] leading-[22px] not-italic bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-[18px] sm:text-[19px] md:text-[20px] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />
@@ -242,11 +162,11 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
 }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[120px] sm:top-[130px] md:top-[141px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[130px] sm:top-[140px] md:top-[151px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Content block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] min-h-[40px] sm:min-h-[44px] leading-[22px] not-italic relative shrink-0 text-[#e1ff00] text-[18px] sm:text-[19px] md:text-[20px] text-center w-full">
-        <p className="block leading-[22px]">{questionText}</p>
+      <div className="typography-body min-h-[40px] sm:min-h-[44px] text-[#e1ff00] text-center w-full">
+        <p className="block">{questionText}</p>
       </div>
       <AnswerBlock answer={answer} onAnswerChange={onAnswerChange} />
     </div>
@@ -260,6 +180,8 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function QuestionScreen02({ onBack, onNext, cardId, cardTitle: _cardTitle, questionText, previousAnswer: _previousAnswer }: QuestionScreen02Props) {
+  const { content } = useContent();
+  
   // Состояние для хранения ответа пользователя
   const [answer, setAnswer] = useState('');
   
@@ -281,7 +203,7 @@ export function QuestionScreen02({ onBack, onNext, cardId, cardTitle: _cardTitle
    * Функция для обработки кнопки "Back" 
    * Возвращается к предыдущему экрану
    */
-  const handleBack = () => {
+  const _handleBack = () => {
     console.log(`Going back from question 2 for card: ${cardId}`);
     onBack();
   };
@@ -304,9 +226,6 @@ export function QuestionScreen02({ onBack, onNext, cardId, cardTitle: _cardTitle
       {/* Мини-логотип */}
       <MiniStripeLogo />
       
-      {/* Кнопка возврата */}
-      <BackButton onClick={handleBack} />
-      
       {/* Контентный блок с вопросом и полем ввода */}
       <ContentBlock 
         questionText={questionText || defaultQuestionText}
@@ -316,10 +235,10 @@ export function QuestionScreen02({ onBack, onNext, cardId, cardTitle: _cardTitle
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton 
-        onClick={handleNext} 
+        onClick={handleNext}
         disabled={!answer.trim()}
       >
-        Next
+        {content?.ui?.navigation?.next || 'Далее'}
       </BottomFixedButton>
     </div>
   );

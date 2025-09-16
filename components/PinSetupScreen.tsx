@@ -1,6 +1,7 @@
-// Импортируем необходимые хуки и SVG пути
+// Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
-import svgPaths from "../imports/svg-6yay9zhlpl";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -53,16 +54,21 @@ function Light() {
 
 /**
  * Кнопка Skip для пропуска настройки пин-кода
- * Позиционирование согласно Bottom Fixed Button стандарту из Guidelines.md
+ * Текстовая кнопка без фона и рамки
  */
 function TextButton({ onSkip }: { onSkip: () => void }) {
+  const { content } = useContent();
+  
   return (
     <button
-      onClick={onSkip} 
-      className="absolute left-[23px] top-[758px] h-[46px] w-[350px] flex items-center justify-center font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#696969] text-[20px] text-center text-nowrap cursor-pointer hover:text-[#e1ff00] touch-friendly transition-colors duration-200"
-      data-name="Text button"
+      onClick={onSkip}
+      className="absolute left-1/2 transform -translate-x-1/2 bottom-[35px] 
+                typography-button text-[#e1ff00]
+                hover:opacity-80 active:scale-[0.98] transition-all duration-200
+                min-h-[44px] min-w-[44px] cursor-pointer"
+      data-name="Skip Button"
     >
-      <p className="block leading-none whitespace-pre">Skip</p>
+      {content.ui.pinSetup.skip}
     </button>
   );
 }
@@ -85,8 +91,8 @@ function NumberButton({ number, onPress }: { number: string; onPress: (num: stri
         </svg>
       </div>
       {/* Цифра */}
-      <div className="absolute font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal inset-[35.29%_39.71%_36.77%_39.71%] leading-[0] text-[#ffffff] text-[24px] text-center text-nowrap">
-        <p className="block leading-[0.8] whitespace-pre">{number}</p>
+      <div className="absolute typography-h2 inset-[35.29%_39.71%_36.77%_39.71%] text-[#ffffff] text-center text-nowrap">
+        <p className="block whitespace-pre">{number}</p>
       </div>
     </button>
   );
@@ -171,21 +177,6 @@ function PinBlock4({ pinLength }: { pinLength: number }) {
   );
 }
 
-/**
- * Сообщение об ошибке при несовпадении пин-кодов
- * Показывается только при ошибке валидации
- */
-function PinMessage({ show }: { show: boolean }) {
-  if (!show) return null;
-  
-  return (
-    <div className="h-4 w-full mt-4" data-name="pin message">
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#e1ff00] text-[16px] text-center">
-        <p className="block leading-none">PIN code does not match, please try again</p>
-      </div>
-    </div>
-  );
-}
 
 /**
  * Блок с инструкциями и отображением пин-кода
@@ -200,124 +191,37 @@ function PinSetup({
   showError: boolean; 
   mode: PinMode;
 }) {
+  const { content } = useContent();
+  
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-[351px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0" data-name="Pin setup">
       {/* Блоки для отображения пин-кода */}
       <PinBlock4 pinLength={pinLength} />
       
-      {/* Инструкция */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic text-[#ffffff] text-[18px] sm:text-[20px] text-center w-full">
-        <p className="block leading-none">
-          {mode === 'create' 
-            ? 'For more privacy you can set a pin code to log in'
-            : 'Please confirm your PIN code'
-          }
-        </p>
+      {/* Сообщение под квадратами - фиксированная высота для предотвращения "прыжков" */}
+      <div className="min-h-[40px] flex items-center justify-center w-full">
+        {(mode === 'confirm' || showError) && (
+          <div className={`typography-body text-center w-full ${showError ? 'text-[#e1ff00]' : 'text-[#ffffff]'}`}>
+            <p className="block">
+              {showError 
+                ? content.ui.pinSetup.pinMismatch
+                : content.ui.pinSetup.confirmPin
+              }
+            </p>
+          </div>
+        )}
       </div>
-      
-      {/* Сообщение об ошибке */}
-      <PinMessage show={showError} />
     </div>
   );
 }
 
-/**
- * Компонент символа логотипа (повторно используемый)
- */
-function SymbolBig() {
-  return (
-    <div className="relative size-full" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Компонент названия приложения (повторно используемый)
- */
-function Menhausen() {
-  return (
-    <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
-        <g id="Menhausen">
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_2" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_3" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_4" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p2d60800} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Компонент мини-логотипа (адаптивное позиционирование)
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-1/2 transform -translate-x-1/2 top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка возврата к предыдущему экрану
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-4 sm:left-6 md:left-8 lg:left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80" 
-      data-name="Back Button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onClick={onBack} />
-    </div>
-  );
-}
 
 /**
  * Главный компонент экрана настройки пин-кода
  * Управляет состоянием ввода, валидацией и навигацией
  */
-export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenProps) {
+export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetupScreenProps) {
+  const { content } = useContent();
   // Состояние для текущего пин-кода
   const [currentPin, setCurrentPin] = useState<string>('');
   // Состояние для сохраненного пин-кода (при подтверждении)
@@ -379,33 +283,49 @@ export function PinSetupScreen({ onComplete, onSkip, onBack }: PinSetupScreenPro
   };
 
   return (
-    <div className="bg-[#111111] relative size-full min-h-screen flex flex-col" data-name="004_PIN page">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Заголовочный блок с навигацией */}
-      <HeaderBlock onBack={onBack} />
+      {/* Логотип */}
+      <MiniStripeLogo />
       
-      {/* Основной контент */}
-      <div className="flex-1 flex flex-col items-center justify-start pt-[180px] px-4 sm:px-6 md:px-8 lg:px-0 pb-20">
-        
-        {/* Блок настройки пин-кода */}
-        <div className="mb-12">
-          <PinSetup 
-            pinLength={currentPin.length} 
-            showError={showError} 
-            mode={mode}
-          />
-        </div>
-        
-        {/* Цифровая клавиатура */}
-        <div className="w-full max-w-[280px]">
-          <PinButtons onNumberPress={handleNumberPress} />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
+          <div className="max-w-[351px] mx-auto">
+            
+            {/* Заголовок */}
+            <div className="text-center mb-12">
+              <h1 className="typography-h1 text-white mb-6">
+                {content.ui.pinSetup.title}
+              </h1>
+              <p className="typography-body text-white">
+                {content.ui.pinSetup.subtitle}
+              </p>
+            </div>
+            
+            {/* Отображение PIN */}
+            <div className="flex justify-center mb-12">
+              <PinSetup 
+                pinLength={currentPin.length} 
+                showError={showError} 
+                mode={mode}
+              />
+            </div>
+            
+            {/* Клавиатура */}
+            <div className="flex justify-center">
+              <PinButtons onNumberPress={handleNumberPress} />
+            </div>
+
+          </div>
         </div>
       </div>
-      
-      {/* Кнопка Skip */}
+
+      {/* Bottom Fixed Button */}
       <TextButton onSkip={onSkip} />
+
     </div>
   );
 }

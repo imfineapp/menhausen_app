@@ -1,0 +1,19 @@
+{
+  "screen01": {
+    "title": "Welcome to Menhausen",
+    "subtitle": "Your personal mental health companion. Let's start your journey to better emotional well-being.",
+    "buttonText": "Get Started",
+    "privacyText": "Privacy Policy",
+    "termsText": "Terms of Use"
+  },
+  "screen02": {
+    "title": "What makes Menhausen special?",
+    "benefits": [
+      "Personalized exercises based on your needs",
+      "Evidence-based techniques from psychology",
+      "Daily check-ins to track your progress",
+      "Emergency support when you need it most"
+    ],
+    "buttonText": "Continue"
+  }
+}

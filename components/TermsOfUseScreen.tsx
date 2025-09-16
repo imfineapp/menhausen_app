@@ -1,5 +1,7 @@
 // Импортируем SVG пути для страницы Terms of Use
 import svgPaths from "../imports/svg-k77qyw9djl";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useLanguage } from './LanguageContext';
 
 // Типы для пропсов компонента
 interface TermsOfUseScreenProps {
@@ -66,104 +68,103 @@ function Light() {
  * Содержит заголовок и весь текст документа на английском языке
  */
 function MainContent() {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-[21px] p-0 top-[122px] w-[351px]"
+      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[100px] w-full max-w-[351px] mx-auto"
       data-name="main_content"
     >
       {/* Заголовок страницы */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
-        <p className="block leading-[0.8]">Terms of use</p>
+      <div className="typography-h2 text-[#e1ff00] text-center w-full">
+        <h2 className="block">{getText('Условия использования', 'Terms of use')}</h2>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="typography-caption text-[#ffffff] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
-          <p className="block leading-none mb-0">Last updated: August 2, 2025</p>
+          <p className="block leading-none mb-0">{getText('Последнее обновление: 2 августа 2025', 'Last updated: August 2, 2025')}</p>
           <p className="block leading-none mb-0">
-            PLEASE READ THESE TERMS CAREFULLY BEFORE USING THIS SERVICE.
+            {getText('ВНИМАТЕЛЬНО ПРОЧТИТЕ ЭТИ УСЛОВИЯ ПЕРЕД ИСПОЛЬЗОВАНИЕМ СЕРВИСА.', 'PLEASE READ THESE TERMS CAREFULLY BEFORE USING THIS SERVICE.')}
           </p>
           <p className="block leading-none mb-0">
-            These Terms of Use ("Terms") govern your access to and use of Menhausen (the "Service"), a self-help digital
-            platform designed to support mental well-being. By accessing or using the Service, you agree to be bound by
-            these Terms. If you do not agree with these Terms, please do not use the Service.
+            {getText('Эти Условия использования ("Условия") регулируют ваш доступ к сервису Menhausen (далее "Сервис") и его использование. Сервис представляет собой цифровую платформу самопомощи, предназначенную для поддержки психического благополучия. Получая доступ к Сервису или используя его, вы соглашаетесь соблюдать эти Условия. Если вы не согласны с этими Условиями, пожалуйста, не используйте Сервис.', 'These Terms of Use ("Terms") govern your access to and use of Menhausen (the "Service"), a self-help digital platform designed to support mental well-being. By accessing or using the Service, you agree to be bound by these Terms. If you do not agree with these Terms, please do not use the Service.')}
           </p>
           
           {/* Секция 1 - Legal Disclaimer */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">1. Legal Disclaimer — No Medical Advice</p>
+            <p className="block leading-none mb-0 font-medium">{getText('1. Правовое уведомление — Не медицинский совет', '1. Legal Disclaimer — No Medical Advice')}</p>
             <p className="block leading-none mb-0">
-              Menhausen is not a medical or psychiatric service. The content provided through the Service, including but not
-              limited to interactive cards, mood tracking, and exercises, is intended for informational and self-reflective
-              purposes only.
+              {getText('Menhausen не является медицинской или психиатрической службой. Контент, предоставляемый через Сервис, включая интерактивные карточки, отслеживание настроения и упражнения, предназначен только для информационных и саморефлексивных целей.', 'Menhausen is not a medical or psychiatric service. The content provided through the Service, including interactive cards, mood tracking, and exercises, is intended for informational and self-reflective purposes only.')}
             </p>
             <ul className="list-disc ml-5 space-y-1">
               <li className="leading-none">
-                The Service does not diagnose, treat, or cure any mental health condition.
+                {getText('Сервис не диагностирует, не лечит и не излечивает психические расстройства.', 'The Service does not diagnose, treat, or cure any mental health condition.')}
               </li>
               <li className="leading-none">
-                We are not licensed therapists, clinicians, or healthcare providers.
+                {getText('Мы не лицензированные терапевты, клиницисты или поставщики медицинских услуг.', 'We are not licensed therapists, clinicians, or healthcare providers.')}
               </li>
               <li className="leading-none">
-                If you are experiencing a mental health crisis, suicidal thoughts, or any other medical emergency, please
-                seek immediate help from a qualified healthcare professional or call emergency services.
+                {getText('Если вы переживаете психический кризис, суицидальные мысли или любую другую медицинскую чрезвычайную ситуацию, немедленно обратитесь за помощью к квалифицированному медицинскому работнику или вызовите службы экстренной помощи.', 'If you are experiencing a mental health crisis, suicidal thoughts, or any other medical emergency, please seek immediate help from a qualified healthcare professional or call emergency services.')}
               </li>
             </ul>
-            <p className="block leading-none mb-0">Use of the Service is at your own risk.</p>
+            <p className="block leading-none mb-0">{getText('Использование Сервиса осуществляется на ваш собственный риск.', 'Use of the Service is at your own risk.')}</p>
           </div>
 
           {/* Секция 2 - No Warranty */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">2. No Warranty or Guarantee of Outcomes</p>
+            <p className="block leading-none mb-0 font-medium">{getText('2. Отсутствие гарантий', '2. No Warranty or Guarantee of Outcomes')}</p>
             <p className="block leading-none mb-0">
-              Menhausen makes no representations or warranties about the effectiveness, accuracy, or outcomes of using the
-              Service. We do not guarantee:
+              {getText('Menhausen не дает никаких заявлений или гарантий относительно эффективности, точности или результатов использования Сервиса. Мы не гарантируем:', 'Menhausen makes no representations or warranties about the effectiveness, accuracy, or outcomes of using the Service. We do not guarantee:')}
             </p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">any improvement in your mental or emotional state,</li>
-              <li className="leading-none">any relief from psychological distress,</li>
-              <li className="leading-none">any behavioral or lifestyle change.</li>
+              <li className="leading-none">{getText('улучшение вашего психического или эмоционального состояния,', 'any improvement in your mental or emotional state,')}</li>
+              <li className="leading-none">{getText('облегчение психологического дистресса,', 'any relief from psychological distress,')}</li>
+              <li className="leading-none">{getText('изменение поведения или образа жизни.', 'any behavioral or lifestyle change.')}</li>
             </ul>
             <p className="block leading-none mb-0">
-              All materials are provided "as is", without warranties of any kind, express or implied.
+              {getText('Все материалы предоставляются "как есть", без каких-либо гарантий, явных или подразумеваемых.', 'All materials are provided "as is", without warranties of any kind, express or implied.')}
             </p>
           </div>
 
           {/* Секция 3 - Eligibility */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">3. Eligibility</p>
-            <p className="block leading-none mb-0">To use the Service, you must:</p>
+            <p className="block leading-none mb-0 font-medium">{getText('3. Право на использование', '3. Eligibility')}</p>
+            <p className="block leading-none mb-0">{getText('Для использования Сервиса вы должны:', 'To use the Service, you must:')}</p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">be at least 18 years old;</li>
+              <li className="leading-none">{getText('быть не моложе 18 лет;', 'be at least 18 years old;')}</li>
               <li className="leading-none">
-                reside in a jurisdiction where the use of such services is legally permitted;
+                {getText('проживать в юрисдикции, где использование таких сервисов юридически разрешено;', 'reside in a jurisdiction where the use of such services is legally permitted;')}
               </li>
               <li className="leading-none">
-                not use the Service in violation of any applicable law or regulation.
+                {getText('не использовать Сервис в нарушение применимого законодательства или правил.', 'not use the Service in violation of any applicable law or regulation.')}
               </li>
             </ul>
           </div>
 
           {/* Секция 4 - Privacy */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">4. Privacy and Anonymity</p>
+            <p className="block leading-none mb-0 font-medium">{getText('4. Конфиденциальность и анонимность', '4. Privacy and Anonymity')}</p>
             <p className="block leading-none mb-0">
-              We respect your privacy. We do not collect personally identifiable information unless explicitly provided by you.
-              The Service is designed to operate anonymously.
+              {getText('Мы уважаем вашу конфиденциальность. Мы не собираем личную информацию, если вы явно ее не предоставили. Сервис предназначен для анонимной работы.', 'We respect your privacy. We do not collect personally identifiable information unless explicitly provided by you. The Service is designed to operate anonymously.')}
             </p>
           </div>
 
           {/* Секция 5 - Contact */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">5. Contact Information</p>
+            <p className="block leading-none mb-0 font-medium">{getText('5. Контактная информация', '5. Contact Information')}</p>
             <p className="leading-none mb-0">
-              <span>For questions or concerns about these Terms, please contact: </span>
+              <span>{getText('По вопросам или проблемам, связанным с этими Условиями, обращайтесь: ', 'For questions or concerns about these Terms, please contact: ')}</span>
               <span className="text-[#e1ff00]">support@menhausen.com</span>
             </p>
           </div>
           
           <p className="block leading-none">
-            By using Menhausen, you acknowledge that you have read, understood, and agreed to these Terms of Use.
+            {getText('Используя Menhausen, вы подтверждаете, что прочитали, поняли и согласились с этими Условиями использования.', 'By using Menhausen, you acknowledge that you have read, understood, and agreed to these Terms of Use.')}
           </p>
         </div>
       </div>
@@ -174,7 +175,7 @@ function MainContent() {
 /**
  * Компонент символа логотипа (повторно используемый)
  */
-function SymbolBig() {
+function _SymbolBig() {
   return (
     <div className="relative size-full" data-name="Symbol_big">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
@@ -189,7 +190,7 @@ function SymbolBig() {
 /**
  * Компонент названия приложения (повторно используемый)
  */
-function Menhausen() {
+function _Menhausen() {
   return (
     <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
@@ -209,76 +210,22 @@ function Menhausen() {
   );
 }
 
-/**
- * Компонент мини-логотипа (повторно используемый)
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[153px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка возврата к предыдущему экрану
- * Интерактивная стрелка "назад"
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80" 
-      data-name="Back Button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onClick={onBack} />
-    </div>
-  );
-}
 
 /**
  * Главный компонент страницы Terms of Use
  * Отображает полный документ с навигацией
  */
-export function TermsOfUseScreen({ onBack }: TermsOfUseScreenProps) {
+export function TermsOfUseScreen({ onBack: _onBack }: TermsOfUseScreenProps) {
   return (
     <div className="bg-[#111111] relative size-full overflow-hidden" data-name="002_terms of use">
       {/* Световые эффекты фона */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Основной контент документа */}
       <MainContent />
-      
-      {/* Заголовочный блок с навигацией */}
-      <HeaderBlock onBack={onBack} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 // Компоненты для отображения информации пользователя в профиле
 import svgPaths from "../imports/svg-x18dvlov3w";
 import { ArrowIcon } from './UserProfileIcons';
+import { useContent } from './ContentContext';
 
 /**
  * Адаптивный аватар пользователя
@@ -29,7 +30,7 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
       }`}
       data-name="User account status"
     >
-      <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[14px] sm:text-[15px] text-center tracking-[-0.43px] ${
+      <div className={`typography-caption text-center ${
         isPremium ? 'text-[#2d2b2b]' : 'text-[#696969]'
       }`}>
         <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">
@@ -44,15 +45,14 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
  * Адаптивная информация о пользователе
  */
 export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
+  const { getUI } = useContent();
+  
   return (
     <div className="flex flex-col gap-2.5 items-center justify-start w-full" data-name="User info block">
-      <div className="font-['Kreon:Regular',_sans-serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-center">
-        <p className="block leading-[0.8]">Hero #1275</p>
+      <div className="typography-h2 text-[#e1ff00] text-center">
+        <h2 className="block">{getUI().profile.heroTitle}</h2>
       </div>
-      <div className="flex items-center gap-4 sm:gap-5">
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#696969] text-left">
-          <p className="block leading-none">Level 25</p>
-        </div>
+      <div className="flex items-center justify-center">
         <UserAccountStatus isPremium={userHasPremium} />
       </div>
     </div>
@@ -151,7 +151,7 @@ export function SettingsItem({
         <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
           <div className="flex items-center gap-2.5">
             {icon}
-            <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-left ${
+            <div className={`typography-body text-left ${
               isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
             }`}>
               <p className="block leading-none">{title}</p>
@@ -173,13 +173,13 @@ export function SettingsItem({
   return (
     <button
       onClick={onClick}
-      className="w-full h-16 relative cursor-pointer touch-friendly hover:bg-[rgba(217,217,217,0.06)]"
+      className="w-full h-16 relative cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]"
       data-name="Settings item"
     >
       <div className="absolute flex items-center justify-between inset-x-0 top-5 px-0">
         <div className="flex items-center gap-2.5">
           {icon}
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-left ${
+          <div className={`typography-body text-left ${
             isHighlighted ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}>
             <p className="block leading-none">{title}</p>

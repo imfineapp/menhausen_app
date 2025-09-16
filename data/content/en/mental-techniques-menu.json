@@ -1,0 +1,26 @@
+{
+  "title": "Quick techniques",
+  "subtitle": "Emergency help tools",
+  "categories": {
+    "emergency": {
+      "title": "Emergency help",
+      "description": "1-2 minutes",
+      "techniqueIds": ["grounding-5-4-3-2-1", "grounding-anchor"]
+    },
+    "breathing": {
+      "title": "Breathing",
+      "description": "3-5 minutes",
+      "techniqueIds": ["breathing-4-7-8", "breathing-square"]
+    },
+    "stabilization": {
+      "title": "Stabilization",
+      "description": "5-10 minutes",
+      "techniqueIds": []
+    },
+    "recovery": {
+      "title": "Recovery",
+      "description": "10-20 minutes",
+      "techniqueIds": []
+    }
+  }
+}

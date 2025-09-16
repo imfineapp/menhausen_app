@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-bamg6d8zx5";
+import { BottomFixedButton } from './BottomFixedButton';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useLanguage } from './LanguageContext';
 
 /**
  * Компонент страницы "Under Construction"
@@ -52,18 +55,19 @@ function Light() {
 
 /**
  * Кнопка "Got it" для возврата к профилю
+ * Теперь использует стандартный компонент BottomFixedButton
  */
 function Button({ onBack }: { onBack: () => void }) {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
-    <button
-      onClick={onBack}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] hover:bg-[#d1ef00] touch-friendly"
-      data-name="Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Got it</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onBack}>
+      {getText('Понятно', 'Got it')}
+    </BottomFixedButton>
   );
 }
 
@@ -117,17 +121,26 @@ function Icon() {
  * Блок с заголовком и описанием "Under Construction"
  */
 function HeroBlockQuestion({ featureName }: { featureName?: string }) {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start leading-[0] p-0 relative shrink-0 text-center w-full"
       data-name="Hero_block_question"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">Under Construction</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <h1 className="block">{getText('В разработке', 'Under Construction')}</h1>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
+      <div className="typography-body text-[#ffffff] w-full">
         <p className="block leading-none">
-          {featureName ? `${featureName} feature` : 'This feature'} is currently being developed by our team. We're working hard to bring you the best experience possible.
+          {featureName 
+            ? getText(`Функция "${featureName}"`, `"${featureName}" feature`)
+            : getText('Эта функция', 'This feature')
+          } {getText('в настоящее время разрабатывается нашей командой. Мы усердно работаем, чтобы предоставить вам лучший опыт.', 'is currently being developed by our team. We\'re working hard to bring you the best experience possible.')}
         </p>
       </div>
     </div>
@@ -140,7 +153,7 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
 function IconContainer({ featureName }: { featureName?: string }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-center justify-start left-[21px] p-0 top-[294px] w-[351px]"
+      className="box-border content-stretch flex flex-col gap-5 items-center justify-start p-0 w-full"
       data-name="Icon container"
     >
       <Icon />
@@ -149,98 +162,7 @@ function IconContainer({ featureName }: { featureName?: string }) {
   );
 }
 
-/**
- * SVG символ логотипа
- */
-function SymbolBig() {
-  return (
-    <div className="relative size-full" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
 
-/**
- * Название приложения без "beta"
- */
-function Menhausen() {
-  return (
-    <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
-        <g id="Menhausen">
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_2" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_3" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_4" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p2d60800} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Мини-логотип с символом и названием
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[153px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка "Назад" с touch-friendly размером
- */
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] touch-friendly hover:opacity-80"
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onBack={onBack} />
-    </div>
-  );
-}
 
 /**
  * Основной компонент страницы "Under Construction"
@@ -274,11 +196,26 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Under Construction Screen">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
+      {/* Контент с вертикальным центрированием */}
+      <div className="flex-1 flex items-center justify-center px-[16px] sm:px-[20px] md:px-[21px]">
+        <div className="max-w-[351px] w-full">
+          
+          {/* Контейнер с иконкой и текстом */}
+          <IconContainer featureName={featureName} />
+
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
       <Button onBack={handleBackClick} />
-      <IconContainer featureName={featureName} />
-      <HeaderBlock onBack={handleBackClick} />
+
     </div>
   );
 }

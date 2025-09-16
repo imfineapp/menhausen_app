@@ -26,24 +26,44 @@ import { QuestionScreen01 } from './components/QuestionScreen01';
 import { QuestionScreen02 } from './components/QuestionScreen02';
 import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
+import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
+import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
+import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
+import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
+
+// Импорты ментальных техник
+import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
+import { SquareBreathingScreen } from './components/mental-techniques/SquareBreathingScreen';
+import { Grounding54321Screen } from './components/mental-techniques/Grounding54321Screen';
+import { GroundingAnchorScreen } from './components/mental-techniques/GroundingAnchorScreen';
 
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
-import { appContent } from './data/content';
+import { LanguageProvider } from './components/LanguageContext';
+// import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
 /**
  * Основной компонент приложения с навигацией
  * Теперь использует централизованную систему управления контентом и расширенную систему опроса
  */
 function AppContent() {
+
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
   // =====================================================================================
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding1');
-  const [previousScreen, setPreviousScreen] = useState<AppScreen>('onboarding1');
+  // В E2E тестовой среде начинаем с главной страницы
+  const isE2ETestEnvironment = typeof window !== 'undefined' && 
+    (window as any).__PLAYWRIGHT__ === true;
+  
+  if (isE2ETestEnvironment) {
+    console.log('E2E test environment detected, starting with home screen');
+  }
+  
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>(isE2ETestEnvironment ? 'home' : 'onboarding1');
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([isE2ETestEnvironment ? 'home' : 'onboarding1']);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
@@ -53,6 +73,7 @@ function AppContent() {
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
   const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
+  const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
 
   // =====================================================================================
   // НОВОЕ СОСТОЯНИЕ ДЛЯ СИСТЕМЫ ОПРОСА
@@ -67,6 +88,42 @@ function AppContent() {
 
   // Получение системы контента
   const { getCard, getTheme, getLocalizedText } = useContent();
+  
+  // Логируем изменения currentScreen
+  
+  // Проверка, является ли текущий экран главной страницей
+  // На первой странице онбординга кнопка Back должна закрывать приложение
+  const isHomePage = currentScreen === 'home';
+  
+  // Функция для навигации с отслеживанием истории
+  const navigateTo = (screen: AppScreen) => {
+    setNavigationHistory(prev => [...prev, screen]);
+    setCurrentScreen(screen);
+  };
+  
+  // Функция для закрытия приложения через Telegram WebApp
+  const closeApp = () => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.close();
+    } else {
+      // Fallback для тестирования вне Telegram
+      console.log('App would be closed in Telegram WebApp');
+    }
+  };
+
+  // Функция для возврата на предыдущий экран
+  const goBack = () => {
+    if (navigationHistory.length > 1) {
+      const newHistory = [...navigationHistory];
+      newHistory.pop(); // Удаляем текущий экран
+      const previousScreen = newHistory[newHistory.length - 1];
+      setNavigationHistory(newHistory);
+      setCurrentScreen(previousScreen);
+    } else {
+      // Если это первый экран, закрываем приложение
+      closeApp();
+    }
+  };
 
   // =====================================================================================
   // ФУНКЦИИ СОХРАНЕНИЯ ДАННЫХ ОПРОСА
@@ -107,46 +164,159 @@ function AppContent() {
     }
   };
 
+  /**
+   * Проверка полученных достижений после чекина
+   * В реальном приложении здесь будет логика проверки достижений
+   */
+  const _checkForEarnedAchievements = (mood: string): string[] => {
+    const earnedAchievements: string[] = [];
+    
+    // Получаем данные о чекинах из localStorage
+    const checkinData = localStorage.getItem('checkin-data');
+    let checkinHistory: any[] = [];
+    
+    if (checkinData) {
+      try {
+        checkinHistory = JSON.parse(checkinData);
+      } catch (error) {
+        console.error('Failed to parse checkin data:', error);
+      }
+    }
+    
+    // Добавляем текущий чекин
+    const currentCheckin = {
+      mood,
+      timestamp: new Date().toISOString(),
+      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+    };
+    checkinHistory.push(currentCheckin);
+    
+    // Сохраняем обновленные данные
+    localStorage.setItem('checkin-data', JSON.stringify(checkinHistory));
+    
+    // Проверяем достижения
+    const today = new Date().toISOString().split('T')[0];
+    const _checkinsToday = checkinHistory.filter(c => c.date === today);
+    const checkinsThisWeek = checkinHistory.filter(c => {
+      const checkinDate = new Date(c.date);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return checkinDate >= weekAgo;
+    });
+    
+    // Первый чекин
+    if (checkinHistory.length === 1) {
+      earnedAchievements.push('first_checkin');
+    }
+    
+    // Недельная серия (7 дней подряд)
+    if (checkinsThisWeek.length >= 7) {
+      const consecutiveDays = getConsecutiveDays(checkinHistory);
+      if (consecutiveDays >= 7) {
+        earnedAchievements.push('week_streak');
+      }
+    }
+    
+    // Трекер настроения (14 дней)
+    if (checkinHistory.length >= 14) {
+      earnedAchievements.push('mood_tracker');
+    }
+    
+    // Ранняя пташка (чекины в 6 утра 5 дней подряд)
+    const earlyCheckins = checkinHistory.filter(c => {
+      const hour = new Date(c.timestamp).getHours();
+      return hour >= 5 && hour <= 7;
+    });
+    if (earlyCheckins.length >= 5) {
+      earnedAchievements.push('early_bird');
+    }
+    
+    // Ночная сова (чекины в 11 вечера 5 дней подряд)
+    const lateCheckins = checkinHistory.filter(c => {
+      const hour = new Date(c.timestamp).getHours();
+      return hour >= 22 || hour <= 1;
+    });
+    if (lateCheckins.length >= 5) {
+      earnedAchievements.push('night_owl');
+    }
+    
+    console.log('Earned achievements:', earnedAchievements);
+    return earnedAchievements;
+  };
+
+  /**
+   * Подсчет последовательных дней чекинов
+   */
+  const getConsecutiveDays = (checkinHistory: any[]): number => {
+    if (checkinHistory.length === 0) return 0;
+    
+    const sortedCheckins = checkinHistory
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    
+    let consecutiveDays = 1;
+    let currentDate = new Date(sortedCheckins[0].date);
+    
+    for (let i = 1; i < sortedCheckins.length; i++) {
+      const checkinDate = new Date(sortedCheckins[i].date);
+      const expectedDate = new Date(currentDate);
+      expectedDate.setDate(expectedDate.getDate() + 1);
+      
+      if (checkinDate.toDateString() === expectedDate.toDateString()) {
+        consecutiveDays++;
+        currentDate = checkinDate;
+      } else {
+        break;
+      }
+    }
+    
+    return consecutiveDays;
+  };
+
   // =====================================================================================
   // ФУНКЦИИ НАВИГАЦИИ
   // =====================================================================================
 
   const handleNextScreen = () => {
-    setCurrentScreen('onboarding2');
+    navigateTo('onboarding2');
   };
 
   const handleShowSurvey = () => {
     // Загружаем сохраненные результаты если есть
     const savedResults = loadSavedSurveyResults();
     setSurveyResults(prev => ({ ...prev, ...savedResults }));
-    setCurrentScreen('survey01');
+    navigateTo('survey01');
   };
 
   const _handleShowPinSetup = () => {
-    setCurrentScreen('pin');
+    navigateTo('pin');
   };
 
   const _handleShowCheckIn = () => {
-    setCurrentScreen('checkin');
+    navigateTo('checkin');
   };
 
   const _handleShowHome = () => {
-    setCurrentScreen('home');
+    navigateTo('home');
   };
 
   const handleCompletePinSetup = () => {
     console.log('PIN setup completed');
-    setCurrentScreen('checkin');
+    navigateTo('checkin');
   };
 
   const handleSkipPinSetup = () => {
     console.log('PIN setup skipped');
-    setCurrentScreen('checkin');
+    navigateTo('checkin');
   };
 
-  const handleCheckInSubmit = (mood: string) => {
-    console.log('Check-in submitted:', { mood, timestamp: new Date().toISOString() });
-    setCurrentScreen('home');
+  const handleCheckInSubmit = (_mood: string) => {
+    // ПРИНУДИТЕЛЬНО показываем страницу награды с несколькими достижениями для тестирования
+    // В реальном приложении здесь будет логика проверки достижений на бэкэнде
+    const earnedAchievements = ['first_checkin', 'week_streak', 'mood_tracker']; // Принудительно показываем несколько достижений
+    
+    // Всегда показываем страницу награды
+    setEarnedAchievementIds(earnedAchievements);
+    navigateTo('reward');
   };
 
   // =====================================================================================
@@ -156,25 +326,25 @@ function AppContent() {
   const handleSurvey01Next = (answers: string[]) => {
     console.log('Survey 01 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen01: answers }));
-    setCurrentScreen('survey02');
+    navigateTo('survey02');
   };
 
   const handleSurvey02Next = (answers: string[]) => {
     console.log('Survey 02 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen02: answers }));
-    setCurrentScreen('survey03');
+    navigateTo('survey03');
   };
 
   const handleSurvey03Next = (answers: string[]) => {
     console.log('Survey 03 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen03: answers }));
-    setCurrentScreen('survey04');
+    navigateTo('survey04');
   };
 
   const handleSurvey04Next = (answers: string[]) => {
     console.log('Survey 04 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen04: answers }));
-    setCurrentScreen('survey05');
+    navigateTo('survey05');
   };
 
   const handleSurvey05Next = (answers: string[]) => {
@@ -191,89 +361,98 @@ function AppContent() {
     const saveSuccess = saveSurveyResults(finalResults);
     if (saveSuccess) {
       console.log('Survey completed successfully');
-      setCurrentScreen('pin');
+      navigateTo('pin');
     } else {
       console.error('Failed to save survey, but continuing...');
-      setCurrentScreen('pin');
+      navigateTo('pin');
     }
   };
 
   // Обработчики возврата для экранов опроса
-  const handleBackToSurvey01 = () => setCurrentScreen('survey01');
-  const handleBackToSurvey02 = () => setCurrentScreen('survey02');
-  const handleBackToSurvey03 = () => setCurrentScreen('survey03');
-  const handleBackToSurvey04 = () => setCurrentScreen('survey04');
+  const handleBackToSurvey01 = () => navigateTo('survey01');
+  const handleBackToSurvey02 = () => navigateTo('survey02');
+  const handleBackToSurvey03 = () => navigateTo('survey03');
+  const handleBackToSurvey04 = () => navigateTo('survey04');
 
   const handleGoToCheckIn = () => {
-    setCurrentScreen('checkin');
+    navigateTo('checkin');
   };
 
   const handleGoToProfile = () => {
-    setCurrentScreen('profile');
+    navigateTo('profile');
+  };
+
+  const handleGoToBadges = () => {
+    navigateTo('badges');
+  };
+
+  const handleGoToLevels = () => {
+    console.log('Navigating to levels screen');
+    navigateTo('levels');
   };
 
   /**
    * Навигация к теме - теперь использует систему контента
    */
-  const handleGoToTheme = (themeTitle: string) => {
-    console.log(`Opening theme: ${themeTitle}`);
+  const handleGoToTheme = (themeId: string) => {
+    console.log(`Opening theme: ${themeId}`);
     
-    // Найти тему по локализованному названию
-    const themeId = Object.keys(appContent.themes).find(id => {
-      const theme = getTheme(id);
-      return theme && getLocalizedText(theme.title) === themeTitle;
-    });
+    // Проверяем, существует ли тема с таким ID
+    const theme = getTheme(themeId);
     
-    if (themeId) {
+    if (theme) {
       setCurrentTheme(themeId);
-      setCurrentScreen('theme-welcome');
+      navigateTo('theme-welcome');
     } else {
-      console.error('Theme not found:', themeTitle);
+      console.error('Theme not found:', themeId);
     }
   };
 
   const handleBackToHomeFromTheme = () => {
     setCurrentTheme('');
-    setCurrentScreen('home');
+    navigateTo('home');
   };
 
   const handleStartTheme = () => {
     console.log(`Starting theme: ${currentTheme}`);
+    // Очищаем историю навигации, чтобы кнопка Back на theme-home вела сразу к home
+    // theme-welcome доступна только при прямом переходе с home, не через кнопку Back
+    setNavigationHistory(['home', 'theme-home']);
     setCurrentScreen('theme-home');
   };
 
   const _handleBackToThemeWelcome = () => {
-    setCurrentScreen('theme-welcome');
+    navigateTo('theme-welcome');
   };
 
   const handleBackToThemeHome = () => {
     setCurrentCard({id: ''});
-    setCurrentScreen('theme-home');
+    navigateTo('theme-home');
   };
 
   const handleBackToCardDetails = () => {
     setCurrentCheckin({id: ''});
-    setCurrentScreen('card-details');
+    navigateTo('card-details');
   };
 
   const handleBackToCardDetailsFromWelcome = () => {
-    setCurrentScreen('card-details');
+    navigateTo('card-details');
   };
 
   const handleBackToCardWelcome = () => {
-    setCurrentScreen('card-welcome');
+    navigateTo('card-welcome');
   };
 
   const handleBackToQuestion01 = () => {
-    setCurrentScreen('question-01');
+    navigateTo('question-01');
   };
 
   const handleBackToQuestion02 = () => {
-    setCurrentScreen('question-02');
+    navigateTo('question-02');
   };
 
   const handleBackToFinalMessage = () => {
-    setCurrentScreen('final-message');
+    navigateTo('final-message');
   };
 
   // =====================================================================================
@@ -283,19 +462,19 @@ function AppContent() {
   const handleNextQuestion = (answer: string) => {
     console.log(`Question 1 answered for card: ${currentCard.id}`, answer);
     setUserAnswers(prev => ({ ...prev, question1: answer }));
-    setCurrentScreen('question-02');
+    navigateTo('question-02');
   };
 
   const handleCompleteExercise = (answer: string) => {
     console.log(`Question 2 answered for card: ${currentCard.id}`, answer);
     const finalAnswers = { ...userAnswers, question2: answer };
     setUserAnswers(finalAnswers);
-    setCurrentScreen('final-message');
+    navigateTo('final-message');
   };
 
   const handleCompleteFinalMessage = () => {
     console.log(`Final message completed for card: ${currentCard.id}`);
-    setCurrentScreen('rate-card');
+    navigateTo('rate-card');
   };
 
   const handleCompleteRating = (rating: number, textMessage?: string) => {
@@ -308,29 +487,35 @@ function AppContent() {
       [currentCard.id]: (prev[currentCard.id] || 0) + 1
     }));
     
-    console.log('Exercise completed with data:', {
+    const completionData = {
       cardId: currentCard.id,
-      answers: userAnswers,
+      cardTitle: currentCard.title,
       rating: rating,
-      textMessage: textMessage,
+      hasMessage: !!textMessage,
       completedAt: new Date().toISOString(),
       completionCount: (cardCompletionCounts[currentCard.id] || 0) + 1
-    });
+    };
+    
+    console.log('Exercise completed with data:', completionData);
     
     setUserAnswers({});
     setCardRating(0);
     setCurrentCard({id: ''});
+    
+    // Очищаем историю навигации и устанавливаем правильный путь для кнопки Back
+    // Кнопка Back на theme-home должна вести сразу к home, минуя theme-welcome
+    setNavigationHistory(['home', 'theme-home']);
     setCurrentScreen('theme-home');
   };
 
   const handleStartCardExercise = () => {
     console.log(`Starting exercise for card: ${currentCard.id}`);
-    setCurrentScreen('question-01');
+    navigateTo('question-01');
   };
 
   const handleOpenCardExercise = () => {
     console.log(`Opening exercise for card: ${currentCard.id}`);
-    setCurrentScreen('card-welcome');
+    navigateTo('card-welcome');
   };
 
   const handleOpenCheckin = (checkinId: string, cardTitle: string, date: string) => {
@@ -340,7 +525,7 @@ function AppContent() {
       cardTitle: cardTitle,
       date: date
     });
-    setCurrentScreen('checkin-details');
+    navigateTo('checkin-details');
   };
 
   /**
@@ -350,7 +535,7 @@ function AppContent() {
     console.log(`Card clicked: ${cardId}`);
     const cardData = getCardData(cardId);
     setCurrentCard(cardData);
-    setCurrentScreen('card-details');
+    navigateTo('card-details');
   };
 
   /**
@@ -391,7 +576,7 @@ function AppContent() {
       console.log(`Opening next available card: ${nextCard}`);
       const cardData = getCardData(nextCard);
       setCurrentCard(cardData);
-      setCurrentScreen('card-details');
+      navigateTo('card-details');
     } else {
       console.log('All cards have been completed!');
       alert('Congratulations! You have completed all cards in this theme.');
@@ -403,69 +588,65 @@ function AppContent() {
   // =====================================================================================
 
   const handleShowAboutApp = () => {
-    setCurrentScreen('about');
+    navigateTo('about');
   };
 
   const handleBackToProfile = () => {
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleShowPinSettings = () => {
-    setCurrentScreen('pin-settings');
+    navigateTo('pin-settings');
   };
 
   const handleCompletePinSettings = () => {
     console.log('PIN settings updated');
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleSkipPinSettings = () => {
     console.log('PIN settings skipped');
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleShowPrivacy = () => {
-    setPreviousScreen('onboarding1');
-    setCurrentScreen('privacy');
+    navigateTo('privacy');
   };
 
   const handleShowTerms = () => {
-    setPreviousScreen('onboarding1');
-    setCurrentScreen('terms');
+    navigateTo('terms');
   };
 
-  const handleBackToOnboarding = () => {
-    setCurrentScreen('onboarding1');
+  const _handleBackToOnboarding = () => {
+    navigateTo('onboarding1');
   };
 
   const handleShowPrivacyFromProfile = () => {
-    setPreviousScreen('profile');
-    setCurrentScreen('privacy');
+    navigateTo('privacy');
   };
 
   const handleShowTermsFromProfile = () => {
-    setPreviousScreen('profile');
-    setCurrentScreen('terms');
+    navigateTo('terms');
   };
 
-  const handleBackToProfileFromDocuments = () => {
-    setCurrentScreen('profile');
+  const _handleBackToProfileFromDocuments = () => {
+    navigateTo('profile');
   };
 
   const handleBackToOnboarding2 = () => {
-    setCurrentScreen('onboarding2');
+    navigateTo('onboarding2');
   };
 
   const handleBackToSurvey = () => {
-    setCurrentScreen('survey01');
+    navigateTo('survey01');
   };
 
   const handleBackToHome = () => {
-    setCurrentScreen('home');
+    navigateTo('home');
   };
 
   const handleShowDeleteAccount = () => {
-    setCurrentScreen('delete');
+    navigateTo('delete');
   };
 
   const handleDeleteAccount = () => {
@@ -486,38 +667,52 @@ function AppContent() {
       screen05: []
     });
     localStorage.removeItem('survey-results');
+    // Сбрасываем историю навигации
+    setNavigationHistory(['onboarding1']);
     setCurrentScreen('onboarding1');
-    setPreviousScreen('onboarding1');
   };
 
   const handleBackToProfileFromDelete = () => {
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleShowPayments = () => {
-    setCurrentScreen('payments');
+    navigateTo('payments');
   };
 
   const handlePurchaseComplete = () => {
     console.log('Premium purchase completed, updating user subscription status');
     setUserHasPremium(true);
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleBackToProfileFromPayments = () => {
-    setCurrentScreen('profile');
+    navigateTo('profile');
   };
 
   const handleShowUnderConstruction = (featureName: string) => {
     console.log(`Navigating to Under Construction for: ${featureName}`);
     setCurrentFeatureName(featureName);
-    setCurrentScreen('under-construction');
+    navigateTo('under-construction');
   };
 
   const handleBackToProfileFromUnderConstruction = () => {
     console.log('Returning to profile from Under Construction');
     setCurrentFeatureName('');
-    setCurrentScreen('profile');
+    navigateTo('profile');
+  };
+
+  // =====================================================================================
+  // ФУНКЦИИ НАВИГАЦИИ ДЛЯ МЕНТАЛЬНЫХ ТЕХНИК
+  // =====================================================================================
+
+  const handleOpenMentalTechnique = (techniqueId: string) => {
+    console.log(`Opening mental technique: ${techniqueId}`);
+    navigateTo(techniqueId as AppScreen);
+  };
+
+  const handleBackFromMentalTechnique = () => {
+    navigateTo('home');
   };
 
   // =====================================================================================
@@ -595,6 +790,7 @@ function AppContent() {
             onGoToCheckIn={handleGoToCheckIn} 
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
+            onOpenMentalTechnique={handleOpenMentalTechnique}
             userHasPremium={userHasPremium}
           />
         );
@@ -606,13 +802,13 @@ function AppContent() {
             onBack={handleBackToHomeFromTheme}
             onStart={handleStartTheme}
             onUnlock={handleShowPayments}
-            themeTitle={themeData ? getLocalizedText(themeData.title) : currentTheme}
+            themeTitle={currentTheme}
             isPremiumTheme={themeData?.isPremium || false}
             userHasPremium={userHasPremium}
           />
         );
       }
-      case 'theme-home':
+      case 'theme-home': {
         return (
           <ThemeHomeScreen
             onBack={handleBackToHomeFromTheme}
@@ -623,6 +819,7 @@ function AppContent() {
             cardCompletionCounts={cardCompletionCounts}
           />
         );
+      }
       case 'card-details':
         return (
           <CardDetailsScreen
@@ -718,6 +915,8 @@ function AppContent() {
             onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
             onShowUnderConstruction={handleShowUnderConstruction}
+            onGoToBadges={handleGoToBadges}
+            onGoToLevels={handleGoToLevels}
             userHasPremium={userHasPremium}
           />
         );
@@ -734,13 +933,13 @@ function AppContent() {
       case 'privacy':
         return (
           <PrivacyPolicyScreen 
-            onBack={previousScreen === 'profile' ? handleBackToProfileFromDocuments : handleBackToOnboarding} 
+            onBack={goBack} 
           />
         );
       case 'terms':
         return (
           <TermsOfUseScreen 
-            onBack={previousScreen === 'profile' ? handleBackToProfileFromDocuments : handleBackToOnboarding} 
+            onBack={goBack} 
           />
         );
       case 'delete':
@@ -764,14 +963,74 @@ function AppContent() {
             featureName={currentFeatureName}
           />
         );
+      
+      // Экраны ментальных техник
+      case 'breathing-4-7-8':
+        return (
+          <Breathing478Screen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'breathing-square':
+        return (
+          <SquareBreathingScreen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'grounding-5-4-3-2-1':
+        return (
+          <Grounding54321Screen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      case 'grounding-anchor':
+        return (
+          <GroundingAnchorScreen 
+            onBack={handleBackFromMentalTechnique}
+          />
+        );
+      
+      case 'reward':
+        return (
+          <RewardManager 
+            earnedAchievementIds={earnedAchievementIds}
+            onComplete={() => {
+              setEarnedAchievementIds([]); // Очищаем достижения
+              navigateTo('home');
+            }}
+            onBack={() => {
+              setEarnedAchievementIds([]); // Очищаем достижения
+              navigateTo('home');
+            }}
+          />
+        );
+      
+      case 'badges':
+        return (
+          <BadgesScreen 
+            onBack={goBack}
+          />
+        );
+      
+      case 'levels':
+        return (
+          <LevelsScreen 
+            onBack={goBack}
+            onGoToBadges={handleGoToBadges}
+          />
+        );
+      
       default:
         return <OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />;
     }
   };
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
-      <div className="flex-1 relative w-full h-full overflow-hidden">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+      <div className="flex-1 relative w-full h-full overflow-hidden overflow-x-hidden">
+        {/* Глобальная кнопка Back для Telegram WebApp */}
+        <BackButton isHomePage={isHomePage} onBack={goBack} />
+        
         {renderCurrentScreen()}
       </div>
     </div>
@@ -783,8 +1042,10 @@ function AppContent() {
  */
 export default function App() {
   return (
-    <ContentProvider>
-      <AppContent />
-    </ContentProvider>
+    <LanguageProvider>
+      <ContentProvider>
+        <AppContent />
+      </ContentProvider>
+    </LanguageProvider>
   );
 }

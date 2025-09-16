@@ -1,5 +1,74 @@
 @import "tailwindcss";
 
+/* Принудительное применение Roboto Slab - должно быть в начале */
+* {
+  font-family: inherit;
+}
+
+/* Принудительное применение Roboto Slab для всех заголовков */
+.typography-h1,
+.typography-h1 h1,
+.typography-h1 h2,
+.typography-h1 h3,
+.typography-h1 h4,
+.typography-h1 h5,
+.typography-h1 h6,
+.typography-h1 p,
+.typography-h1 span,
+.typography-h1 div,
+.typography-h2,
+.typography-h2 h1,
+.typography-h2 h2,
+.typography-h2 h3,
+.typography-h2 h4,
+.typography-h2 h5,
+.typography-h2 h6,
+.typography-h2 p,
+.typography-h2 span,
+.typography-h2 div,
+.typography-h3,
+.typography-h3 h1,
+.typography-h3 h2,
+.typography-h3 h3,
+.typography-h3 h4,
+.typography-h3 h5,
+.typography-h3 h6,
+.typography-h3 p,
+.typography-h3 span,
+.typography-h3 div,
+.typography-h4,
+.typography-h4 h1,
+.typography-h4 h2,
+.typography-h4 h3,
+.typography-h4 h4,
+.typography-h4 h5,
+.typography-h4 h6,
+.typography-h4 p,
+.typography-h4 span,
+.typography-h4 div,
+.typography-h5,
+.typography-h5 h1,
+.typography-h5 h2,
+.typography-h5 h3,
+.typography-h5 h4,
+.typography-h5 h5,
+.typography-h5 h6,
+.typography-h5 p,
+.typography-h5 span,
+.typography-h5 div,
+.typography-h6,
+.typography-h6 h1,
+.typography-h6 h2,
+.typography-h6 h3,
+.typography-h6 h4,
+.typography-h6 h5,
+.typography-h6 h6,
+.typography-h6 p,
+.typography-h6 span,
+.typography-h6 div {
+  font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+}
+
 :root {
   /* Адаптивные размеры шрифтов */
   --font-size-xs: 10px;
@@ -26,6 +95,27 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+  
+  /* Bottom Fixed Button стандарты */
+  --bottom-button-width: 350px;
+  --bottom-button-height: 46px;
+  --bottom-button-bottom: 35px;
+  --bottom-button-padding-x: 126px;
+  --bottom-button-padding-y: 15px;
+  --bottom-button-radius: 12px;
+  --bottom-button-center: center; /* Кнопка центрирована по горизонтали */
+  
+  /* Secondary Button стандарты */
+  --secondary-button-width: 350px;
+  --secondary-button-height: 46px;
+  --secondary-button-bottom: 35px;
+  --secondary-button-radius: 12px;
+  --secondary-button-border-color: #e1ff00;
+  --secondary-button-text-color: #e1ff00;
+  --secondary-button-hover-bg-opacity: 0.1;
+  
+  /* Content padding для предотвращения перекрытия кнопкой */
+  --content-bottom-padding: 200px;
   
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
@@ -154,6 +244,39 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+  }
+
+  /* Стандартные стили для экранов с нижними кнопками */
+  .screen-container {
+    @apply w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col;
+  }
+
+  .screen-content {
+    @apply flex-1 overflow-y-auto;
+  }
+
+  .screen-content-inner {
+    @apply px-[16px] sm:px-[20px] md:px-[21px] pt-[120px] pb-[200px];
+  }
+
+  .screen-content-wrapper {
+    @apply max-w-[351px] mx-auto;
+  }
+
+  /* Центрирование нижних кнопок */
+  .bottom-button-centered {
+    @apply left-1/2 transform -translate-x-1/2;
+  }
+
+  /* Secondary Button стили */
+  .secondary-button {
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] 
+           bg-transparent border border-[#e1ff00] rounded-xl 
+           font-sans font-bold text-[15px] 
+           text-[#e1ff00] text-center
+           hover:bg-[rgba(225,255,0,0.1)] hover:text-[#2d2b2b]
+           active:scale-[0.98] transition-all duration-200
+           min-h-[44px] min-w-[44px] cursor-pointer;
   }
 
   /* Адаптивные утилиты для контейнеров */
@@ -294,60 +417,58 @@
 }
 
 /**
- * Base typography with responsive scaling
+ * Base typography with responsive scaling - iOS Safari optimized
  */
 @layer base {
-  :where(:not(:has([class*=" text-"]), :not(:has([class^="text-"])))) {
-    h1 {
-      font-family: 'Roboto Slab', Georgia, 'Times New Roman', serif;
-      font-weight: 400; /* normal */
-      font-size: clamp(24px, 5vw, 32px);
-      line-height: 0.8;
-    }
+  h1, h2, h3, h4, h5, h6,
+  h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-weight: 400 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
 
-    h2 {
-      font-size: clamp(20px, 4vw, 28px);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.3;
-    }
+  h1 {
+    font-size: clamp(24px, 5vw, 32px);
+    line-height: 1.1;
+  }
 
-    h3 {
-      font-size: clamp(18px, 3.5vw, 24px);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.4;
-    }
+  h2 { 
+    font-size: clamp(20px, 4vw, 28px); 
+    line-height: 1.3; 
+  }
 
-    h4 {
-      font-size: clamp(16px, 3vw, 20px);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.4;
-    }
+  h3 { 
+    font-size: clamp(18px, 3.5vw, 24px); 
+    line-height: 1.4; 
+  }
 
-    p {
-      font-size: clamp(14px, 2.5vw, 18px);
-      font-weight: var(--font-weight-normal);
-      line-height: 1.5;
-    }
+  h4 { 
+    font-size: clamp(16px, 3vw, 20px); 
+    line-height: 1.4; 
+  }
 
-    label {
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.4;
-    }
+  p, span, div, label {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(14px, 2.5vw, 18px);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
 
-    button {
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: var(--font-weight-medium);
-      line-height: 1.4;
-      min-height: 44px; /* Touch-friendly */
-    }
-
-    input {
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: var(--font-weight-normal);
-      line-height: 1.4;
-      min-height: 44px; /* Touch-friendly */
-    }
+  button,
+  input {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(14px, 2.5vw, 16px);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+    min-height: 44px;
   }
 }
 
@@ -366,12 +487,39 @@ html {
   body {
     height: -webkit-fill-available;
   }
+  
+  /* iOS Safari font loading optimization */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+  
+  /* Force font loading on iOS */
+  .font-heading {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+  
+  .font-sans {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
 }
 
 /* Prevent horizontal scrolling */
 html, body {
   max-width: 100vw;
   overflow-x: hidden;
+}
+
+/* Additional overflow prevention */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure no element can cause horizontal overflow */
+body, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
 /* Safe area handling for notch devices */
@@ -411,4 +559,245 @@ html, body {
 @media (min-width: 640px) and (max-width: 767px) {
   .md-only-block { display: block; }
   .md-only-hidden { display: none; }
+}
+
+/* ========================================================================================
+   TYPOGRAPHY SYSTEM - Menhausen App
+   ======================================================================================== */
+
+/* Основные типографические классы согласно Guidelines.md */
+@layer base {
+  /* H1 Заголовки - clamp(24px, 5vw, 32px) с leading-[0.8] */
+  .typography-h1,
+  .typography-h1 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(24px, 5vw, 32px) !important;
+    line-height: 0.8 !important;
+    font-weight: 400 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* H2 Заголовки - clamp(20px, 4vw, 28px) с leading-[0.96] (увеличен на 20%) */
+  .typography-h2,
+  .typography-h2 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(20px, 4vw, 28px) !important;
+    line-height: 0.96 !important;
+    font-weight: 400 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* H3 Заголовки - clamp(18px, 3.5vw, 24px) с leading-[0.8] */
+  .typography-h3,
+  .typography-h3 * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+    font-size: clamp(18px, 3.5vw, 24px) !important;
+    line-height: 0.8 !important;
+    font-weight: 400 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Body Text - clamp(14px, 2.5vw, 18px) с leading-[1.5] */
+  .typography-body {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.5;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Button Text - 15px с leading-[1.4] и font-weight 500 */
+  .typography-button {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Caption Text - clamp(12px, 2vw, 14px) с leading-[1.4] */
+  .typography-caption {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(12px, 2vw, 14px);
+    line-height: 1.4;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Small Text - clamp(10px, 1.8vw, 12px) с leading-[1.3] */
+  .typography-small {
+    font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: clamp(10px, 1.8vw, 12px);
+    line-height: 1.3;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  /* Утилитарные классы для специальных случаев */
+  .typography-responsive {
+    font-size: clamp(14px, 2.5vw, 18px);
+    line-height: 1.5;
+  }
+
+  /* Принудительное применение Roboto Slab для отладки */
+  .font-roboto-slab {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Принудительное применение Roboto Slab ко всем элементам с typography классами */
+  [class*="typography-h"] {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  [class*="typography-h"] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Принудительное применение для всех заголовков */
+  div[class*="typography-h"],
+  div[class*="typography-h"] *,
+  p[class*="typography-h"],
+  p[class*="typography-h"] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  /* Дополнительные правила для принудительного применения Roboto Slab */
+  .text-\[#e1ff00\],
+  .text-\[#e1ff00\] * {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  }
+
+  .typography-compact {
+    line-height: 1.2;
+  }
+
+  .typography-tight {
+    line-height: 1.1;
+  }
+
+  .typography-loose {
+    line-height: 1.6;
+  }
+
+  /* Обратная совместимость с существующими классами */
+  .leading-\[0\.8\] {
+    font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
+    font-weight: 400;
+  }
+}
+
+/* ========================================================================================
+   ПОЛОСАТЫЕ ПРОГРЕСС-БАРЫ
+   ======================================================================================== */
+
+/* Базовый класс для полосатого прогресс-бара */
+.striped-progress-bar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem; /* rounded-xl */
+}
+
+/* Фон прогресс-бара */
+.striped-progress-bar-bg {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(217, 217, 217, 0.04);
+  border-radius: 0.75rem;
+}
+
+/* Полосатый прогресс */
+.striped-progress-bar-fill {
+  position: absolute;
+  height: 100%;
+  border-radius: 0.75rem;
+  background: repeating-linear-gradient(
+    -45deg,
+    #e1ff00 0px,
+    #e1ff00 16px,
+    #d1ef00 16px,
+    #d1ef00 32px
+  );
+  transition: width 0.3s ease-in-out;
+}
+
+/* Варианты размеров */
+.striped-progress-bar-sm {
+  height: 0.625rem; /* h-2.5 */
+}
+
+.striped-progress-bar-md {
+  height: 1rem; /* h-4 */
+}
+
+.striped-progress-bar-lg {
+  height: 1.5rem; /* h-6 */
+}
+
+.striped-progress-bar-xl {
+  height: 2rem; /* h-8 */
+}
+
+/* Варианты фона */
+.striped-progress-bar-bg-dark {
+  background-color: #313131;
+}
+
+.striped-progress-bar-bg-gray {
+  background-color: #212121;
+}
+
+.striped-progress-bar-bg-light {
+  background-color: rgba(217, 217, 217, 0.04);
+}
+
+/* Анимация загрузки */
+.striped-progress-bar-animated .striped-progress-bar-fill {
+  animation: striped-progress-shift 2s linear infinite;
+}
+
+@keyframes striped-progress-shift {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 32px 0;
+  }
+}
+
+/* Активное состояние */
+.striped-progress-bar-active .striped-progress-bar-fill {
+  box-shadow: 0 0 8px rgba(225, 255, 0, 0.3);
+}
+
+/* Hover эффекты */
+.striped-progress-bar:hover .striped-progress-bar-fill {
+  filter: brightness(1.1);
+}
+
+/* Эффекты свечения для блока активности */
+.flame-glow {
+  filter: drop-shadow(0 0 15px rgba(225, 255, 0, 0.8));
+}
+
+.progress-glow {
+  box-shadow: 0 0 8px rgba(225, 255, 0, 0.3);
+}
+
+.checkin-glow {
+  box-shadow: 0 0 6px rgba(225, 255, 0, 0.4);
 }

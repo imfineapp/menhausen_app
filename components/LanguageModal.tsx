@@ -17,7 +17,7 @@ function LanguageOptionButton({ language, isSelected, onSelect, label, nativeLab
   return (
     <button
       onClick={() => onSelect(language)}
-      className={`w-full p-4 sm:p-5 rounded-xl border transition-all duration-200 touch-friendly active:scale-[0.98] ${
+      className={`w-full p-4 sm:p-5 rounded-xl border transition-all duration-200 min-h-[44px] min-w-[44px] active:scale-[0.98] ${
         isSelected 
           ? 'bg-[#e1ff00] border-[#e1ff00] text-[#2d2b2b]' 
           : 'bg-[rgba(217,217,217,0.04)] border-[#212121] text-[#ffffff] hover:bg-[rgba(217,217,217,0.08)]'
@@ -26,15 +26,15 @@ function LanguageOptionButton({ language, isSelected, onSelect, label, nativeLab
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-col items-start gap-1">
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-left ${
+          <div className={`typography-body text-left ${
             isSelected ? 'text-[#2d2b2b]' : 'text-[#ffffff]'
           }`}>
-            <p className="block leading-[1.5]">{label}</p>
+            <p className="block">{label}</p>
           </div>
-          <div className={`font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-left ${
+          <div className={`typography-caption text-left ${
             isSelected ? 'text-[#2d2b2b]' : 'text-[#cfcfcf]'
           }`}>
-            <p className="block leading-[1.5]">{nativeLabel}</p>
+            <p className="block">{nativeLabel}</p>
           </div>
         </div>
         
@@ -69,22 +69,22 @@ function ActionButtons({ onCancel, onConfirm, cancelLabel, confirmLabel }: Actio
       {/* Кнопка отмены */}
       <button
         onClick={onCancel}
-        className="flex-1 bg-[rgba(217,217,217,0.04)] border border-[#212121] text-[#ffffff] rounded-xl py-3 sm:py-4 px-4 hover:bg-[rgba(217,217,217,0.08)] active:scale-[0.98] transition-all duration-200 touch-friendly"
+        className="flex-1 bg-[rgba(217,217,217,0.04)] border border-[#212121] text-[#ffffff] rounded-xl py-3 sm:py-4 px-4 hover:bg-[rgba(217,217,217,0.08)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px]"
         data-name="Cancel button"
       >
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-center">
-          <p className="block leading-[1.5]">{cancelLabel}</p>
+        <div className="typography-body text-center">
+          <p className="block">{cancelLabel}</p>
         </div>
       </button>
       
       {/* Кнопка подтверждения */}
       <button
         onClick={onConfirm}
-        className="flex-1 bg-[#e1ff00] text-[#2d2b2b] rounded-xl py-3 sm:py-4 px-4 hover:bg-[#d4f200] active:scale-[0.98] transition-all duration-200 touch-friendly"
+        className="flex-1 bg-[#e1ff00] text-[#2d2b2b] rounded-xl py-3 sm:py-4 px-4 hover:bg-[#d4f200] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px]"
         data-name="Confirm button"
       >
-        <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-lg text-center">
-          <p className="block leading-[1.5]">{confirmLabel}</p>
+        <div className="typography-body text-center">
+          <p className="block">{confirmLabel}</p>
         </div>
       </button>
     </div>
@@ -93,7 +93,7 @@ function ActionButtons({ onCancel, onConfirm, cancelLabel, confirmLabel }: Actio
 
 /**
  * Адаптивное модальное окно для выбора языка приложения
- * Полностью адаптивное с поддержкой всех устройств и touch-friendly элементами
+ * Полностью адаптивное с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
 export function LanguageModal() {
   const { language, setLanguage, isLanguageModalOpen, closeLanguageModal } = useLanguage();
@@ -145,11 +145,11 @@ export function LanguageModal() {
           >
             {/* Заголовок */}
             <div className="flex flex-col gap-2 mb-6 sm:mb-8" data-name="Modal header">
-              <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-responsive-3xl text-[#e1ff00] text-center">
-                <h2 className="block leading-[0.8]">{t('change_language_title')}</h2>
+              <div className="typography-h2 text-[#e1ff00] text-center">
+                <h2 className="block">{t('change_language_title')}</h2>
               </div>
-              <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-responsive-base text-[#cfcfcf] text-center">
-                <p className="block leading-[1.5]">{t('change_language_description')}</p>
+              <div className="typography-body text-[#cfcfcf] text-center">
+                <p className="block">{t('change_language_description')}</p>
               </div>
             </div>
 

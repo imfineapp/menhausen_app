@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import svgPaths from "../imports/svg-tf9lg82y07";
 // import WarningIcon from "../imports/Frame-6-24";
 import warningIconPaths from "../imports/svg-iawz1hhk6y";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
 
 /**
  * Компонент страницы удаления аккаунта
@@ -76,15 +76,15 @@ function DeleteButton({ onDelete, isLoading }: { onDelete: () => void; isLoading
     <button
       onClick={onDelete}
       disabled={isLoading}
-      className={`bg-[#e1ff00] h-[46px] relative rounded-xl shrink-0 w-full touch-friendly hover:bg-[#d1ef00] ${
+      className={`bg-[#e1ff00] h-[46px] relative rounded-xl shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[#d1ef00] ${
         isLoading ? 'opacity-70 cursor-not-allowed' : ''
       }`}
       data-name="Delete Button"
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
+          <div className="typography-button text-[#2d2b2b] text-center">
+            <p className="block">
               {isLoading ? 'Deleting...' : 'Delete'}
             </p>
           </div>
@@ -103,8 +103,8 @@ function ButtonBlock({ onDelete, isLoading }: { onDelete: () => void; isLoading:
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-1/2 -translate-x-1/2 p-0 bottom-4 sm:bottom-6 md:bottom-8 w-[351px]"
       data-name="button block"
     >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#e1ff00] text-[14px] text-center w-full">
-        <p className="block leading-none">
+      <div className="typography-caption text-[#e1ff00] text-center w-full">
+        <p className="block">
           By clicking the button I understand that all data about me will be deleted without the possibility of return
         </p>
       </div>
@@ -119,7 +119,7 @@ function ButtonBlock({ onDelete, isLoading }: { onDelete: () => void; isLoading:
 function WarningIconComponent() {
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 top-[280px] w-20 h-20 flex items-center justify-center"
+      className="absolute left-1/2 -translate-x-1/2 top-[370px] w-20 h-20 flex items-center justify-center"
       data-name="warning_icon"
     >
       <div className="w-16 h-16">
@@ -162,14 +162,14 @@ function WarningIconComponent() {
 function MainContent() {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[380px] w-[351px]"
+      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[470px] w-[351px]"
       data-name="main_content"
     >
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[36px] w-full">
-        <p className="block leading-[0.8]">Danger zone</p>
+      <div className="typography-h1 text-[#e1ff00] w-full">
+        <h1 className="block">Danger zone</h1>
       </div>
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">
           In this section you can delete all information about yourself and your account from the application
         </p>
       </div>
@@ -177,103 +177,12 @@ function MainContent() {
   );
 }
 
-/**
- * SVG иконка для стрелки назад
- */
-function SymbolBig() {
-  return (
-    <div className="relative size-full" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
 
-/**
- * Логотип Menhausen
- */
-function Menhausen() {
-  return (
-    <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
-        <g id="Menhausen">
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_2" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_3" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_4" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p2d60800} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Мини-логотип с иконкой
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[153px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка "Назад" с touch-friendly размером
- */
-function BackButton({ onBack }: { onBack: () => void }) {
-  return (
-    <button
-      onClick={onBack}
-      className="absolute left-[21px] size-12 top-[53px] touch-friendly hover:opacity-80"
-      data-name="Back Button"
-      aria-label="Go back to profile"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onBack={onBack} />
-    </div>
-  );
-}
 
 /**
  * Основной компонент экрана удаления аккаунта
  */
-export function DeleteAccountScreen({ onBack, onDeleteAccount }: DeleteAccountScreenProps) {
+export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: DeleteAccountScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   /**
@@ -320,10 +229,13 @@ export function DeleteAccountScreen({ onBack, onDeleteAccount }: DeleteAccountSc
   return (
     <div className="bg-[#111111] relative size-full" data-name="Delete Account Screen">
       <Light />
+      
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       <ButtonBlock onDelete={handleDelete} isLoading={isLoading} />
       <WarningIconComponent />
       <MainContent />
-      <HeaderBlock onBack={onBack} />
     </div>
   );
 }

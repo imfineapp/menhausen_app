@@ -1,5 +1,8 @@
 // Импортируем SVG пути для второго экрана
 import svgPaths from "../imports/svg-vn1j3wuqix";
+import { BottomFixedButton } from './BottomFixedButton';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -48,20 +51,16 @@ function Light() {
 }
 
 /**
- * Кнопка завершения онбординга согласно Bottom Fixed CTA Button стандарту
- * 350px ширина, 46px высота, 23px отступ слева, абсолютное позиционирование
+ * Кнопка "Get Started" согласно Bottom Fixed CTA Button стандарту
+ * Теперь использует стандартный компонент BottomFixedButton
  */
-function Button({ onClick }: { onClick: () => void }) {
+function GetStartedButton({ onClick }: { onClick: () => void }) {
+  const { content } = useContent();
+  
   return (
-    <button
-      onClick={onClick}
-      className="absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-[23px] px-[126px] py-[15px] rounded-xl top-[758px] w-[350px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200 touch-friendly"
-      data-name="Bottom Fixed CTA Button"
-    >
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] font-bold leading-[0] not-italic relative shrink-0 text-[#2d2b2b] text-[15px] text-center text-nowrap tracking-[-0.43px]">
-        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">Get Started</p>
-      </div>
-    </button>
+    <BottomFixedButton onClick={onClick} dataName="Next button" ariaLabel="Get Started">
+      {content.ui.onboarding.screen02.buttonText}
+    </BottomFixedButton>
   );
 }
 
@@ -103,18 +102,20 @@ function LockIcon() {
  * Описывает анонимность приложения
  */
 function NoLoginTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
       data-name="Text block"
     >
       {/* Заголовок преимущества */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] w-full">
-        <p className="block leading-[0.8]">No sign-up, no traces</p>
+      <div className="typography-h2 text-[#e1ff00] w-full">
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[0]}</h2>
       </div>
       {/* Описание преимущества */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[20px] w-full">
-        <p className="block leading-none">Works directly in Telegram. No accounts, no email required</p>
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen02.descriptions[0]}</p>
       </div>
     </div>
   );
@@ -176,18 +177,20 @@ function ShieldIcon() {
  * Описывает защиту данных пользователя
  */
 function EncryptionTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Описание шифрования (располагается ниже заголовка) */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">AES-256, Web3 technology. Your data is protected at banking-grade level</p>
-      </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Data encryption</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[1]}</h2>
+      </div>
+      {/* Описание шифрования */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen02.descriptions[1]}</p>
       </div>
     </div>
   );
@@ -204,7 +207,9 @@ function EncryptionContainer() {
       data-name="Container"
     >
       <ShieldIcon />
-      <EncryptionTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <EncryptionTextBlock />
+      </div>
     </div>
   );
 }
@@ -247,18 +252,20 @@ function MobileIcon() {
  * Описывает доступность приложения
  */
 function AlwaysWithYouTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Описание доступности */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-[29px] not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">In your pocket, in Telegram. Help available 24/7, when you need it</p>
-      </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Always with you</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[2]}</h2>
+      </div>
+      {/* Описание доступности */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">{content.ui.onboarding.screen02.descriptions[2]}</p>
       </div>
     </div>
   );
@@ -275,7 +282,9 @@ function AlwaysWithYouContainer() {
       data-name="Container"
     >
       <MobileIcon />
-      <AlwaysWithYouTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <AlwaysWithYouTextBlock />
+      </div>
     </div>
   );
 }
@@ -366,20 +375,22 @@ function ScienceIcon() {
  * Самый подробный блок с описанием методологии
  */
 function ScienceTextBlock() {
+  const { content } = useContent();
+  
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-left"
-      data-name="Container"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-end justify-start ml-0 mt-0 p-0 relative text-left w-[248px]"
+      data-name="Text block"
     >
-      {/* Подробное описание методов */}
-      <div className="[grid-area:1_/_1] font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] ml-px mt-12 not-italic relative text-[#ffffff] text-[20px] w-[247px]">
-        <p className="block leading-none">
-          CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man.
-        </p>
-      </div>
       {/* Заголовок преимущества */}
-      <div className="[grid-area:1_/_1] font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal ml-0 mt-0 relative text-[#e1ff00] text-[24px] w-[248px]">
-        <p className="block leading-[0.8]">Based on science-backed methods</p>
+      <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
+        <h2 className="block">{content.ui.onboarding.screen02.benefits[3]}</h2>
+      </div>
+      {/* Подробное описание методов */}
+      <div className="typography-body text-[#ffffff] w-full">
+        <p className="block">
+          {content.ui.onboarding.screen02.descriptions[3]}
+        </p>
       </div>
     </div>
   );
@@ -396,7 +407,9 @@ function ScienceContainer() {
       data-name="Container"
     >
       <ScienceIcon />
-      <ScienceTextBlock />
+      <div className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0">
+        <ScienceTextBlock />
+      </div>
     </div>
   );
 }
@@ -408,7 +421,7 @@ function ScienceContainer() {
 function ContentBlock({ onComplete: _onComplete }: { onComplete: () => void }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-[42px] p-0 top-36 w-[310px]"
+      className="flex flex-col gap-10 items-start justify-start w-full max-w-[310px]"
       data-name="Content block"
     >
       {/* Первое преимущество: No Sign-Up */}
@@ -427,83 +440,30 @@ function ContentBlock({ onComplete: _onComplete }: { onComplete: () => void }) {
 }
 
 /**
- * Компонент символа логотипа (аналогичен первому экрану)
- * Повторно используемый SVG символ
- */
-function SymbolBig() {
-  return (
-    <div className="relative size-full" data-name="Symbol_big">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
-        <g id="Symbol_big">
-          <path d={svgPaths.p377b7c00} fill="var(--fill-0, #E1FF00)" id="Union" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Компонент названия приложения (аналогичен первому экрану)
- * Повторно используемый текст логотипа
- */
-function Menhausen() {
-  return (
-    <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
-        <g id="Menhausen">
-          {/* Те же SVG пути для букв логотипа */}
-          <path d={svgPaths.p32d14cf0} fill="var(--fill-0, #CFCFCF)" id="Vector" />
-          <path d={svgPaths.p1786c280} fill="var(--fill-0, #CFCFCF)" id="Vector_2" />
-          <path d={svgPaths.p23ce7e00} fill="var(--fill-0, #CFCFCF)" id="Vector_3" />
-          <path d={svgPaths.p35fc2600} fill="var(--fill-0, #CFCFCF)" id="Vector_4" />
-          <path d={svgPaths.p30139900} fill="var(--fill-0, #CFCFCF)" id="Vector_5" />
-          <path d={svgPaths.p33206e80} fill="var(--fill-0, #CFCFCF)" id="Vector_6" />
-          <path d={svgPaths.p2cb2bd40} fill="var(--fill-0, #CFCFCF)" id="Vector_7" />
-          <path d={svgPaths.p3436ffe0} fill="var(--fill-0, #CFCFCF)" id="Vector_8" />
-          <path d={svgPaths.p2d60800} fill="var(--fill-0, #CFCFCF)" id="Vector_9" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Компонент мини-логотипа (аналогичен первому экрану)
- * Логотип в верхней части экрана
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[152px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      {/* Символ логотипа */}
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      {/* Название приложения */}
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
  * Главный компонент второго экрана онбординга
  * Показывает преимущества приложения и завершает онбординг
  */
 export function OnboardingScreen02({ onComplete }: OnboardingScreen02Props) {
   return (
-    <div className="bg-[#111111] relative size-full" data-name="002_onboarding page_02">
-      {/* Световые эффекты фона */}
+    <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
+      {/* Световые эффекты */}
       <Light />
       
-      {/* Логотип приложения */}
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Блок с преимуществами приложения */}
-      <ContentBlock onComplete={onComplete} />
-      
-      {/* Bottom Fixed CTA Button */}
-      <Button onClick={onComplete} />
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto flex items-center justify-center">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] w-full">
+          <div className="max-w-[351px] mx-auto flex flex-col items-center">
+            {/* Блок с контентом всех преимуществ */}
+            <ContentBlock onComplete={onComplete} />
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Fixed Button */}
+      <GetStartedButton onClick={onComplete} />
     </div>
   );
 }

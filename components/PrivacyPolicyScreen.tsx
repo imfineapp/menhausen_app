@@ -1,5 +1,7 @@
 // Импортируем SVG пути для страницы Privacy Policy
 import svgPaths from "../imports/svg-e41m9aecp1";
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { useLanguage } from './LanguageContext';
 
 // Типы для пропсов компонента
 interface PrivacyPolicyScreenProps {
@@ -66,158 +68,103 @@ function Light() {
  * Содержит заголовок и весь текст политики на английском языке
  */
 function MainContent() {
+  const { language } = useLanguage();
+  
+  const getText = (ruText: string, enText: string) => {
+    return language === 'ru' ? ruText : enText;
+  };
+  
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-[21px] p-0 top-[122px] w-[351px]"
+      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[100px] w-full max-w-[351px] mx-auto"
       data-name="main_content"
     >
       {/* Заголовок страницы */}
-      <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] font-normal relative shrink-0 text-[#e1ff00] text-[24px] text-center w-full">
-        <p className="block leading-[0.8]">Privacy policy</p>
+      <div className="typography-h2 text-[#e1ff00] text-center w-full">
+        <h2 className="block">{getText('Политика конфиденциальности', 'Privacy policy')}</h2>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] not-italic relative shrink-0 text-[#ffffff] text-[14px] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="typography-caption text-[#ffffff] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
           <div className="space-y-1">
-            <p className="block leading-none mb-0">Effective Date: August 2, 2025</p>
-            <p className="block leading-none mb-0">Last Updated: August 2, 2025</p>
+            <p className="block leading-none mb-0">{getText('Дата вступления в силу: 2 августа 2025', 'Effective Date: August 2, 2025')}</p>
+            <p className="block leading-none mb-0">{getText('Последнее обновление: 2 августа 2025', 'Last Updated: August 2, 2025')}</p>
           </div>
           
           <p className="block leading-none mb-0">
-            Menhausen ("we," "us," or "our") respects your privacy and is committed to protecting the anonymity of users
-            ("you") who access our mental well-being mini-application via Telegram (the "Service").
+            {getText('Menhausen ("мы", "нас" или "наш") уважает вашу конфиденциальность и стремится защищать анонимность пользователей ("вы"), которые получают доступ к нашему мини-приложению для психического благополучия через Telegram (далее "Сервис").', 'Menhausen ("we," "us," or "our") respects your privacy and is committed to protecting the anonymity of users ("you") who access our mental well-being mini-application via Telegram (the "Service").')}
           </p>
           
           <p className="block leading-none mb-0">
-            This Privacy Policy outlines what data we collect (if any), how we use it, and your rights regarding that
-            data.
+            {getText('Эта Политика конфиденциальности описывает, какие данные мы собираем (если таковые имеются), как мы их используем, и ваши права в отношении этих данных.', 'This Privacy Policy outlines what data we collect (if any), how we use it, and your rights regarding that data.')}
           </p>
 
           {/* Секция 1 - No PII */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">1. No Personally Identifiable Information (PII)</p>
+            <p className="block leading-none mb-0 font-medium">{getText('1. Отсутствие личной информации', '1. No Personally Identifiable Information (PII)')}</p>
             <p className="block leading-none mb-0">
-              We designed Menhausen with anonymity as a core value. By default, we do not collect or store any personally 
-              identifiable information (PII) such as your name, email address, phone number, or IP address.
+              {getText('Мы разработали Menhausen с анонимностью как основной ценностью. По умолчанию мы не собираем и не храним никакой личной информации, такой как ваше имя, адрес электронной почты, номер телефона или IP-адрес.', 'We designed Menhausen with anonymity as a core value. By default, we do not collect or store any personally identifiable information (PII) such as your name, email address, phone number, or IP address.')}
             </p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">No sign-up is required to use the Service.</li>
+              <li className="leading-none">{getText('Для использования Сервиса регистрация не требуется.', 'No sign-up is required to use the Service.')}</li>
               <li className="leading-none">
-                You are identified only by a random session token (non-persistent) within the Telegram environment.
+                {getText('Вы идентифицируетесь только случайным токеном сессии (непостоянным) в среде Telegram.', 'You are identified only by a random session token (non-persistent) within the Telegram environment.')}
               </li>
               <li className="leading-none">
-                You may optionally choose to connect a TON wallet or donate using crypto or fiat. This is strictly
-                optional and anonymized to the extent possible.
+                {getText('Вы можете по желанию подключить TON кошелек или делать пожертвования с помощью криптовалюты или фиата. Это строго добровольно и максимально анонимизировано.', 'You may optionally choose to connect a TON wallet or donate using crypto or fiat. This is strictly optional and anonymized to the extent possible.')}
               </li>
             </ul>
           </div>
 
           {/* Секция 2 - Data Collection */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">2. Data We May Collect (Anonymous Only)</p>
+            <p className="block leading-none mb-0 font-medium">{getText('2. Данные, которые мы можем собирать (только анонимные)', '2. Data We May Collect (Anonymous Only)')}</p>
             <p className="block leading-none mb-0">
-              To improve your experience and app functionality, we may collect and process the following non-personal and
-              aggregated information:
+              {getText('Для улучшения вашего опыта и функциональности приложения мы можем собирать и обрабатывать следующую неличную и агрегированную информацию:', 'To improve your experience and app functionality, we may collect and process the following non-personal and aggregated information:')}
             </p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">Anonymous interaction history (e.g., which cards you've opened)</li>
-              <li className="leading-none">Mood check-in data (non-identifying)</li>
-              <li className="leading-none">Session events (e.g., clicks, duration)</li>
-              <li className="leading-none">Device/browser type</li>
-              <li className="leading-none">Encrypted TON wallet address (if connected)</li>
+              <li className="leading-none">{getText('Анонимная история взаимодействий (например, какие карточки вы открыли)', 'Anonymous interaction history (e.g., which cards you\'ve opened)')}</li>
+              <li className="leading-none">{getText('Данные проверки настроения (неидентифицирующие)', 'Mood check-in data (non-identifying)')}</li>
+              <li className="leading-none">{getText('События сессии (например, клики, продолжительность)', 'Session events (e.g., clicks, duration)')}</li>
+              <li className="leading-none">{getText('Тип устройства/браузера', 'Device/browser type')}</li>
+              <li className="leading-none">{getText('Зашифрованный адрес TON кошелька (если подключен)', 'Encrypted TON wallet address (if connected)')}</li>
             </ul>
             <p className="block leading-none mb-0">
-              All such data is collected without linkage to any identity and is stored securely using industry standards.
+              {getText('Все такие данные собираются без привязки к какой-либо личности и хранятся безопасно с использованием отраслевых стандартов.', 'All such data is collected without linkage to any identity and is stored securely using industry standards.')}
             </p>
           </div>
 
           {/* Секция 3 - Telegram Integration */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">3. Telegram Integration</p>
+            <p className="block leading-none mb-0 font-medium">{getText('3. Интеграция с Telegram', '3. Telegram Integration')}</p>
             <p className="block leading-none mb-0">
-              As a Telegram Mini App, Menhausen operates within the Telegram ecosystem.
+              {getText('Как Telegram Mini App, Menhausen работает в экосистеме Telegram.', 'As a Telegram Mini App, Menhausen operates within the Telegram ecosystem.')}
             </p>
             <ul className="list-disc ml-5 space-y-1">
               <li className="leading-none">
-                Telegram may process basic metadata (user ID, app usage time), subject to their Privacy Policy.
+                {getText('Telegram может обрабатывать базовые метаданные (ID пользователя, время использования приложения) в соответствии с их Политикой конфиденциальности.', 'Telegram may process basic metadata (user ID, app usage time), subject to their Privacy Policy.')}
               </li>
               <li className="leading-none">
-                We do not share any collected user data with Telegram or third parties unless required by law.
+                {getText('Мы не передаем собранные пользовательские данные в Telegram или третьим лицам, если это не требуется по закону.', 'We do not share any collected user data with Telegram or third parties unless required by law.')}
               </li>
               <li className="leading-none">
-                We do not access your Telegram messages, contacts, or phone number.
+                {getText('Мы не получаем доступ к вашим сообщениям Telegram, контактам или номеру телефона.', 'We do not access your Telegram messages, contacts, or phone number.')}
               </li>
             </ul>
           </div>
 
-          {/* Секция 4 - Crypto Payments */}
+          {/* Секция 4 - Contact */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">4. Crypto Payments and Web3</p>
-            <p className="block leading-none mb-0">
-              If you choose to make a donation or use Web3 features (e.g., connect a wallet):
+            <p className="block leading-none mb-0 font-medium">{getText('4. Контактная информация', '4. Contact Information')}</p>
+            <p className="leading-none mb-0">
+              <span>{getText('По вопросам или проблемам, связанным с этой Политикой конфиденциальности, обращайтесь: ', 'For questions or concerns about this Privacy Policy, please contact: ')}</span>
+              <span className="text-[#e1ff00]">support@menhausen.com</span>
             </p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">
-                Transactions are handled via decentralized protocols or external providers (e.g., TON, P2P exchanges).
-              </li>
-              <li className="leading-none">
-                We do not store private keys, wallet balances, or transaction logs.
-              </li>
-              <li className="leading-none">
-                Wallet addresses, if connected, are stored in hashed or encrypted form only for technical purposes.
-              </li>
-            </ul>
-            <p className="block leading-none mb-0">
-              Note: Blockchain activity is public by nature, and you are responsible for your own wallet privacy.
-            </p>
-          </div>
-
-          {/* Секция 5 - Cookies & Analytics */}
-          <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">5. Cookies & Analytics</p>
-            <p className="block leading-none mb-0">
-              Menhausen does not use cookies or web tracking pixels in the Telegram Mini App environment.
-              We may use local device storage to maintain user session state, but this is ephemeral and fully anonymous.
-            </p>
-          </div>
-
-          {/* Секция 6 - Data Security */}
-          <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">6. Data Security</p>
-            <p className="block leading-none mb-0">
-              We apply AES-256 encryption for data in transit and at rest (if stored).
-              All data is hosted on GDPR-compliant and/or ISO-certified infrastructure.
-              Data is not stored outside the country or region unless anonymized and aggregated.
-            </p>
-          </div>
-
-          {/* Секция 7 - Your Rights */}
-          <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">7. Your Rights</p>
-            <p className="block leading-none mb-0">You may request to:</p>
-            <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">Access the anonymous data associated with your session token;</li>
-              <li className="leading-none">Delete all local usage data (via app settings or upon request);</li>
-              <li className="leading-none">Opt out of future tracking or analytics.</li>
-            </ul>
-            <p className="block leading-none mb-0">
-              Since we do not collect PII, these actions are limited to data that can be technically associated with your
-              session.
-            </p>
-          </div>
-
-          {/* Секция 8 - Contact */}
-          <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">8. Contact Us</p>
-            <p className="block leading-none mb-0">
-              If you have any questions about this policy or how your data is handled, please contact:
-            </p>
-            <p className="block leading-none mb-0 text-[#e1ff00]">privacy@menhausen.app</p>
           </div>
           
           <p className="block leading-none">
-            By using Menhausen, you agree to this Privacy Policy and the anonymous, self-help nature of the Service.
+            {getText('Используя Menhausen, вы подтверждаете, что прочитали, поняли и согласились с этой Политикой конфиденциальности.', 'By using Menhausen, you acknowledge that you have read, understood, and agreed to this Privacy Policy.')}
           </p>
         </div>
       </div>
@@ -228,7 +175,7 @@ function MainContent() {
 /**
  * Компонент символа логотипа (повторно используемый)
  */
-function SymbolBig() {
+function _SymbolBig() {
   return (
     <div className="relative size-full" data-name="Symbol_big">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 8 13">
@@ -243,7 +190,7 @@ function SymbolBig() {
 /**
  * Компонент названия приложения (повторно используемый)
  */
-function Menhausen() {
+function _Menhausen() {
   return (
     <div className="absolute inset-[2.21%_1.17%_7.2%_15.49%]" data-name="Menhausen">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 75 12">
@@ -263,76 +210,22 @@ function Menhausen() {
   );
 }
 
-/**
- * Компонент мини-логотипа (повторно используемый)
- */
-function MiniStripeLogo() {
-  return (
-    <div className="absolute h-[13px] left-[153px] top-[69px] w-[89px]" data-name="Mini_stripe_logo">
-      <div className="absolute bottom-0 flex items-center justify-center left-0 right-[91.01%] top-0">
-        <div className="flex-none h-[13px] rotate-[180deg] w-2">
-          <SymbolBig />
-        </div>
-      </div>
-      <Menhausen />
-    </div>
-  );
-}
-
-/**
- * Кнопка возврата к предыдущему экрану
- * Интерактивная стрелка "назад"
- */
-function BackButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className="absolute left-[21px] size-12 top-[53px] cursor-pointer hover:opacity-80" 
-      data-name="Back Button"
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Back Button">
-          <path
-            d="M17 36L5 24L17 12"
-            id="Vector"
-            stroke="var(--stroke-0, #E1FF00)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-
-/**
- * Заголовочный блок с логотипом и кнопкой назад
- */
-function HeaderBlock({ onBack }: { onBack: () => void }) {
-  return (
-    <div className="absolute contents left-[21px] top-[53px]" data-name="Header block">
-      <MiniStripeLogo />
-      <BackButton onClick={onBack} />
-    </div>
-  );
-}
 
 /**
  * Главный компонент страницы Privacy Policy
  * Отображает полную политику конфиденциальности с навигацией
  */
-export function PrivacyPolicyScreen({ onBack }: PrivacyPolicyScreenProps) {
+export function PrivacyPolicyScreen({ onBack: _onBack }: PrivacyPolicyScreenProps) {
   return (
     <div className="bg-[#111111] relative size-full overflow-hidden" data-name="002_privacy policy">
       {/* Световые эффекты фона */}
       <Light />
       
+      {/* Логотип */}
+      <MiniStripeLogo />
+      
       {/* Основной контент документа */}
       <MainContent />
-      
-      {/* Заголовочный блок с навигацией */}
-      <HeaderBlock onBack={onBack} />
     </div>
   );
 }

@@ -14,6 +14,9 @@
   <meta name="theme-color" content="#111111" />
   <meta name="msapplication-TileColor" content="#111111" />
   
+  <!-- Content Security Policy for development -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org; connect-src 'self' https://telegram.org https://*.telegram.org; object-src 'none';" />
+  
   <!-- iOS Safari specific -->
   <meta name="apple-touch-fullscreen" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Menhausen" />
@@ -23,11 +26,26 @@
   
   <title>Menhausen - Mental Health Support</title>
   
-    <!-- Google Fonts - Optimized Loading -->
+    <!-- Google Fonts - iOS Safari Optimized Loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- iOS Safari fallback fonts -->
+  <style>
+    /* iOS system fonts fallback */
+    @font-face {
+      font-family: 'SF Pro Display';
+      src: local('SF Pro Display'), local('-apple-system');
+      font-display: swap;
+    }
+    
+    @font-face {
+      font-family: 'SF Pro Text';
+      src: local('SF Pro Text'), local('-apple-system');
+      font-display: swap;
+    }
+  </style>
 
   <!-- Critical resources are bundled by Vite -->
 
@@ -35,18 +53,32 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
-    /* Prevent FOUC (Flash of Unstyled Content) */
+    /* Prevent FOUC (Flash of Unstyled Content) - iOS Optimized */
     html, body {
       margin: 0;
       padding: 0;
       background-color: #111111;
       color: #ffffff;
-      font-family: 'PT Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
       overflow-x: hidden;
       height: 100vh;
       max-height: 100vh;
+    }
+    
+    /* iOS Safari specific font rendering */
+    @supports (-webkit-touch-callout: none) {
+      * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif;
+      }
     }
     
     /* iOS Safari specific fixes */
@@ -105,23 +137,7 @@
   <script type="module" src="/main.tsx"></script>
   
   <script>
-    // Initialize Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-      const webApp = window.Telegram.WebApp;
-      webApp.ready();
-      webApp.expand();
-      
-      // Check version and set colors only if supported (version 6.1+)
-      if (webApp.version >= '6.1') {
-        webApp.setHeaderColor('#111111');
-        webApp.setBackgroundColor('#111111');
-      }
-      
-      // Disable vertical swipes only if supported (version 6.1+)
-      if (webApp.version >= '6.1' && webApp.disableVerticalSwipes) {
-        webApp.disableVerticalSwipes();
-      }
-    }
+    // Telegram WebApp initialization is now handled by TelegramWebAppProvider component
     
     // Prevent zoom on double tap (iOS Safari)
     let lastTouchEnd = 0;

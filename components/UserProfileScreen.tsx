@@ -1,14 +1,12 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
 import { useState } from 'react';
 import { useLanguage, useTranslation } from './LanguageContext';
+import { useContent } from './ContentContext';
 import { LanguageModal } from './LanguageModal';
 import { Switch } from './ui/switch';
 
 // Импортируем выделенные компоненты
 import { 
-  BadgeIcon, 
-  LevelIcon, 
-  MentalStatusIcon, 
   UnlockIcon, 
   DonationIcon, 
   ActivityIcon, 
@@ -21,10 +19,12 @@ import {
   TermsIcon, 
   DeleteIcon
 } from './UserProfileIcons';
-import { UserInfoSection, SeparationLine, SettingsItem } from './UserProfileComponents';
+import { UserInfoSection, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
-import { Light, BackButton, MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
+import { StatusBlocksRow } from './StatusBlocksRow';
+import { ProgressBlock } from './ProgressBlock';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -36,15 +36,17 @@ interface UserProfileScreenProps {
   onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
   onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
+  onGoToBadges: () => void; // Функция для перехода к странице достижений
+  onGoToLevels: () => void; // Функция для перехода к странице уровней
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
 /**
  * Главный компонент страницы профиля пользователя
- * Полностью адаптивный с поддержкой всех устройств и touch-friendly элементами
+ * Полностью адаптивный с поддержкой всех устройств и min-h-[44px] min-w-[44px] элементами
  */
 export function UserProfileScreen({ 
-  onBack, 
+  onBack: _onBack, 
   onShowAboutApp, 
   onShowPinSettings, 
   onShowPrivacy, 
@@ -52,6 +54,8 @@ export function UserProfileScreen({
   onShowDeleteAccount, 
   onShowPayments, 
   onShowUnderConstruction, 
+  onGoToBadges,
+  onGoToLevels,
   userHasPremium 
 }: UserProfileScreenProps) {
   // Состояние для настроек
@@ -59,26 +63,16 @@ export function UserProfileScreen({
   
   // Хуки для управления языком и шарингом
   const { language, openLanguageModal } = useLanguage();
-  const { t: _t } = useTranslation();
+  const { t } = useTranslation();
+  const { getUI } = useContent();
   const { handleShare } = useAppShare();
+  
+  // Получаем переводы UI
+  const _ui = getUI();
 
   /**
    * Обработчики для различных действий профиля
    */
-  const handleBadges = () => {
-    console.log('Opening badges - redirecting to Under Construction');
-    onShowUnderConstruction('Badges');
-  };
-
-  const handleYourLevel = () => {
-    console.log('Opening level details - redirecting to Under Construction');  
-    onShowUnderConstruction('Your level');
-  };
-
-  const handleMentalStatus = () => {
-    console.log('Opening mental status - redirecting to Under Construction');
-    onShowUnderConstruction('How are you status');
-  };
 
   const handleUnlockThemes = () => {
     console.log('Opening unlock themes - redirecting to Premium purchase');
@@ -130,9 +124,24 @@ export function UserProfileScreen({
     console.log('Notifications', enabled ? 'enabled' : 'disabled');
   };
 
+  const handleStatusBlockBadges = () => {
+    console.log('Status block badges clicked - navigating to badges');
+    onGoToBadges();
+  };
+
+  const handleStatusBlockLevel = () => {
+    console.log('Status block level clicked - navigating to levels');
+    onGoToLevels();
+  };
+
+  const handleStatusBlockStatus = () => {
+    console.log('Status block status clicked - redirecting to Under Construction');
+    onShowUnderConstruction('How are you status');
+  };
+
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom" 
+      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="User Profile Page"
       style={{
         msOverflowStyle: 'none',
@@ -142,131 +151,122 @@ export function UserProfileScreen({
       {/* Световые эффекты фона */}
       <Light />
       
-      {/* Заголовочный блок с логотипом и кнопкой назад */}
-      <div className="absolute left-4 sm:left-6 md:left-[21px] top-[53px] z-10">
-        <BackButton onClick={onBack} />
-      </div>
+      {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Основной контент */}
-      <div className="absolute flex flex-col gap-8 sm:gap-10 left-4 sm:left-6 md:left-[21px] top-[120px] sm:top-[130px] md:top-[142px] w-[calc(100%-2rem)] sm:w-[calc(100%-3rem)] md:w-[351px] max-w-[351px] pb-6 sm:pb-8">
-        
-        {/* Информация о пользователе */}
-        <UserInfoSection userHasPremium={userHasPremium} />
-        
-        {/* Разделительная линия */}
-        <div className="w-full mt-8 sm:mt-10">
-          <SeparationLine />
-        </div>
-        
-        {/* Секция "Your status" */}
-        <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Your status</p>
-          </div>
-          <div className="flex flex-col w-full">
-            <SettingsItem
-              icon={<BadgeIcon />}
-              title="Badges"
-              onClick={handleBadges}
-            />
-            <SettingsItem
-              icon={<LevelIcon />}
-              title="Your level"
-              onClick={handleYourLevel}
-            />
-            <SettingsItem
-              icon={<MentalStatusIcon />}
-              title="How are you status"
-              onClick={handleMentalStatus}
-            />
-            <SettingsItem
-              icon={<UnlockIcon />}
-              title="Unlock all themes & cards"
-              onClick={handleUnlockThemes}
-            />
-            <SettingsItem
-              icon={<DonationIcon />}
-              title="Make donation"
-              onClick={handleDonation}
-            />
-            <SettingsItem
-              icon={<ActivityIcon />}
-              title="Your activity"
-              onClick={handleActivity}
-            />
-            <SettingsItem
-              icon={<ShareIcon />}
-              title="Share app to friend"
-              onClick={handleShare}
-              isHighlighted={true}
-            />
-          </div>
-        </div>
-        
-        {/* Секция обратной связи */}
-        <FeedbackSection />
-        
-        {/* Секция "Settings" */}
-        <div className="flex flex-col gap-4 sm:gap-5 w-full">
-          <div className="font-['Roboto Slab',_'Georgia',_'Times_New_Roman',_serif] text-[22px] sm:text-[24px] text-[#e1ff00] text-left">
-            <p className="block leading-[0.8]">Settings</p>
-          </div>
-          <div className="flex flex-col w-full">
-            <SettingsItem
-              icon={<LanguageIcon />}
-              title="Language"
-              rightElement={
-                <div className="font-['PT Sans',_'Helvetica_Neue',_'Arial',_sans-serif] text-[18px] sm:text-[20px] text-[#ffffff] text-right">
-                  <p className="block leading-none">{language === 'en' ? 'English' : 'Русский'}</p>
-                </div>
-              }
-              onClick={handleLanguage}
-            />
-            <SettingsItem
-              icon={<ReminderIcon />}
-              title="Daily reminder"
-              rightElement={
-                <Switch 
-                  checked={notificationsEnabled} 
-                  onCheckedChange={handleNotificationToggle}
-                  className="data-[state=checked]:bg-[#e1ff00] data-[state=unchecked]:bg-[#2d2b2b] h-5 w-9 touch-friendly"
-                  data-testid="notifications-switch"
+      {/* Контент с прокруткой */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
+          {/* Основной контент */}
+          <div className="flex flex-col gap-8 sm:gap-10 w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+            
+            {/* Информация о пользователе */}
+            <UserInfoSection userHasPremium={userHasPremium} />
+            
+            {/* Ряд статусных блоков */}
+            <div className="w-full mt-6 sm:mt-8">
+              <StatusBlocksRow 
+                onBadgesClick={handleStatusBlockBadges}
+                onLevelClick={handleStatusBlockLevel}
+                onStatusClick={handleStatusBlockStatus}
+              />
+            </div>
+            
+            {/* Блок прогресса */}
+            <div className="w-full mt-3 sm:mt-4">
+              <ProgressBlock onBadgesClick={handleStatusBlockBadges} />
+            </div>
+            
+            {/* Меню без заголовка с отступом 40px */}
+            <div className="flex flex-col gap-4 sm:gap-5 w-full mt-10">
+              <div className="flex flex-col w-full">
+                <SettingsItem
+                  icon={<UnlockIcon />}
+                  title={t('unlock_all_themes')}
+                  onClick={handleUnlockThemes}
+                  isHighlighted={true}
                 />
-              }
-            />
-            <SettingsItem
-              icon={<SecurityIcon />}
-              title="Security PIN"
-              onClick={handleSecurityPin}
-            />
-            <SettingsItem
-              icon={<InfoIcon />}
-              title="About app"
-              onClick={handleAboutApp}
-            />
-            <SettingsItem
-              icon={<PrivacyIcon />}
-              title="Privacy policy"
-              onClick={handlePrivacyPolicy}
-            />
-            <SettingsItem
-              icon={<TermsIcon />}
-              title="Terms of use"
-              onClick={handleTermsOfUse}
-            />
-            <SettingsItem
-              icon={<DeleteIcon />}
-              title="Delete account"
-              onClick={handleDeleteAccount}
-              isHighlighted={true}
-            />
+                <SettingsItem
+                  icon={<DonationIcon />}
+                  title={t('make_donation')}
+                  onClick={handleDonation}
+                />
+                <SettingsItem
+                  icon={<ActivityIcon />}
+                  title={t('your_activity')}
+                  onClick={handleActivity}
+                />
+                <SettingsItem
+                  icon={<ShareIcon />}
+                  title={t('share_app_to_friend')}
+                  onClick={handleShare}
+                  isHighlighted={true}
+                />
+              </div>
+            </div>
+            
+            {/* Секция обратной связи */}
+            <FeedbackSection />
+            
+            {/* Секция "Settings" */}
+            <div className="flex flex-col gap-4 sm:gap-5 w-full">
+              <h2 className="typography-h2 text-[#e1ff00] text-left">{t('settings')}</h2>
+              <div className="flex flex-col w-full">
+                <SettingsItem
+                  icon={<LanguageIcon />}
+                  title={t('language')}
+                  rightElement={
+                    <div className="typography-body text-[#ffffff] text-right">
+                      <p className="block">{language === 'en' ? t('english') : t('russian')}</p>
+                    </div>
+                  }
+                  onClick={handleLanguage}
+                />
+                <SettingsItem
+                  icon={<ReminderIcon />}
+                  title={t('daily_reminder')}
+                  rightElement={
+                    <Switch 
+                      checked={notificationsEnabled} 
+                      onCheckedChange={handleNotificationToggle}
+                      data-testid="notifications-switch"
+                    />
+                  }
+                />
+                <SettingsItem
+                  icon={<SecurityIcon />}
+                  title={t('security_pin')}
+                  onClick={handleSecurityPin}
+                />
+                <SettingsItem
+                  icon={<InfoIcon />}
+                  title={t('about_app')}
+                  onClick={handleAboutApp}
+                />
+                <SettingsItem
+                  icon={<PrivacyIcon />}
+                  title={t('privacy_policy')}
+                  onClick={handlePrivacyPolicy}
+                />
+                <SettingsItem
+                  icon={<TermsIcon />}
+                  title={t('terms_of_use')}
+                  onClick={handleTermsOfUse}
+                />
+                <SettingsItem
+                  icon={<DeleteIcon />}
+                  title={t('delete_account')}
+                  onClick={handleDeleteAccount}
+                  isHighlighted={true}
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
       
-      {/* Модальное окно выбора языка */}
-      <LanguageModal />
+        {/* Модальное окно выбора языка */}
+        <LanguageModal />
+      </div>
     </div>
   );
 }

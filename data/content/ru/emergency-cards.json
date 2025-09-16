@@ -1,0 +1,16 @@
+{
+  "emergency-grounding": {
+    "id": "emergency-grounding",
+    "title": "Техники заземления",
+    "description": "Быстрые техники, которые помогут вам почувствовать себя более присутствующим и сосредоточенным, когда вы перегружены.",
+    "isPremium": false,
+    "actionUrl": "/grounding-exercise"
+  },
+  "emergency-support": {
+    "id": "emergency-support",
+    "title": "Контакты экстренной поддержки",
+    "description": "Доступ к профессиональной поддержке, когда вам нужна немедленная помощь.",
+    "isPremium": false,
+    "actionUrl": "/crisis-support"
+  }
+}
