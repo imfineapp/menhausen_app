@@ -7,7 +7,7 @@ import svgPaths from "../imports/svg-x18dvlov3w";
 export function Light() {
   return (
     <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px]"
+      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] pointer-events-none"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >

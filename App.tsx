@@ -43,6 +43,9 @@ import { LanguageProvider } from './components/LanguageContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
+// Smart Navigation imports
+import { UserStateManager } from './utils/userStateManager';
+
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
 /**
@@ -62,8 +65,25 @@ function AppContent() {
     console.log('E2E test environment detected, starting with home screen');
   }
   
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>(isE2ETestEnvironment ? 'home' : 'onboarding1');
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([isE2ETestEnvironment ? 'home' : 'onboarding1']);
+  // Smart Navigation: Dynamic screen determination based on user state
+  const getInitialScreen = (): AppScreen => {
+    if (isE2ETestEnvironment) {
+      return 'home';
+    }
+    
+    try {
+      const userState = UserStateManager.analyzeUserState();
+      const initialScreen = UserStateManager.getInitialScreen(userState);
+      console.log('Smart Navigation: User state analyzed, initial screen:', initialScreen);
+      return initialScreen;
+    } catch (error) {
+      console.error('Smart Navigation: Failed to analyze user state, falling back to onboarding1:', error);
+      return 'onboarding1';
+    }
+  };
+
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([getInitialScreen()]);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
@@ -95,6 +115,16 @@ function AppContent() {
   // На первой странице онбординга кнопка Back должна закрывать приложение
   const isHomePage = currentScreen === 'home';
   
+  // Smart Navigation: Function to refresh user state when data changes
+  const refreshUserState = () => {
+    try {
+      UserStateManager.invalidateCache();
+      console.log('Smart Navigation: User state cache invalidated');
+    } catch (error) {
+      console.error('Smart Navigation: Failed to refresh user state:', error);
+    }
+  };
+
   // Функция для навигации с отслеживанием истории
   const navigateTo = (screen: AppScreen) => {
     setNavigationHistory(prev => [...prev, screen]);
@@ -314,6 +344,9 @@ function AppContent() {
     // В реальном приложении здесь будет логика проверки достижений на бэкэнде
     const earnedAchievements = ['first_checkin', 'week_streak', 'mood_tracker']; // Принудительно показываем несколько достижений
     
+    // Smart Navigation: Refresh user state after check-in completion
+    refreshUserState();
+    
     // Всегда показываем страницу награды
     setEarnedAchievementIds(earnedAchievements);
     navigateTo('reward');
@@ -361,6 +394,10 @@ function AppContent() {
     const saveSuccess = saveSurveyResults(finalResults);
     if (saveSuccess) {
       console.log('Survey completed successfully');
+      
+      // Smart Navigation: Refresh user state after survey completion
+      refreshUserState();
+      
       navigateTo('pin');
     } else {
       console.error('Failed to save survey, but continuing...');
@@ -792,6 +829,7 @@ function AppContent() {
             onGoToTheme={handleGoToTheme}
             onOpenMentalTechnique={handleOpenMentalTechnique}
             userHasPremium={userHasPremium}
+            onGoToSurvey={handleShowSurvey}
           />
         );
       case 'theme-welcome': {

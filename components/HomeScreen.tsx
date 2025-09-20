@@ -1,11 +1,18 @@
 // Импортируем необходимые хуки и SVG пути
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
+
+// Smart Navigation imports
+import { UserStateManager } from '../utils/userStateManager';
+import { UserState, Recommendation, QuickAction } from '../types/userState';
+import { ProgressIndicators } from './ProgressIndicators';
+import { RecommendationCards } from './RecommendationCards';
+import { QuickActions } from './QuickActions';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -14,6 +21,7 @@ interface HomeScreenProps {
   onGoToTheme: (themeId: string) => void; // Функция для перехода к теме
   onOpenMentalTechnique: (techniqueId: string) => void; // Функция для открытия ментальной техники
   userHasPremium: boolean; // Статус Premium подписки пользователя
+  onGoToSurvey?: () => void; // Функция для перехода к опросу (для рекомендаций)
 }
 
 // Типы для элементов слайдера экстренной помощи
@@ -522,19 +530,114 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
 /**
  * Адаптивный основной контейнер контента главной страницы
  */
-function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium, onInfoClick }: { 
+function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium, onInfoClick, onGoToSurvey }: { 
   onGoToCheckIn: () => void; 
   onGoToProfile: () => void;
   onGoToTheme: (themeId: string) => void;
   userHasPremium: boolean;
   onInfoClick: () => void;
+  onGoToSurvey?: () => void;
 }) {
+  // Smart Navigation: Load user state and generate recommendations
+  const [_userState, setUserState] = useState<UserState | null>(null);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [progressIndicators, setProgressIndicators] = useState<any[]>([]);
+  const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
+
+  useEffect(() => {
+    try {
+      const state = UserStateManager.analyzeUserState();
+      setUserState(state);
+      setRecommendations(UserStateManager.getRecommendations(state));
+      setProgressIndicators(UserStateManager.getProgressIndicators(state));
+      
+      // Generate quick actions based on user state
+      const actions: QuickAction[] = [
+        {
+          id: 'checkin',
+          title: 'Check-in',
+          description: 'How are you feeling?',
+          icon: '💭',
+          color: 'bg-blue-500',
+          action: onGoToCheckIn,
+          visible: true
+        },
+        {
+          id: 'survey',
+          title: 'Continue Survey',
+          description: 'Complete your assessment',
+          icon: '📋',
+          color: 'bg-green-500',
+          action: onGoToSurvey || (() => {}),
+          visible: !state.hasCompletedSurvey
+        },
+        {
+          id: 'exercise',
+          title: 'Try Exercise',
+          description: 'Mental health techniques',
+          icon: '🧘',
+          color: 'bg-purple-500',
+          action: () => onGoToTheme('anxiety'),
+          visible: state.hasCompletedSurvey && state.hasCompletedFirstCheckin
+        },
+        {
+          id: 'profile',
+          title: 'View Profile',
+          description: 'Your progress & settings',
+          icon: '👤',
+          color: 'bg-gray-500',
+          action: onGoToProfile,
+          visible: true
+        }
+      ];
+      setQuickActions(actions);
+    } catch (error) {
+      console.error('Failed to load user state for smart navigation:', error);
+    }
+  }, [onGoToCheckIn, onGoToProfile, onGoToTheme, onGoToSurvey]);
+
+  const handleRecommendationAction = (recommendation: Recommendation) => {
+    switch (recommendation.type) {
+      case 'action':
+        if (recommendation.title.includes('Survey')) {
+          onGoToSurvey?.();
+        } else if (recommendation.title.includes('Check-in')) {
+          onGoToCheckIn();
+        }
+        break;
+      case 'feature':
+        onGoToTheme('anxiety');
+        break;
+      case 'motivation':
+        // For motivation cards, just log for now
+        console.log('Motivation action:', recommendation.title);
+        break;
+    }
+  };
+
   return (
     <div
       className="flex flex-col gap-[48px] sm:gap-[54px] md:gap-[60px] items-start justify-start w-full max-w-[351px] mx-auto pb-6 sm:pb-7 md:pb-8"
       data-name="Main_page_contenct_block"
     >
       <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
+      
+      {/* Smart Navigation Components */}
+      {progressIndicators.length > 0 && (
+        <ProgressIndicators indicators={progressIndicators} />
+      )}
+      
+      {recommendations.length > 0 && (
+        <RecommendationCards 
+          recommendations={recommendations}
+          onRecommendationAction={handleRecommendationAction}
+        />
+      )}
+      
+      {quickActions.filter(action => action.visible).length > 0 && (
+        <QuickActions actions={quickActions} />
+      )}
+      
       <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
       <ActivityBlockNew />
       <WorriesContainer onGoToTheme={onGoToTheme} />
@@ -730,7 +833,7 @@ function SocialFollowBlock() {
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMentalTechnique, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMentalTechnique, userHasPremium, onGoToSurvey }: HomeScreenProps) {
   const { getUI } = useContent();
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
@@ -768,6 +871,7 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
             onGoToTheme={onGoToTheme}
             userHasPremium={userHasPremium}
             onInfoClick={handleInfoClick}
+            onGoToSurvey={onGoToSurvey}
           />
         </div>
         
