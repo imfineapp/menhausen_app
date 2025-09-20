@@ -1,1 +1,0 @@
-const isE2ETestEnvironment = typeof window !== "undefined" && (window as any).__PLAYWRIGHT__ === true;
