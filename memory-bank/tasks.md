@@ -1,10 +1,154 @@
 # Memory Bank: Tasks
 
 ## Current Task
-✅ **COMPLETED**: Reward Screen Design & Implementation - COMPLETE
+🎯 **IN PROGRESS**: Smart User Navigation Implementation - Level 3 (Intermediate Feature)
 
 ## Implementation Progress
-**Status**: Reward Screen Design & Implementation IN PROGRESS - Creating achievement reward page
+**Status**: Smart User Navigation Implementation IN PROGRESS - Creating dynamic screen routing based on user progress
+
+### 🎯 **CURRENT TASK**: Smart User Navigation Implementation
+**Status**: PLANNING COMPLETE - Ready for CREATIVE phase
+
+**Problem Identified:**
+- User requested: "VAN я хочу проанализировать какие ответы пользователя мы уже запоминаем локально на его устройстве. И поменять сценарии использования приложения, в зависимости от того прошел ли пользователь онбординг или нет. И от других событий. Чтобы в зависимости от его прогресса показывать пользователю сразу актуальный для него следующий шаг"
+- Root cause: App always starts with onboarding1 regardless of user progress
+- UX issue: Users need personalized navigation based on their completion status and progress
+
+**VAN Mode Analysis Results:**
+1. **Local Storage Analysis**: Identified 6 types of user data stored locally:
+   - Survey results (`survey-results`)
+   - Check-in data (`checkin-data`) 
+   - Exercise completions (`menhausen_exercise_completions`)
+   - User preferences (`menhausen_user_preferences`)
+   - Progress data (`menhausen_progress_data`)
+   - Language settings (`menhausen-language`)
+
+2. **Current Navigation Logic**: App always starts with `onboarding1` regardless of user state
+3. **User Journey Scenarios**: Defined 5 key scenarios for different user states
+4. **Technical Architecture**: Planned UserStateManager and App.tsx modifications
+
+**Solution Planned:**
+1. **Create UserStateManager**: Utility to analyze localStorage data and determine user state
+2. **Modify App.tsx**: Dynamic screen routing based on user progress
+3. **Enhance HomeScreen**: Progress indicators and personalized recommendations
+4. **Implement Smart Navigation**: Show relevant next steps based on user completion status
+
+## 📋 DETAILED IMPLEMENTATION PLAN
+
+### Phase 1: UserStateManager Creation
+**Files to Create:**
+- `utils/userStateManager.ts` - Core utility for analyzing user state
+- `types/userState.ts` - TypeScript interfaces for user state
+
+**Components:**
+- `UserState` interface with completion flags and recommendations
+- `determineUserState()` function to analyze localStorage data
+- `getInitialScreen()` function to determine starting screen
+- `getNextRecommendedAction()` function for personalized recommendations
+
+### Phase 2: App.tsx Modifications
+**Files to Modify:**
+- `App.tsx` - Update initialization logic and screen routing
+
+**Changes:**
+- Replace static `onboarding1` start with dynamic screen determination
+- Integrate UserStateManager for initial screen selection
+- Add user state context throughout the app
+- Implement smart navigation based on user progress
+
+### Phase 3: HomeScreen Enhancements
+**Files to Modify:**
+- `components/HomeScreen.tsx` - Add progress indicators and recommendations
+
+**Features:**
+- Display user completion status (survey, check-ins, exercises)
+- Show personalized next steps based on user state
+- Add progress indicators for different app sections
+- Implement quick actions based on user needs
+
+### Phase 4: User Journey Scenarios
+**Scenarios to Implement:**
+1. **New User**: No data → onboarding1 → onboarding2 → survey01
+2. **Onboarding Complete**: Has onboarding data, no survey → survey01
+3. **Survey Complete**: Has survey data, no check-ins → checkin
+4. **Active User**: Has all basic data → home with daily check-in prompt
+5. **Returning User**: Last activity > 7 days → home with re-engagement message
+
+## 🎯 USER STATE SCENARIOS
+
+### Scenario 1: New User (No Data)
+- **Condition**: No localStorage data exists
+- **Action**: Show onboarding1
+- **Next Steps**: onboarding2 → survey01 → checkin → home
+
+### Scenario 2: Onboarding Complete, No Survey
+- **Condition**: Has onboarding data, no survey-results
+- **Action**: Show survey01
+- **Next Steps**: Complete survey → checkin → home
+
+### Scenario 3: Survey Complete, No Check-ins
+- **Condition**: Has survey-results, no checkin-data
+- **Action**: Show checkin
+- **Next Steps**: First check-in → home
+
+### Scenario 4: Active User
+- **Condition**: Has all basic data, last check-in yesterday
+- **Action**: Show home with check-in prompt
+- **Next Steps**: Daily check-in → explore exercises
+
+### Scenario 5: Returning User
+- **Condition**: Last activity > 7 days ago
+- **Action**: Show home with re-engagement message
+- **Next Steps**: Check-in → explore new features
+
+## 🔧 TECHNICAL IMPLEMENTATION DETAILS
+
+### UserStateManager Interface
+```typescript
+interface UserState {
+  hasCompletedOnboarding: boolean;
+  hasCompletedSurvey: boolean;
+  hasCompletedFirstCheckin: boolean;
+  hasCompletedFirstExercise: boolean;
+  lastActivityDate: string;
+  nextRecommendedAction: 'onboarding' | 'survey' | 'checkin' | 'home' | 'exercise';
+  completionPercentage: number;
+  streakDays: number;
+  totalCheckins: number;
+}
+```
+
+### App.tsx Integration
+```typescript
+// Replace static initialization
+const [currentScreen, setCurrentScreen] = useState<AppScreen>(() => {
+  if (isE2ETestEnvironment) return 'home';
+  
+  const userState = determineUserState();
+  return getInitialScreen(userState);
+});
+```
+
+### HomeScreen Enhancements
+- Progress bars for survey completion
+- Check-in streak indicators
+- Personalized recommendations
+- Quick action buttons based on user state
+
+## 📊 SUCCESS METRICS
+
+1. **User Retention**: Increase in users completing onboarding flow
+2. **Feature Adoption**: Higher completion rates for survey and check-ins
+3. **Daily Engagement**: More users returning for daily check-ins
+4. **User Satisfaction**: Reduced confusion about next steps
+
+## 🚀 NEXT STEPS
+
+1. **CREATIVE Mode**: Design UserStateManager architecture and user experience flows
+2. **Implementation**: Create UserStateManager utility
+3. **Integration**: Modify App.tsx for dynamic routing
+4. **Enhancement**: Update HomeScreen with progress indicators
+5. **Testing**: Verify all user journey scenarios work correctly
 
 ### ✅ **COMPLETED**: Reward Screen Design & Implementation
 **Status**: COMPLETE - Achievement reward page created and integrated

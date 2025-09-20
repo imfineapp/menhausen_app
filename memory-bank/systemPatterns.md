@@ -34,12 +34,38 @@ export function ComponentName({ prop1, prop2 }: ComponentProps) {
 - **Screen-based routing**: Using AppScreen type with 24 defined screens
 - **State-driven navigation**: currentScreen and previousScreen state management
 - **Back button integration**: Figma BackButton component throughout
+- **Smart Navigation**: Dynamic screen routing based on user progress and localStorage data (NEW)
 
 ### State Management Patterns
 - **Survey State**: Centralized survey results with localStorage persistence
 - **Exercise State**: Completion tracking with counts and ratings
 - **User State**: Premium status and preferences
 - **Content State**: Centralized content management via React Context
+- **Smart Navigation State**: User progress analysis and dynamic routing (NEW)
+
+### Smart Navigation Pattern (NEW)
+```typescript
+// User state analysis for dynamic routing
+interface UserState {
+  hasCompletedOnboarding: boolean;
+  hasCompletedSurvey: boolean;
+  hasCompletedFirstCheckin: boolean;
+  hasCompletedFirstExercise: boolean;
+  lastActivityDate: string;
+  nextRecommendedAction: 'onboarding' | 'survey' | 'checkin' | 'home' | 'exercise';
+  completionPercentage: number;
+  streakDays: number;
+  totalCheckins: number;
+}
+
+// Dynamic screen initialization
+const [currentScreen, setCurrentScreen] = useState<AppScreen>(() => {
+  if (isE2ETestEnvironment) return 'home';
+  
+  const userState = determineUserState();
+  return getInitialScreen(userState);
+});
+```
 
 ### Content Management Pattern
 ```typescript
