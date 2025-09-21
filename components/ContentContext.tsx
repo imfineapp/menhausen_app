@@ -181,7 +181,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
         continue: 'Continue',
         send: 'Send',
         start: 'Start',
-        unlock: 'Unlock'
+        unlock: 'Unlock',
+        previous: 'Previous',
+        morePages: 'More pages',
+        more: 'More'
       },
       common: {
         loading: 'Loading...',
@@ -190,7 +193,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
         save: 'Save',
         cancel: 'Cancel',
         delete: 'Delete',
-        edit: 'Edit'
+        edit: 'Edit',
+        close: 'Close'
       },
       home: {
         greeting: 'Hello',
@@ -216,6 +220,20 @@ export function ContentProvider({ children }: ContentProviderProps) {
           streakLabel: 'days streak',
           progressLabel: 'Progress',
           weeklyCheckins: 'Weekly check-ins'
+        },
+        emergencyHelp: {
+          breathing: {
+            title: 'Emergency breathing patterns',
+            description: 'Calm your mind with guided breathing exercises for immediate relief.'
+          },
+          meditation: {
+            title: 'Quick meditation techniques',
+            description: 'Calm your mind with guided meditation exercises for immediate relief.'
+          },
+          grounding: {
+            title: 'Grounding techniques',
+            description: 'Ground yourself in the present moment with proven techniques.'
+          }
         }
       },
       profile: {

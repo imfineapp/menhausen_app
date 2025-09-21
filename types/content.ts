@@ -150,6 +150,9 @@ export interface UITexts {
     send: LocalizedContent;
     start: LocalizedContent;
     unlock: LocalizedContent;
+    previous: LocalizedContent;
+    morePages: LocalizedContent;
+    more: LocalizedContent;
   };
   common: {
     loading: LocalizedContent;
@@ -159,6 +162,7 @@ export interface UITexts {
     cancel: LocalizedContent;
     delete: LocalizedContent;
     edit: LocalizedContent;
+    close: LocalizedContent;
   };
   home: {
     greeting: LocalizedContent;
@@ -184,6 +188,20 @@ export interface UITexts {
       streakLabel: LocalizedContent;
       progressLabel: LocalizedContent;
       weeklyCheckins: LocalizedContent;
+    };
+    emergencyHelp: {
+      breathing: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
+      meditation: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
+      grounding: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
     };
   };
   profile: {

@@ -5,6 +5,7 @@ import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
+import { useContent } from './ContentContext';
 
 
 // Типы для пропсов компонента
@@ -21,53 +22,10 @@ interface MainPageContentBlockProps {
   userHasPremium: boolean;
 }
 
-// Типы для элементов слайдера экстренной помощи
-interface EmergencyCard {
-  id: string;
-  title: string;
-  description: string;
-  status: 'Soon' | 'Available';
-  isAvailable: boolean;
-}
+// Emergency card interface removed - not currently used in implementation
 
-// Данные карточек экстренной помощи (не используется, заменено на динамические данные)
-const _EMERGENCY_CARDS: EmergencyCard[] = [
-  {
-    id: 'breathing',
-    title: 'Emergency breathing patterns',
-    description: "Check in with yourself — it's the first step to self-care! Do it everyday.",
-    status: 'Soon',
-    isAvailable: false
-  },
-  {
-    id: 'meditation',
-    title: 'Quick meditation techniques',
-    description: 'Calm your mind with guided meditation exercises for immediate relief.',
-    status: 'Soon',
-    isAvailable: false
-  },
-  {
-    id: 'grounding',
-    title: '5-4-3-2-1 Grounding method',
-    description: 'Use your senses to ground yourself and reduce anxiety in moments of panic.',
-    status: 'Available',
-    isAvailable: true
-  },
-  {
-    id: 'affirmations',
-    title: 'Positive affirmations',
-    description: 'Boost your confidence and self-worth with personalized positive statements.',
-    status: 'Soon',
-    isAvailable: false
-  },
-  {
-    id: 'visualization',
-    title: 'Calming visualizations',
-    description: 'Transport your mind to peaceful places with guided visualization exercises.',
-    status: 'Available',
-    isAvailable: true
-  }
-];
+// Emergency cards data is now managed through the i18n content system
+// See data/content/en/ui.json and data/content/ru/ui.json for emergency help content
 
 /**
  * Адаптивный компонент световых эффектов для фона
@@ -432,52 +390,7 @@ function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => v
   );
 }
 
-/**
- * Адаптивная карточка экстренной помощи
- */
-function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={!card.isAvailable}
-      className={`bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 h-[180px] sm:h-[190px] md:h-[197px] items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-[260px] sm:w-[270px] md:w-[280px] min-h-[44px] min-w-[44px] ${
-        card.isAvailable 
-          ? 'cursor-pointer hover:bg-[#d1ef00]' 
-          : 'opacity-75 cursor-not-allowed'
-      }`}
-      data-name="Emergency card"
-    >
-      <div className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full">
-          <div
-            className="typography-h2 w-full text-[#313131] text-left"
-          >
-            <h2 className="block">{card.title}</h2>
-          </div>
-        <div
-          className="typography-body w-full text-[#333333] text-left"
-        >
-          <p className="block">{card.description}</p>
-        </div>
-        <div
-          className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-start justify-center p-0 relative rounded-xl shrink-0 ${
-            card.isAvailable 
-              ? 'bg-[#2d2b2b]' 
-              : 'bg-[#2d2b2b]'
-          }`}
-          data-name="Card_anons_status"
-        >
-          <div className={`typography-button text-center tracking-[-0.43px] w-[60px] sm:w-[63px] md:w-[66px] ${
-            card.isAvailable 
-              ? 'text-[#e1ff00]' 
-              : 'text-[#e1ff00]'
-          }`}>
-            <p className="adjustLetterSpacing block">{card.status}</p>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
+// EmergencyCard component removed - not currently used in implementation
 
 
 /**
@@ -508,6 +421,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
  */
 export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const { content: _content } = useContent(); // Content system ready for future use
 
   const _handleInfoClick = () => {
     setIsInfoModalOpen(true);
