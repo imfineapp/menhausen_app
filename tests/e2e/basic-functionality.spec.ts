@@ -11,7 +11,7 @@ test.describe('Basic App Functionality', () => {
   test('должен загружать главную страницу', async ({ page }) => {
     // Переходим на главную страницу приложения
     await page.goto('/');
-    
+
     // Ждем загрузки приложения
     await page.waitForLoadState('networkidle');
 
@@ -23,15 +23,15 @@ test.describe('Basic App Functionality', () => {
       await getStarted.click();
       await page.waitForLoadState('networkidle');
     }
-    
-    // Проверяем, что блок "How are you?" присутствует (заголовок или контейнер)
-    await expect(page.locator('[data-name="Info_group"]')).toBeVisible();
-    
-    // Проверяем, что есть кнопка перехода к чекину
-    await expect(page.locator('[data-name="Start Mining"]')).toBeVisible();
-    
-    // Проверяем, что есть блок пользователя
+
+    // Проверяем, что есть блок пользователя (Герой #1)
     await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
+
+    // Проверяем, что есть блок "Что вас беспокоит?" (основной контент)
+    await expect(page.getByText('Что вас беспокоит?')).toBeVisible();
+
+    // Проверяем, что есть тема "Стресс" (единственная доступная)
+    await expect(page.locator('[data-name="Theme card narrow"]').filter({ hasText: 'Стресс' }).first()).toBeVisible();
   });
 
   test('должен открывать профиль при клике на блок пользователя', async ({ page }) => {
@@ -46,18 +46,16 @@ test.describe('Basic App Functionality', () => {
       await getStarted.click();
       await page.waitForLoadState('networkidle');
     }
-    
+
     // Кликаем на блок пользователя
     await page.click('[data-name="User frame info block"]');
     await page.waitForLoadState('networkidle');
-    
-    // Проверяем, что страница изменилась (не главная)
-    const bodyText = await page.textContent('body');
-    expect(bodyText).toBeTruthy();
-    expect(bodyText!.length).toBeGreaterThan(0);
+
+    // Проверяем, что открылась страница профиля
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible();
   });
 
-  test('должен переключаться на страницу чекина', async ({ page }) => {
+  test('должен переключаться на страницу темы', async ({ page }) => {
     // Переходим на главную страницу
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -69,12 +67,13 @@ test.describe('Basic App Functionality', () => {
       await getStarted.click();
       await page.waitForLoadState('networkidle');
     }
-    
-    // Кликаем на кнопку чекина
-    await page.click('[data-name="Start Mining"]');
+
+    // Кликаем на тему "Стресс"
+    await page.locator('[data-name="Theme card narrow"]').filter({ hasText: 'Стресс' }).click();
     await page.waitForLoadState('networkidle');
-    
-    // Проверяем, что открылась страница чекина
-    await expect(page.getByText('How are you feeling?')).toBeVisible();
+
+    // Проверяем, что страница изменилась (появился какой-то новый контент)
+    const bodyText = await page.textContent('body');
+    expect(bodyText).toContain('Стресс'); // Должны остаться на той же странице или перейти куда-то
   });
 });

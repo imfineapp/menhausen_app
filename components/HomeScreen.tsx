@@ -1,27 +1,24 @@
 // Импортируем необходимые хуки и SVG пути
-import { useRef, useState, useEffect } from 'react';
+import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { useContent } from './ContentContext';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
 
-// Smart Navigation imports
-import { UserStateManager } from '../utils/userStateManager';
-import { UserState, Recommendation, QuickAction } from '../types/userState';
-import { ProgressIndicators } from './ProgressIndicators';
-import { RecommendationCards } from './RecommendationCards';
-import { QuickActions } from './QuickActions';
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
-  onGoToCheckIn: () => void; // Функция для перехода к чекину
   onGoToProfile: () => void; // Функция для перехода к профилю пользователя
   onGoToTheme: (themeId: string) => void; // Функция для перехода к теме
-  onOpenMentalTechnique: (techniqueId: string) => void; // Функция для открытия ментальной техники
   userHasPremium: boolean; // Статус Premium подписки пользователя
-  onGoToSurvey?: () => void; // Функция для перехода к опросу (для рекомендаций)
+}
+
+// Типы для пропсов основного блока контента
+interface MainPageContentBlockProps {
+  onGoToProfile: () => void;
+  onGoToTheme: (themeId: string) => void;
+  userHasPremium: boolean;
 }
 
 // Типы для элементов слайдера экстренной помощи
@@ -132,15 +129,13 @@ function UserAvatar() {
  * Адаптивная инфо��мация о пользователе с именем
  */
 function UserInfo() {
-  const { getUI } = useContent();
-  
   return (
     <div
       className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0 w-full"
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <h2 className="block">{getUI().home.heroTitle}</h2>
+        <h2 className="block">Герой #1</h2>
       </div>
     </div>
   );
@@ -165,7 +160,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
           : 'text-[#696969]'
       }`}>
         <p className="adjustLetterSpacing block whitespace-pre">
-          {isPremium ? 'Premium' : 'Free'}
+          {isPremium ? 'Премиум' : 'Бесплатно'}
         </p>
       </div>
     </div>
@@ -176,15 +171,13 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  * Адаптивный уровень пользователя и статус подписки
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
-  const { getUI } = useContent();
-  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
       <div className="typography-body text-[#696969] text-left text-nowrap">
-        <p className="block whitespace-pre">{getUI().home.level} 25</p>
+        <p className="block whitespace-pre">Уровень 1</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>
@@ -224,8 +217,9 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
 }
 
 /**
- * Адаптивная иконка информации для блока чекина
+ * Адаптивная иконка информации для блока чекина - СКРЫТ ПО ТРЕБОВАНИЮ
  */
+/*
 function InfoIcon({ onClick }: { onClick: () => void }) {
   return (
     <button
@@ -265,32 +259,32 @@ function InfoIcon({ onClick }: { onClick: () => void }) {
     </button>
   );
 }
+*/
 
 /**
- * Адаптивный заголовок блока чекина
+ * Адаптивный заголовок блока чекина - СКРЫТ ПО ТРЕБОВАНИЮ
  */
+/*
 function InfoGroup({ onInfoClick }: { onInfoClick: () => void }) {
-  const { getUI } = useContent();
-  
   return (
     <div
       className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
       data-name="Info_group"
     >
       <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
-        <h2 className="block whitespace-pre">{getUI().home.howAreYou}</h2>
+        <h2 className="block whitespace-pre">Как дела?</h2>
       </div>
       <InfoIcon onClick={onInfoClick} />
     </div>
   );
 }
+*/
 
 /**
- * Адаптивный кнопка для перехода к чекину
+ * Адаптивный кнопка для перехода к чекину - СКРЫТ ПО ТРЕБОВАНИЮ
  */
+/*
 function CheckInButton({ onClick }: { onClick: () => void }) {
-  const { getUI } = useContent();
-  
   return (
     <button
       onClick={onClick}
@@ -300,68 +294,32 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
           <div className="typography-button text-[#696969] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block whitespace-pre">{getUI().home.checkInButton}</p>
+            <p className="adjustLetterSpacing block whitespace-pre">Отправить</p>
           </div>
         </div>
       </div>
     </button>
   );
 }
-
-/**
- * Адаптивный контейнер блока чекина
- */
-function CheckInContainer({ onGoToCheckIn, onInfoClick }: { onGoToCheckIn: () => void; onInfoClick: () => void }) {
-  const { getUI } = useContent();
-  
-  return (
-    <div
-      className="box-border content-stretch flex flex-col gap-4 sm:gap-5 items-start justify-start p-0 relative shrink-0 w-full"
-      data-name="Info container"
-    >
-      <InfoGroup onInfoClick={onInfoClick} />
-      <div className="typography-body text-[#2d2b2b] text-left w-full">
-        <p className="block">{getUI().home.checkInDescription}</p>
-      </div>
-      <CheckInButton onClick={onGoToCheckIn} />
-    </div>
-  );
-}
-
-/**
- * Адаптивный главный блок "How are you?" для чекина
- */
-function CheckInBlock({ onGoToCheckIn, onInfoClick }: { onGoToCheckIn: () => void; onInfoClick: () => void }) {
-  return (
-    <div
-      className="bg-[#e1ff00] box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative rounded-xl shrink-0 w-full"
-      data-name="HAYOU_block"
-    >
-      <CheckInContainer onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
-    </div>
-  );
-}
-
-
+*/
 
 
 /**
  * Адаптивная карточка темы с прогрессом и обработкой кликов
  */
-function ThemeCard({ 
-  title, 
-  description, 
-  progress = 0, 
+function ThemeCard({
+  title,
+  description,
+  progress = 0,
   isPremium = false,
-  onClick 
-}: { 
-  title: string; 
-  description: string; 
-  progress?: number; 
+  onClick
+}: {
+  title: string;
+  description: string;
+  progress?: number;
   isPremium?: boolean;
   onClick?: () => void;
 }) {
-  const { getUI } = useContent();
   
   return (
     <button
@@ -397,14 +355,14 @@ function ThemeCard({
           showBackground={true}
         />
         <div className="absolute typography-caption top-1/2 left-0 right-0 -translate-y-1/2 text-[#696969] text-right pr-2">
-          <p className="block">{getUI().home.progress}</p>
+          <p className="block">Прогресс</p>
         </div>
       </div>
       
       {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
       <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
         <div className="typography-button text-[#696969] text-left">
-          <p className="block">{getUI().home.use80PercentUsers}</p>
+          <p className="block">Используют 80% пользователей</p>
         </div>
         <UserAccountStatus isPremium={isPremium} />
       </div>
@@ -416,20 +374,17 @@ function ThemeCard({
  * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
 function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
-  const { getAllThemes, getLocalizedText } = useContent();
-  
-  // Получаем все темы из контента
-  const themes = getAllThemes();
-  
-  // Создаем массив для отображения с фиктивными данными прогресса
-  const worries = themes.map((theme) => ({
-    title: getLocalizedText(theme.title),
-    description: getLocalizedText(theme.description),
-    progress: Math.floor(Math.random() * 100), // Фиктивный прогресс для демонстрации
-    isPremium: theme.isPremium,
-    isAvailable: true,
-    themeId: theme.id
-  }));
+  // Фиктивные данные для демонстрации
+  const worries = [
+    {
+      title: 'Стресс',
+      description: 'Обучение управлению ежедневным стрессом и развитие здоровых механизмов преодоления.',
+      progress: Math.floor(Math.random() * 100),
+      isPremium: false,
+      isAvailable: true,
+      themeId: 'stress-management'
+    }
+  ];
 
   const handleThemeClick = (themeId: string, isAvailable: boolean) => {
     if (isAvailable) {
@@ -446,7 +401,7 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }
       className="box-border content-stretch flex flex-col gap-8 sm:gap-10 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries list"
     >
-      {worries.map((worry) => (
+      {worries.map((worry: any) => (
         <ThemeCard 
           key={worry.themeId}
           title={worry.title}
@@ -464,15 +419,13 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }
  * Адаптивный контейнер блока "What worries you?"
  */
 function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
-  const { getUI } = useContent();
-  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
-        <h2 className="block">{getUI().home.whatWorriesYou}</h2>
+        <h2 className="block">Что вас беспокоит?</h2>
       </div>
       <WorriesList onGoToTheme={onGoToTheme} />
     </div>
@@ -530,90 +483,8 @@ function EmergencyCard({ card, onClick }: { card: EmergencyCard; onClick: () => 
 /**
  * Адаптивный основной контейнер контента главной страницы
  */
-function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userHasPremium, onInfoClick, onGoToSurvey }: { 
-  onGoToCheckIn: () => void; 
-  onGoToProfile: () => void;
-  onGoToTheme: (themeId: string) => void;
-  userHasPremium: boolean;
-  onInfoClick: () => void;
-  onGoToSurvey?: () => void;
-}) {
-  // Smart Navigation: Load user state and generate recommendations
-  const [_userState, setUserState] = useState<UserState | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [progressIndicators, setProgressIndicators] = useState<any[]>([]);
-  const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
-
-  useEffect(() => {
-    try {
-      const state = UserStateManager.analyzeUserState();
-      setUserState(state);
-      setRecommendations(UserStateManager.getRecommendations(state));
-      setProgressIndicators(UserStateManager.getProgressIndicators(state));
-      
-      // Generate quick actions based on user state
-      const actions: QuickAction[] = [
-        {
-          id: 'checkin',
-          title: 'Check-in',
-          description: 'How are you feeling?',
-          icon: '💭',
-          color: 'bg-blue-500',
-          action: onGoToCheckIn,
-          visible: true
-        },
-        {
-          id: 'survey',
-          title: 'Continue Survey',
-          description: 'Complete your assessment',
-          icon: '📋',
-          color: 'bg-green-500',
-          action: onGoToSurvey || (() => {}),
-          visible: !state.hasCompletedSurvey
-        },
-        {
-          id: 'exercise',
-          title: 'Try Exercise',
-          description: 'Mental health techniques',
-          icon: '🧘',
-          color: 'bg-purple-500',
-          action: () => onGoToTheme('anxiety'),
-          visible: state.hasCompletedSurvey && state.hasCompletedFirstCheckin
-        },
-        {
-          id: 'profile',
-          title: 'View Profile',
-          description: 'Your progress & settings',
-          icon: '👤',
-          color: 'bg-gray-500',
-          action: onGoToProfile,
-          visible: true
-        }
-      ];
-      setQuickActions(actions);
-    } catch (error) {
-      console.error('Failed to load user state for smart navigation:', error);
-    }
-  }, [onGoToCheckIn, onGoToProfile, onGoToTheme, onGoToSurvey]);
-
-  const handleRecommendationAction = (recommendation: Recommendation) => {
-    switch (recommendation.type) {
-      case 'action':
-        if (recommendation.title.includes('Survey')) {
-          onGoToSurvey?.();
-        } else if (recommendation.title.includes('Check-in')) {
-          onGoToCheckIn();
-        }
-        break;
-      case 'feature':
-        onGoToTheme('anxiety');
-        break;
-      case 'motivation':
-        // For motivation cards, just log for now
-        console.log('Motivation action:', recommendation.title);
-        break;
-    }
-  };
+function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
+  MainPageContentBlockProps) {
 
   return (
     <div
@@ -621,223 +492,24 @@ function MainPageContentBlock({ onGoToCheckIn, onGoToProfile, onGoToTheme, userH
       data-name="Main_page_contenct_block"
     >
       <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
-      
-      {/* Smart Navigation Components */}
-      {progressIndicators.length > 0 && (
-        <ProgressIndicators indicators={progressIndicators} />
-      )}
-      
-      {recommendations.length > 0 && (
-        <RecommendationCards 
-          recommendations={recommendations}
-          onRecommendationAction={handleRecommendationAction}
-        />
-      )}
-      
-      {quickActions.filter(action => action.visible).length > 0 && (
-        <QuickActions actions={quickActions} />
-      )}
-      
-      <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} />
+
+      {/* CheckInBlock скрыт по требованию */}
+      {/* <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} /> */}
       <ActivityBlockNew />
       <WorriesContainer onGoToTheme={onGoToTheme} />
     </div>
   );
 }
 
-/**
- * Адаптивный горизонтальный слайдер экстренной помощи без навигационных кнопок
- * Управляется только горизонтальными свайпами и занимает всю ширину экрана
- */
-function EmergencySlider({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
-  const sliderRef = useRef<HTMLDivElement>(null);
-  const { getMentalTechniques, getLocalizedText } = useContent();
-
-  // Получаем все ментальные техники
-  const allTechniques = getMentalTechniques();
-
-  /**
-   * Обработчик клика на карточку
-   */
-  const handleCardClick = (techniqueId: string) => {
-    console.log(`Opening mental technique: ${techniqueId}`);
-    onOpenMentalTechnique(techniqueId);
-  };
-
-  return (
-    <div
-      ref={sliderRef}
-      className="flex flex-row gap-[12px] sm:gap-[13px] md:gap-[15px] items-center overflow-x-auto scrollbar-hide w-full"
-      data-name="Slider_emergency"
-      style={{ 
-        scrollSnapType: 'x mandatory',
-        WebkitOverflowScrolling: 'touch',
-        msOverflowStyle: 'none',
-        scrollbarWidth: 'none'
-      }}
-    >
-      {allTechniques.map((technique) => (
-        <div 
-          key={technique.id} 
-          style={{ scrollSnapAlign: 'start' }}
-          className="shrink-0"
-        >
-          <EmergencyCard 
-            card={{
-              id: technique.id,
-              title: getLocalizedText(technique.title),
-              description: getLocalizedText(technique.subtitle),
-              status: 'Available',
-              isAvailable: true
-            }} 
-            onClick={() => handleCardClick(technique.id)}
-          />
-        </div>
-      ))}
-      {/* Пустой элемент для создания отступа в конце слайдера для лучшего UX */}
-      <div className="shrink-0 w-4" aria-hidden="true" />
-    </div>
-  );
-}
-
-/**
- * Адаптивный блок экстренной помощи с заголовком и слайдером
- * Занимает всю ширину экрана
- */
-function EmergencyBlock({ onOpenMentalTechnique }: { onOpenMentalTechnique: (techniqueId: string) => void }) {
-  const { getUI } = useContent();
-  
-  return (
-    <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Emergency_block_container">
-      {/* Заголовок с отступами как у основного контента */}
-      <div className="px-[16px] sm:px-[20px] md:px-[21px] max-w-[calc(351px+32px)] sm:max-w-[calc(351px+40px)] md:max-w-[calc(351px+42px)] mx-auto w-full mb-4 sm:mb-5">
-        <div className="typography-h2 text-[#e1ff00] text-left w-full">
-          <h2 className="block">{getUI().home.quickHelpTitle}</h2>
-        </div>
-      </div>
-      
-      {/* Слайдер с отступом слева как у основного контента и с правым отступом */}
-      <div className="px-[16px] sm:px-[20px] md:px-[21px]">
-        <EmergencySlider onOpenMentalTechnique={onOpenMentalTechnique} />
-      </div>
-    </div>
-  );
-}
-
-/**
- * Адаптивная социальная иконка Телеграм
- */
-function TelegramIcon() {
-  return (
-    <div className="relative shrink-0 size-10 sm:size-11 md:size-12" data-name="Social Icons">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g clipPath="url(#clip0_2_2114)" id="Social Icons">
-          <path
-            clipRule="evenodd"
-            d={svgPaths.p201ec800}
-            fill="var(--fill-0, #2D2B2B)"
-            fillRule="evenodd"
-            id="Vector"
-          />
-        </g>
-        <defs>
-          <clipPath id="clip0_2_2114">
-            <rect fill="white" height="48" width="48" />
-          </clipPath>
-        </defs>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивная социальная иконка X (Twitter)
- */
-function TwitterIcon() {
-  return (
-    <div className="relative shrink-0 size-10 sm:size-11 md:size-12" data-name="Social Icons">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 48 48">
-        <g id="Social Icons">
-          <path d={svgPaths.p118f24c0} fill="var(--fill-0, #2D2B2B)" id="Vector" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивная кнопка Follow с социальной иконкой
- */
-function FollowButton({ 
-  icon, 
-  platform: _platform, 
-  onClick 
-}: { 
-  icon: React.ReactNode; 
-  platform: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="h-[65px] sm:h-[69px] md:h-[73px] relative w-full cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-200 min-h-[44px] min-w-[44px]"
-      data-name="Follow button"
-    >
-      <div className="absolute contents inset-0">
-        <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" />
-        <div className="absolute box-border content-stretch flex flex-row gap-[10px] sm:gap-[11px] md:gap-[13px] inset-[17.81%_7.83%_16.44%_7.83%] items-center justify-center p-0">
-          {icon}
-          <div className="typography-h2 text-[#2d2b2b] text-nowrap text-right">
-            <h2 className="block whitespace-pre">Follow</h2>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-/**
- * Адаптивный блок социальных кнопок
- */
-function SocialFollowBlock() {
-  const handleFollow = (platform: string) => {
-    console.log(`Following on ${platform}`);
-    // TODO: Добавить реальные ссылки на социальные сети
-    if (platform === 'telegram') {
-      window.open('https://t.me/menhausen', '_blank');
-    } else if (platform === 'twitter') {
-      window.open('https://twitter.com/menhausen', '_blank');
-    }
-  };
-
-  return (
-    <div
-      className="grid grid-cols-2 gap-[15px] sm:gap-[17px] md:gap-[19px] w-full"
-      data-name="Follow_block"
-    >
-      <FollowButton 
-        icon={<TelegramIcon />}
-        platform="telegram"
-        onClick={() => handleFollow('telegram')}
-      />
-      <FollowButton 
-        icon={<TwitterIcon />}
-        platform="twitter"
-        onClick={() => handleFollow('twitter')}
-      />
-    </div>
-  );
-}
 
 /**
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMentalTechnique, userHasPremium, onGoToSurvey }: HomeScreenProps) {
-  const { getUI } = useContent();
+export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
-  const handleInfoClick = () => {
+  const _handleInfoClick = () => {
     setIsInfoModalOpen(true);
   };
 
@@ -865,37 +537,33 @@ export function HomeScreen({ onGoToCheckIn, onGoToProfile, onGoToTheme, onOpenMe
       <div className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
           {/* Основной контент страницы */}
-          <MainPageContentBlock 
-            onGoToCheckIn={onGoToCheckIn} 
-            onGoToProfile={onGoToProfile} 
+          <MainPageContentBlock
+            onGoToProfile={onGoToProfile}
             onGoToTheme={onGoToTheme}
             userHasPremium={userHasPremium}
-            onInfoClick={handleInfoClick}
-            onGoToSurvey={onGoToSurvey}
           />
         </div>
         
         {/* Отступ между блоками */}
         <div className="h-[40px]"></div>
         
-        {/* Блок экстренной помощи - независимый, на всю ширину экрана */}
-        <EmergencyBlock onOpenMentalTechnique={onOpenMentalTechnique} />
+        {/* Блок экстренной помощи - СКРЫТ ПО ТРЕБОВАНИЮ */}
+        {/* <EmergencyBlock onOpenMentalTechnique={onOpenMentalTechnique} /> */}
         
-        {/* Блок с кнопками социальных сетей - на всю ширину экрана */}
-        <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Social_follow_container">
-          {/* Заголовок с отступами как у основного контента */}
+        {/* Блок с кнопками социальных сетей - СКРЫТ ПО ТРЕБОВАНИЮ */}
+        {/* <div className="w-full mb-[48px] sm:mb-[54px] md:mb-[60px]" data-name="Social_follow_container">
           <div className="px-[16px] sm:px-[20px] md:px-[21px] w-full">
             <SocialFollowBlock />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Модальное окно с информацией о чекине */}
       <InfoModal
         isOpen={isInfoModalOpen}
         onClose={handleCloseInfoModal}
-        title={getUI().home.checkInInfo.title}
-        content={getUI().home.checkInInfo.content}
+        title="Зачем нужен ежедневный чекин?"
+        content="Ежедневный чекин — это простой, но мощный инструмент для улучшения вашего ментального здоровья. Вот почему это важно:\n\n• Самосознание: Регулярная проверка эмоций помогает лучше понимать свои чувства и реакции\n\n• Раннее выявление: Позволяет заметить изменения в настроении до того, как они станут серьезной проблемой\n\n• Привычка заботы: Формирует полезную привычку обращать внимание на свое психологическое состояние\n\n• Трекинг прогресса: Помогает отслеживать изменения в вашем эмоциональном состоянии со временем\n\n• Мотивация: Понимание своих эмоций — первый шаг к их управлению и улучшению качества жизни\n\nВсего несколько минут в день могут значительно повлиять на ваше общее благополучие."
       />
     </div>
   );

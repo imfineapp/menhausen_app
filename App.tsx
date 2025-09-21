@@ -94,6 +94,15 @@ function AppContent() {
   const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
+  const [hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('has-shown-first-achievement');
+      return saved ? JSON.parse(saved) : false;
+    } catch (error) {
+      console.error('Failed to load hasShownFirstAchievement from localStorage:', error);
+      return false;
+    }
+  });
 
   // =====================================================================================
   // НОВОЕ СОСТОЯНИЕ ДЛЯ СИСТЕМЫ ОПРОСА
@@ -213,11 +222,29 @@ function AppContent() {
       }
     }
     
+    // Определяем текущую дату на основе локального времени (сутки начинаются в 6 утра)
+    const getCurrentDay = (): string => {
+      const now = new Date();
+      const localTime = now.getTime() + (now.getTimezoneOffset() * 60000); // UTC to local
+      const localDate = new Date(localTime);
+
+      // Если время раньше 6 утра, считаем что это предыдущий день
+      const hour = localDate.getHours();
+      const adjustedDate = new Date(localDate);
+      if (hour < 6) {
+        adjustedDate.setDate(adjustedDate.getDate() - 1);
+      }
+
+      return adjustedDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    };
+
+    const currentDay = getCurrentDay();
+
     // Добавляем текущий чекин
     const currentCheckin = {
       mood,
       timestamp: new Date().toISOString(),
-      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      date: currentDay
     };
     checkinHistory.push(currentCheckin);
     
@@ -225,8 +252,14 @@ function AppContent() {
     localStorage.setItem('checkin-data', JSON.stringify(checkinHistory));
     
     // Проверяем достижения
-    const today = new Date().toISOString().split('T')[0];
-    const _checkinsToday = checkinHistory.filter(c => c.date === today);
+    const checkinsToday = checkinHistory.filter(c => c.date === currentDay);
+
+    // Если уже был чекин сегодня, не позволяем делать новый
+    if (checkinsToday.length > 0) {
+      console.log('Check-in already completed today');
+      // TODO: Показать сообщение пользователю что чекин уже сделан
+      return [];
+    }
     const checkinsThisWeek = checkinHistory.filter(c => {
       const checkinDate = new Date(c.date);
       const weekAgo = new Date();
@@ -255,7 +288,7 @@ function AppContent() {
     // Ранняя пташка (чекины в 6 утра 5 дней подряд)
     const earlyCheckins = checkinHistory.filter(c => {
       const hour = new Date(c.timestamp).getHours();
-      return hour >= 5 && hour <= 7;
+      return hour === 6;
     });
     if (earlyCheckins.length >= 5) {
       earnedAchievements.push('early_bird');
@@ -347,8 +380,15 @@ function AppContent() {
     // Smart Navigation: Refresh user state after check-in completion
     refreshUserState();
     
-    // Всегда показываем страницу награды
-    setEarnedAchievementIds(earnedAchievements);
+    // Показываем достижение только если не показывали раньше
+    if (!hasShownFirstAchievement && earnedAchievements.includes('first_checkin')) {
+      setEarnedAchievementIds(['first_checkin']); // Показываем только первое достижение
+      setHasShownFirstAchievement(true);
+      localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
+    } else {
+      setEarnedAchievementIds([]);
+    }
+
     navigateTo('reward');
   };
 
@@ -411,7 +451,7 @@ function AppContent() {
   const handleBackToSurvey03 = () => navigateTo('survey03');
   const handleBackToSurvey04 = () => navigateTo('survey04');
 
-  const handleGoToCheckIn = () => {
+  const _handleGoToCheckIn = () => {
     navigateTo('checkin');
   };
 
@@ -743,7 +783,7 @@ function AppContent() {
   // ФУНКЦИИ НАВИГАЦИИ ДЛЯ МЕНТАЛЬНЫХ ТЕХНИК
   // =====================================================================================
 
-  const handleOpenMentalTechnique = (techniqueId: string) => {
+  const _handleOpenMentalTechnique = (techniqueId: string) => {
     console.log(`Opening mental technique: ${techniqueId}`);
     navigateTo(techniqueId as AppScreen);
   };
@@ -823,13 +863,10 @@ function AppContent() {
         return <CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />;
       case 'home':
         return (
-          <HomeScreen 
-            onGoToCheckIn={handleGoToCheckIn} 
+          <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
-            onOpenMentalTechnique={handleOpenMentalTechnique}
             userHasPremium={userHasPremium}
-            onGoToSurvey={handleShowSurvey}
           />
         );
       case 'theme-welcome': {

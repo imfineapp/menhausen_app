@@ -54,7 +54,10 @@
     "deleteAccount": "Delete account",
     "payments": "Subscription",
     "heroTitle": "Hero #1275",
-    "level": "Level"
+    "level": "Level",
+    "premium": "Premium",
+    "free": "Free",
+    "follow": "Follow"
   },
   "about": {
     "title": "About Menhausen",

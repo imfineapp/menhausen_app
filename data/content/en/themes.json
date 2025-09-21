@@ -4,7 +4,7 @@
     "title": "Social anxiety",
     "description": "Working through social fears and building confidence in interpersonal situations.",
     "welcomeMessage": "Ready to overcome social anxiety? This theme will help you build confidence and develop healthy social skills through practical exercises.",
-    "isPremium": false,
+    "isPremium": true,
     "cardIds": ["card-1", "card-2", "card-3", "card-4"]
   },
   "stress-management": {
@@ -20,7 +20,7 @@
     "title": "Angry",
     "description": "Understanding and managing anger in healthy, constructive ways.",
     "welcomeMessage": "Transform your relationship with anger. Learn to channel this powerful emotion constructively.",
-    "isPremium": false,
+    "isPremium": true,
     "cardIds": ["card-8", "card-9"]
   },
   "sadness-apathy": {
@@ -36,7 +36,7 @@
     "title": "Anxiety and panic",
     "description": "Managing anxiety attacks, panic disorders, and overwhelming worry.",
     "welcomeMessage": "Take control of your anxiety. Learn proven techniques to manage panic and reduce worry.",
-    "isPremium": false,
+    "isPremium": true,
     "cardIds": ["card-12", "card-13", "card-14"]
   },
   "self-esteem": {
