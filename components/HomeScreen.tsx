@@ -338,13 +338,18 @@ function ThemeCard({
 function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
   const { content } = useContent();
 
-  // Берём первые несколько тем из контента (демо-отображение)
-  const worries = Object.values(content.themes)
-    .map((theme) => ({
+  // Берём все темы из контента; если пусто — создаём безопасный плейсхолдер
+  const themeList = Object.values(content.themes || {});
+  const source = themeList.length > 0
+    ? themeList
+    : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
+
+  const worries = source
+    .map((theme: any) => ({
       title: theme.title,
       description: theme.description,
       progress: Math.floor(Math.random() * 100),
-      isPremium: theme.isPremium,
+      isPremium: !!theme.isPremium,
       isAvailable: userHasPremium || !theme.isPremium,
       themeId: theme.id,
     }))

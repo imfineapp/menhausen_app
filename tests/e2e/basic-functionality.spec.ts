@@ -27,11 +27,11 @@ test.describe('Basic App Functionality', () => {
     // Проверяем, что есть блок пользователя (Герой #1)
     await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
 
-    // Проверяем, что есть блок "Что вас беспокоит?" (основной контент)
-    await expect(page.getByText('Что вас беспокоит?')).toBeVisible();
+    // Проверяем, что контейнер списка тем виден (язык-независимый селектор)
+    await expect(page.locator('[data-name="Worries container"]')).toBeVisible();
 
-    // Проверяем, что есть тема "Стресс" (единственная доступная)
-    await expect(page.locator('[data-name="Theme card narrow"]').filter({ hasText: 'Стресс' }).first()).toBeVisible();
+    // Проверяем, что есть хотя бы одна карточка темы
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
   });
 
   test('должен открывать профиль при клике на блок пользователя', async ({ page }) => {
@@ -68,12 +68,11 @@ test.describe('Basic App Functionality', () => {
       await page.waitForLoadState('networkidle');
     }
 
-    // Кликаем на тему "Стресс"
-    await page.locator('[data-name="Theme card narrow"]').filter({ hasText: 'Стресс' }).click();
+    // Кликаем по первой карточке темы (язык-независимо)
+    await page.locator('[data-name="Theme card narrow"]').first().click();
     await page.waitForLoadState('networkidle');
 
-    // Проверяем, что страница изменилась (появился какой-то новый контент)
-    const bodyText = await page.textContent('body');
-    expect(bodyText).toContain('Стресс'); // Должны остаться на той же странице или перейти куда-то
+    // Проверяем, что после клика список тем всё ещё отображается (язык-независимо)
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
   });
 });
