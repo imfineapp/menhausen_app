@@ -255,7 +255,9 @@ describe('Final Theme Cards Tests', () => {
             deleteAccount: 'Delete account',
             payments: 'Payments',
             heroTitle: 'Hero #1275',
-            level: 'Level'
+            level: 'Level',
+            premium: 'Premium',
+            free: 'Free'
           },
           survey: {
             progress: 'Step {current} of {total}',
