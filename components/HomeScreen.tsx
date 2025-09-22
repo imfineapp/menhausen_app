@@ -87,13 +87,14 @@ function UserAvatar() {
  * Адаптивная инфо��мация о пользователе с именем
  */
 function UserInfo() {
+  const { content } = useContent();
   return (
     <div
       className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0 w-full"
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <h2 className="block">Герой #1</h2>
+        <h2 className="block">{content.ui.home.heroTitle}</h2>
       </div>
     </div>
   );
@@ -103,6 +104,7 @@ function UserInfo() {
  * Адаптивный статус аккаунта пользователя (Premium/Free)
  */
 function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
+  const { content } = useContent();
   return (
     <div
       className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 ${
@@ -118,7 +120,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
           : 'text-[#696969]'
       }`}>
         <p className="adjustLetterSpacing block whitespace-pre">
-          {isPremium ? 'Премиум' : 'Бесплатно'}
+          {isPremium ? content.ui.profile.premium : content.ui.profile.free}
         </p>
       </div>
     </div>
@@ -129,13 +131,14 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  * Адаптивный уровень пользователя и статус подписки
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
+  const { content } = useContent();
   return (
     <div
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
       <div className="typography-body text-[#696969] text-left text-nowrap">
-        <p className="block whitespace-pre">Уровень 1</p>
+        <p className="block whitespace-pre">{content.ui.home.level} 1</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>
@@ -184,7 +187,7 @@ function InfoIcon({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       className="relative shrink-0 size-10 sm:size-12 cursor-pointer hover:opacity-70 transition-opacity duration-200 p-2"
       data-name="Info icon"
-      aria-label="Показать информацию о чекине"
+      aria-label={content.ui.home.checkInInfo.title}
     >
       <svg className="block size-full" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
         <g id="Info icon">
@@ -230,7 +233,7 @@ function InfoGroup({ onInfoClick }: { onInfoClick: () => void }) {
       data-name="Info_group"
     >
       <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
-        <h2 className="block whitespace-pre">Как дела?</h2>
+        <h2 className="block whitespace-pre">{content.ui.home.howAreYou}</h2>
       </div>
       <InfoIcon onClick={onInfoClick} />
     </div>
@@ -252,7 +255,7 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
           <div className="typography-button text-[#696969] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block whitespace-pre">Отправить</p>
+            <p className="adjustLetterSpacing block whitespace-pre">{content.ui.home.checkInButton}</p>
           </div>
         </div>
       </div>
@@ -278,6 +281,7 @@ function ThemeCard({
   isPremium?: boolean;
   onClick?: () => void;
 }) {
+  const { content } = useContent();
   
   return (
     <button
@@ -313,14 +317,14 @@ function ThemeCard({
           showBackground={true}
         />
         <div className="absolute typography-caption top-1/2 left-0 right-0 -translate-y-1/2 text-[#696969] text-right pr-2">
-          <p className="block">Прогресс</p>
+          <p className="block">{content.ui.home.activity.progressLabel}</p>
         </div>
       </div>
       
       {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
       <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
         <div className="typography-button text-[#696969] text-left">
-          <p className="block">Используют 80% пользователей</p>
+          <p className="block">{content.ui.home.use80PercentUsers}</p>
         </div>
         <UserAccountStatus isPremium={isPremium} />
       </div>
@@ -331,18 +335,20 @@ function ThemeCard({
 /**
  * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
-function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
-  // Фиктивные данные для демонстрации
-  const worries = [
-    {
-      title: 'Стресс',
-      description: 'Обучение управлению ежедневным стрессом и развитие здоровых механизмов преодоления.',
+function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
+  const { content } = useContent();
+
+  // Берём первые несколько тем из контента (демо-отображение)
+  const worries = Object.values(content.themes)
+    .map((theme) => ({
+      title: theme.title,
+      description: theme.description,
       progress: Math.floor(Math.random() * 100),
-      isPremium: false,
-      isAvailable: true,
-      themeId: 'stress-management'
-    }
-  ];
+      isPremium: theme.isPremium,
+      isAvailable: userHasPremium || !theme.isPremium,
+      themeId: theme.id,
+    }))
+    .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable));
 
   const handleThemeClick = (themeId: string, isAvailable: boolean) => {
     if (isAvailable) {
@@ -376,16 +382,17 @@ function WorriesList({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }
 /**
  * Адаптивный контейнер блока "What worries you?"
  */
-function WorriesContainer({ onGoToTheme }: { onGoToTheme: (themeId: string) => void }) {
+function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
+  const { content } = useContent();
   return (
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
-        <h2 className="block">Что вас беспокоит?</h2>
+        <h2 className="block">{content.ui.home.whatWorriesYou}</h2>
       </div>
-      <WorriesList onGoToTheme={onGoToTheme} />
+      <WorriesList onGoToTheme={onGoToTheme} userHasPremium={userHasPremium} />
     </div>
   );
 }
@@ -409,7 +416,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
       {/* CheckInBlock скрыт по требованию */}
       {/* <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} /> */}
       <ActivityBlockNew />
-      <WorriesContainer onGoToTheme={onGoToTheme} />
+      <WorriesContainer onGoToTheme={onGoToTheme} userHasPremium={userHasPremium} />
     </div>
   );
 }
@@ -476,8 +483,8 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeS
       <InfoModal
         isOpen={isInfoModalOpen}
         onClose={handleCloseInfoModal}
-        title="Зачем нужен ежедневный чекин?"
-        content="Ежедневный чекин — это простой, но мощный инструмент для улучшения вашего ментального здоровья. Вот почему это важно:\n\n• Самосознание: Регулярная проверка эмоций помогает лучше понимать свои чувства и реакции\n\n• Раннее выявление: Позволяет заметить изменения в настроении до того, как они станут серьезной проблемой\n\n• Привычка заботы: Формирует полезную привычку обращать внимание на свое психологическое состояние\n\n• Трекинг прогресса: Помогает отслеживать изменения в вашем эмоциональном состоянии со временем\n\n• Мотивация: Понимание своих эмоций — первый шаг к их управлению и улучшению качества жизни\n\nВсего несколько минут в день могут значительно повлиять на ваше общее благополучие."
+        title={_content.ui.home.checkInInfo.title}
+        content={_content.ui.home.checkInInfo.content}
       />
     </div>
   );

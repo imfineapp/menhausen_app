@@ -213,6 +213,9 @@ export interface UITexts {
     payments: LocalizedContent;
     heroTitle: LocalizedContent;
     level: LocalizedContent;
+    premium: LocalizedContent;
+    free: LocalizedContent;
+    follow?: LocalizedContent;
   };
   about: {
     title: LocalizedContent;
