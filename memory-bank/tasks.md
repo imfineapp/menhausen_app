@@ -645,3 +645,76 @@
 - ✅ TypeScript: 0 type errors
 
 **Task Status**: 🏆 FULLY COMPLETED AND ARCHIVED
+
+## 📝 NEW TASK: Onboarding Flow Orchestrator (Variant A)
+
+### Description
+Implement a minimal persisted flow controller in `App.tsx` to orchestrate first-run onboarding: Onboarding1 → Onboarding2 → Survey (01–05) → PIN (disabled/skip) → Check-in → Reward (only once) → Home. On repeat visits, skip onboarding/survey/reward and start at Check-in (configurable to Home later).
+
+### Complexity
+Level: 2
+Type: Enhancement
+
+### Technology Stack
+- Framework: React 18 + TypeScript
+- Build Tool: Vite
+- Language: TypeScript
+- Storage: localStorage (option to swap to `CriticalDataManager` later)
+
+### Technology Validation Checkpoints
+- [x] Project setup validated (existing app)
+- [x] Dependencies already installed
+- [x] Build configuration validated (existing Vite/TS)
+- [x] Hello world present (existing app)
+- [x] Test build passes (existing CI verified)
+
+### Status
+- [x] Initialization complete
+- [x] Planning complete
+- [ ] Implementation in progress
+- [ ] Technology validation complete (post-change smoke test)
+
+### Implementation Plan
+1. Add progress model and helpers in `App.tsx`:
+   - Type `AppFlowProgress`
+   - `FLOW_KEY = 'app-flow-progress'`
+   - `defaultProgress`, `loadProgress()`, `saveProgress()`, `updateFlow()`
+2. Compute initial screen from progress:
+   - If `!onboardingCompleted` → `onboarding1`
+   - Else if `!surveyCompleted` → `survey01`
+   - Else (PIN disabled) → `checkin` (later configurable to `home`)
+3. Wire progress updates into existing handlers:
+   - On `OnboardingScreen02` complete: set `onboardingCompleted=true`, go `survey01`
+   - On `SurveyScreen05` complete: set `surveyCompleted=true`; if `pinEnabled=false` → `checkin`
+   - On `PinSetupScreen` complete/skip: mark `pinCompleted=true` on complete; navigate `checkin`
+   - On `CheckInScreen` submit: set `firstCheckinDone=true`; if `!firstRewardShown` → show reward once then set `firstRewardShown=true`, else go `home`
+4. Keep settings path for PIN screen intact (accessible from profile), but main flow skips PIN while `pinEnabled=false`.
+5. Preserve existing E2E behavior where tests start at `home` via Playwright flag.
+
+### Components Affected
+- `App.tsx` (navigation/state orchestrator)
+
+### Dependencies
+- None new (reuse existing React/TS/Vite). Optional future: use `CriticalDataManager` to persist flow state with encryption/backup.
+
+### Challenges & Mitigations
+- State drift between React state and storage → always mutate via `updateFlow()` that calls `saveProgress()`.
+- Back navigation into completed onboarding → rely on `navigateTo` flow and avoid exposing obsolete entries in history.
+- First-run/repeat-run detection → presence/values in `app-flow-progress` localStorage.
+
+### Testing Strategy
+- Manual
+  - First run: Verify sequence Onboarding1 → Onboarding2 → Survey → Check-in → Reward (once) → Home
+  - Refresh and reopen: Verify direct jump to Check-in (no onboarding/survey/reward)
+- E2E (future additions)
+  - Spec A: First-run full flow
+  - Spec B: Repeat-run skips directly to Check-in
+
+### Checklist
+- [ ] Add `AppFlowProgress` type and helpers
+- [ ] Compute initial screen from progress
+- [ ] Update onboarding completion handler
+- [ ] Update survey completion handler (skip PIN when disabled)
+- [ ] Update PIN handlers (complete/skip)
+- [ ] Update check-in submit with one-time reward logic
+- [ ] Manual smoke test (first-run and repeat-run)
