@@ -1,7 +1,7 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🎯 **READY FOR NEW TASK** - Test Fixes Implementation archived
+🎯 **ACTIVE TASK** - Content System Consolidation (Level 3 Intermediate Feature)
 
 ## Implementation Progress
 **Status**: ✅ **COMPLETED** - Test Fixes Implementation (Level 1 Quick Bug Fix)
@@ -327,3 +327,226 @@
 **Project Status**: ✅ **READY FOR DEPLOYMENT**
 
 **Memory Bank Status**: ✅ **UPDATED AND READY**
+
+---
+
+## 🎯 **NEW TASK**: Content System Consolidation
+
+### ✅ **TASK INITIATED**: Content System Consolidation
+**Status**: IN PLANNING PHASE - Level 3 (Intermediate Feature)
+**Problem**: Dual content system with legacy `data/content.ts` and modern JSON files
+**Goal**: Complete migration to single JSON-based i18n system
+
+**Requirements Analysis:**
+1. **Complete Removal**: Remove legacy `data/content.ts` file completely
+2. **Content Migration**: Merge any missing content from `content.ts` into existing JSON files
+3. **System Integration**: Update `contentUtils.ts` to use ContentContext instead of direct imports
+4. **Caching Preservation**: Keep current caching mechanism in `contentLoader.ts` but remove deprecated code
+5. **Test Updates**: Update all failing tests to use JSON-based content system
+6. **Mock System Update**: Update mock system to use JSON files from `/data/content`
+
+**Current State Assessment:**
+- ✅ JSON content structure: 8 organized files per language (en/ru)
+- ⚠️ Legacy `data/content.ts`: 418 lines of deprecated content
+- ⚠️ `contentUtils.ts`: Still imports from legacy file
+- ⚠️ Mock system: Duplicates content structure
+- ✅ ContentLoader: Modern caching system in place
+- ✅ ContentContext: Modern React context system working
+
+**Complexity Level**: Level 3 (Intermediate Feature)
+- Multiple system integration required
+- Test system updates needed
+- Type system alignment required
+- Migration strategy needed
+- Comprehensive validation required
+
+**Ready for Planning Phase**: ✅ **PLANNING MODE ACTIVE**
+
+## 📋 **COMPREHENSIVE IMPLEMENTATION PLAN**
+
+### **Phase 1: Content Analysis & Migration Planning**
+**Objective**: Analyze legacy content and plan migration strategy
+
+**Analysis Results:**
+1. **Legacy Content Assessment**:
+   - `data/content.ts`: 418 lines of deprecated content
+   - **Empty Collections**: `themes: {}`, `cards: {}`, `emergencyCards: {}`, `mentalTechniques: {}`
+   - **Fallback Content**: Contains fallback UI text and about content
+   - **Status**: All meaningful content already exists in JSON files
+
+2. **Content Comparison**:
+   - ✅ **UI Content**: Already migrated to `ui.json` files
+   - ✅ **About Content**: Already exists in `ui.json` about section
+   - ✅ **Onboarding**: Already exists in `onboarding.json`
+   - ✅ **Survey**: Already exists in `survey.json`
+   - ✅ **Badges**: Already exists in `ui.json` badges section
+   - ✅ **Mental Techniques Menu**: Already exists in `mental-techniques-menu.json`
+
+3. **Migration Strategy**:
+   - **No Content Migration Needed**: All content already in JSON files
+   - **Legacy File**: Can be safely deleted
+   - **Focus**: Update system integration and remove dependencies
+
+### **Phase 2: System Integration Updates**
+**Objective**: Update contentUtils.ts to use ContentContext instead of legacy imports
+
+**Files to Modify**:
+1. **`utils/contentUtils.ts`**: Complete rewrite to use ContentContext
+2. **Remove Legacy Imports**: Remove `import { appContent } from '../data/content'`
+3. **Update Function Signatures**: Change to accept ContentContext or useContent hook
+4. **Maintain API Compatibility**: Keep existing function names for backward compatibility
+
+**Implementation Strategy**:
+- Convert utility functions to hooks or context-aware functions
+- Update all 276 lines of contentUtils.ts
+- Maintain existing API for components that might use these utilities
+- Add proper TypeScript types for new implementation
+
+### **Phase 3: Legacy System Removal**
+**Objective**: Remove legacy content.ts file and clean up deprecated code
+
+**Files to Remove**:
+1. **`data/content.ts`**: Complete file deletion (418 lines)
+
+**Files to Update**:
+1. **`utils/contentLoader.ts`**: Remove any references to legacy content
+2. **`components/ContentContext.tsx`**: Remove fallback imports from content.ts
+3. **`types/content.ts`**: Remove any legacy type definitions
+4. **`mocks/content-provider-mock.ts`**: Update to use JSON-based content
+
+### **Phase 4: Test System Updates**
+**Objective**: Update all tests to use JSON-based content system
+
+**Test Files to Update**:
+1. **Unit Tests**: Update any tests importing from content.ts
+2. **E2E Tests**: Ensure mock system uses JSON files
+3. **Mock System**: Update `mocks/content-provider-mock.ts` to load from JSON files
+4. **Integration Tests**: Verify ContentContext integration
+
+**Mock System Strategy**:
+- Update mock to dynamically load JSON files
+- Maintain test isolation and performance
+- Ensure mock content matches production content structure
+
+### **Phase 5: Validation & Quality Assurance**
+**Objective**: Comprehensive testing and validation
+
+**Validation Checklist**:
+1. **Build Verification**: Ensure all builds pass
+2. **Linting**: All ESLint and Stylelint checks pass
+3. **Type Checking**: Full TypeScript validation
+4. **Unit Tests**: All 87/88 tests pass
+5. **E2E Tests**: All 27/27 tests pass
+6. **Language Switching**: Verify both EN/RU content loading
+7. **Content Loading**: Verify all 8 JSON files load correctly
+8. **Performance**: Verify caching mechanism works
+9. **Memory**: Check for memory leaks in content loading
+
+### **Phase 6: Documentation & Cleanup**
+**Objective**: Update documentation and clean up deprecated code
+
+**Documentation Updates**:
+1. **README**: Update content system documentation
+2. **Comments**: Update code comments referencing legacy system
+3. **Type Definitions**: Clean up unused types
+4. **Import Statements**: Remove unused imports
+
+## 🎯 **IMPLEMENTATION CHECKLIST**
+
+### **Phase 1: Content Analysis** ✅ **COMPLETE**
+- [x] Analyze legacy content.ts structure
+- [x] Compare with existing JSON files
+- [x] Determine migration strategy
+- [x] Plan system integration updates
+
+### **Phase 2: System Integration** 🔄 **READY**
+- [ ] Update contentUtils.ts to use ContentContext
+- [ ] Remove legacy imports from contentUtils.ts
+- [ ] Update function signatures and implementations
+- [ ] Maintain API compatibility
+- [ ] Add proper TypeScript types
+
+### **Phase 3: Legacy Removal** 🔄 **READY**
+- [ ] Delete data/content.ts file
+- [ ] Update contentLoader.ts (remove legacy references)
+- [ ] Update ContentContext.tsx (remove legacy fallbacks)
+- [ ] Update types/content.ts (remove legacy types)
+- [ ] Update mocks/content-provider-mock.ts
+
+### **Phase 4: Test Updates** 🔄 **READY**
+- [ ] Update unit tests to use JSON content
+- [ ] Update E2E test mocks
+- [ ] Verify mock system uses JSON files
+- [ ] Test ContentContext integration
+- [ ] Verify test isolation and performance
+
+### **Phase 5: Validation** 🔄 **READY**
+- [ ] Build verification (TypeScript, Vite)
+- [ ] Linting verification (ESLint, Stylelint)
+- [ ] Unit test execution (87/88 tests)
+- [ ] E2E test execution (27/27 tests)
+- [ ] Language switching verification
+- [ ] Content loading verification (8 JSON files)
+- [ ] Performance and caching verification
+- [ ] Memory leak checks
+
+### **Phase 6: Documentation** 🔄 **READY**
+- [ ] Update README documentation
+- [ ] Update code comments
+- [ ] Clean up unused types
+- [ ] Remove unused imports
+- [ ] Final code review
+
+## 🚨 **RISK ASSESSMENT**
+
+**Low Risk Areas**:
+- ✅ JSON content structure is stable and well-tested
+- ✅ ContentContext system is working correctly
+- ✅ ContentLoader caching is proven and reliable
+
+**Medium Risk Areas**:
+- ⚠️ contentUtils.ts rewrite (276 lines, multiple functions)
+- ⚠️ Test system updates (mock system changes)
+- ⚠️ Component dependencies (if any components use contentUtils)
+
+**Mitigation Strategies**:
+- Comprehensive testing at each phase
+- Maintain API compatibility during transition
+- Incremental implementation with rollback capability
+- Thorough validation before each phase completion
+
+## 📊 **SUCCESS METRICS**
+
+**Primary Success Criteria**:
+1. ✅ Legacy `data/content.ts` completely removed
+2. ✅ All content loaded from JSON files only
+3. ✅ contentUtils.ts updated to use ContentContext
+4. ✅ All tests passing (87/88 unit, 27/27 E2E)
+5. ✅ All linting checks passing
+6. ✅ Build system working correctly
+7. ✅ Language switching functional
+8. ✅ Performance maintained or improved
+
+**Quality Metrics**:
+- Zero legacy code references
+- 100% test coverage maintained
+- No performance degradation
+- Clean, maintainable code structure
+- Proper TypeScript typing throughout
+
+## 🎯 **READY FOR IMPLEMENTATION**
+
+**Planning Phase Status**: ✅ **COMPLETE**
+**Next Phase**: **CREATIVE MODE** (if design decisions needed) or **IMPLEMENTATION MODE**
+**Estimated Timeline**: 1-2 days for complete implementation
+**Complexity Confirmed**: Level 3 (Intermediate Feature)
+
+**Key Deliverables Planned**:
+1. ✅ Content analysis and migration strategy
+2. ✅ System integration update plan
+3. ✅ Legacy removal strategy
+4. ✅ Test system update plan
+5. ✅ Validation and QA strategy
+6. ✅ Documentation update plan
+
+**Ready for Next Phase**: ✅ **PLANNING COMPLETE**
