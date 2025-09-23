@@ -1,6 +1,6 @@
 // Базовые тесты функциональности приложения
 import { test, expect } from '@playwright/test';
-import { skipSurvey } from './utils/skip-survey';
+import { skipSurvey, skipOnboarding } from './utils/skip-survey';
 
 test.describe('Basic App Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,14 +16,11 @@ test.describe('Basic App Functionality', () => {
     // Ждем загрузки приложения
     await page.waitForLoadState('networkidle');
 
-    // Пройдем онбординг если он показывается
-    const nextBtn = page.getByRole('button', { name: /next/i });
-    if (await nextBtn.isVisible().catch(() => false)) {
-      await nextBtn.click();
-      const getStarted = page.getByRole('button', { name: /get started/i });
-      await getStarted.click();
-      await page.waitForLoadState('networkidle');
-    }
+    // Пройдем онбординг
+    await skipOnboarding(page);
+
+    // Пропустим опрос и последующие шаги до домашней страницы при первом запуске
+    await skipSurvey(page);
 
     // Проверяем, что есть блок пользователя (Герой #1)
     await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
@@ -39,14 +36,10 @@ test.describe('Basic App Functionality', () => {
     // Переходим на главную страницу
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    // Пройдем онбординг если он показывается
-    const nextBtn = page.getByRole('button', { name: /next/i });
-    if (await nextBtn.isVisible().catch(() => false)) {
-      await nextBtn.click();
-      const getStarted = page.getByRole('button', { name: /get started/i });
-      await getStarted.click();
-      await page.waitForLoadState('networkidle');
-    }
+
+    // Пройдем онбординг и пропустим первый запуск
+    await skipOnboarding(page);
+    await skipSurvey(page);
 
     // Кликаем на блок пользователя
     await page.click('[data-name="User frame info block"]');

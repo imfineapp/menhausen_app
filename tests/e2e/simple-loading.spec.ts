@@ -17,8 +17,6 @@ test.describe('Simple App Loading', () => {
     
     // Проверяем, что есть какой-то контент
     const bodyText = await page.textContent('body');
-    console.log('Body text:', bodyText);
-    
     // Проверяем, что страница не пустая
     expect(bodyText).toBeTruthy();
     expect(bodyText!.length).toBeGreaterThan(0);

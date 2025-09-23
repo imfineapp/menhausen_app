@@ -51,7 +51,6 @@ test.describe('i18n Language Switching', () => {
     await expect(pageTitle).toBeVisible({ timeout: 10000 });
     
     const titleText = await pageTitle.textContent();
-    console.log('Page title after language switch:', titleText);
     
     // Проверяем, что заголовок содержит русский текст
     expect(titleText).toMatch(/Герой #1275|Профиль|Как дела?/);
@@ -66,7 +65,6 @@ test.describe('i18n Language Switching', () => {
     // Пропускаем опрос если он показывается после переключения языка
     const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
     if (surveyVisible) {
-      console.log('Survey appeared after language switch, skipping...');
       await skipSurvey(page);
     } else {
       await expect(page.locator('[data-testid="home-ready"]')).toBeVisible();
@@ -114,7 +112,6 @@ test.describe('i18n Language Switching', () => {
     await expect(pageTitle).toBeVisible({ timeout: 10000 });
     
     const titleText = await pageTitle.textContent();
-    console.log('Page title after language switch:', titleText);
     
     // Проверяем, что заголовок содержит русский текст "Герой #1275" или английский "Hero #1275"
     expect(titleText).toMatch(/Герой #1275|Hero #1275/);
@@ -129,7 +126,6 @@ test.describe('i18n Language Switching', () => {
     // Пропускаем опрос если он показывается после переключения языка
     const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
     if (surveyVisible) {
-      console.log('Survey appeared after language switch, skipping...');
       await skipSurvey(page);
     } else {
       await expect(page.locator('[data-testid="home-ready"]')).toBeVisible();
@@ -164,7 +160,6 @@ test.describe('i18n Language Switching', () => {
     // Пропускаем опрос если он показывается после переключения языка
     const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
     if (surveyVisible) {
-      console.log('Survey appeared after language switch, skipping...');
       await skipSurvey(page);
     } else {
       await expect(page.locator('[data-testid="home-ready"]')).toBeVisible();

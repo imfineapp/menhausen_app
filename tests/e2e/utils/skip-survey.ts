@@ -5,50 +5,50 @@ import { Page } from '@playwright/test';
  * Новые пользователи проходят: survey01 → survey02 → survey03 → survey04 → survey05 → pin → checkin → reward → home
  */
 export async function skipSurvey(page: Page): Promise<void> {
+  // Ensure onboarding is completed first
+  await skipOnboarding(page);
+
   // Проверяем, показывается ли опрос
   const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
   
   if (surveyVisible) {
-    console.log('Survey detected, starting complete flow...');
     
     // Проходим весь опрос (5 экранов)
     await completeSurvey(page);
-    console.log('Survey completed');
     
     // После опроса идет настройка PIN
     await skipPinSetup(page);
-    console.log('PIN setup skipped');
     
     // После PIN идет первый чекин
     await completeFirstCheckin(page);
-    console.log('First checkin completed');
     
     // После чекина показывается награда
     await skipRewardScreen(page);
-    console.log('Reward screen skipped');
   }
   
-  // Ждем загрузки главной страницы
-  console.log('Waiting for home page...');
-  try {
-    await page.waitForSelector('[data-testid="home-ready"]', { timeout: 15000 });
-    console.log('Home page loaded successfully');
-  } catch (error) {
-    console.log('Home page not found, checking current page state...');
-    // Проверяем, на какой странице мы находимся
-    const currentUrl = page.url();
-    console.log('Current URL:', currentUrl);
-    
-    // Если мы на главной странице, но data-testid не найден, попробуем другой подход
-    if (currentUrl.includes('localhost') || currentUrl === 'about:blank') {
-      console.log('Trying to navigate to home page...');
-      await page.goto('/');
-      await page.waitForLoadState('networkidle');
-      await page.waitForSelector('[data-testid="home-ready"]', { timeout: 10000 });
-      console.log('Home page loaded after navigation');
-    } else {
-      throw error;
+  // Ждем загрузки главной страницы (оптимизировано для CI)
+  const homeSelectors = [
+    '[data-testid="home-ready"]',
+    '[data-name="Theme card narrow"]',
+    '[data-name="User frame info block"]'
+  ];
+  const startedAt = Date.now();
+  const maxMs = 4000; // 4s ceiling
+  while (Date.now() - startedAt < maxMs) {
+    for (const sel of homeSelectors) {
+      const visible = await page.locator(sel).first().isVisible().catch(() => false);
+      if (visible) {
+        return;
+      }
     }
+    await page.waitForTimeout(200);
+  }
+  // Adaptive final assert: try home-ready first, then fallback to any home selector
+  try {
+    await page.waitForSelector('[data-testid="home-ready"]', { timeout: 3000 });
+  } catch {
+    // Fallback: wait for any home indicator with more time
+    await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 5000 });
   }
 }
 
@@ -89,11 +89,8 @@ async function skipPinSetup(page: Page): Promise<void> {
   // Ищем кнопку "Skip" на экране настройки PIN
   const skipBtn = page.locator('text=Skip');
   if (await skipBtn.isVisible()) {
-    console.log('PIN setup screen found, clicking Skip...');
     await skipBtn.click();
     await page.waitForLoadState('networkidle');
-  } else {
-    console.log('PIN setup screen not found, continuing...');
   }
 }
 
@@ -104,19 +101,13 @@ async function completeFirstCheckin(page: Page): Promise<void> {
   // Проверяем, находимся ли мы на экране чекина
   const checkinTitle = page.locator('text=How are you?');
   if (await checkinTitle.isVisible()) {
-    console.log('Checkin screen found, submitting with default mood...');
     
     // Нажимаем кнопку отправки (по умолчанию уже выбрано настроение neutral)
     const sendBtn = page.locator('text=Send');
     if (await sendBtn.isVisible()) {
-      console.log('Submitting checkin...');
       await sendBtn.click();
       await page.waitForLoadState('networkidle');
-    } else {
-      console.log('Send button not found on checkin screen');
     }
-  } else {
-    console.log('Checkin screen not found, continuing...');
   }
 }
 
@@ -124,14 +115,18 @@ async function completeFirstCheckin(page: Page): Promise<void> {
  * Пропускаем экран награды
  */
 async function skipRewardScreen(page: Page): Promise<void> {
-  // Ищем кнопку "Continue" на экране награды
-  const continueBtn = page.locator('text=Continue');
-  if (await continueBtn.isVisible()) {
-    console.log('Reward screen found, clicking Continue...');
-    await continueBtn.click();
-    await page.waitForLoadState('networkidle');
-  } else {
-    console.log('Reward screen not found, continuing...');
+  // Ждем появления экрана награды
+  try {
+    await page.waitForSelector('text=Congratulations!', { timeout: 5000 });
+    
+    // Ищем кнопку "Continue" на экране награды
+    const continueBtn = page.locator('text=Continue');
+    if (await continueBtn.isVisible()) {
+      await continueBtn.click();
+      await page.waitForLoadState('networkidle');
+    }
+  } catch {
+    // Если экран награды не появился, продолжаем
   }
 }
 
@@ -156,19 +151,13 @@ export async function skipOnboarding(page: Page): Promise<void> {
     await continueBtn.waitFor({ state: 'attached', timeout: 5000 });
     
     // Пробуем кликнуть с повторными попытками
-    let clicked = false;
     for (let i = 0; i < 10; i++) {
       if (await continueBtn.isEnabled()) {
         await continueBtn.click();
         await page.waitForLoadState('networkidle');
-        clicked = true;
         break;
       }
       await page.waitForTimeout(500);
-    }
-    
-    if (!clicked) {
-      console.log('Continue button found but not enabled after waiting');
     }
   }
   

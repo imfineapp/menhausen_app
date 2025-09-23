@@ -65,21 +65,73 @@ function AppContent() {
     console.log('E2E test environment detected, starting with home screen');
   }
   
+  // Persisted onboarding flow progress (Variant A)
+  type AppFlowProgress = {
+    onboardingCompleted: boolean;
+    surveyCompleted: boolean;
+    pinEnabled: boolean;       // feature flag, disabled for now
+    pinCompleted: boolean;
+    firstCheckinDone: boolean;
+    firstRewardShown: boolean;
+  };
+
+  const FLOW_KEY = 'app-flow-progress';
+
+  const defaultProgress: AppFlowProgress = {
+    onboardingCompleted: false,
+    surveyCompleted: false,
+    pinEnabled: false, // skip PIN in the main flow for now
+    pinCompleted: false,
+    firstCheckinDone: false,
+    firstRewardShown: false
+  };
+
+  const loadProgress = (): AppFlowProgress => {
+    try {
+      const raw = localStorage.getItem(FLOW_KEY);
+      return raw ? { ...defaultProgress, ...JSON.parse(raw) } : defaultProgress;
+    } catch (e) {
+      console.error('Failed to load app flow progress:', e);
+      return defaultProgress;
+    }
+  };
+
+  const saveProgress = (p: AppFlowProgress) => {
+    try {
+      localStorage.setItem(FLOW_KEY, JSON.stringify(p));
+    } catch (e) {
+      console.error('Failed to save app flow progress:', e);
+    }
+  };
+
+  const [flow, setFlow] = useState<AppFlowProgress>(loadProgress());
+  const updateFlow = (updater: (prev: AppFlowProgress) => AppFlowProgress) => {
+    setFlow(prev => {
+      const next = updater(prev);
+      saveProgress(next);
+      return next;
+    });
+  };
+  
   // Smart Navigation: Dynamic screen determination based on user state
   const getInitialScreen = (): AppScreen => {
     if (isE2ETestEnvironment) {
       return 'home';
     }
-    
-    try {
-      const userState = UserStateManager.analyzeUserState();
-      const initialScreen = UserStateManager.getInitialScreen(userState);
-      console.log('Smart Navigation: User state analyzed, initial screen:', initialScreen);
-      return initialScreen;
-    } catch (error) {
-      console.error('Smart Navigation: Failed to analyze user state, falling back to onboarding1:', error);
+
+    // Primary: flow-driven initial screen
+    const p = loadProgress();
+
+    if (!p.onboardingCompleted) {
       return 'onboarding1';
     }
+
+    if (!p.surveyCompleted) {
+      return 'survey01';
+    }
+
+    // PIN disabled in flow: start with check-in for repeat visits
+    return 'checkin';
   };
 
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());
@@ -94,7 +146,7 @@ function AppContent() {
   const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
-  const [hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
+  const [_hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('has-shown-first-achievement');
       return saved ? JSON.parse(saved) : false;
@@ -344,6 +396,8 @@ function AppContent() {
   };
 
   const handleShowSurvey = () => {
+    // Mark onboarding as completed and move to survey
+    updateFlow(p => ({ ...p, onboardingCompleted: true }));
     // Загружаем сохраненные результаты если есть
     const savedResults = loadSavedSurveyResults();
     setSurveyResults(prev => ({ ...prev, ...savedResults }));
@@ -364,6 +418,7 @@ function AppContent() {
 
   const handleCompletePinSetup = () => {
     console.log('PIN setup completed');
+    updateFlow(p => ({ ...p, pinCompleted: true }));
     navigateTo('checkin');
   };
 
@@ -373,23 +428,26 @@ function AppContent() {
   };
 
   const handleCheckInSubmit = (_mood: string) => {
-    // ПРИНУДИТЕЛЬНО показываем страницу награды с несколькими достижениями для тестирования
     // В реальном приложении здесь будет логика проверки достижений на бэкэнде
-    const earnedAchievements = ['first_checkin', 'week_streak', 'mood_tracker']; // Принудительно показываем несколько достижений
-    
     // Smart Navigation: Refresh user state after check-in completion
     refreshUserState();
-    
+
+    // Update flow for first check-in
+    updateFlow(p => ({ ...p, firstCheckinDone: true }));
+
     // Показываем достижение только если не показывали раньше
-    if (!hasShownFirstAchievement && earnedAchievements.includes('first_checkin')) {
-      setEarnedAchievementIds(['first_checkin']); // Показываем только первое достижение
+    if (!flow.firstRewardShown) {
+      setEarnedAchievementIds(['first_checkin']);
       setHasShownFirstAchievement(true);
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
-    } else {
-      setEarnedAchievementIds([]);
+      updateFlow(p => ({ ...p, firstRewardShown: true }));
+      navigateTo('reward');
+      return;
     }
 
-    navigateTo('reward');
+    // If reward already shown, go home directly
+    setEarnedAchievementIds([]);
+    navigateTo('home');
   };
 
   // =====================================================================================
@@ -432,16 +490,23 @@ function AppContent() {
     
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
+
+    // Mark survey completed in flow
+    updateFlow(p => ({ ...p, surveyCompleted: true }));
+
+    // Decide next step: skip PIN if disabled
+    const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+
     if (saveSuccess) {
       console.log('Survey completed successfully');
       
       // Smart Navigation: Refresh user state after survey completion
       refreshUserState();
       
-      navigateTo('pin');
+      navigateTo(nextScreen);
     } else {
       console.error('Failed to save survey, but continuing...');
-      navigateTo('pin');
+      navigateTo(nextScreen);
     }
   };
 
