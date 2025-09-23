@@ -1,5 +1,6 @@
 // Базовые тесты функциональности приложения
 import { test, expect } from '@playwright/test';
+import { skipSurvey } from './utils/skip-survey';
 
 test.describe('Basic App Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,20 +60,19 @@ test.describe('Basic App Functionality', () => {
     // Переходим на главную страницу
     await page.goto('/');
     await page.waitForLoadState('networkidle');
-    // Пройдем онбординг если он показывается
-    const nextBtn = page.getByRole('button', { name: /next/i });
-    if (await nextBtn.isVisible().catch(() => false)) {
-      await nextBtn.click();
-      const getStarted = page.getByRole('button', { name: /get started/i });
-      await getStarted.click();
-      await page.waitForLoadState('networkidle');
-    }
+    
+    // Пропускаем опрос если он показывается
+    await skipSurvey(page);
 
+    // Ждем загрузки контента и появления карточек тем
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 10000 });
+    
     // Кликаем по первой карточке темы (язык-независимо)
     await page.locator('[data-name="Theme card narrow"]').first().click();
     await page.waitForLoadState('networkidle');
 
-    // Проверяем, что после клика список тем всё ещё отображается (язык-независимо)
-    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
+    // Проверяем, что мы перешли на страницу темы
+    // Главная страница больше не видна, что означает успешную навигацию
+    await expect(page.locator('[data-testid="home-ready"]')).not.toBeVisible();
   });
 });

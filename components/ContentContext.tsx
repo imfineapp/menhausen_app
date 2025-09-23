@@ -6,7 +6,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
-import { mockContent } from '../mocks/content-provider-mock';
+// Моки больше не используются - все тесты используют реальный контент
 
 /**
  * React контекст для централизованного управления контентом
@@ -569,18 +569,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getLocalizedBadges
   };
 
-  // В E2E тестовой среде используем мок
-  const isE2ETestEnvironment = typeof window !== 'undefined' && 
-    (window as any).__PLAYWRIGHT__ === true;
-  
-  if (isE2ETestEnvironment) {
-    console.log('Using mock content for E2E tests');
-    return (
-      <ContentContext.Provider value={mockContent}>
-        {children}
-      </ContentContext.Provider>
-    );
-  }
+  // E2E тесты теперь используют реальный контент из JSON файлов
 
   // Показываем загрузку или ошибку
   if (isLoading) {

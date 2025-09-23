@@ -36,31 +36,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       onboarding: onboarding.default,
       emergencyCards: emergencyCards.default,
       badges: ui.default.badges,
-      about: ui.default.about || {
-        title: 'About Menhausen',
-        description: 'Your personal mental health companion',
-        keyFeatures: 'Key Features',
-        features: {
-          moodTracking: 'Mood Tracking',
-          exercises: 'Mental Exercises',
-          progress: 'Progress Tracking',
-          privacy: 'Privacy First',
-          telegram: 'Telegram Integration'
-        },
-        developmentTeam: 'Development Team',
-        teamDescription: 'Built by mental health professionals',
-        madeWithLove: 'Made with ❤️',
-        copyright: '© 2024 Menhausen',
-        technicalInformation: 'Technical Information',
-        importantNote: 'Important Note',
-        disclaimer: 'This app is designed to support your mental wellness journey, but it is not a substitute for professional medical advice.',
-        emergency: 'For emergencies, please contact your local emergency services.',
-        version: 'Version 1.0.0',
-        platform: 'Platform',
-        builtWith: 'Built with',
-        lastUpdated: 'Last Updated',
-        betaVersion: 'Beta Version'
-      }
+      about: ui.default.about
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);
