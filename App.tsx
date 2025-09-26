@@ -45,6 +45,7 @@ import { SurveyResults } from './types/content';
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
+import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
@@ -130,8 +131,20 @@ function AppContent() {
       return 'survey01';
     }
 
-    // PIN disabled in flow: start with check-in for repeat visits
-    return 'checkin';
+    // Daily check-in logic: Check if check-in is needed today
+    const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+    
+    if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+      // Check-in needed for today
+      return 'checkin';
+    } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+      // Check-in already completed today, go to home
+      return 'home';
+    } else {
+      // Error state, default to check-in
+      console.warn('Daily check-in status error, defaulting to check-in screen');
+      return 'checkin';
+    }
   };
 
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());

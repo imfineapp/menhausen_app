@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { DailyCheckinManager } from '../utils/DailyCheckinManager';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -58,6 +59,7 @@ function SendButton({ onClick, disabled }: { onClick: () => void; disabled: bool
     <BottomFixedButton 
       onClick={onClick}
       disabled={disabled}
+      ariaLabel="Submit check-in"
     >
       {content.ui.checkin.send}
     </BottomFixedButton>
@@ -267,15 +269,28 @@ export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps)
     if (selectedMood !== null) {
       const moodData = moodOptions[selectedMood];
       
-      // Логируем данные о настроении
-      console.log('Mood check-in:', {
-        mood_id: moodData.id,
-        mood_label: moodData.label,
-        mood_value: moodData.value,
-        timestamp: new Date().toISOString()
+      // Save check-in data using DailyCheckinManager
+      const saveSuccess = DailyCheckinManager.saveCheckin({
+        mood: moodData.label,
+        value: moodData.value,
+        color: moodData.color
       });
       
-      onSubmit(moodData.label);
+      if (saveSuccess) {
+        console.log('Daily check-in saved successfully:', {
+          mood_id: moodData.id,
+          mood_label: moodData.label,
+          mood_value: moodData.value,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Call the original onSubmit handler
+        onSubmit(moodData.label);
+      } else {
+        console.error('Failed to save daily check-in data');
+        // Still call onSubmit to maintain app flow, but log the error
+        onSubmit(moodData.label);
+      }
     }
   };
 

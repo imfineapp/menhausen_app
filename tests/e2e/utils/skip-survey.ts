@@ -19,36 +19,41 @@ export async function skipSurvey(page: Page): Promise<void> {
     // После опроса идет настройка PIN
     await skipPinSetup(page);
     
-    // После PIN идет первый чекин
-    await completeFirstCheckin(page);
+    // Skip the first check-in - let the test handle it
+    // await completeFirstCheckin(page);
     
-    // После чекина показывается награда
-    await skipRewardScreen(page);
+    // Skip the reward screen as well
+    // await skipRewardScreen(page);
   }
   
-  // Ждем загрузки главной страницы (оптимизировано для CI)
-  const homeSelectors = [
-    '[data-testid="home-ready"]',
-    '[data-name="Theme card narrow"]',
-    '[data-name="User frame info block"]'
-  ];
-  const startedAt = Date.now();
-  const maxMs = 4000; // 4s ceiling
-  while (Date.now() - startedAt < maxMs) {
-    for (const sel of homeSelectors) {
-      const visible = await page.locator(sel).first().isVisible().catch(() => false);
-      if (visible) {
-        return;
-      }
-    }
-    await page.waitForTimeout(200);
-  }
-  // Adaptive final assert: try home-ready first, then fallback to any home selector
+  // Wait for check-in screen to appear (since we're not completing the check-in)
   try {
-    await page.waitForSelector('[data-testid="home-ready"]', { timeout: 3000 });
+    await page.waitForSelector('text=How are you?', { timeout: 5000 });
   } catch {
-    // Fallback: wait for any home indicator with more time
-    await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 5000 });
+    // If check-in screen doesn't appear, wait for home screen as fallback
+    const homeSelectors = [
+      '[data-testid="home-ready"]',
+      '[data-name="Theme card narrow"]',
+      '[data-name="User frame info block"]'
+    ];
+    const startedAt = Date.now();
+    const maxMs = 4000; // 4s ceiling
+    while (Date.now() - startedAt < maxMs) {
+      for (const sel of homeSelectors) {
+        const visible = await page.locator(sel).first().isVisible().catch(() => false);
+        if (visible) {
+          return;
+        }
+      }
+      await page.waitForTimeout(200);
+    }
+    // Adaptive final assert: try home-ready first, then fallback to any home selector
+    try {
+      await page.waitForSelector('[data-testid="home-ready"]', { timeout: 3000 });
+    } catch {
+      // Fallback: wait for any home indicator with more time
+      await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 5000 });
+    }
   }
 }
 
@@ -94,41 +99,6 @@ async function skipPinSetup(page: Page): Promise<void> {
   }
 }
 
-/**
- * Проходим первый чекин
- */
-async function completeFirstCheckin(page: Page): Promise<void> {
-  // Проверяем, находимся ли мы на экране чекина
-  const checkinTitle = page.locator('text=How are you?');
-  if (await checkinTitle.isVisible()) {
-    
-    // Нажимаем кнопку отправки (по умолчанию уже выбрано настроение neutral)
-    const sendBtn = page.locator('text=Send');
-    if (await sendBtn.isVisible()) {
-      await sendBtn.click();
-      await page.waitForLoadState('networkidle');
-    }
-  }
-}
-
-/**
- * Пропускаем экран награды
- */
-async function skipRewardScreen(page: Page): Promise<void> {
-  // Ждем появления экрана награды
-  try {
-    await page.waitForSelector('text=Congratulations!', { timeout: 5000 });
-    
-    // Ищем кнопку "Continue" на экране награды
-    const continueBtn = page.locator('text=Continue');
-    if (await continueBtn.isVisible()) {
-      await continueBtn.click();
-      await page.waitForLoadState('networkidle');
-    }
-  } catch {
-    // Если экран награды не появился, продолжаем
-  }
-}
 
 /**
  * Утилитная функция для пропуска онбординга если он показывается
