@@ -650,75 +650,245 @@
 
 **Task Status**: 🏆 FULLY COMPLETED AND ARCHIVED
 
-## 📝 NEW TASK: Onboarding Flow Orchestrator (Variant A)
+## 📝 CURRENT TASK: Daily Check-in Logic Implementation
 
 ### Description
-Implement a minimal persisted flow controller in `App.tsx` to orchestrate first-run onboarding: Onboarding1 → Onboarding2 → Survey (01–05) → PIN (disabled/skip) → Check-in → Reward (only once) → Home. On repeat visits, skip onboarding/survey/reward and start at Check-in (configurable to Home later).
+Implement daily check-in logic system with the following requirements:
+- Daily check-in (asking "How are you?" or "Как дела?") should be asked only once per day
+- New day starts at 6:00 AM local device time
+- Save user check-in data with unique key for current day
+- If check-in already completed today, skip check-in screen and go directly to Home on repeat visits
+- Count and display actual number of saved check-ins on Home page instead of placeholder "142 days"
 
 ### Complexity
-Level: 2
+Level: 2 (Simple Enhancement)
 Type: Enhancement
 
 ### Technology Stack
 - Framework: React 18 + TypeScript
 - Build Tool: Vite
 - Language: TypeScript
-- Storage: localStorage (option to swap to `CriticalDataManager` later)
+- Storage: localStorage with day-based keys
+- Time handling: JavaScript Date API with local timezone
+- Testing: Vitest (unit), Playwright (E2E)
+- State Management: React hooks + localStorage
 
 ### Technology Validation Checkpoints
-- [x] Project setup validated (existing app)
-- [x] Dependencies already installed
-- [x] Build configuration validated (existing Vite/TS)
-- [x] Hello world present (existing app)
+- [x] Project setup validated (existing React/TS/Vite app)
+- [x] Dependencies already installed (React 18, TypeScript, Vite)
+- [x] Build configuration validated (existing Vite/TS setup)
+- [x] Testing infrastructure present (Vitest + Playwright)
+- [x] Hello world present (existing app functionality)
 - [x] Test build passes (existing CI verified)
+- [x] localStorage API available and working
+- [x] JavaScript Date API available for time handling
+
+### VAN Mode Status
+- [x] Platform detection complete (macOS/Darwin)
+- [x] Memory Bank verification complete
+- [x] File structure verified
+- [x] QA validation status: PASS
+- [x] Complexity determination: Level 2
+- [x] Technology validation checkpoints complete
+- [x] VAN mode initialization complete
 
 ### Status
-- [x] Initialization complete
-- [x] Planning complete
-- [ ] Implementation in progress
+- [x] VAN mode initialization complete
+- [x] Planning phase (PLAN mode active)
+- [ ] Implementation phase
 - [ ] Technology validation complete (post-change smoke test)
 
-### Implementation Plan
-1. Add progress model and helpers in `App.tsx`:
-   - Type `AppFlowProgress`
-   - `FLOW_KEY = 'app-flow-progress'`
-   - `defaultProgress`, `loadProgress()`, `saveProgress()`, `updateFlow()`
-2. Compute initial screen from progress:
-   - If `!onboardingCompleted` → `onboarding1`
-   - Else if `!surveyCompleted` → `survey01`
-   - Else (PIN disabled) → `checkin` (later configurable to `home`)
-3. Wire progress updates into existing handlers:
-   - On `OnboardingScreen02` complete: set `onboardingCompleted=true`, go `survey01`
-   - On `SurveyScreen05` complete: set `surveyCompleted=true`; if `pinEnabled=false` → `checkin`
-   - On `PinSetupScreen` complete/skip: mark `pinCompleted=true` on complete; navigate `checkin`
-   - On `CheckInScreen` submit: set `firstCheckinDone=true`; if `!firstRewardShown` → show reward once then set `firstRewardShown=true`, else go `home`
-4. Keep settings path for PIN screen intact (accessible from profile), but main flow skips PIN while `pinEnabled=false`.
-5. Preserve existing E2E behavior where tests start at `home` via Playwright flag.
+### Comprehensive Implementation Plan
+
+#### Phase 1: Core Daily Check-in Logic System
+1. **DailyCheckinManager Utility Class**:
+   - Create `utils/DailyCheckinManager.ts` with comprehensive API
+   - Implement day-based key generation (YYYY-MM-DD format)
+   - Add 6 AM reset logic using local device time
+   - Create check-in data storage with unique daily keys
+   - Add timezone handling and edge case management
+
+2. **Data Models & Types**:
+   - Define `CheckinData` interface for stored data
+   - Create `DailyCheckinStatus` enum for state management
+   - Add TypeScript types for all check-in operations
+   - Implement data validation and error handling
+
+#### Phase 2: App Navigation Integration
+3. **App.tsx Flow Control**:
+   - Modify navigation logic to check daily check-in status
+   - Implement conditional routing: check-in vs Home
+   - Add day transition detection (6 AM reset)
+   - Handle edge cases (timezone changes, device time updates)
+
+4. **CheckInScreen Enhancement**:
+   - Update `CheckInScreen.tsx` to save daily data
+   - Add progress tracking and completion status
+   - Implement data persistence with DailyCheckinManager
+   - Add error handling and user feedback
+
+#### Phase 3: Home Screen Integration
+5. **Home Screen Progress Display**:
+   - Update `HomeScreen.tsx` to display actual check-in count
+   - Remove hardcoded "142 days" placeholder
+   - Show real progress based on stored check-ins
+   - Add dynamic progress calculation
+
+6. **Progress Visualization**:
+   - Implement check-in streak calculation
+   - Add total check-in count display
+   - Create progress indicators and statistics
+   - Add user motivation elements
+
+#### Phase 4: Comprehensive Testing Implementation
+7. **Unit Testing Suite**:
+   - `DailyCheckinManager.test.ts`: Core logic testing
+   - `CheckInScreen.test.tsx`: Component testing
+   - `HomeScreen.test.tsx`: Progress display testing
+   - Time boundary testing (6 AM reset logic)
+   - Data persistence and retrieval testing
+
+8. **E2E Testing Suite**:
+   - `daily-checkin-flow.spec.ts`: Complete user journey
+   - `day-boundary-testing.spec.ts`: 6 AM reset testing
+   - `checkin-persistence.spec.ts`: Data persistence testing
+   - `home-progress-display.spec.ts`: Progress display testing
+   - Cross-browser and device testing
+
+#### Phase 5: Quality Assurance & Validation
+9. **Integration Testing**:
+   - App navigation flow testing
+   - Data consistency across components
+   - Error handling and edge cases
+   - Performance and memory usage testing
+
+10. **User Experience Testing**:
+    - Manual testing scenarios
+    - Accessibility testing
+    - Mobile device testing
+    - Timezone change testing
 
 ### Components Affected
 - `App.tsx` (navigation/state orchestrator)
+- `components/CheckInScreen.tsx` (check-in logic)
+- `components/HomeScreen.tsx` (display actual check-in count)
+- New: `utils/DailyCheckinManager.ts` (daily check-in logic)
 
 ### Dependencies
-- None new (reuse existing React/TS/Vite). Optional future: use `CriticalDataManager` to persist flow state with encryption/backup.
+- None new (reuse existing React/TS/Vite)
+- JavaScript Date API for time handling
+- localStorage for daily check-in storage
 
 ### Challenges & Mitigations
-- State drift between React state and storage → always mutate via `updateFlow()` that calls `saveProgress()`.
-- Back navigation into completed onboarding → rely on `navigateTo` flow and avoid exposing obsolete entries in history.
-- First-run/repeat-run detection → presence/values in `app-flow-progress` localStorage.
+- **Timezone handling**: Use local device time, handle timezone changes gracefully
+- **Day boundary detection**: Implement 6 AM reset logic with proper date comparison
+- **Data persistence**: Use unique daily keys to prevent data conflicts
+- **State synchronization**: Ensure check-in status is properly tracked across app sessions
 
-### Testing Strategy
-- Manual
-  - First run: Verify sequence Onboarding1 → Onboarding2 → Survey → Check-in → Reward (once) → Home
-  - Refresh and reopen: Verify direct jump to Check-in (no onboarding/survey/reward)
-- E2E (future additions)
-  - Spec A: First-run full flow
-  - Spec B: Repeat-run skips directly to Check-in
+### Comprehensive Testing Strategy
 
-### Checklist
-- [ ] Add `AppFlowProgress` type and helpers
-- [ ] Compute initial screen from progress
-- [ ] Update onboarding completion handler
-- [ ] Update survey completion handler (skip PIN when disabled)
-- [ ] Update PIN handlers (complete/skip)
-- [ ] Update check-in submit with one-time reward logic
-- [ ] Manual smoke test (first-run and repeat-run)
+#### Unit Testing Specifications
+1. **DailyCheckinManager.test.ts**:
+   - Test day key generation (YYYY-MM-DD format)
+   - Test 6 AM reset logic with various time scenarios
+   - Test data storage and retrieval operations
+   - Test timezone handling and edge cases
+   - Test error handling and validation
+
+2. **CheckInScreen.test.tsx**:
+   - Test component rendering and user interactions
+   - Test data submission and persistence
+   - Test error states and user feedback
+   - Test accessibility and keyboard navigation
+
+3. **HomeScreen.test.tsx**:
+   - Test progress display with various check-in counts
+   - Test dynamic content updates
+   - Test user interface interactions
+   - Test responsive design and accessibility
+
+#### E2E Testing Specifications
+4. **daily-checkin-flow.spec.ts**:
+   - Complete user journey: first visit → check-in → home
+   - Repeat visit same day: direct to home
+   - Next day visit: check-in screen appears
+   - Data persistence across browser sessions
+
+5. **day-boundary-testing.spec.ts**:
+   - Test 6 AM reset logic with time manipulation
+   - Test timezone changes and device time updates
+   - Test edge cases around midnight transitions
+   - Test data consistency across day boundaries
+
+6. **checkin-persistence.spec.ts**:
+   - Test data storage in localStorage
+   - Test data retrieval after browser restart
+   - Test data consistency across multiple tabs
+   - Test error handling for storage failures
+
+7. **home-progress-display.spec.ts**:
+   - Test progress display with various check-in counts
+   - Test dynamic updates after new check-ins
+   - Test responsive design on different screen sizes
+   - Test accessibility features
+
+#### Manual Testing Scenarios
+8. **User Experience Testing**:
+   - First-time user flow
+   - Returning user flow
+   - Cross-device synchronization
+   - Offline/online scenarios
+   - Performance testing with large datasets
+
+#### Integration Testing
+9. **System Integration**:
+   - App navigation flow testing
+   - Data consistency across components
+   - Error handling and recovery
+   - Performance and memory usage
+   - Cross-browser compatibility
+
+### Comprehensive Implementation Checklist
+
+#### Phase 1: Core System Development
+- [ ] Create `DailyCheckinManager` utility class
+- [ ] Implement day-based key generation (YYYY-MM-DD)
+- [ ] Add 6 AM reset logic with timezone handling
+- [ ] Create data models and TypeScript interfaces
+- [ ] Implement error handling and validation
+
+#### Phase 2: App Integration
+- [ ] Update `App.tsx` with daily check-in logic
+- [ ] Modify `CheckInScreen.tsx` to save daily data
+- [ ] Update `HomeScreen.tsx` to display actual count
+- [ ] Implement progress visualization
+- [ ] Add user feedback and error states
+
+#### Phase 3: Unit Testing Implementation
+- [ ] Create `DailyCheckinManager.test.ts` with comprehensive test cases
+- [ ] Create `CheckInScreen.test.tsx` with component testing
+- [ ] Create `HomeScreen.test.tsx` with progress display testing
+- [ ] Implement time boundary testing
+- [ ] Add data persistence testing
+
+#### Phase 4: E2E Testing Implementation
+- [ ] Create `daily-checkin-flow.spec.ts` for complete user journey
+- [ ] Create `day-boundary-testing.spec.ts` for 6 AM reset testing
+- [ ] Create `checkin-persistence.spec.ts` for data persistence
+- [ ] Create `home-progress-display.spec.ts` for progress display
+- [ ] Add cross-browser and device testing
+
+#### Phase 5: Quality Assurance
+- [ ] Manual testing: first check-in, repeat same day, next day
+- [ ] Timezone change testing
+- [ ] Performance testing with large datasets
+- [ ] Accessibility testing
+- [ ] Cross-device synchronization testing
+- [ ] Error handling and recovery testing
+
+#### Phase 6: Documentation & Cleanup
+- [ ] Update code documentation and comments
+- [ ] Create user guide for new features
+- [ ] Update README with testing instructions
+- [ ] Code review and optimization
+- [ ] Final integration testing
