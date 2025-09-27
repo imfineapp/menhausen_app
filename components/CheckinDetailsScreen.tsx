@@ -1,7 +1,9 @@
 // Импортируем необходимые хуки и SVG пути
+import React from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { ThemeCardManager, CardProgress } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
 interface CheckinDetailsScreenProps {
@@ -214,34 +216,19 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Card #1",
   
   /**
    * Функция для получения данных чекина
-   * В реальном приложении данные будут загружаться с сервера
+   * Теперь использует реальные данные из ThemeCardManager
    */
   const getCheckinData = (id: string): CheckinData => {
     // Получаем данные карточки для переводов вопросов и рекомендаций
     const cardData = getCard('card-1'); // Используем первую карточку как пример
     
-    // Моковые данные ответов пользователей (не переводятся)
-    const userAnswersMapping: Record<string, { answer1: string; answer2: string }> = {
-      "1": {
-        answer1: "Oh, I don't know what to say. Everyone just pisses me off.",
-        answer2: "I want everyone to just leave me alone and that's it"
-      },
-      "2": {
-        answer1: "When people don't listen to what I'm saying and interrupt me constantly.",
-        answer2: "I expect people to respect my time and opinions when I'm speaking."
-      },
-      "3": {
-        answer1: "People who are always late and don't apologize for it.",
-        answer2: "I expect punctuality and respect for other people's schedules."
-      }
-    };
-
-    const defaultAnswers = {
-      answer1: "This is a sample answer for demonstration purposes.",
-      answer2: "This is another sample answer to show the format."
-    };
-
-    const userAnswers = userAnswersMapping[id] || defaultAnswers;
+    // Получаем реальные данные прогресса из ThemeCardManager
+    const progress = ThemeCardManager.getCardProgress('card-1');
+    
+    // Получаем реальные ответы пользователя
+    const allAnswers = ThemeCardManager.getCardAnswers('card-1');
+    const answer1 = allAnswers['question-1'] || "No answer provided yet.";
+    const answer2 = allAnswers['question-2'] || "No answer provided yet.";
 
     // Получаем переведенные вопросы и рекомендации из карточки
     const question1 = cardData?.questions?.[0] ? getLocalizedText(cardData.questions[0].text) : "What in other people's behavior most often irritates or offends you?";
@@ -253,12 +240,12 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Card #1",
     return {
       id,
       cardTitle: cardTitle,
-      date: checkinDate || "2025-01-01",
-      formattedDate: checkinDate || "01.01.2025",
+      date: checkinDate || progress?.lastAttemptDate || "2025-01-01",
+      formattedDate: checkinDate || progress?.lastAttemptDate || "01.01.2025",
       question1,
-      answer1: userAnswers.answer1,
+      answer1,
       question2,
-      answer2: userAnswers.answer2,
+      answer2,
       instructions,
       practiceTask,
       whyNote

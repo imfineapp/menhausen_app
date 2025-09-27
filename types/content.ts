@@ -296,13 +296,15 @@ export interface UITexts {
     };
     home: {
       progress: LocalizedContent;
-      checkins: LocalizedContent;
+      attempts: LocalizedContent;
+      attemptsCounter: LocalizedContent;
       level: LocalizedContent;
       nextLevel: LocalizedContent;
     };
   };
   cards: {
-    checkins: LocalizedContent;
+    attempts: LocalizedContent;
+    noAttempts: LocalizedContent;
     welcome: {
       subtitle: LocalizedContent;
     };

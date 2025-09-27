@@ -302,13 +302,15 @@ export function ContentProvider({ children }: ContentProviderProps) {
         },
         home: {
           progress: 'Progress',
-          checkins: 'Check-ins',
+          attempts: 'Attempts',
+          attemptsCounter: 'attempts',
           level: 'Level',
           nextLevel: 'Next Level'
         }
       },
       cards: {
-        checkins: 'Check-ins',
+        attempts: 'Attempts',
+        noAttempts: 'No attempts yet. Start your first attempt by opening the card!',
         welcome: {
           subtitle: 'Welcome to card'
         },

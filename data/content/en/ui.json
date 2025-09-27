@@ -166,13 +166,15 @@
     },
     "home": {
       "progress": "Progress",
-      "checkins": "Checkins",
+      "attempts": "Attempts",
+      "attemptsCounter": "attempts",
       "level": "Level",
       "nextLevel": "Next Level"
     }
   },
   "cards": {
-    "checkins": "Checkins",
+    "attempts": "Attempts",
+    "noAttempts": "No attempts yet. Start your first attempt by opening the card!",
     "welcome": {
       "title": "Card",
       "subtitle": "Ready to start the exercise?"
@@ -208,7 +210,8 @@
       "level3": "Level 3",
       "level4": "Level 4",
       "level5": "Level 5",
-      "description": "Some text about card and more."
+      "description": "Some text about card and more.",
+      "attemptsLabel": "Attempts"
     }
   },
   "badges": {

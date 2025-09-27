@@ -1,7 +1,9 @@
 // Импортируем необходимые хуки и SVG пути
+import React from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { ThemeCardManager, CardProgress } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -13,11 +15,13 @@ interface CardDetailsScreenProps {
   cardDescription?: string; // Описание карточки (опционально)
 }
 
-// Типы для чекинов
-interface Checkin {
+// Типы для попыток (attempts)
+interface Attempt {
   id: string;
   date: string;
   formattedDate: string;
+  rating?: number;
+  questionsAnswered: string[];
 }
 
 /**
@@ -83,53 +87,89 @@ function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: st
 }
 
 /**
- * Адаптивный элемент чекина
+ * Адаптивный элемент попытки
  */
-function CheckinItem({ checkin, onClick }: { checkin: Checkin; onClick?: (checkinId: string) => void }) {
+function AttemptItem({ attempt, onClick }: { attempt: Attempt; onClick?: (attemptId: string) => void }) {
+  const isCompleted = attempt.questionsAnswered.length > 0 && attempt.rating !== undefined;
+  
   return (
     <button
-      onClick={() => onClick?.(checkin.id)}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px]"
-      data-name="Checkin"
+      onClick={() => onClick?.(attempt.id)}
+      className={`h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] ${
+        isCompleted ? 'opacity-100' : 'opacity-75'
+      }`}
+      data-name="Attempt"
     >
-      <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Background">
+      <div className={`absolute inset-0 rounded-xl ${
+        isCompleted 
+          ? 'bg-[rgba(34,197,94,0.1)]' 
+          : 'bg-[rgba(217,217,217,0.04)]'
+      }`} data-name="Background">
         <div
           aria-hidden="true"
-          className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl"
+          className={`absolute border border-solid inset-0 pointer-events-none rounded-xl ${
+            isCompleted 
+              ? 'border-[#22c55e]/30' 
+              : 'border-[#505050]'
+          }`}
         />
       </div>
-      <div className="absolute inset-[33.33%_4.84%_33.33%_3.7%] text-[#ffffff] text-left">
-        <p className="typography-body block">{checkin.formattedDate}</p>
+      <div className="absolute inset-[33.33%_4.84%_33.33%_3.7%] text-left">
+        <p className={`typography-body block ${
+          isCompleted ? 'text-[#22c55e]' : 'text-[#ffffff]'
+        }`}>
+          {attempt.formattedDate}
+        </p>
+        {isCompleted && (
+          <p className="typography-caption text-[#22c55e] mt-1">
+            {attempt.rating ? `Rating: ${attempt.rating}/5` : 'Completed'}
+          </p>
+        )}
       </div>
+      {isCompleted && (
+        <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        </div>
+      )}
     </button>
   );
 }
 
 /**
- * Адаптивный контейнер списка чекинов
+ * Адаптивный контейнер списка попыток
  */
-function CheckinsContainer({ checkins, onCheckinClick }: { checkins: Checkin[]; onCheckinClick?: (checkinId: string) => void }) {
+function AttemptsContainer({ attempts, onAttemptClick }: { attempts: Attempt[]; onAttemptClick?: (attemptId: string) => void }) {
   const { content, getLocalizedText } = useContent();
   
   return (
     <div
       className="relative shrink-0 w-full"
-      data-name="Checkins Container"
+      data-name="Attempts Container"
     >
       <div className="typography-h2 mb-[39px] text-[#e1ff00] text-left w-full">
-        <h2 className="block">{getLocalizedText(content.ui.cards.checkins)}</h2>
+        <h2 className="block">{getLocalizedText(content.ui.cards.attempts)}</h2>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"
-        data-name="Checkins List"
+        data-name="Attempts List"
       >
-        {checkins.map((checkin) => (
-          <CheckinItem
-            key={checkin.id}
-            checkin={checkin}
-            onClick={onCheckinClick}
-          />
-        ))}
+        {attempts.length > 0 ? (
+          attempts.map((attempt) => (
+            <AttemptItem
+              key={attempt.id}
+              attempt={attempt}
+              onClick={onAttemptClick}
+            />
+          ))
+        ) : (
+          <div className="w-full p-4 text-center">
+            <p className="typography-body text-[#696969]">
+              {getLocalizedText(content.ui.cards.noAttempts)}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -154,31 +194,75 @@ function OpenCardButton({ onClick }: { onClick: () => void }) {
  * Адаптивный дизайн с поддержкой mobile-first подхода и корректным скроллингом
  */
 export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, cardId, cardTitle, cardDescription }: CardDetailsScreenProps) {
-  // Моковые данные чекинов (в реальном приложении будут загружаться с сервера)
-  const checkins: Checkin[] = [
-    { id: "1", date: "1984-02-26", formattedDate: "26.02.1984" },
-    { id: "2", date: "1986-02-26", formattedDate: "26.02.1986" },
-    { id: "3", date: "2000-02-26", formattedDate: "26.02.2000" },
-    { id: "4", date: "2001-02-26", formattedDate: "26.02.2001" },
-    { id: "5", date: "2025-02-26", formattedDate: "26.02.2025" },
-    { id: "6", date: "2026-02-26", formattedDate: "26.02.2026" },
-    { id: "7", date: "2024-12-08", formattedDate: "08.12.2024" }
-  ];
+  // Получаем реальные данные попыток из ThemeCardManager
+  const progress = ThemeCardManager.getCardProgress(cardId);
+  
+  // Создаем массив попыток на основе реальных данных
+  const attempts: Attempt[] = React.useMemo(() => {
+    if (!progress || progress.totalAttempts === 0) {
+      return [];
+    }
+    
+    // Создаем попытки на основе данных прогресса
+    const attemptsList: Attempt[] = [];
+    
+    // Если есть завершенная попытка, добавляем её
+    if (progress.isCompleted && progress.completedDate) {
+      attemptsList.push({
+        id: `${cardId}-completed`,
+        date: progress.completedDate,
+        formattedDate: formatDate(progress.completedDate),
+        rating: progress.rating,
+        questionsAnswered: progress.questionsAnswered
+      });
+    }
+    
+    // Добавляем незавершенные попытки (если есть)
+    const incompleteAttempts = progress.totalAttempts - (progress.isCompleted ? 1 : 0);
+    for (let i = 0; i < incompleteAttempts; i++) {
+      attemptsList.push({
+        id: `${cardId}-attempt-${i + 1}`,
+        date: progress.lastAttemptDate,
+        formattedDate: formatDate(progress.lastAttemptDate),
+        questionsAnswered: [],
+        rating: undefined
+      });
+    }
+    
+    return attemptsList.reverse(); // Показываем последние попытки первыми
+  }, [progress, cardId]);
 
   /**
-   * Функция для обработки клика по чекину
-   * Переходит к странице деталей чекина с заполненными ответами
+   * Функция для форматирования даты
    */
-  const handleCheckinClick = (checkinId: string) => {
-    console.log(`Checkin clicked: ${checkinId}`);
+  function formatDate(dateString: string): string {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return dateString;
+    }
+  }
+
+  /**
+   * Функция для обработки клика по попытке
+   * Переходит к странице деталей попытки с заполненными ответами
+   */
+  const handleAttemptClick = (attemptId: string) => {
+    console.log(`Attempt clicked: ${attemptId}`);
     
-    // Получаем дату чекина из данных
-    const checkin = checkins.find(c => c.id === checkinId);
-    if (checkin && onOpenCheckin) {
-      onOpenCheckin(checkinId, cardTitle || 'Card', checkin.date);
+    // Получаем данные попытки
+    const attempt = attempts.find(a => a.id === attemptId);
+    if (attempt && onOpenCheckin) {
+      onOpenCheckin(attemptId, cardTitle || 'Card', attempt.date);
     } else {
       // Fallback alert если функция не передана
-      alert(`Opening checkin: ${checkinId}. Checkin details will be available soon!`);
+      alert(`Opening attempt: ${attemptId}. Attempt details will be available soon!`);
     }
   };
 
@@ -212,10 +296,10 @@ export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, 
               />
             </div>
             
-            {/* Контейнер чекинов */}
-            <CheckinsContainer 
-              checkins={checkins}
-              onCheckinClick={handleCheckinClick}
+            {/* Контейнер попыток */}
+            <AttemptsContainer 
+              attempts={attempts}
+              onAttemptClick={handleAttemptClick}
             />
 
           </div>
