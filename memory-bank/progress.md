@@ -19,21 +19,21 @@
 - **E2E Test Infrastructure**: Created comprehensive `skip-survey.ts` utility
 - **Quality Achievement**: 100% E2E test success (29/29), 99% unit test success (93/94)
 
-### 🎯 Current Task: Daily Check-in Logic Implementation
-- **Task Type**: Level 2 (Simple Enhancement)
-- **Focus**: Daily check-in system with 6 AM reset logic
-- **Requirements**: Once-per-day check-in, day-based storage, actual count display
-- **Status**: ✅ **ARCHIVED** - Complete task documentation preserved
-- **Final Results**: 
-  - ✅ DailyCheckinManager utility class created with comprehensive API
-  - ✅ App.tsx updated with daily check-in navigation logic
-  - ✅ CheckInScreen.tsx enhanced to save daily data
-  - ✅ HomeScreen.tsx updated to display actual check-in count
-  - ✅ All tests passing (93/94 unit tests, 65/65 E2E tests)
-  - ✅ Build successful with no errors
-  - ✅ Code quality: 0 linting warnings, 0 TypeScript errors
-- **Testing Coverage**: 100% E2E test success, 99% unit test success
-- **Technology Validation**: All checkpoints verified and implementation successful
+### 🎯 Current Task: Theme Cards Logic Implementation
+- **Task Type**: Level 3 (Intermediate Feature)
+- **Focus**: Progressive card unlocking, terminology updates, real progress tracking
+- **Requirements**: 
+  - Change "Чекины" to "Attempts" (Подходы) terminology ONLY in theme cards context (daily check-ins remain "Чекины")
+  - Implement sequential card unlocking (1st → 2nd → 3rd)
+  - Remove demo data, implement real user progress storage
+  - Card completion = all questions answered + rating provided
+  - Welcome screen shows only if first card not completed
+  - Display attempts counter for each card
+  - Next Level button opens next available card
+- **Status**: 🔄 **PLANNING PHASE COMPLETE** - Ready for implementation
+- **Implementation Plan**: 6-phase approach with comprehensive technical specifications
+- **Components Affected**: ThemeHomeScreen, ThemeWelcomeScreen, content files, new utility class
+- **Technology Stack**: React 18 + TypeScript, localStorage, existing i18n system
 - **Archive**: [archive-daily-checkin-logic-20250125.md](archive/archive-daily-checkin-logic-20250125.md)
 - **Reflection**: [reflection-daily-checkin-logic-20250125.md](reflection/reflection-daily-checkin-logic-20250125.md)
 
@@ -75,7 +75,7 @@
 - **Data Persistence**: Enhanced with encryption, validation, and offline sync
 
 ### 🎯 Current Focus
-**Ready for New Task** - Test Fixes Implementation completed and archived. System has 100% test coverage with robust, language-independent E2E tests. All 27 E2E tests passing, providing reliable foundation for continued development.
+**Theme Cards Logic Implementation** - Planning phase complete with comprehensive 6-phase implementation plan. Ready to implement progressive card unlocking, terminology updates, and real progress tracking system. All requirements analyzed and technical specifications defined.
 
 ## Recent Achievements
 
