@@ -41,87 +41,272 @@ Implement comprehensive theme cards logic system with progressive unlocking, rea
 ## Implementation Progress
 **Status**: 🔄 **PLANNING PHASE** - Theme Cards Logic Implementation
 
+## 📋 **DETAILED PLANNING ANALYSIS**
+
+### Current System Analysis
+**Existing Implementation Review:**
+- ✅ **ThemeHomeScreen.tsx**: Currently uses hardcoded `checkins` property in Card interface (line 165)
+- ✅ **ThemeWelcomeScreen.tsx**: Shows welcome screen without completion check
+- ✅ **Content System**: Existing i18n structure with `ui.json` and `themes.json`
+- ✅ **Card Data Structure**: Cards defined in `cards.json` with questions and completion criteria
+- ✅ **Navigation Flow**: Basic theme navigation without progressive unlocking
+
+**Key Integration Points Identified:**
+1. **Card Interface**: `checkins` property needs to become `attempts` with real data
+2. **Content Localization**: Specific sections in `ui.json` need terminology updates
+3. **Storage System**: Need localStorage integration for card progress tracking
+4. **Navigation Logic**: Welcome screen logic needs completion-based conditional rendering
+5. **Progressive Unlocking**: Card availability needs sequential logic implementation
+
+### Technical Architecture Planning
+
+#### Data Flow Architecture
+```
+User Interaction → ThemeCardManager → localStorage → Component State → UI Update
+     ↓                    ↓              ↓              ↓           ↓
+Card Selection → Progress Check → Data Storage → State Sync → Visual Update
+```
+
+#### Component Integration Map
+```
+App.tsx (Navigation)
+    ↓
+ThemeWelcomeScreen.tsx (Conditional rendering based on first card completion)
+    ↓
+ThemeHomeScreen.tsx (Card list with progressive unlocking)
+    ↓
+Individual Card Components (Real attempts display)
+    ↓
+ThemeCardManager.ts (Progress tracking and storage)
+```
+
 ### Comprehensive Implementation Plan
 
 #### Phase 1: Data Structure & Storage System
+**Objective**: Create core data management system for theme card progress tracking
+
 1. **ThemeCardManager Utility Class**:
-   - Create `utils/ThemeCardManager.ts` with comprehensive API
-   - Implement card progress storage with structured data
-   - Add completion tracking (questions + rating)
-   - Create attempts counter system
-   - Add progressive unlocking logic
+   - **File**: `utils/ThemeCardManager.ts`
+   - **API Methods**:
+     - `getCardProgress(cardId: string): CardProgress | null`
+     - `saveCardProgress(cardId: string, progress: CardProgress): void`
+     - `incrementCardAttempts(cardId: string): number`
+     - `isCardCompleted(cardId: string): boolean`
+     - `getNextAvailableCard(themeId: string): string | null`
+     - `getCardAttemptsCount(cardId: string): number`
+   - **Storage Keys**: `theme_card_progress_${cardId}`, `theme_card_attempts_${cardId}`
+   - **Data Validation**: Input validation and error handling
 
 2. **Data Models & Types**:
-   - Define `CardProgress` interface for stored data
-   - Create `CardCompletionStatus` enum for state management
-   - Add TypeScript types for all card operations
-   - Implement data validation and error handling
+   - **CardProgress Interface**:
+     ```typescript
+     interface CardProgress {
+       cardId: string;
+       isCompleted: boolean;
+       questionsAnswered: string[];
+       rating?: number;
+       lastAttemptDate: string;
+       totalAttempts: number;
+     }
+     ```
+   - **CardCompletionStatus Enum**:
+     ```typescript
+     enum CardCompletionStatus {
+       NOT_STARTED = 'not_started',
+       IN_PROGRESS = 'in_progress', 
+       COMPLETED = 'completed'
+     }
+     ```
+   - **ThemeCardData Interface**: Extended card data with progress info
 
 #### Phase 2: Terminology & Localization Updates
+**Objective**: Update terminology specifically for theme cards while preserving daily check-ins terminology
+
 3. **Content System Updates**:
-   - Update `data/content/en/ui.json` - replace "check-ins" with "attempts" ONLY in theme cards context
-   - Update `data/content/ru/ui.json` - replace "чекины" with "подходы" ONLY in theme cards context
-   - Keep daily check-ins terminology unchanged ("как дела?" remains "Чекины")
-   - Update theme-related content files for card attempts terminology
-   - Add new localized strings for attempts counter
+   - **File**: `data/content/en/ui.json`
+     - Update `ui.cards.themeHome.attemptsLabel: "Attempts"`
+     - Update `ui.themes.home.attemptsCounter: "attempts"`
+     - Keep `ui.home.checkInPrompt` and related daily check-in terms unchanged
+   - **File**: `data/content/ru/ui.json`
+     - Update `ui.cards.themeHome.attemptsLabel: "Подходы"`
+     - Update `ui.themes.home.attemptsCounter: "подходов"`
+     - Keep daily check-in terminology unchanged
+   - **Validation**: Ensure no daily check-in terms are modified
 
 4. **Component Terminology Updates**:
-   - Update `ThemeHomeScreen.tsx` - replace "checkins" with "attempts" in card context only
-   - Update theme card components - change terminology for card attempts
-   - Keep daily check-in terminology unchanged in HomeScreen and CheckInScreen
-   - Maintain clear distinction between daily check-ins and card attempts
+   - **ThemeHomeScreen.tsx**:
+     - Replace `card.checkins` with `card.attempts` in Card interface
+     - Update CheckinIcon component name to AttemptsIcon
+     - Update display logic to use attempts terminology
+   - **HomeScreen.tsx**: Keep daily check-in terminology unchanged
+   - **CheckInScreen.tsx**: Keep daily check-in terminology unchanged
 
 #### Phase 3: Progressive Unlocking Logic
+**Objective**: Implement sequential card unlocking and navigation flow control
+
 5. **Card Availability System**:
-   - Implement sequential card unlocking (1st → 2nd → 3rd)
-   - Update `ThemeHomeScreen.tsx` with progressive logic
-   - Add completion detection for card availability
-   - Handle edge cases (first card, last card, etc.)
+   - **ThemeHomeScreen.tsx Updates**:
+     - Add `isCardAvailable(cardId: string): boolean` logic
+     - Implement sequential unlocking: card N+1 unlocked when card N completed
+     - Update Card component to show locked/unlocked states
+     - Add visual indicators for locked cards (grayed out, disabled)
+   - **Card Order Logic**: Use card order from theme configuration
+   - **Edge Cases**: Handle first card (always available), last card, theme completion
 
 6. **Navigation Logic Updates**:
-   - Update `ThemeWelcomeScreen.tsx` - show only if first card not completed
-   - Modify navigation flow based on card completion status
-   - Add logic for "Next Level" button behavior
-   - Handle theme entry points and routing
+   - **ThemeWelcomeScreen.tsx**:
+     - Add `shouldShowWelcomeScreen(themeId: string): boolean` logic
+     - Show welcome screen only if first card not completed
+     - Direct navigation to first available card if welcome not needed
+   - **Next Level Button Logic**:
+     - `getNextAvailableCard()` integration
+     - Navigate to next unlocked card in sequence
+     - Handle "All cards completed" state
 
 #### Phase 4: Real Progress Implementation
+**Objective**: Replace demo data with real user progress tracking
+
 7. **Progress Storage Integration**:
-   - Remove demo/hardcoded progress data
-   - Implement real user progress tracking
-   - Add attempts counter display in card list
-   - Create progress persistence across sessions
+   - **ThemeHomeScreen.tsx**:
+     - Remove hardcoded `checkins: 1, 20, 4, 7, 0...` demo data
+     - Integrate `ThemeCardManager.getCardAttemptsCount(cardId)` for real data
+     - Add loading states while fetching progress data
+     - Implement error handling for storage failures
+   - **Data Migration**: Handle existing users with no progress data
+   - **Performance**: Optimize localStorage operations for multiple cards
 
 8. **Completion Logic Implementation**:
-   - Define card completion criteria (all questions + rating)
-   - Implement completion detection and storage
-   - Add completion status indicators in UI
-   - Handle partial completion scenarios
+   - **Completion Criteria**: All questions answered + rating provided
+   - **ThemeCardManager Methods**:
+     - `markCardCompleted(cardId: string, answers: string[], rating: number): void`
+     - `isCardFullyCompleted(cardId: string): boolean`
+   - **UI Indicators**: Visual completion status in card list
+   - **Partial Completion**: Track progress for incomplete cards
 
 #### Phase 5: UI/UX Enhancements
+**Objective**: Enhance user experience with visual feedback and smart navigation
+
 9. **Theme Cards Display Updates**:
-   - Update card list to show real attempts count
-   - Add visual indicators for completed cards
-   - Implement locked/unlocked card states
-   - Add progress indicators for partial completion
+   - **Card States**:
+     - ✅ **Completed**: Green checkmark, full opacity
+     - 🔒 **Locked**: Grayed out, disabled interaction
+     - ⏳ **Available**: Normal state, clickable
+     - 📝 **In Progress**: Partial completion indicator
+   - **Attempts Counter**: Real-time display of attempts count
+   - **Progress Indicators**: Visual progress bars for partial completion
 
 10. **Navigation Flow Improvements**:
-    - Update "Next Level" button logic
-    - Implement smart navigation based on progress
-    - Add completion celebrations and feedback
-    - Handle edge cases in user flow
+    - **Next Level Button**:
+      - Show "Next Available Card" text
+      - Navigate to next unlocked card
+      - Handle "Complete Theme" state when all cards done
+    - **Smart Navigation**: Skip welcome screen if first card completed
+    - **Completion Feedback**: Success messages and celebrations
 
 #### Phase 6: Testing & Validation
+**Objective**: Comprehensive testing of all implemented functionality
+
 11. **Unit Testing Suite**:
-    - `ThemeCardManager.test.ts`: Core logic testing
-    - `ThemeHomeScreen.test.tsx`: Component testing with real data
-    - `ThemeWelcomeScreen.test.tsx`: Navigation logic testing
-    - Progress storage and retrieval testing
+    - **ThemeCardManager.test.ts**:
+      - Test all API methods with various scenarios
+      - Test localStorage integration and error handling
+      - Test progressive unlocking logic
+      - Test completion detection and validation
+    - **ThemeHomeScreen.test.tsx**:
+      - Test component rendering with real progress data
+      - Test card availability logic
+      - Test attempts counter display
+      - Test locked/unlocked card states
+    - **ThemeWelcomeScreen.test.tsx**:
+      - Test conditional rendering based on completion
+      - Test navigation flow logic
 
 12. **E2E Testing Suite**:
-    - `theme-cards-progressive-unlocking.spec.ts`: Complete user journey
-    - `theme-cards-progress-tracking.spec.ts`: Progress persistence testing
-    - `theme-cards-completion-logic.spec.ts`: Completion criteria testing
-    - Cross-theme navigation and progress testing
+    - **theme-cards-progressive-unlocking.spec.ts**:
+      - Complete user journey: first visit → welcome → first card → completion → second card
+      - Test sequential unlocking across multiple cards
+      - Test navigation between cards
+    - **theme-cards-progress-tracking.spec.ts**:
+      - Test progress persistence across browser sessions
+      - Test attempts counter accuracy
+      - Test completion status persistence
+    - **theme-cards-terminology.spec.ts**:
+      - Test terminology changes in theme cards context
+      - Verify daily check-ins terminology remains unchanged
+
+## 📋 **IMPLEMENTATION CHECKLISTS**
+
+### Phase 1 Checklist: Data Structure & Storage System
+- [ ] Create `utils/ThemeCardManager.ts` with all API methods
+- [ ] Define `CardProgress` and `CardCompletionStatus` interfaces
+- [ ] Implement localStorage integration with error handling
+- [ ] Add data validation and type safety
+- [ ] Create unit tests for ThemeCardManager
+- [ ] Test localStorage operations and edge cases
+
+### Phase 2 Checklist: Terminology & Localization Updates
+- [ ] Update `data/content/en/ui.json` - theme cards terminology only
+- [ ] Update `data/content/ru/ui.json` - theme cards terminology only
+- [ ] Verify daily check-ins terminology unchanged
+- [ ] Update Card interface: `checkins` → `attempts`
+- [ ] Rename CheckinIcon → AttemptsIcon in ThemeHomeScreen
+- [ ] Test terminology changes in both languages
+
+### Phase 3 Checklist: Progressive Unlocking Logic
+- [ ] Implement `isCardAvailable()` logic in ThemeHomeScreen
+- [ ] Add sequential unlocking: card N+1 when card N completed
+- [ ] Update Card component with locked/unlocked states
+- [ ] Implement `shouldShowWelcomeScreen()` logic
+- [ ] Update "Next Level" button with smart navigation
+- [ ] Handle edge cases: first card, last card, theme completion
+
+### Phase 4 Checklist: Real Progress Implementation
+- [ ] Remove hardcoded demo data from ThemeHomeScreen
+- [ ] Integrate real progress data from ThemeCardManager
+- [ ] Implement completion detection logic
+- [ ] Add loading states and error handling
+- [ ] Handle data migration for existing users
+- [ ] Test progress persistence across sessions
+
+### Phase 5 Checklist: UI/UX Enhancements
+- [ ] Add visual indicators for card states (completed, locked, available)
+- [ ] Implement real-time attempts counter display
+- [ ] Add progress indicators for partial completion
+- [ ] Update "Next Level" button text and behavior
+- [ ] Add completion feedback and celebrations
+- [ ] Test all visual states and interactions
+
+### Phase 6 Checklist: Testing & Validation
+- [ ] Create comprehensive unit tests for all components
+- [ ] Create E2E tests for complete user journeys
+- [ ] Test progressive unlocking across multiple cards
+- [ ] Test terminology changes and daily check-ins preservation
+- [ ] Test progress persistence and data migration
+- [ ] Verify all tests pass and no regressions introduced
+
+## 🚨 **RISK ASSESSMENT & MITIGATION**
+
+### High Risk Areas
+- **Data Migration**: Existing users with no progress data
+  - *Mitigation*: Graceful fallback to default states, no data corruption
+- **State Synchronization**: Progress consistency across components
+  - *Mitigation*: Centralized state management, comprehensive testing
+- **Terminology Confusion**: Mixing daily check-ins and card attempts
+  - *Mitigation*: Clear documentation, isolated terminology changes
+
+### Medium Risk Areas
+- **Progressive Logic**: Edge cases in sequential unlocking
+  - *Mitigation*: Comprehensive edge case testing, fallback logic
+- **Performance**: localStorage operations with multiple cards
+  - *Mitigation*: Optimized storage patterns, batch operations
+- **Navigation Flow**: Complex conditional rendering logic
+  - *Mitigation*: Clear state management, extensive E2E testing
+
+### Low Risk Areas
+- **Localization**: Content file updates
+  - *Mitigation*: Careful file editing, terminology validation
+- **UI Updates**: Visual state changes
+  - *Mitigation*: Incremental updates, visual regression testing
 
 ### Components Affected
 - `utils/ThemeCardManager.ts` (new utility class)
@@ -139,14 +324,6 @@ Implement comprehensive theme cards logic system with progressive unlocking, rea
 - Existing i18n system for localization
 - Current theme and card content structure
 
-### Challenges & Mitigations
-- **Data Migration**: Implement gradual migration from demo to real data
-- **State Synchronization**: Ensure progress consistency across components
-- **Progressive Logic**: Handle edge cases in sequential unlocking
-- **Terminology Clarity**: Maintain clear distinction between daily check-ins and card attempts
-- **Localization**: Maintain consistency across all language files while preserving daily check-in terminology
-- **Performance**: Optimize storage operations for large datasets
-
 ### Success Metrics
 - ✅ Theme card terminology updated from "check-ins" to "attempts" (daily check-ins remain unchanged)
 - ✅ Progressive unlocking working correctly
@@ -157,6 +334,29 @@ Implement comprehensive theme cards logic system with progressive unlocking, rea
 - ✅ Clear distinction between daily check-ins and card attempts maintained
 - ✅ All tests passing (unit and E2E)
 - ✅ No performance degradation
+
+## 🎯 **PLANNING PHASE COMPLETE**
+
+**Status**: ✅ **PLANNING COMPLETE** - Ready for Implementation
+
+**Planning Summary:**
+- ✅ **Requirements Analysis**: Complete with terminology clarification
+- ✅ **Technical Architecture**: Data flow and component integration mapped
+- ✅ **6-Phase Implementation Plan**: Detailed specifications for each phase
+- ✅ **Risk Assessment**: High/Medium/Low risk areas identified with mitigations
+- ✅ **Implementation Checklists**: Comprehensive task lists for each phase
+- ✅ **Testing Strategy**: Unit and E2E testing plans defined
+- ✅ **Success Metrics**: Clear criteria for task completion
+
+**Key Deliverables Planned:**
+1. **ThemeCardManager Utility**: Core data management system
+2. **Progressive Unlocking**: Sequential card availability logic
+3. **Real Progress Tracking**: Actual user data integration
+4. **Terminology Updates**: Theme cards context only (preserving daily check-ins)
+5. **Enhanced UI/UX**: Visual feedback and smart navigation
+6. **Comprehensive Testing**: Full test coverage for all functionality
+
+**Ready for Next Phase**: **IMPLEMENTATION MODE** - Phase 1: Data Structure & Storage System
 
 ### 🎯 **TASK ARCHIVED**: Daily Check-in Logic Implementation
 **Status**: ✅ **ARCHIVED** - Complete task documentation preserved
