@@ -30,7 +30,7 @@ interface Card {
 /**
  * Адаптивный компонент световых эффектов для фона
  */
-function Light() {
+function _Light() {
   return (
     <div
       className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
@@ -72,13 +72,27 @@ function Light() {
 function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCardIds: string[] }) {
   const { content, getLocalizedText } = useContent();
   
-  // Вычисляем реальный прогресс темы
-  const completedCards = allCardIds.filter(cardId => 
-    ThemeCardManager.getCardCompletionStatus(cardId) === CardCompletionStatus.COMPLETED
-  ).length;
+  // Используем встроенный метод ThemeCardManager для расчета прогресса
+  const progressPercentage = ThemeCardManager.getThemeProgressPercentage(allCardIds);
   
-  const totalCards = allCardIds.length;
-  const progressPercentage = totalCards > 0 ? Math.round((completedCards / totalCards) * 100) : 0;
+  // Отладочная информация для прогресса
+  console.log('ProgressTheme Debug:', {
+    allCardIds,
+    progressPercentage,
+    attemptedCards: allCardIds.filter(cardId => {
+      const progress = ThemeCardManager.getCardProgress(cardId);
+      return progress && progress.completedAttempts.length > 0;
+    }).length,
+    totalCards: allCardIds.length,
+    cardStatuses: allCardIds.map(cardId => {
+      const progress = ThemeCardManager.getCardProgress(cardId);
+      return {
+        cardId,
+        hasAttempts: progress && progress.completedAttempts.length > 0,
+        attemptsCount: progress ? progress.completedAttempts.length : 0
+      };
+    })
+  });
   
   return (
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
@@ -98,7 +112,7 @@ function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCar
 /**
  * Компонент празднования завершения карточки
  */
-function CompletionCelebration({ isVisible, onComplete }: { isVisible: boolean; onComplete: () => void }) {
+function _CompletionCelebration({ isVisible, onComplete }: { isVisible: boolean; onComplete: () => void }) {
   React.useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
@@ -213,7 +227,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
     <button
       onClick={() => !isLocked && onClick(card.id)}
       disabled={isLocked}
-      className={`${getCardStyles()} h-[106px] relative rounded-xl shrink-0 w-full transition-all duration-200 min-h-[44px] min-w-[44px]`}
+      className={`${getCardStyles()} relative rounded-xl shrink-0 w-full transition-all duration-200 min-h-[44px] min-w-[44px]`}
       data-name="Card_item"
     >
       <div
@@ -251,7 +265,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
       )}
 
       <div className="relative size-full">
-        <div className="box-border content-stretch flex flex-col gap-2.5 h-[106px] items-start justify-start p-[15px] relative w-full text-left">
+        <div className="box-border content-stretch flex flex-col gap-2.5 items-start justify-start p-[15px] relative w-full text-left">
           <div className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full">
             <div className={`typography-h2 ${getTitleStyles()} text-left w-[158px]`}>
               <h2 className="block">{card.title}</h2>
@@ -279,7 +293,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
             <p className="block">{card.level}</p>
           </div>
           <div className={`typography-body ${getDescriptionStyles()} text-left w-full`}>
-            <p className="block">{card.description}</p>
+            <p className="block break-words">{card.description}</p>
           </div>
           
           {/* Индикатор прогресса для карточки */}
@@ -319,13 +333,15 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
   // Определяем текст кнопки на основе состояния темы
   const getButtonText = () => {
     const nextCardId = ThemeCardManager.getNextAvailableCard(allCardIds);
-    const completedCards = allCardIds.filter(cardId => 
-      ThemeCardManager.getCardCompletionStatus(cardId) === CardCompletionStatus.COMPLETED
-    ).length;
-    const totalCards = allCardIds.length;
     
-    if (completedCards === totalCards) {
-      return "🎉 Theme Completed!";
+    // Проверяем, все ли карточки имеют хотя бы одну попытку
+    const attemptedCards = allCardIds.filter(cardId => {
+      const progress = ThemeCardManager.getCardProgress(cardId);
+      return progress && progress.completedAttempts.length > 0;
+    });
+    
+    if (attemptedCards.length === allCardIds.length) {
+      return "🎉 All Cards Attempted!";
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;
       return `Start Card #${nextCardIndex}`;
@@ -353,8 +369,8 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Состояние для празднования завершения
-  const [showCelebration, setShowCelebration] = React.useState(false);
+  // Состояние для празднования завершения - отключено
+  const [_showCelebration, _setShowCelebration] = React.useState(false);
   const [lastCompletedCard, setLastCompletedCard] = React.useState<string | null>(null);
   
   // Загружаем тему при монтировании
@@ -404,7 +420,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
         // Если карточка завершена и это не последняя завершенная карточка
         if (isCompleted && cardId !== lastCompletedCard) {
           setLastCompletedCard(cardId);
-          setShowCelebration(true);
+          // setShowCelebration(true); // Отключено
         }
       });
     };
@@ -566,14 +582,14 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
-      {/* Компонент празднования */}
-      <CompletionCelebration 
+      {/* Компонент празднования - отключен */}
+      {/* <CompletionCelebration 
         isVisible={showCelebration} 
         onComplete={() => setShowCelebration(false)} 
-      />
+      /> */}
       
-      {/* Световые эффекты */}
-      <Light />
+      {/* Световые эффекты - отключены */}
+      {/* <Light /> */}
       
       {/* Логотип */}
       <MiniStripeLogo />

@@ -1,9 +1,10 @@
 // Импортируем необходимые хуки и SVG пути
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
+import { ThemeLoader } from '../utils/ThemeLoader';
 
 // Типы для пропсов компонента
 interface CheckinDetailsScreenProps {
@@ -202,15 +203,18 @@ function StartExerciseInvitation() {
  * Основной компонент экрана деталей чекина
  */
 export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", checkinDate }: CheckinDetailsScreenProps) {
-  const { getCard, getLocalizedText } = useContent();
+  const { currentLanguage } = useContent();
+  const [checkinData, setCheckinData] = useState<CheckinData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Парсим attemptId для получения cardId
-  const cardId = checkinId.split('_')[0]; // Извлекаем cardId из attemptId (card-1_2024-01-15_1)
+  const cardId = checkinId.split('_')[0]; // Извлекаем cardId из attemptId (STRESS-01_2024-01-15_1)
 
   /**
    * Получаем данные завершенного подхода
    */
-  const getCheckinData = (attemptId: string): CheckinData | null => {
+  const getCheckinData = useCallback(async (attemptId: string): Promise<CheckinData | null> => {
     try {
       // Получаем завершенный подход по attemptId
       const completedAttempt = ThemeCardManager.getCompletedAttempt(cardId, attemptId);
@@ -219,15 +223,25 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
         return null; // Подход не найден
       }
 
-      // Получаем данные карточки для переводов вопросов и рекомендаций
-      const cardData = getCard(cardId);
+      // Получаем данные карточки через ThemeLoader
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, currentLanguage);
+      const cardData = theme?.cards?.find(c => c.id === cardId);
+      
+      if (!cardData) {
+        console.error(`Card ${cardId} not found in theme ${themeId}`);
+        return null;
+      }
       
       // Получаем переведенные вопросы и рекомендации из карточки
-      const question1 = cardData?.questions?.[0] ? getLocalizedText(cardData.questions[0].text) : "What in other people's behavior most often irritates or offends you?";
-      const question2 = cardData?.questions?.[1] ? getLocalizedText(cardData.questions[1].text) : "What are your expectations behind this reaction?";
-      const instructions = cardData?.finalMessage?.message ? getLocalizedText(cardData.finalMessage.message) : "Awareness of expectations reduces the automaticity of emotional reactions.";
-      const practiceTask = cardData?.finalMessage?.practiceTask ? getLocalizedText(cardData.finalMessage.practiceTask) : "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments.";
-      const whyNote = cardData?.finalMessage?.whyExplanation ? getLocalizedText(cardData.finalMessage.whyExplanation) : "You learn to distinguish people's behavior from your own projections.";
+      const question1 = cardData.questions?.[0] || "What in other people's behavior most often irritates or offends you?";
+      const question2 = cardData.questions?.[1] || "What are your expectations behind this reaction?";
+      const instructions = cardData.technique || "Awareness of expectations reduces the automaticity of emotional reactions.";
+      const practiceTask = cardData.recommendation || "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments.";
+      const whyNote = cardData.mechanism || "You learn to distinguish people's behavior from your own projections.";
 
       // Форматируем дату
       const formatDate = (dateStr: string) => {
@@ -245,9 +259,9 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
         date: completedAttempt.date,
         formattedDate: formatDate(completedAttempt.date),
         question1,
-        answer1: completedAttempt.answers['question-1'] || "No answer provided yet.",
+        answer1: completedAttempt.answers['question1'] || "No answer provided yet.",
         question2,
-        answer2: completedAttempt.answers['question-2'] || "No answer provided yet.",
+        answer2: completedAttempt.answers['question2'] || "No answer provided yet.",
         instructions,
         practiceTask,
         whyNote,
@@ -257,9 +271,83 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
       console.error('Error getting checkin data:', error);
       return null;
     }
-  };
+  }, [cardId, currentLanguage, cardTitle]);
 
-  const checkinData = getCheckinData(checkinId);
+  // Загружаем данные при монтировании компонента
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getCheckinData(checkinId);
+        setCheckinData(data);
+      } catch (err) {
+        console.error('Error loading checkin data:', err);
+        setError('Ошибка загрузки данных');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [checkinId, currentLanguage, getCheckinData]);
+
+  // Показываем загрузку
+  if (loading) {
+    return (
+      <div 
+        className="bg-[#111111] relative size-full min-h-screen overflow-x-hidden" 
+        data-name="Checkin Details Page"
+      >
+        <Light />
+        <MiniStripeLogo />
+        
+        <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
+          <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
+            <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
+              <div className="text-center text-white">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                <p>Загрузка...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <CheckinDetailsBottomButton onClick={onBack} />
+      </div>
+    );
+  }
+
+  // Показываем ошибку
+  if (error) {
+    return (
+      <div 
+        className="bg-[#111111] relative size-full min-h-screen overflow-x-hidden" 
+        data-name="Checkin Details Page"
+      >
+        <Light />
+        <MiniStripeLogo />
+        
+        <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
+          <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
+            <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
+              <div className="text-center text-white">
+                <p className="text-red-500 mb-4">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Попробовать снова
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <CheckinDetailsBottomButton onClick={onBack} />
+      </div>
+    );
+  }
 
   // Если завершенный подход не найден, показываем приглашение
   if (!checkinData) {

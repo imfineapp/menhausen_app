@@ -241,7 +241,7 @@ export class ThemeCardManager {
   }
 
   /**
-   * Calculate theme progress percentage
+   * Calculate theme progress percentage based on cards with at least one attempt
    * @param allCardIds - Array of all card IDs in the theme
    * @returns Progress percentage (0-100)
    */
@@ -250,12 +250,13 @@ export class ThemeCardManager {
       return 0;
     }
     
-    const completedCards = allCardIds.filter(cardId => {
-      const status = this.getCardCompletionStatus(cardId);
-      return status === CardCompletionStatus.COMPLETED;
+    // Считаем карточки, на которые пользователь ответил хотя бы один раз
+    const attemptedCards = allCardIds.filter(cardId => {
+      const progress = this.getCardProgress(cardId);
+      return progress && progress.completedAttempts.length > 0;
     });
     
-    return Math.round((completedCards.length / allCardIds.length) * 100);
+    return Math.round((attemptedCards.length / allCardIds.length) * 100);
   }
 
   /**

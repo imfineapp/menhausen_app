@@ -105,7 +105,7 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
   return (
     <button
       onClick={() => onClick?.(attempt.attemptId)}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(34,197,94,0.15)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] opacity-100"
+      className="relative shrink-0 w-full cursor-pointer hover:bg-[rgba(34,197,94,0.15)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] opacity-100 p-4"
       data-name="Completed Attempt"
     >
       <div className="absolute inset-0 rounded-xl bg-[rgba(34,197,94,0.1)]" data-name="Background">
@@ -114,13 +114,17 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
           className="absolute border border-solid inset-0 pointer-events-none rounded-xl border-[#22c55e]/30"
         />
       </div>
-      <div className="absolute inset-[33.33%_4.84%_33.33%_3.7%] text-left">
+      <div className="relative text-left pr-8">
         <p className="typography-body block text-[#22c55e]">
           {formatDate(attempt.date)}
         </p>
-        <p className="typography-caption text-[#22c55e] mt-1">
-          Rating: {attempt.rating}/5
-        </p>
+        <div className="typography-caption text-[#22c55e] mt-1 space-y-1">
+          {Object.entries(attempt.answers).map(([questionKey, answer]) => (
+            <p key={questionKey} className="break-words">
+              {answer || 'No answer provided'}
+            </p>
+          ))}
+        </div>
       </div>
       <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">

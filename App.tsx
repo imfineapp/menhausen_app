@@ -28,6 +28,7 @@ import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
+import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 
@@ -61,7 +62,7 @@ function QuestionScreen01WithLoader({
   currentLanguage 
 }: {
   onBack: () => void;
-  onNext: () => void;
+  onNext: (answer: string) => void;
   cardId: string;
   cardTitle: string;
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
@@ -121,7 +122,7 @@ function QuestionScreen02WithLoader({
   previousAnswer
 }: {
   onBack: () => void;
-  onNext: () => void;
+  onNext: (answer: string) => void;
   cardId: string;
   cardTitle: string;
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
@@ -356,9 +357,10 @@ function AppContent() {
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
+  const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
-  const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
+  const [_cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
   const [_hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
@@ -824,8 +826,13 @@ function AppContent() {
 
   const handleCompleteExercise = (answer: string) => {
     console.log(`Question 2 answered for card: ${currentCard.id}`, answer);
+    console.log('Current userAnswers before updating:', userAnswers);
     const finalAnswers = { ...userAnswers, question2: answer };
+    console.log('Final answers to be set:', finalAnswers);
     setUserAnswers(finalAnswers);
+    
+    // Сохраняем финальные ответы в дополнительном состоянии для надежности
+    setFinalAnswers(finalAnswers);
     navigateTo('final-message');
   };
 
@@ -836,26 +843,44 @@ function AppContent() {
 
   const handleCompleteRating = (rating: number, textMessage?: string) => {
     console.log(`Card rated: ${rating} stars for card: ${currentCard.id}`, textMessage ? `with message: ${textMessage}` : 'without message');
+    console.log('Current userAnswers before saving:', userAnswers);
+    console.log('Final answers to save:', finalAnswers);
     
-    setCardRating(rating);
-    setCompletedCards(prev => new Set([...prev, currentCard.id]));
-    setCardCompletionCounts(prev => ({
-      ...prev,
-      [currentCard.id]: (prev[currentCard.id] || 0) + 1
-    }));
+    try {
+      // Используем finalAnswers для надежности, fallback на userAnswers
+      const answersToSave = Object.keys(finalAnswers).length > 0 ? finalAnswers : userAnswers;
+      
+      // Сохраняем завершенную попытку через ThemeCardManager
+      const completedAttempt = ThemeCardManager.addCompletedAttempt(
+        currentCard.id,
+        answersToSave, // Все ответы пользователя (question1, question2)
+        rating
+      );
+      
+      console.log('Exercise completed and saved:', {
+        cardId: currentCard.id,
+        answers: answersToSave,
+        rating: rating,
+        attemptId: completedAttempt.completedAttempts[completedAttempt.completedAttempts.length - 1]?.attemptId,
+        totalAttempts: completedAttempt.totalCompletedAttempts
+      });
+      
+      // Обновляем локальные состояния для UI
+      setCardRating(rating);
+      setCompletedCards(prev => new Set([...prev, currentCard.id]));
+      setCardCompletionCounts(prev => ({
+        ...prev,
+        [currentCard.id]: completedAttempt.totalCompletedAttempts
+      }));
+      
+    } catch (error) {
+      console.error('Error saving completed attempt:', error);
+      // Показываем пользователю ошибку, но не блокируем навигацию
+    }
     
-    const completionData = {
-      cardId: currentCard.id,
-      cardTitle: currentCard.title,
-      rating: rating,
-      hasMessage: !!textMessage,
-      completedAt: new Date().toISOString(),
-      completionCount: (cardCompletionCounts[currentCard.id] || 0) + 1
-    };
-    
-    console.log('Exercise completed with data:', completionData);
-    
+    // Очищаем состояние и переходим к домашней странице темы
     setUserAnswers({});
+    setFinalAnswers({});
     setCardRating(0);
     setCurrentCard({id: ''});
     
@@ -1288,7 +1313,7 @@ function AppContent() {
         return (
           <QuestionScreen01WithLoader
             onBack={handleBackToCardWelcome}
-            onNext={() => handleNextQuestion('')}
+            onNext={handleNextQuestion}
             cardId={currentCard.id}
             cardTitle={currentCard.title || ''}
             getCardQuestions={getCardQuestions}
@@ -1301,7 +1326,7 @@ function AppContent() {
         return (
           <QuestionScreen02WithLoader
             onBack={handleBackToQuestion01}
-            onNext={() => handleCompleteExercise('')}
+            onNext={handleCompleteExercise}
             cardId={currentCard.id}
             cardTitle={currentCard.title || ''}
             getCardQuestions={getCardQuestions}
