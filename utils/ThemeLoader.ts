@@ -35,36 +35,11 @@ export class ThemeLoader {
    */
   static async loadThemes(language: string): Promise<ThemeData[]> {
     try {
-      // В development режиме используем динамический импорт
-      if ((import.meta as any).env?.DEV) {
-        return await this._loadAllThemesFromImport(language);
-      }
-
-      // Список доступных тем (можно расширить)
-      const themeIds = [
-        'stress-management',
-        'anxiety-management', 
-        'sleep-improvement',
-        'mindfulness',
-        'emotional-regulation'
-      ];
-
-      const themes: ThemeData[] = [];
-      
-      for (const themeId of themeIds) {
-        try {
-          const theme = await this.loadTheme(themeId, language);
-          if (theme) {
-            themes.push(theme);
-          }
-        } catch (error) {
-          console.warn(`Failed to load theme ${themeId}:`, error);
-          // Продолжаем загрузку других тем
-        }
-      }
-
-      // Сортируем по ID (01-stress-management, 02-anxiety-management, etc.)
-      return themes.sort((a, b) => a.id.localeCompare(b.id));
+      console.log(`[ThemeLoader] Loading themes for language: ${language}`);
+      // Всегда используем статические импорты для надежности
+      const themes = await this._loadAllThemesFromImport(language);
+      console.log(`[ThemeLoader] Successfully loaded ${themes.length} themes for language: ${language}`);
+      return themes;
     } catch (error) {
       console.error('Error loading themes:', error);
       return [];
@@ -110,8 +85,8 @@ export class ThemeLoader {
       return this.loadingPromises.get(cacheKey)!;
     }
 
-    // Создаем промис загрузки
-    const loadingPromise = this._loadThemeFromFile(themeId, language);
+    // Создаем промис загрузки - всегда используем статические импорты
+    const loadingPromise = this._loadThemeFromImport(themeId, language);
     this.loadingPromises.set(cacheKey, loadingPromise as Promise<ThemeData>);
 
     try {
