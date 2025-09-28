@@ -3,7 +3,7 @@ import React from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
-import { ThemeCardManager, CardProgress } from '../utils/ThemeCardManager';
+import { ThemeCardManager, CompletedAttempt } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -13,15 +13,6 @@ interface CardDetailsScreenProps {
   cardId: string; // ID карточки
   cardTitle?: string; // Название карточки (опционально)
   cardDescription?: string; // Описание карточки (опционально)
-}
-
-// Типы для попыток (attempts)
-interface Attempt {
-  id: string;
-  date: string;
-  formattedDate: string;
-  rating?: number;
-  questionsAnswered: string[];
 }
 
 /**
@@ -62,103 +53,106 @@ function Light() {
   );
 }
 
-
-
 /**
- * Адаптивный заголовок карточки с описанием
+ * Адаптивный заголовок карточки с информацией
  */
-function CardHeader({ cardTitle = "Card #1", cardDescription }: { cardTitle?: string; cardDescription?: string }) {
-  const { content, getLocalizedText } = useContent();
-  const defaultDescription = getLocalizedText(content.ui.cards.welcome.subtitle);
-  
+function CardInfo({ cardTitle, cardDescription }: { cardTitle: string; cardDescription?: string }) {
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 text-left w-full"
-      data-name="Card Header"
+      className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 relative shrink-0 w-full"
+      data-name="Card Info"
     >
-      <div className="typography-h2 text-[#e1ff00] w-full">
-        <h2 className="block">{cardTitle}</h2>
+      <div className="typography-h2 text-[#e1ff00] text-left w-full">
+        <h2 className="typography-h2">{cardTitle}</h2>
       </div>
-      <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{cardDescription || defaultDescription}</p>
+      {cardDescription && (
+        <div className="typography-body text-[#cfcfcf] text-left w-full">
+          <p className="block">{cardDescription}</p>
+        </div>
+      )}
+      <div className="bg-[#ffffff] relative shrink-0 w-full" data-name="Separation Line">
+        <div className="absolute bottom-0 left-0 right-0 top-[-1px]" style={{ "--stroke-0": "rgba(45, 43, 43, 1)" } as React.CSSProperties}>
+          <svg className="block size-full" fill="none" preserveAspectRatio="none" role="presentation" viewBox="0 0 351 1">
+            <line
+              id="Sepapration line"
+              stroke="var(--stroke-0, #2D2B2B)"
+              x1="4.37114e-08"
+              x2="351"
+              y1="0.5"
+              y2="0.500031"
+            />
+          </svg>
+        </div>
       </div>
     </div>
   );
 }
 
 /**
- * Адаптивный элемент попытки
+ * Адаптивный элемент завершенного подхода
  */
-function AttemptItem({ attempt, onClick }: { attempt: Attempt; onClick?: (attemptId: string) => void }) {
-  const isCompleted = attempt.questionsAnswered.length > 0 && attempt.rating !== undefined;
-  
+function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt; onClick?: (attemptId: string) => void }) {
+  // Форматируем дату
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('ru-RU', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  };
+
   return (
     <button
-      onClick={() => onClick?.(attempt.id)}
-      className={`h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.06)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] ${
-        isCompleted ? 'opacity-100' : 'opacity-75'
-      }`}
-      data-name="Attempt"
+      onClick={() => onClick?.(attempt.attemptId)}
+      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(34,197,94,0.15)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] opacity-100"
+      data-name="Completed Attempt"
     >
-      <div className={`absolute inset-0 rounded-xl ${
-        isCompleted 
-          ? 'bg-[rgba(34,197,94,0.1)]' 
-          : 'bg-[rgba(217,217,217,0.04)]'
-      }`} data-name="Background">
+      <div className="absolute inset-0 rounded-xl bg-[rgba(34,197,94,0.1)]" data-name="Background">
         <div
           aria-hidden="true"
-          className={`absolute border border-solid inset-0 pointer-events-none rounded-xl ${
-            isCompleted 
-              ? 'border-[#22c55e]/30' 
-              : 'border-[#505050]'
-          }`}
+          className="absolute border border-solid inset-0 pointer-events-none rounded-xl border-[#22c55e]/30"
         />
       </div>
       <div className="absolute inset-[33.33%_4.84%_33.33%_3.7%] text-left">
-        <p className={`typography-body block ${
-          isCompleted ? 'text-[#22c55e]' : 'text-[#ffffff]'
-        }`}>
-          {attempt.formattedDate}
+        <p className="typography-body block text-[#22c55e]">
+          {formatDate(attempt.date)}
         </p>
-        {isCompleted && (
-          <p className="typography-caption text-[#22c55e] mt-1">
-            {attempt.rating ? `Rating: ${attempt.rating}/5` : 'Completed'}
-          </p>
-        )}
+        <p className="typography-caption text-[#22c55e] mt-1">
+          Rating: {attempt.rating}/5
+        </p>
       </div>
-      {isCompleted && (
-        <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
-          <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-        </div>
-      )}
+      <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
+        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+        </svg>
+      </div>
     </button>
   );
 }
 
 /**
- * Адаптивный контейнер списка попыток
+ * Адаптивный контейнер списка завершенных подходов
  */
-function AttemptsContainer({ attempts, onAttemptClick }: { attempts: Attempt[]; onAttemptClick?: (attemptId: string) => void }) {
+function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: CompletedAttempt[]; onAttemptClick?: (attemptId: string) => void }) {
   const { content, getLocalizedText } = useContent();
   
   return (
     <div
       className="relative shrink-0 w-full"
-      data-name="Attempts Container"
+      data-name="Completed Attempts Container"
     >
       <div className="typography-h2 mb-[39px] text-[#e1ff00] text-left w-full">
         <h2 className="block">{getLocalizedText(content.ui.cards.attempts)}</h2>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"
-        data-name="Attempts List"
+        data-name="Completed Attempts List"
       >
         {attempts.length > 0 ? (
           attempts.map((attempt) => (
-            <AttemptItem
-              key={attempt.id}
+            <CompletedAttemptItem
+              key={attempt.attemptId}
               attempt={attempt}
               onClick={onAttemptClick}
             />
@@ -176,139 +170,75 @@ function AttemptsContainer({ attempts, onAttemptClick }: { attempts: Attempt[]; 
 }
 
 /**
- * Адаптивная кнопка "Open card"
- * Теперь использует стандартный компонент BottomFixedButton
+ * Кнопка для страницы деталей карточки
  */
-function OpenCardButton({ onClick }: { onClick: () => void }) {
+function CardDetailsBottomButton({ onClick }: { onClick: () => void }) {
   const { content, getLocalizedText } = useContent();
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getLocalizedText(content.ui.navigation.start)}
+      {getLocalizedText(content.ui.cards.startExercise)}
     </BottomFixedButton>
   );
 }
 
 /**
- * Главный компонент страницы деталей карточки
- * Адаптивный дизайн с поддержкой mobile-first подхода и корректным скроллингом
+ * Основной компонент экрана деталей карточки
  */
-export function CardDetailsScreen({ onBack: _onBack, onOpenCard, onOpenCheckin, cardId, cardTitle, cardDescription }: CardDetailsScreenProps) {
-  // Получаем реальные данные попыток из ThemeCardManager
-  const progress = ThemeCardManager.getCardProgress(cardId);
+export function CardDetailsScreen({ 
+  onBack: _onBack, 
+  onOpenCard, 
+  onOpenCheckin, 
+  cardId, 
+  cardTitle = "Stress Card", 
+  cardDescription 
+}: CardDetailsScreenProps) {
   
-  // Создаем массив попыток на основе реальных данных
-  const attempts: Attempt[] = React.useMemo(() => {
-    if (!progress || progress.totalAttempts === 0) {
-      return [];
-    }
-    
-    // Создаем попытки на основе данных прогресса
-    const attemptsList: Attempt[] = [];
-    
-    // Если есть завершенная попытка, добавляем её
-    if (progress.isCompleted && progress.completedDate) {
-      attemptsList.push({
-        id: `${cardId}-completed`,
-        date: progress.completedDate,
-        formattedDate: formatDate(progress.completedDate),
-        rating: progress.rating,
-        questionsAnswered: progress.questionsAnswered
-      });
-    }
-    
-    // Добавляем незавершенные попытки (если есть)
-    const incompleteAttempts = progress.totalAttempts - (progress.isCompleted ? 1 : 0);
-    for (let i = 0; i < incompleteAttempts; i++) {
-      attemptsList.push({
-        id: `${cardId}-attempt-${i + 1}`,
-        date: progress.lastAttemptDate,
-        formattedDate: formatDate(progress.lastAttemptDate),
-        questionsAnswered: [],
-        rating: undefined
-      });
-    }
-    
-    return attemptsList.reverse(); // Показываем последние попытки первыми
-  }, [progress, cardId]);
+  // Получаем все завершенные подходы для карточки
+  const completedAttempts = React.useMemo(() => {
+    return ThemeCardManager.getCompletedAttempts(cardId);
+  }, [cardId]);
 
   /**
-   * Функция для форматирования даты
-   */
-  function formatDate(dateString: string): string {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return dateString;
-    }
-  }
-
-  /**
-   * Функция для обработки клика по попытке
-   * Переходит к странице деталей попытки с заполненными ответами
+   * Обработчик клика по завершенному подходу
    */
   const handleAttemptClick = (attemptId: string) => {
-    console.log(`Attempt clicked: ${attemptId}`);
-    
-    // Получаем данные попытки
-    const attempt = attempts.find(a => a.id === attemptId);
-    if (attempt && onOpenCheckin) {
-      onOpenCheckin(attemptId, cardTitle || 'Card', attempt.date);
-    } else {
-      // Fallback alert если функция не передана
-      alert(`Opening attempt: ${attemptId}. Attempt details will be available soon!`);
+    if (onOpenCheckin) {
+      // Извлекаем дату из attemptId (card-1_2024-01-15_1)
+      const datePart = attemptId.split('_')[1];
+      onOpenCheckin(attemptId, cardTitle, datePart);
     }
-  };
-
-  /**
-   * Функция для обработки кнопки "Open card"
-   * Переходит к упражнению карточки
-   */
-  const handleOpenCard = () => {
-    console.log(`Opening card exercise: ${cardId}`);
-    onOpenCard();
   };
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
-      {/* Световые эффекты */}
+    <div 
+      className="bg-[#111111] relative size-full min-h-screen overflow-x-hidden" 
+      data-name="Card Details Page"
+    >
+      {/* Световые эффекты фона */}
       <Light />
       
-      {/* Логотип */}
+      {/* Мини-логотип */}
       <MiniStripeLogo />
       
-      {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
-          <div className="max-w-[351px] mx-auto">
-            
+      {/* Основной контент - скроллируемый */}
+      <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
+        <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
+          <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
             {/* Заголовок карточки */}
-            <div className="mb-8">
-              <CardHeader 
-                cardTitle={cardTitle} 
-                cardDescription={cardDescription}
-              />
-            </div>
+            <CardInfo cardTitle={cardTitle} cardDescription={cardDescription} />
             
-            {/* Контейнер попыток */}
-            <AttemptsContainer 
-              attempts={attempts}
+            {/* Список завершенных подходов */}
+            <CompletedAttemptsContainer 
+              attempts={completedAttempts} 
               onAttemptClick={handleAttemptClick}
             />
-
           </div>
         </div>
       </div>
-
-      {/* Bottom Fixed Button */}
-      <OpenCardButton onClick={handleOpenCard} />
-
+      
+      {/* Кнопка начала упражнения */}
+      <CardDetailsBottomButton onClick={onOpenCard} />
     </div>
   );
 }

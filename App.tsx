@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -48,6 +48,208 @@ import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+
+/**
+ * Компонент для загрузки вопросов и отображения QuestionScreen01
+ */
+function QuestionScreen01WithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardQuestions, 
+  currentLanguage 
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  cardId: string;
+  cardTitle: string;
+  getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
+  currentLanguage: string;
+}) {
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const cardQuestions = await getCardQuestions(cardId, currentLanguage);
+        setQuestions(cardQuestions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
+  }, [cardId, currentLanguage, getCardQuestions]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading questions...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  const questionText = questions[0] || "Question not found";
+  
+  return (
+    <QuestionScreen01
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      questionText={questionText}
+    />
+  );
+}
+
+/**
+ * Компонент для загрузки вопросов и отображения QuestionScreen02
+ */
+function QuestionScreen02WithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardQuestions, 
+  currentLanguage,
+  previousAnswer
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  cardId: string;
+  cardTitle: string;
+  getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
+  currentLanguage: string;
+  previousAnswer: string;
+}) {
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const cardQuestions = await getCardQuestions(cardId, currentLanguage);
+        setQuestions(cardQuestions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
+  }, [cardId, currentLanguage, getCardQuestions]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading questions...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  const questionText = questions[1] || "Question not found";
+  
+  return (
+    <QuestionScreen02
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      questionText={questionText}
+      previousAnswer={previousAnswer}
+    />
+  );
+}
+
+/**
+ * Компонент для загрузки данных и отображения FinalCardMessageScreen
+ */
+function FinalCardMessageScreenWithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardMessageData, 
+  currentLanguage
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  cardId: string;
+  cardTitle: string;
+  getCardMessageData: (cardId: string, language: string) => Promise<{
+    finalMessage: string;
+    practiceTask: string;
+    whyExplanation: string;
+  }>;
+  currentLanguage: string;
+}) {
+  const [messageData, setMessageData] = useState<{
+    finalMessage: string;
+    practiceTask: string;
+    whyExplanation: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadMessageData = async () => {
+      try {
+        const data = await getCardMessageData(cardId, currentLanguage);
+        setMessageData(data);
+      } catch (error) {
+        console.error('Error loading message data:', error);
+        setMessageData({
+          finalMessage: "Technique not found",
+          practiceTask: "Practice task not found",
+          whyExplanation: "Explanation not found"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMessageData();
+  }, [cardId, currentLanguage, getCardMessageData]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading final message...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!messageData) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg text-red-400">Error loading message data</div>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <FinalCardMessageScreen
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      finalMessage={messageData.finalMessage}
+      practiceTask={messageData.practiceTask}
+      whyExplanation={messageData.whyExplanation}
+    />
+  );
+}
 
 /**
  * Основной компонент приложения с навигацией
@@ -181,7 +383,7 @@ function AppContent() {
   });
 
   // Получение системы контента
-  const { getCard, getTheme, getLocalizedText } = useContent();
+  const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage } = useContent();
   
   // Логируем изменения currentScreen
   
@@ -686,9 +888,9 @@ function AppContent() {
   /**
    * Обработка клика по карточке - теперь использует систему контента
    */
-  const handleThemeCardClick = (cardId: string) => {
+  const handleThemeCardClick = async (cardId: string) => {
     console.log(`Card clicked: ${cardId}`);
-    const cardData = getCardData(cardId);
+    const cardData = await getCardData(cardId, currentLanguage);
     setCurrentCard(cardData);
     navigateTo('card-details');
   };
@@ -696,29 +898,109 @@ function AppContent() {
   /**
    * Получение данных карточки из централизованной системы
    */
-  const getCardData = (cardId: string) => {
-    const card = getCard(cardId);
-    
-    if (!card) {
-      console.error('Card not found:', cardId);
+  const getCardData = async (cardId: string, language: string) => {
+    try {
+      // Используем ThemeLoader для получения данных карточки
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      // Определяем themeId из cardId (например, STRESS-01 -> stress-management)
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return {
+        id: cardId,
+        title: card.id, // Используем ID как заголовок
+        description: card.introduction // Используем introduction как описание
+      };
+    } catch (error) {
+      console.error('Error loading card data:', error);
       return {
         id: cardId,
         title: 'Card',
         description: 'Card description will be available soon.'
       };
     }
-    
-    return {
-      id: cardId,
-      title: getLocalizedText(card.title),
-      description: getLocalizedText(card.description)
-    };
+  };
+
+  /**
+   * Получение вопросов карточки из новой системы
+   */
+  const getCardQuestions = async (cardId: string, language: string) => {
+    try {
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return card.questions || [];
+    } catch (error) {
+      console.error('Error loading card questions:', error);
+      return [];
+    }
+  };
+
+  /**
+   * Получение данных карточки для FinalCardMessageScreen
+   */
+  const getCardMessageData = async (cardId: string, language: string) => {
+    try {
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return {
+        finalMessage: card.technique || "Technique not found",
+        practiceTask: card.recommendation || "Practice task not found", 
+        whyExplanation: card.mechanism || "Explanation not found"
+      };
+    } catch (error) {
+      console.error('Error loading card message data:', error);
+      return {
+        finalMessage: "Technique not found",
+        practiceTask: "Practice task not found",
+        whyExplanation: "Explanation not found"
+      };
+    }
   };
 
   /**
    * Поиск следующей доступной карточки
    */
-  const handleOpenNextLevel = () => {
+  const handleOpenNextLevel = async () => {
     console.log('Opening next level');
     
     // Получить карточки текущей темы
@@ -729,7 +1011,7 @@ function AppContent() {
     
     if (nextCard) {
       console.log(`Opening next available card: ${nextCard}`);
-      const cardData = getCardData(nextCard);
+      const cardData = await getCardData(nextCard, currentLanguage);
       setCurrentCard(cardData);
       navigateTo('card-details');
     } else {
@@ -967,9 +1249,7 @@ function AppContent() {
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
             onOpenNextLevel={handleOpenNextLevel}
-            themeTitle={currentTheme}
-            completedCards={completedCards}
-            cardCompletionCounts={cardCompletionCounts}
+            themeId={currentTheme}
           />
         );
       }
@@ -980,7 +1260,7 @@ function AppContent() {
             onOpenCard={handleOpenCardExercise}
             onOpenCheckin={handleOpenCheckin}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
             cardDescription={currentCard.description}
           />
         );
@@ -999,52 +1279,47 @@ function AppContent() {
             onBack={handleBackToCardDetailsFromWelcome}
             onNext={handleStartCardExercise}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
             cardDescription={currentCard.description}
           />
         );
       case 'question-01': {
-        const card1 = getCard(currentCard.id);
-        const question1 = card1?.questions[0];
-        
+        // Используем новую систему для получения вопросов
         return (
-          <QuestionScreen01
+          <QuestionScreen01WithLoader
             onBack={handleBackToCardWelcome}
-            onNext={handleNextQuestion}
+            onNext={() => handleNextQuestion('')}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            questionText={question1 ? getLocalizedText(question1.text) : "What in other people's behavior most often irritates or offends you?"}
+            cardTitle={currentCard.title || ''}
+            getCardQuestions={getCardQuestions}
+            currentLanguage={currentLanguage}
           />
         );
       }
       case 'question-02': {
-        const card2 = getCard(currentCard.id);
-        const question2 = card2?.questions[1];
-        
+        // Используем новую систему для получения вопросов
         return (
-          <QuestionScreen02
+          <QuestionScreen02WithLoader
             onBack={handleBackToQuestion01}
-            onNext={handleCompleteExercise}
+            onNext={() => handleCompleteExercise('')}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            questionText={question2 ? getLocalizedText(question2.text) : "What are your expectations behind this reaction?"}
-            previousAnswer={userAnswers.question1}
+            cardTitle={currentCard.title || ''}
+            getCardQuestions={getCardQuestions}
+            currentLanguage={currentLanguage}
+            previousAnswer={userAnswers.question1 || ''}
           />
         );
       }
       case 'final-message': {
-        const cardFinal = getCard(currentCard.id);
-        const finalMessage = cardFinal?.finalMessage;
-        
+        // Используем новую систему для получения данных финального сообщения
         return (
-          <FinalCardMessageScreen
+          <FinalCardMessageScreenWithLoader
             onBack={handleBackToQuestion02}
             onNext={handleCompleteFinalMessage}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            finalMessage={finalMessage ? getLocalizedText(finalMessage.message) : "Awareness of expectations reduces the automaticity of emotional reactions."}
-            practiceTask={finalMessage ? getLocalizedText(finalMessage.practiceTask) : "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments."}
-            whyExplanation={finalMessage ? getLocalizedText(finalMessage.whyExplanation) : "You learn to distinguish people's behavior from your own projections."}
+            cardTitle={currentCard.title || ''}
+            getCardMessageData={getCardMessageData}
+            currentLanguage={currentLanguage}
           />
         );
       }
@@ -1054,7 +1329,7 @@ function AppContent() {
             onBack={handleBackToFinalMessage}
             onNext={handleCompleteRating}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
           />
         );
       case 'profile':

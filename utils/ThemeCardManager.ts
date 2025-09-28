@@ -1,23 +1,27 @@
 /**
- * ThemeCardManager - Utility class for managing theme card progress and attempts
+ * ThemeCardManager - Utility class for managing theme card progress and completed attempts
  * 
  * Features:
- * - Card progress storage with structured data
- * - Completion tracking (questions + rating)
- * - Attempts counter system
+ * - Card progress storage with completed attempts array
+ * - Completion tracking (only fully completed attempts with answers + rating)
+ * - Attempts counter system (only completed attempts)
  * - Progressive unlocking logic
  * - Data validation and error handling
  */
 
+export interface CompletedAttempt {
+  attemptId: string; // card-1_2024-01-15_1 format
+  date: string; // YYYY-MM-DD format
+  answers: Record<string, string>; // Answers to all questions
+  rating: number; // User rating for the card
+  completedAt: string; // ISO timestamp when completed
+}
+
 export interface CardProgress {
   cardId: string;
-  isCompleted: boolean;
-  questionsAnswered: string[];
-  answers: Record<string, string>; // Store actual answers by question ID
-  rating?: number;
-  lastAttemptDate: string; // YYYY-MM-DD format
-  totalAttempts: number;
-  completedDate?: string; // YYYY-MM-DD format when fully completed
+  completedAttempts: CompletedAttempt[]; // Array of completed attempts
+  isCompleted: boolean; // true if at least one completed attempt exists
+  totalCompletedAttempts: number; // Count of completed attempts
 }
 
 export enum CardCompletionStatus {
@@ -39,7 +43,6 @@ export interface ThemeCardData {
 
 export class ThemeCardManager {
   private static readonly STORAGE_KEY_PREFIX = 'theme_card_progress_';
-  private static readonly ATTEMPTS_KEY_PREFIX = 'theme_card_attempts_';
 
   /**
    * Get card progress from localStorage
@@ -91,221 +94,77 @@ export class ThemeCardManager {
   }
 
   /**
-   * Increment card attempts counter
+   * Add a completed attempt to a card
    * @param cardId - Unique card identifier
-   * @returns Updated attempts count
+   * @param answers - Answers to all questions
+   * @param rating - User rating for the card
+   * @returns Updated CardProgress object
    */
-  static incrementCardAttempts(cardId: string): number {
-    try {
-      const currentProgress = this.getCardProgress(cardId);
-      const currentAttempts = currentProgress?.totalAttempts || 0;
-      const newAttempts = currentAttempts + 1;
-      
-      const updatedProgress: CardProgress = {
-        cardId,
-        isCompleted: currentProgress?.isCompleted || false,
-        questionsAnswered: currentProgress?.questionsAnswered || [],
-        answers: currentProgress?.answers || {},
-        rating: currentProgress?.rating,
-        lastAttemptDate: this.getCurrentDateKey(),
-        totalAttempts: newAttempts,
-        completedDate: currentProgress?.completedDate
-      };
-      
-      this.saveCardProgress(cardId, updatedProgress);
-      return newAttempts;
-    } catch (error) {
-      console.error(`Error incrementing attempts for card ${cardId}:`, error);
-      throw error;
-    }
-  }
-
-  /**
-   * Check if card is fully completed (all questions answered + rating provided)
-   * @param cardId - Unique card identifier
-   * @returns boolean indicating if card is completed
-   */
-  static isCardCompleted(cardId: string): boolean {
-    const progress = this.getCardProgress(cardId);
-    return progress?.isCompleted || false;
-  }
-
-  /**
-   * Save answer for a specific question
-   * @param cardId - Unique card identifier
-   * @param questionId - Question identifier
-   * @param answer - User's answer text
-   */
-  static saveQuestionAnswer(cardId: string, questionId: string, answer: string): void {
+  static addCompletedAttempt(
+    cardId: string, 
+    answers: Record<string, string>, 
+    rating: number
+  ): CardProgress {
     try {
       const currentProgress = this.getCardProgress(cardId) || {
         cardId,
+        completedAttempts: [],
         isCompleted: false,
-        questionsAnswered: [],
-        answers: {},
-        lastAttemptDate: this.getCurrentDateKey(),
-        totalAttempts: 0
+        totalCompletedAttempts: 0
       };
 
-      const updatedAnswers = { ...currentProgress.answers, [questionId]: answer };
-      const updatedQuestionsAnswered = currentProgress.questionsAnswered.includes(questionId) 
-        ? currentProgress.questionsAnswered 
-        : [...currentProgress.questionsAnswered, questionId];
+      // Generate attempt ID: card-1_2024-01-15_1 format
+      const currentDate = this.getCurrentDateKey();
+      const attemptNumber = currentProgress.completedAttempts.length + 1;
+      const attemptId = `${cardId}_${currentDate}_${attemptNumber}`;
 
+      // Create completed attempt
+      const completedAttempt: CompletedAttempt = {
+        attemptId,
+        date: currentDate,
+        answers,
+        rating,
+        completedAt: new Date().toISOString()
+      };
+
+      // Add to completed attempts array
+      const updatedAttempts = [...currentProgress.completedAttempts, completedAttempt];
+
+      // Create updated progress
       const updatedProgress: CardProgress = {
-        ...currentProgress,
-        questionsAnswered: updatedQuestionsAnswered,
-        answers: updatedAnswers,
-        lastAttemptDate: this.getCurrentDateKey()
+        cardId,
+        completedAttempts: updatedAttempts,
+        isCompleted: true, // At least one completed attempt exists
+        totalCompletedAttempts: updatedAttempts.length
       };
 
       this.saveCardProgress(cardId, updatedProgress);
+      return updatedProgress;
     } catch (error) {
-      console.error(`Error saving answer for card ${cardId}, question ${questionId}:`, error);
+      console.error(`Error adding completed attempt for card ${cardId}:`, error);
       throw error;
     }
   }
 
   /**
-   * Mark card as completed with answers and rating
+   * Get all completed attempts for a card
    * @param cardId - Unique card identifier
-   * @param answers - Array of answered question IDs
-   * @param rating - User rating for the card
-   * @param answersText - Record of actual answers by question ID
+   * @returns Array of CompletedAttempt objects
    */
-  static markCardCompleted(cardId: string, answers: string[], rating: number, answersText?: Record<string, string>): void {
-    try {
-      const currentProgress = this.getCardProgress(cardId);
-      
-      const completedProgress: CardProgress = {
-        cardId,
-        isCompleted: true,
-        questionsAnswered: answers,
-        answers: answersText || currentProgress?.answers || {},
-        rating,
-        lastAttemptDate: this.getCurrentDateKey(),
-        totalAttempts: currentProgress?.totalAttempts || 0,
-        completedDate: this.getCurrentDateKey()
-      };
-      
-      this.saveCardProgress(cardId, completedProgress);
-    } catch (error) {
-      console.error(`Error marking card ${cardId} as completed:`, error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get next available card in theme (first unlocked card)
-   * @param themeId - Theme identifier
-   * @param cardIds - Array of card IDs in theme (in order)
-   * @returns Next available card ID or null if all completed
-   */
-  static getNextAvailableCard(themeId: string, cardIds: string[]): string | null {
-    try {
-      // First card is always available
-      if (cardIds.length === 0) {
-        return null;
-      }
-      
-      const firstCardId = cardIds[0];
-      
-      // Check if first card is completed
-      const firstCardCompleted = this.isCardCompleted(firstCardId);
-      if (!firstCardCompleted) {
-        return firstCardId;
-      }
-      
-      // Find next incomplete card
-      for (let i = 1; i < cardIds.length; i++) {
-        const prevCardId = cardIds[i - 1];
-        const currentCardId = cardIds[i];
-        
-        const prevCardCompleted = this.isCardCompleted(prevCardId);
-        const currentCardCompleted = this.isCardCompleted(currentCardId);
-        
-        // If previous card is completed and current is not, current is available
-        if (prevCardCompleted && !currentCardCompleted) {
-          return currentCardId;
-        }
-      }
-      
-      // All cards completed
-      return null;
-    } catch (error) {
-      console.error(`Error getting next available card for theme ${themeId}:`, error);
-      return null;
-    }
-  }
-
-  /**
-   * Get attempts count for specific card
-   * @param cardId - Unique card identifier
-   * @returns Number of attempts
-   */
-  static getCardAttemptsCount(cardId: string): number {
+  static getCompletedAttempts(cardId: string): CompletedAttempt[] {
     const progress = this.getCardProgress(cardId);
-    return progress?.totalAttempts || 0;
+    return progress?.completedAttempts || [];
   }
 
   /**
-   * Check if card should be available (unlocked) based on progressive unlocking
+   * Get a specific completed attempt by attempt ID
    * @param cardId - Unique card identifier
-   * @param cardIds - Array of all card IDs in theme (in order)
-   * @returns boolean indicating if card is available
+   * @param attemptId - Attempt identifier
+   * @returns CompletedAttempt object or null if not found
    */
-  static isCardAvailable(cardId: string, cardIds: string[]): boolean {
-    try {
-      const cardIndex = cardIds.indexOf(cardId);
-      
-      // Card not found in theme
-      if (cardIndex === -1) {
-        return false;
-      }
-      
-      // First card is always available
-      if (cardIndex === 0) {
-        return true;
-      }
-      
-      // Check if previous card is completed
-      const prevCardId = cardIds[cardIndex - 1];
-      return this.isCardCompleted(prevCardId);
-    } catch (error) {
-      console.error(`Error checking card availability for ${cardId}:`, error);
-      return false;
-    }
-  }
-
-  /**
-   * Get answer for a specific question
-   * @param cardId - Unique card identifier
-   * @param questionId - Question identifier
-   * @returns Answer text or null if not found
-   */
-  static getQuestionAnswer(cardId: string, questionId: string): string | null {
-    try {
-      const progress = this.getCardProgress(cardId);
-      return progress?.answers?.[questionId] || null;
-    } catch (error) {
-      console.error(`Error getting answer for card ${cardId}, question ${questionId}:`, error);
-      return null;
-    }
-  }
-
-  /**
-   * Get all answers for a card
-   * @param cardId - Unique card identifier
-   * @returns Record of answers by question ID
-   */
-  static getCardAnswers(cardId: string): Record<string, string> {
-    try {
-      const progress = this.getCardProgress(cardId);
-      return progress?.answers || {};
-    } catch (error) {
-      console.error(`Error getting answers for card ${cardId}:`, error);
-      return {};
-    }
+  static getCompletedAttempt(cardId: string, attemptId: string): CompletedAttempt | null {
+    const attempts = this.getCompletedAttempts(cardId);
+    return attempts.find(attempt => attempt.attemptId === attemptId) || null;
   }
 
   /**
@@ -316,44 +175,121 @@ export class ThemeCardManager {
   static getCardCompletionStatus(cardId: string): CardCompletionStatus {
     const progress = this.getCardProgress(cardId);
     
-    if (!progress) {
+    if (!progress || progress.completedAttempts.length === 0) {
       return CardCompletionStatus.NOT_STARTED;
     }
     
-    if (progress.isCompleted) {
-      return CardCompletionStatus.COMPLETED;
-    }
-    
-    if (progress.questionsAnswered.length > 0) {
-      return CardCompletionStatus.IN_PROGRESS;
-    }
-    
-    return CardCompletionStatus.NOT_STARTED;
+    return progress.isCompleted ? CardCompletionStatus.COMPLETED : CardCompletionStatus.NOT_STARTED;
   }
 
   /**
-   * Check if welcome screen should be shown (first card not completed)
-   * @param themeId - Theme identifier
-   * @param cardIds - Array of card IDs in theme
+   * Check if a card is available for unlocking (previous card is completed)
+   * @param cardId - Unique card identifier
+   * @param allCardIds - Array of all card IDs in order
+   * @returns boolean indicating if card is available
+   */
+  static isCardAvailable(cardId: string, allCardIds: string[]): boolean {
+    const cardIndex = allCardIds.indexOf(cardId);
+    
+    // First card is always available
+    if (cardIndex === 0) {
+      return true;
+    }
+    
+    // Card not found in the list
+    if (cardIndex === -1) {
+      return false;
+    }
+    
+    // Check if previous card is completed
+    const previousCardId = allCardIds[cardIndex - 1];
+    const previousCardStatus = this.getCardCompletionStatus(previousCardId);
+    
+    return previousCardStatus === CardCompletionStatus.COMPLETED;
+  }
+
+  /**
+   * Get next available card in sequence
+   * @param allCardIds - Array of all card IDs in order
+   * @returns Next available card ID or null if none available
+   */
+  static getNextAvailableCard(allCardIds: string[]): string | null {
+    for (const cardId of allCardIds) {
+      const status = this.getCardCompletionStatus(cardId);
+      if (status === CardCompletionStatus.NOT_STARTED && this.isCardAvailable(cardId, allCardIds)) {
+        return cardId;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Check if welcome screen should be shown for a theme
+   * @param themeTitle - Theme title
+   * @param allCardIds - Array of all card IDs in the theme
    * @returns boolean indicating if welcome screen should be shown
    */
-  static shouldShowWelcomeScreen(themeId: string, cardIds: string[]): boolean {
+  static shouldShowWelcomeScreen(themeTitle: string, allCardIds: string[]): boolean {
+    if (allCardIds.length === 0) {
+      return true;
+    }
+    
+    const firstCardId = allCardIds[0];
+    const firstCardStatus = this.getCardCompletionStatus(firstCardId);
+    
+    return firstCardStatus === CardCompletionStatus.NOT_STARTED;
+  }
+
+  /**
+   * Calculate theme progress percentage
+   * @param allCardIds - Array of all card IDs in the theme
+   * @returns Progress percentage (0-100)
+   */
+  static getThemeProgressPercentage(allCardIds: string[]): number {
+    if (allCardIds.length === 0) {
+      return 0;
+    }
+    
+    const completedCards = allCardIds.filter(cardId => {
+      const status = this.getCardCompletionStatus(cardId);
+      return status === CardCompletionStatus.COMPLETED;
+    });
+    
+    return Math.round((completedCards.length / allCardIds.length) * 100);
+  }
+
+  /**
+   * Clear all progress data for a card
+   * @param cardId - Unique card identifier
+   */
+  static clearCardProgress(cardId: string): void {
     try {
-      if (cardIds.length === 0) {
-        return true;
-      }
-      
-      const firstCardId = cardIds[0];
-      return !this.isCardCompleted(firstCardId);
+      const key = `${this.STORAGE_KEY_PREFIX}${cardId}`;
+      localStorage.removeItem(key);
     } catch (error) {
-      console.error(`Error checking welcome screen for theme ${themeId}:`, error);
-      return true; // Default to showing welcome screen on error
+      console.error(`Error clearing card progress for ${cardId}:`, error);
+      throw error;
     }
   }
 
   /**
-   * Get current date key in YYYY-MM-DD format
-   * @returns string in format YYYY-MM-DD
+   * Clear all theme progress data
+   * @param allCardIds - Array of all card IDs in the theme
+   */
+  static clearAllThemeProgress(allCardIds: string[]): void {
+    try {
+      allCardIds.forEach(cardId => {
+        this.clearCardProgress(cardId);
+      });
+    } catch (error) {
+      console.error('Error clearing theme progress:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get current date in YYYY-MM-DD format
+   * @returns Date string in YYYY-MM-DD format
    */
   private static getCurrentDateKey(): string {
     const now = new Date();
@@ -364,59 +300,59 @@ export class ThemeCardManager {
   }
 
   /**
-   * Validate card progress data structure
+   * Validate CardProgress data structure
    * @param progress - CardProgress object to validate
    * @returns boolean indicating if data is valid
    */
   private static isValidCardProgress(progress: any): progress is CardProgress {
+    if (!progress || typeof progress !== 'object') {
+      return false;
+    }
+    
+    // Check required fields
+    if (typeof progress.cardId !== 'string' || !progress.cardId) {
+      return false;
+    }
+    
+    if (!Array.isArray(progress.completedAttempts)) {
+      return false;
+    }
+    
+    if (typeof progress.isCompleted !== 'boolean') {
+      return false;
+    }
+    
+    if (typeof progress.totalCompletedAttempts !== 'number') {
+      return false;
+    }
+    
+    // Validate completed attempts array
+    for (const attempt of progress.completedAttempts) {
+      if (!this.isValidCompletedAttempt(attempt)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
+
+  /**
+   * Validate CompletedAttempt data structure
+   * @param attempt - CompletedAttempt object to validate
+   * @returns boolean indicating if data is valid
+   */
+  private static isValidCompletedAttempt(attempt: any): attempt is CompletedAttempt {
+    if (!attempt || typeof attempt !== 'object') {
+      return false;
+    }
+    
     return (
-      progress &&
-      typeof progress === 'object' &&
-      typeof progress.cardId === 'string' &&
-      typeof progress.isCompleted === 'boolean' &&
-      Array.isArray(progress.questionsAnswered) &&
-      typeof progress.answers === 'object' &&
-      progress.answers !== null &&
-      typeof progress.lastAttemptDate === 'string' &&
-      typeof progress.totalAttempts === 'number' &&
-      (progress.rating === undefined || typeof progress.rating === 'number') &&
-      (progress.completedDate === undefined || typeof progress.completedDate === 'string')
+      typeof attempt.attemptId === 'string' &&
+      typeof attempt.date === 'string' &&
+      typeof attempt.answers === 'object' &&
+      attempt.answers !== null &&
+      typeof attempt.rating === 'number' &&
+      typeof attempt.completedAt === 'string'
     );
-  }
-
-  /**
-   * Clear all card progress data (for testing/reset purposes)
-   * @param themeId - Optional theme ID to clear specific theme data
-   */
-  static clearAllProgress(themeId?: string): void {
-    try {
-      const keys = Object.keys(localStorage);
-      const prefix = themeId ? `${this.STORAGE_KEY_PREFIX}${themeId}_` : this.STORAGE_KEY_PREFIX;
-      
-      keys.forEach(key => {
-        if (key.startsWith(prefix)) {
-          localStorage.removeItem(key);
-        }
-      });
-    } catch (error) {
-      console.error('Error clearing card progress data:', error);
-    }
-  }
-
-  /**
-   * Get all card progress data for a theme
-   * @param themeId - Theme identifier
-   * @param cardIds - Array of card IDs in theme
-   * @returns Array of CardProgress objects
-   */
-  static getAllThemeProgress(themeId: string, cardIds: string[]): CardProgress[] {
-    try {
-      return cardIds
-        .map(cardId => this.getCardProgress(cardId))
-        .filter((progress): progress is CardProgress => progress !== null);
-    } catch (error) {
-      console.error(`Error getting theme progress for ${themeId}:`, error);
-      return [];
-    }
   }
 }

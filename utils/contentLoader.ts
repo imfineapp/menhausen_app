@@ -3,6 +3,7 @@
 // ========================================================================================
 
 import { AppContent, SupportedLanguage } from '../types/content';
+import { ThemeLoader } from './ThemeLoader';
 
 /**
  * Загружает контент для указанного языка
@@ -13,22 +14,31 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
   try {
     console.log(`loadContent: Loading content for language: ${language}`);
     
-    // Загружаем все секции контента параллельно
-    const [themes, cards, ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards] = await Promise.all([
-      import(`../data/content/${language}/themes.json`),
-      import(`../data/content/${language}/cards.json`),
-      import(`../data/content/${language}/ui.json`),
-      import(`../data/content/${language}/mental-techniques.json`),
-      import(`../data/content/${language}/mental-techniques-menu.json`),
-      import(`../data/content/${language}/survey.json`),
-      import(`../data/content/${language}/onboarding.json`),
-      import(`../data/content/${language}/emergency-cards.json`)
+    // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
+    console.log(`loadContent: Starting parallel imports for language: ${language}`);
+    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards] = await Promise.all([
+      import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
+      import(`../data/content/${language}/mental-techniques.json`).then(m => { console.log(`loadContent: mental-techniques.json loaded`); return m; }),
+      import(`../data/content/${language}/mental-techniques-menu.json`).then(m => { console.log(`loadContent: mental-techniques-menu.json loaded`); return m; }),
+      import(`../data/content/${language}/survey.json`).then(m => { console.log(`loadContent: survey.json loaded`); return m; }),
+      import(`../data/content/${language}/onboarding.json`).then(m => { console.log(`loadContent: onboarding.json loaded`); return m; }),
+      import(`../data/content/${language}/emergency-cards.json`).then(m => { console.log(`loadContent: emergency-cards.json loaded`); return m; })
     ]);
     
+    // Загружаем темы через ThemeLoader
+    console.log(`loadContent: Loading themes through ThemeLoader for language: ${language}`);
+    const themesData = await ThemeLoader.loadThemes(language);
+    console.log(`loadContent: Loaded ${themesData.length} themes through ThemeLoader`);
+    
+    // Преобразуем массив тем в Record<string, ThemeData> для совместимости с AppContent
+    const themesRecord: Record<string, any> = {};
+    themesData.forEach(theme => {
+      themesRecord[theme.id] = theme;
+    });
     
     const content: AppContent = {
-      themes: themes.default,
-      cards: cards.default,
+      themes: themesRecord,
+      cards: {}, // Пустой объект, так как карточки теперь загружаются через ThemeLoader
       ui: ui.default,
       mentalTechniques: mentalTechniques.default,
       mentalTechniquesMenu: mentalTechniquesMenu.default,

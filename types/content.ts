@@ -302,9 +302,10 @@ export interface UITexts {
       nextLevel: LocalizedContent;
     };
   };
-  cards: {
-    attempts: LocalizedContent;
-    noAttempts: LocalizedContent;
+    cards: {
+      attempts: LocalizedContent;
+      noAttempts: LocalizedContent;
+      startExercise: LocalizedContent;
     welcome: {
       subtitle: LocalizedContent;
     };

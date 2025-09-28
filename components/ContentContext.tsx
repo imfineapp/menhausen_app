@@ -311,6 +311,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
       cards: {
         attempts: 'Attempts',
         noAttempts: 'No attempts yet. Start your first attempt by opening the card!',
+        startExercise: 'Ready to start the exercise?',
         welcome: {
           subtitle: 'Welcome to card'
         },

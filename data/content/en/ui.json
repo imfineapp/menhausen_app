@@ -175,6 +175,7 @@
   "cards": {
     "attempts": "Attempts",
     "noAttempts": "No attempts yet. Start your first attempt by opening the card!",
+    "startExercise": "Ready to start the exercise?",
     "welcome": {
       "title": "Card",
       "subtitle": "Ready to start the exercise?"

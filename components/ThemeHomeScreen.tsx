@@ -1,19 +1,18 @@
 // Импортируем необходимые хуки и SVG пути
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager, CardCompletionStatus } from '../utils/ThemeCardManager';
+import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
 
 // Типы для пропсов компонента
 interface ThemeHomeScreenProps {
   onBack: () => void; // Функция для возврата к предыдущему экрану
   onCardClick: (cardId: string) => void; // Функция для обработки клика по карточке
   onOpenNextLevel: () => void; // Функция для открытия следующего уровня
-  themeTitle?: string; // Название темы (опционально)
-  completedCards?: Set<string>; // Множество ID завершенных карточек
-  cardCompletionCounts?: Record<string, number>; // Количество прохождений каждой карточки
+  themeId: string; // ID темы для загрузки
 }
 
 // Типы для карточек
@@ -70,7 +69,7 @@ function Light() {
 /**
  * Адаптивный компонент прогресс-бара темы с реальными данными
  */
-function ProgressTheme({ themeTitle, allCardIds }: { themeTitle: string; allCardIds: string[] }) {
+function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCardIds: string[] }) {
   const { content, getLocalizedText } = useContent();
   
   // Вычисляем реальный прогресс темы
@@ -310,16 +309,16 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
  * Кнопка "Open next level" согласно Bottom Fixed Button стандарту
  * Теперь использует стандартный компонент BottomFixedButton с умным текстом
  */
-function OpenNextLevelButton({ onClick, themeTitle, allCardIds }: { 
+function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: { 
   onClick: () => void; 
-  themeTitle: string; 
-  allCardIds: string[]; 
+  theme: ThemeData; 
+  allCardIds: string[];
 }) {
   const { content, getLocalizedText } = useContent();
   
   // Определяем текст кнопки на основе состояния темы
   const getButtonText = () => {
-    const nextCardId = ThemeCardManager.getNextAvailableCard(themeTitle, allCardIds);
+    const nextCardId = ThemeCardManager.getNextAvailableCard(allCardIds);
     const completedCards = allCardIds.filter(cardId => 
       ThemeCardManager.getCardCompletionStatus(cardId) === CardCompletionStatus.COMPLETED
     ).length;
@@ -346,148 +345,57 @@ function OpenNextLevelButton({ onClick, themeTitle, allCardIds }: {
  * Главный компонент домашней страницы темы
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel, themeTitle = "Stress", completedCards: _completedCards = new Set(), cardCompletionCounts: _cardCompletionCounts = {} }: ThemeHomeScreenProps) {
-  const { content, getLocalizedText, getTheme } = useContent();
+export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel, themeId }: ThemeHomeScreenProps) {
+  const { content, currentLanguage } = useContent();
+  
+  // Состояние для загрузки темы
+  const [theme, setTheme] = useState<ThemeData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Состояние для празднования завершения
   const [showCelebration, setShowCelebration] = React.useState(false);
   const [lastCompletedCard, setLastCompletedCard] = React.useState<string | null>(null);
   
-  // Получаем данные темы
-  const themeData = themeTitle ? getTheme(themeTitle) : null;
-  
-  // Отладочная информация
-  console.log('ThemeHomeScreen Debug:', {
-    themeTitle,
-    themeData,
-    hasDescription: !!themeData?.description,
-    description: themeData?.description,
-    content: content,
-    hasContent: !!content,
-    hasUI: !!content?.ui,
-    hasCards: !!content?.ui?.cards,
-    hasThemeHome: !!content?.ui?.cards?.themeHome
-  });
-  
-  // Проверяем, что контент загружен
-  if (!content?.ui?.cards?.themeHome) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">Loading content...</div>
-          <div className="text-sm mt-2 text-gray-400">Theme: {themeTitle}</div>
-          <div className="text-xs mt-1 text-gray-500">Initializing theme cards...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // Проверяем ошибки загрузки данных
-  if (!content) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg text-red-400">Error loading content</div>
-          <div className="text-sm mt-2 text-gray-400">Theme: {themeTitle}</div>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Определяем ID всех карточек в теме (упорядоченный список)
-  const allCardIds = [
-    "card-1", "card-2", "card-3", "card-4", "card-5", 
-    "card-6", "card-7", "card-8", "card-9", "card-10", "card-11"
-  ];
-
-  // Функция для получения следующей доступной карточки
-  const getNextAvailableCard = () => {
-    return ThemeCardManager.getNextAvailableCard(themeTitle, allCardIds);
-  };
-
-  // Функция для проверки, должна ли показываться приветственная страница
-  const shouldShowWelcome = () => {
-    return ThemeCardManager.shouldShowWelcomeScreen(themeTitle, allCardIds);
-  };
-
-  // Функция для миграции данных существующих пользователей
-  const migrateExistingUserData = () => {
+  // Загружаем тему при монтировании
+  const loadTheme = React.useCallback(async () => {
     try {
-      // Проверяем, есть ли старые данные в localStorage
-      const oldDataKeys = Object.keys(localStorage).filter(key => 
-        key.includes('theme') || key.includes('card') || key.includes('progress')
-      );
+      setLoading(true);
+      setError(null);
       
-      if (oldDataKeys.length > 0) {
-        console.log('Found existing user data, migrating...', oldDataKeys);
-        
-        // Здесь можно добавить логику миграции старых данных
-        // Например, преобразование старых форматов в новый формат ThemeCardManager
-        
-        // Пока что просто логируем найденные данные
-        oldDataKeys.forEach(key => {
-          const data = localStorage.getItem(key);
-          if (data) {
-            console.log(`Migrating data from ${key}:`, JSON.parse(data));
-          }
-        });
+      console.log(`[ThemeHomeScreen] Loading theme ${themeId} for language ${currentLanguage}`);
+      
+      const themeData = await ThemeLoader.loadTheme(themeId, currentLanguage);
+      
+      if (!themeData) {
+        console.error(`[ThemeHomeScreen] Theme ${themeId} not found`);
+        throw new Error(`Theme ${themeId} not found`);
       }
-    } catch (error) {
-      console.error('Error during data migration:', error);
+      
+      console.log(`[ThemeHomeScreen] Successfully loaded theme:`, themeData);
+      setTheme(themeData);
+    } catch (err) {
+      console.error('Error loading theme:', err);
+      setError(`Ошибка загрузки темы: ${err}`);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [themeId, currentLanguage]);
 
-  // Функция для тестирования персистентности данных
-  const testProgressPersistence = () => {
-    try {
-      console.log('Testing progress persistence...');
-      
-      // Тестируем сохранение и загрузку данных
-      const testCardId = 'card-1';
-      const testProgress = {
-        cardId: testCardId,
-        isCompleted: false,
-        questionsAnswered: [],
-        answers: {},
-        rating: undefined,
-        lastAttemptDate: new Date().toISOString().split('T')[0],
-        totalAttempts: 1,
-      };
-      
-      ThemeCardManager.saveCardProgress(testCardId, testProgress);
-      const loadedProgress = ThemeCardManager.getCardProgress(testCardId);
-      
-      console.log('Progress persistence test:', {
-        saved: testProgress,
-        loaded: loadedProgress,
-        match: JSON.stringify(testProgress) === JSON.stringify(loadedProgress)
-      });
-      
-      return loadedProgress !== null;
-    } catch (error) {
-      console.error('Progress persistence test failed:', error);
-      return false;
-    }
-  };
+  useEffect(() => {
+    loadTheme();
+  }, [themeId, loadTheme]);
 
-  // Выполняем миграцию и тестирование при монтировании компонента
-  React.useEffect(() => {
-    migrateExistingUserData();
-    
-    // Тестируем персистентность данных в development режиме
-    if (process.env.NODE_ENV === 'development') {
-      testProgressPersistence();
-    }
-  }, []);
-
+  // Получаем ID всех карточек из загруженной темы (если тема загружена)
+  const allCardIds = React.useMemo(() => 
+    theme ? theme.cards.map(card => card.id) : [], 
+    [theme]
+  );
+  
   // Отслеживаем завершение карточек для показа празднования
   React.useEffect(() => {
+    if (!theme) return;
+    
     const checkForNewCompletions = () => {
       allCardIds.forEach(cardId => {
         const completionStatus = ThemeCardManager.getCardCompletionStatus(cardId);
@@ -504,33 +412,111 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
     // Проверяем каждые 2 секунды
     const interval = setInterval(checkForNewCompletions, 2000);
     return () => clearInterval(interval);
-  }, [allCardIds, lastCompletedCard]);
+  }, [allCardIds, lastCompletedCard, theme]);
 
+  // Компонент готов к работе
+  
+  // Отладочная информация
+  console.log('ThemeHomeScreen Debug:', {
+    themeId,
+    theme,
+    loading,
+    error,
+    hasContent: !!content,
+    hasUI: !!content?.ui,
+    hasCards: !!content?.ui?.cards,
+    hasThemeHome: !!content?.ui?.cards?.themeHome
+  });
+  
+  // Состояния загрузки и ошибок
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Загрузка темы...</div>
+          <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
+          <div className="text-xs mt-1 text-gray-500">Загружаем карточки...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg text-red-400">{error}</div>
+          <button 
+            onClick={loadTheme}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!theme) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg">Тема не найдена</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Проверяем ошибки загрузки данных
+  if (!content) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg text-red-400">Error loading content</div>
+          <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
+  // Функция для получения следующей доступной карточки
+  const getNextAvailableCard = () => {
+    return ThemeCardManager.getNextAvailableCard(allCardIds);
+  };
+
+
+
+  
   // Создаем карточки с реальными данными прогресса и состоянием блокировки
-  const cards: Card[] = allCardIds.map((cardId, index) => {
+  const cards: Card[] = theme.cards.map((cardData, index) => {
     try {
-      const cardNumber = index + 1;
-      const levelNumber = Math.ceil(cardNumber / 2); // 1-2: Level 1, 3-4: Level 2, etc.
+      const cardId = cardData.id;
       
       // Получаем реальные данные прогресса
       const progress = ThemeCardManager.getCardProgress(cardId);
-      const attempts = progress ? progress.totalAttempts : 0;
+      const attempts = progress ? progress.totalCompletedAttempts : 0;
       const completionStatus = ThemeCardManager.getCardCompletionStatus(cardId);
       const isAvailable = ThemeCardManager.isCardAvailable(cardId, allCardIds);
       
-      // Получаем локализованные тексты с fallback
-      const titleKey = `card${cardNumber}` as keyof typeof content.ui.cards.themeHome;
-      const levelKey = `level${levelNumber}` as keyof typeof content.ui.cards.themeHome;
+      // Используем данные из JSON файла
+      const title = cardData.id;
+      const level = `Level ${cardData.level}`;
+      const description = cardData.introduction;
       
-      const title = content.ui.cards.themeHome[titleKey] 
-        ? getLocalizedText(content.ui.cards.themeHome[titleKey])
-        : getLocalizedText(content.ui.cards.themeHome.card1);
-        
-      const level = content.ui.cards.themeHome[levelKey]
-        ? getLocalizedText(content.ui.cards.themeHome[levelKey])
-        : getLocalizedText(content.ui.cards.themeHome.level1);
-      
-      const description = getLocalizedText(content.ui.cards.themeHome.description);
+      // Отладочные логи
+      console.log(`[ThemeHomeScreen] Card ${cardId}:`, {
+        id: cardData.id,
+        title,
+        description: description.substring(0, 50) + '...',
+        level
+      });
       
       return {
         id: cardId,
@@ -543,12 +529,12 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
         completionStatus
       };
     } catch (error) {
-      console.error(`Error creating card ${cardId}:`, error);
+      console.error(`Error creating card ${cardData.id}:`, error);
       // Возвращаем fallback карточку
       return {
-        id: cardId,
-        title: `Card ${index + 1}`,
-        level: `Level ${Math.ceil((index + 1) / 2)}`,
+        id: cardData.id,
+        title: cardData.introduction || `Card ${index + 1}`,
+        level: `Level ${cardData.level}`,
         description: 'Card description',
         attempts: 0,
         isActive: index === 0, // Первая карточка всегда доступна
@@ -600,20 +586,20 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
             {/* Заголовок */}
             <div className="text-center mb-6">
               <h1 className="typography-h1 text-[#e1ff00] mb-4">
-                {themeData ? themeData.title : themeTitle}
+                {theme.title}
               </h1>
             </div>
             
             {/* Описание темы */}
             <div className="mb-6">
               <p className="typography-body text-white text-center">
-                {themeData?.description || 'Описание темы будет доступно в ближайшее время.'}
+                {theme.description}
               </p>
             </div>
             
             {/* Прогресс темы */}
             <div className="mb-8">
-              <ProgressTheme themeTitle={themeTitle} allCardIds={allCardIds} />
+              <ProgressTheme theme={theme} allCardIds={allCardIds} />
             </div>
             
             {/* Карточки */}
@@ -634,7 +620,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       {/* Bottom Fixed Button - открывает следующую доступную карточку */}
       <OpenNextLevelButton 
         onClick={handleNextLevelClick} 
-        themeTitle={themeTitle}
+        theme={theme}
         allCardIds={allCardIds}
       />
 
