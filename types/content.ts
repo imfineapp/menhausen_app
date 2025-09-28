@@ -17,7 +17,8 @@ export interface ThemeData {
   description: LocalizedContent;
   welcomeMessage: LocalizedContent;
   isPremium: boolean;
-  cardIds: string[]; // Связанные карточки
+  cardIds?: string[]; // Связанные карточки (для старой архитектуры)
+  cards?: CardData[]; // Карточки темы (для новой архитектуры)
 }
 
 /**

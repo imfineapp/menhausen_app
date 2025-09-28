@@ -1007,7 +1007,7 @@ function AppContent() {
     const theme = getTheme(currentTheme);
     if (!theme) return;
     
-    const nextCard = theme.cardIds.find(cardId => !completedCards.has(cardId));
+    const nextCard = theme.cardIds?.find(cardId => !completedCards.has(cardId));
     
     if (nextCard) {
       console.log(`Opening next available card: ${nextCard}`);

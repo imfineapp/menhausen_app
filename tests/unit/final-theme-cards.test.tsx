@@ -50,23 +50,24 @@ const TestComponent = () => {
 const TestCardComponent = () => {
   const { getTheme, getThemeCards, getUI } = useContent();
   
-  const theme = getTheme('social-anxiety');
-  const cards = getThemeCards('social-anxiety');
+  // Используем существующую тему из новой архитектуры
+  const theme = getTheme('stress-management');
+  const cards = getThemeCards('stress-management');
   const ui = getUI();
   
   return (
     <div>
-      <div data-testid="theme-title">{theme?.title}</div>
-      <div data-testid="theme-description">{theme?.description}</div>
-      <div data-testid="cards-count">{cards.length}</div>
+      <div data-testid="theme-title">{theme?.title || 'Loading...'}</div>
+      <div data-testid="theme-description">{theme?.description || 'Loading...'}</div>
+      <div data-testid="cards-count">{cards?.length || 0}</div>
       <div data-testid="ui-navigation">{ui.navigation.back}</div>
       <div data-testid="cards-list">
-        {cards.map((card) => (
+        {cards?.map((card) => (
           <div key={card.id} data-testid={`card-${card.id}`}>
             <div data-testid={`card-title-${card.id}`}>{card.title}</div>
             <div data-testid={`card-duration-${card.id}`}>{card.duration}</div>
           </div>
-        ))}
+        )) || []}
       </div>
     </div>
   );

@@ -86,8 +86,8 @@ export const cardUtils = {
     if (!theme) return [];
 
     return theme.cardIds
-      .map(cardId => content.cards[cardId])
-      .filter((card): card is CardData => card !== undefined);
+      ?.map(cardId => content.cards[cardId])
+      .filter((card): card is CardData => card !== undefined) || [];
   },
 
   /**
@@ -189,7 +189,7 @@ export const validationUtils = {
     let isValid = true;
 
     Object.values(content.themes).forEach(theme => {
-      theme.cardIds.forEach(cardId => {
+      theme.cardIds?.forEach(cardId => {
         if (!allCardIds.includes(cardId)) {
           console.error(`Theme "${theme.id}" references non-existent card: ${cardId}`);
           isValid = false;

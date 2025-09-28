@@ -103,9 +103,15 @@ export function ContentProvider({ children }: ContentProviderProps) {
     const theme = content?.themes[themeId];
     if (!theme) return [];
     
+    // В новой архитектуре карточки находятся внутри темы
+    if (theme.cards && Array.isArray(theme.cards)) {
+      return theme.cards;
+    }
+    
+    // Fallback для старой структуры
     return theme.cardIds
-      .map(cardId => content?.cards[cardId])
-      .filter((card): card is CardData => card !== undefined);
+      ?.map(cardId => content?.cards[cardId])
+      .filter((card): card is CardData => card !== undefined) || [];
   }, [content]);
 
   /**
