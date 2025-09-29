@@ -340,3 +340,38 @@ Consistent User ID Display
 **Final Status**: ✅ **COMPLETED** - All phases successfully executed with comprehensive documentation
 
 **Ready for Next Task**: Use **VAN MODE** to initialize next task
+
+---
+
+## New Task: Premium Theme Paywall Navigation
+
+- **Goal**: If a theme is premium and the user does not have Premium, then on theme card click user should see a locked screen with a message and a "Разблокировать" button that navigates to the purchase screen.
+- **Complexity**: Level 2 (Simple Enhancement)
+
+### Evidence of Ready Element
+- **Lock Screen Component**: `components/ThemeWelcomeScreen.tsx`
+  - Props support: `isPremiumTheme`, `userHasPremium`, `onUnlock`
+  - Shows lock message and uses localized CTA: `content.ui.themes.welcome.unlock` (RU: "Разблокировать")
+- **Purchase Screen**: `components/PaymentsScreen.tsx` with bottom CTA to buy Premium
+- Therefore, no new UI needed; only wire-up and navigation.
+
+### Files to Modify
+- `components/ThemeListScreen.tsx` (hook up navigation on premium theme click)
+- Potentially the router/navigation point (where themes are opened) if different from `ThemeListScreen.tsx`
+
+### Implementation Steps
+1. When rendering theme cards, on click:
+   - If `theme.isPremium === true` AND `userHasPremium === false`:
+     - Navigate to `ThemeWelcomeScreen` with: `{ isPremiumTheme: true, userHasPremium: false, onUnlock: () => navigateToPayments() }`.
+     - In `ThemeWelcomeScreen`, the bottom button will render "Разблокировать" and call `onUnlock`.
+   - Else: proceed with normal theme start flow.
+2. Implement `navigateToPayments()` to navigate to `PaymentsScreen` and pass `onPurchaseComplete` to refresh user entitlements after purchase.
+3. Ensure language strings are used (already present in `data/content/ru/ui.json`: `themes.welcome.unlock`).
+
+### Potential Challenges
+- Determining `userHasPremium` flag source; if not available, stub with `false` and integrate actual entitlement check later.
+- Ensuring navigation stack/back behavior returns the user to the theme after purchase.
+
+### Testing Strategy
+- Unit: Mock `ThemeWelcomeScreen` props and verify that when `isPremiumTheme=true` and `userHasPremium=false`, the CTA label equals "Разблокировать" and calls `onUnlock` on click.
+- E2E: From theme list, tap a premium theme without premium → see lock screen → tap "Разблокировать" → arrive at `PaymentsScreen`.
