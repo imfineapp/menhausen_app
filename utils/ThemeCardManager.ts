@@ -15,6 +15,7 @@ export interface CompletedAttempt {
   answers: Record<string, string>; // Answers to all questions
   rating: number; // User rating for the card
   completedAt: string; // ISO timestamp when completed
+  ratingComment?: string; // Optional user comment submitted with rating
 }
 
 export interface CardProgress {
@@ -103,7 +104,8 @@ export class ThemeCardManager {
   static addCompletedAttempt(
     cardId: string, 
     answers: Record<string, string>, 
-    rating: number
+    rating: number,
+    ratingComment?: string
   ): CardProgress {
     try {
       const currentProgress = this.getCardProgress(cardId) || {
@@ -124,7 +126,8 @@ export class ThemeCardManager {
         date: currentDate,
         answers,
         rating,
-        completedAt: new Date().toISOString()
+        completedAt: new Date().toISOString(),
+        ratingComment
       };
 
       // Add to completed attempts array

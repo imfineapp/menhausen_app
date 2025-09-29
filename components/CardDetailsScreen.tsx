@@ -181,7 +181,7 @@ function CardDetailsBottomButton({ onClick }: { onClick: () => void }) {
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getLocalizedText(content.ui.cards.startExercise)}
+      {getLocalizedText(content.ui.themes.welcome.start)}
     </BottomFixedButton>
   );
 }

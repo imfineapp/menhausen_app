@@ -761,7 +761,23 @@ function AppContent() {
     
     if (theme) {
       setCurrentTheme(themeId);
-      navigateTo('theme-welcome');
+
+      // Собираем список всех карточек темы в правильном порядке
+      const allCardIds: string[] = Array.isArray(theme.cards)
+        ? theme.cards.map((c: any) => c.id)
+        : Array.isArray(theme.cardIds)
+          ? theme.cardIds
+          : [];
+
+      // Если нет карточек — безопасно перейти на список карточек
+      if (allCardIds.length === 0) {
+        navigateTo('theme-home');
+        return;
+      }
+
+      // Показываем Welcome только если первая карточка не начиналась
+      const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeId, allCardIds);
+      navigateTo(shouldShowWelcome ? 'theme-welcome' : 'theme-home');
     } else {
       console.error('Theme not found:', themeId);
     }
@@ -798,7 +814,7 @@ function AppContent() {
     navigateTo('card-details');
   };
 
-  const handleBackToCardWelcome = () => {
+  const _handleBackToCardWelcome = () => {
     navigateTo('card-welcome');
   };
 
@@ -854,7 +870,8 @@ function AppContent() {
       const completedAttempt = ThemeCardManager.addCompletedAttempt(
         currentCard.id,
         answersToSave, // Все ответы пользователя (question1, question2)
-        rating
+        rating,
+        textMessage
       );
       
       console.log('Exercise completed and saved:', {
@@ -897,7 +914,8 @@ function AppContent() {
 
   const handleOpenCardExercise = () => {
     console.log(`Opening exercise for card: ${currentCard.id}`);
-    navigateTo('card-welcome');
+    // Пропускаем CardWelcomeScreen и сразу переходим к первому вопросу
+    navigateTo('question-01');
   };
 
   const handleOpenCheckin = (checkinId: string, cardTitle: string, date: string) => {
@@ -1312,7 +1330,7 @@ function AppContent() {
         // Используем новую систему для получения вопросов
         return (
           <QuestionScreen01WithLoader
-            onBack={handleBackToCardWelcome}
+            onBack={handleBackToCardDetails}
             onNext={handleNextQuestion}
             cardId={currentCard.id}
             cardTitle={currentCard.title || ''}

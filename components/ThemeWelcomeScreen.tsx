@@ -98,10 +98,13 @@ export function ThemeWelcomeScreen({
   const themeData = themeTitle ? getTheme(themeTitle) : null;
   
   // Определяем ID всех карточек в теме (упорядоченный список)
-  const allCardIds = [
-    "card-1", "card-2", "card-3", "card-4", "card-5", 
-    "card-6", "card-7", "card-8", "card-9", "card-10", "card-11"
-  ];
+  const allCardIds: string[] = themeData
+    ? (Array.isArray((themeData as any).cards)
+        ? (themeData as any).cards.map((c: any) => c.id)
+        : Array.isArray((themeData as any).cardIds)
+          ? (themeData as any).cardIds
+          : [])
+    : [];
 
   // Проверяем, должна ли показываться приветственная страница
   const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || "Stress", allCardIds);

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { StripedProgressBar } from './ui/StripedProgressBar';
+import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
 import { useContent } from './ContentContext';
@@ -345,14 +346,30 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
     : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
 
   const worries = source
-    .map((theme: any) => ({
-      title: theme.title,
-      description: theme.description,
-      progress: Math.floor(Math.random() * 100),
-      isPremium: !!theme.isPremium,
-      isAvailable: userHasPremium || !theme.isPremium,
-      themeId: theme.id,
-    }))
+    .map((theme: any) => {
+      const allCardIds: string[] = Array.isArray(theme.cards)
+        ? theme.cards.map((c: any) => c.id)
+        : Array.isArray(theme.cardIds)
+          ? theme.cardIds
+          : [];
+
+      const attemptedCardsCount = allCardIds.filter((cardId: string) => {
+        const progress = ThemeCardManager.getCardProgress(cardId);
+        return progress && progress.completedAttempts.length > 0;
+      }).length;
+
+      const totalCards = allCardIds.length;
+      const progress = totalCards > 0 ? Math.round((attemptedCardsCount / totalCards) * 100) : 0;
+
+      return {
+        title: theme.title,
+        description: theme.description,
+        progress,
+        isPremium: !!theme.isPremium,
+        isAvailable: userHasPremium || !theme.isPremium,
+        themeId: theme.id,
+      };
+    })
     .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable));
 
   const handleThemeClick = (themeId: string, isAvailable: boolean) => {

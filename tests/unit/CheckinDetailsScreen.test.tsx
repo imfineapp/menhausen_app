@@ -72,6 +72,30 @@ vi.mock('../../components/ProfileLayoutComponents', () => ({
   MiniStripeLogo: () => <div data-testid="mini-logo">Logo</div>
 }));
 
+// Mock ThemeLoader to return predictable theme/card data for async flow
+vi.mock('../../utils/ThemeLoader', () => ({
+  ThemeLoader: {
+    loadTheme: vi.fn(async (_themeId: string, _language: string) => ({
+      id: 'stress-management',
+      title: 'Stress',
+      description: 'desc',
+      welcomeMessage: 'welcome',
+      isPremium: false,
+      cards: [
+        {
+          id: 'card-1',
+          level: 1,
+          introduction: 'intro',
+          questions: ['Question 1', 'Question 2'],
+          technique: 'Test message',
+          recommendation: 'Test task',
+          mechanism: 'Test explanation'
+        }
+      ]
+    }))
+  }
+}));
+
 describe('CheckinDetailsScreen', () => {
   beforeEach(() => {
     localStorageMock.clear();
@@ -84,17 +108,17 @@ describe('CheckinDetailsScreen', () => {
     checkinDate: '2024-01-15'
   };
 
-  it('should display start exercise invitation when no completed attempts exist', () => {
+  it('should display start exercise invitation when no completed attempts exist', async () => {
     // No completed attempts added
     render(<CheckinDetailsScreen {...mockProps} />);
 
-    // Should show start exercise invitation
-    expect(screen.getByText('Ready to start the exercise?')).toBeInTheDocument();
+    // Wait for async load to settle and invitation to appear
+    expect(await screen.findByText('Ready to start the exercise?')).toBeInTheDocument();
   });
 
-  it('should display completed attempt data when attempt exists', () => {
+  it('should display completed attempt data when attempt exists', async () => {
     // Add a completed attempt
-    const answers = { 'question-1': 'My answer to question 1', 'question-2': 'My answer to question 2' };
+    const answers = { 'question1': 'My answer to question 1', 'question2': 'My answer to question 2' };
     const updatedProgress = ThemeCardManager.addCompletedAttempt('card-1', answers, 4);
     const attemptId = updatedProgress.completedAttempts[0].attemptId;
 
@@ -106,11 +130,11 @@ describe('CheckinDetailsScreen', () => {
 
     render(<CheckinDetailsScreen {...propsWithRealAttemptId} />);
 
-    // Should show the completed attempt data
-    expect(screen.getByText('My answer to question 1')).toBeInTheDocument();
-    expect(screen.getByText('My answer to question 2')).toBeInTheDocument();
-    expect(screen.getByText('Test message')).toBeInTheDocument();
-    expect(screen.getByText('Test task')).toBeInTheDocument();
+    // Should show the completed attempt data (await async rendering)
+    expect(await screen.findByText('My answer to question 1')).toBeInTheDocument();
+    expect(await screen.findByText('My answer to question 2')).toBeInTheDocument();
+    expect(await screen.findByText('Test message')).toBeInTheDocument();
+    expect(await screen.findByText('Test task')).toBeInTheDocument();
   });
 
   it('should call onBack when continue button is clicked', () => {
@@ -122,10 +146,10 @@ describe('CheckinDetailsScreen', () => {
     expect(mockProps.onBack).toHaveBeenCalledTimes(1);
   });
 
-  it('should display card title in header', () => {
+  it('should display card title in header', async () => {
     render(<CheckinDetailsScreen {...mockProps} />);
 
     // Should show card title in header (text is split across elements)
-    expect(screen.getByText(/Test Card/)).toBeInTheDocument();
+    expect(await screen.findByText(/Test Card/)).toBeInTheDocument();
   });
 });
