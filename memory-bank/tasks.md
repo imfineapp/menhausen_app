@@ -1,7 +1,9 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🎯 **ACTIVE** - Theme Cards Logic Implementation (Level 3 Intermediate Feature)
+🎯 **ARCHIVED** - Theme Cards Logic Implementation (Level 3 Intermediate Feature)
+
+Archive: `memory-bank/archive/archive-theme-cards-logic-20250929.md`
 
 ## Task Analysis & Requirements
 
