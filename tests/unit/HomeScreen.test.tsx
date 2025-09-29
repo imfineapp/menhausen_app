@@ -232,9 +232,10 @@ describe('HomeScreen', () => {
         />
       );
 
-      // Find and click profile element
-      const profileElement = screen.getByText('Welcome back!');
-      fireEvent.click(profileElement);
+      // Find and click profile button - now displays dynamic user ID
+      const profileButton = screen.getByLabelText('Open user profile');
+      expect(profileButton).toHaveTextContent('Welcome back! #MNHSNDEV'); // Development fallback
+      fireEvent.click(profileButton);
 
       expect(mockOnGoToProfile).toHaveBeenCalled();
     });
@@ -341,9 +342,9 @@ describe('HomeScreen', () => {
         />
       );
 
-      // Check for accessibility attributes
-      const mainContent = screen.getByText('Welcome back!');
-      expect(mainContent).toBeInTheDocument();
+      // Check for accessibility attributes - now displays dynamic user ID
+      const profileButton = screen.getByLabelText('Open user profile');
+      expect(profileButton).toHaveTextContent('Welcome back! #MNHSNDEV'); // Development fallback
     });
 
     it('should support keyboard navigation', () => {
@@ -373,12 +374,9 @@ describe('HomeScreen', () => {
         />
       );
 
-      // Test that interactive elements are present
-      const welcomeText = screen.getByText('Welcome back!');
-      expect(welcomeText).toBeInTheDocument();
-      
-      // Test that buttons are focusable
+      // Test that interactive elements are present - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
+      expect(profileButton).toHaveTextContent('Welcome back! #MNHSNDEV'); // Development fallback
       expect(profileButton).toBeInTheDocument();
     });
   });

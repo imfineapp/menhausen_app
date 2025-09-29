@@ -7,6 +7,7 @@ import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
 import { useContent } from './ContentContext';
+import { getUserDisplayId } from '../utils/telegramUserUtils';
 
 
 // Типы для пропсов компонента
@@ -89,13 +90,19 @@ function UserAvatar() {
  */
 function UserInfo() {
   const { content } = useContent();
+  const userDisplayId = getUserDisplayId();
+  // Extract text part without any ID and combine with dynamic user ID
+  const heroTitle = content.ui?.home?.heroTitle || 'Welcome back! #MNHSNDEV';
+  const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
+  const displayText = `${textPart} ${userDisplayId}`;
+  
   return (
     <div
       className="box-border content-stretch flex flex-row items-start justify-start p-0 relative shrink-0 w-full"
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <h2 className="block">{content.ui.home.heroTitle}</h2>
+        <h2 className="block">{displayText}</h2>
       </div>
     </div>
   );
