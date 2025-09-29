@@ -1163,7 +1163,12 @@ function AppContent() {
   const handlePurchaseComplete = () => {
     console.log('Premium purchase completed, updating user subscription status');
     setUserHasPremium(true);
-    navigateTo('profile');
+    // Если пользователь покупал премиум из контекста темы, возвращаем его в текущую тему
+    if (currentTheme) {
+      navigateTo('theme-home');
+    } else {
+      navigateTo('profile');
+    }
   };
 
   const handleBackToProfileFromPayments = () => {

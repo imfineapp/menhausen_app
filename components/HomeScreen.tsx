@@ -379,14 +379,11 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
     })
     .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable));
 
-  const handleThemeClick = (themeId: string, isAvailable: boolean) => {
-    if (isAvailable) {
-      console.log(`Opening theme: ${themeId}`);
-      onGoToTheme(themeId);
-    } else {
-      console.log(`Theme ${themeId} is not available`);
-      // TODO: Показать модальное окно с информацией о том, что тема недоступна
-    }
+  const handleThemeClick = (themeId: string, _isAvailable: boolean) => {
+    // Всегда открываем экран темы. Для премиум тем без подписки
+    // ThemeWelcomeScreen отобразит экран блокировки с кнопкой "Разблокировать"
+    console.log(`Opening theme: ${themeId}`);
+    onGoToTheme(themeId);
   };
 
   return (
