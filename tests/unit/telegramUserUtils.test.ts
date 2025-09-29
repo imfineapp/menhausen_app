@@ -38,7 +38,7 @@ describe('telegramUserUtils', () => {
     if ((global as any).window) {
       try {
         (global as any).window.Telegram = undefined;
-      } catch (error) {
+      } catch {
         // Ignore errors when setting Telegram property
       }
     }
@@ -49,7 +49,7 @@ describe('telegramUserUtils', () => {
     if ((global as any).window) {
       try {
         (global as any).window.Telegram = originalTelegram;
-      } catch (error) {
+      } catch {
         // Ignore errors when restoring Telegram property
       }
     }
