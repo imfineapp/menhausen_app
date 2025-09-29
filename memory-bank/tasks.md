@@ -378,3 +378,107 @@ Consistent User ID Display
 
 ### Reflection Status
 - ✅ Reflection created: `memory-bank/reflection/reflection-premium-paywall-navigation-20250929.md`
+
+## 🆕 Task: PostHog Analytics Integration (via wizard)
+
+### Description
+Integrate PostHog analytics into the web app using the official setup wizard (`npx -y @posthog/wizard@latest`). Initialize analytics at app start, provide a safe wrapper, and instrument key navigation/events (page views, premium purchase funnel, theme starts, surveys). Ensure environment-based enablement and privacy compliance.
+
+### Complexity
+**Level**: 3 (Intermediate Feature)
+**Type**: Feature
+
+### Technology Stack
+- Framework: React 18 + TypeScript
+- Bundler: Vite
+- Analytics: PostHog Cloud or self-hosted
+- SDK: `posthog-js`, `@posthog/react`
+- Env config: Vite env vars (`VITE_` prefix), `.env` managed and git-ignored
+
+### Technology Validation Checkpoints
+- [ ] Wizard command verified: `npx -y @posthog/wizard@latest`
+- [ ] Required deps identified: `posthog-js`, `@posthog/react`
+- [ ] Build configuration validated for Vite + TypeScript
+- [ ] Hello world init without runtime errors
+- [ ] Test build passes (`npm run build`)
+
+### Status
+- [x] Initialization complete
+- [x] Planning complete
+- [ ] Technology validation complete
+- [ ] Implementation in progress
+
+### Components Affected
+- `main.tsx` (bootstrapping)
+- `App.tsx` (global providers, route/screen tracking hook)
+- `utils/analytics/posthog.ts` (new: init + safe wrappers)
+- `components/PaymentsScreen.tsx` (purchase funnel events)
+- `components/ThemeListScreen.tsx` (theme start events)
+- `components/ThemeWelcomeScreen.tsx` (premium gating events)
+- `components/HomeScreen.tsx` (home impressions, CTA clicks)
+- `components/SurveyScreen*.tsx` (survey progress/completion)
+
+### Implementation Plan
+1) Run wizard and install SDKs
+   - Execute in project root: `npx -y @posthog/wizard@latest`
+   - Choose "JavaScript / React" option; capture created env keys and snippet
+   - Ensure `.env`/`.env.local` are git-ignored; use `VITE_PUBLIC_POSTHOG_KEY` and optional `VITE_PUBLIC_POSTHOG_HOST`
+
+2) Create analytics wrapper
+   - Add `utils/analytics/posthog.ts` exporting: `initPosthog()`, `capture(event, props)`, `identify(userId, props)`, `shutdown()`
+   - Read keys from `import.meta.env.VITE_PUBLIC_POSTHOG_KEY` and `VITE_PUBLIC_POSTHOG_HOST`
+   - Guard initialization for test/build and missing keys; noop in tests
+
+3) Initialize provider
+   - Add `PostHogProvider` from `@posthog/react` at the root (in `App.tsx` or `main.tsx`)
+   - Call `initPosthog()` once on app mount; call `shutdown()` on unmount
+
+4) Basic auto-capture and page/screen views
+   - If using React Router: listen to location changes and `capture('$pageview')`
+   - If custom navigation in `App.tsx`: hook into existing navigation updates to fire `$pageview`-like events
+
+5) Identify users (privacy-safe)
+   - If Telegram environment is active, derive a pseudonymous id from Telegram user id (e.g., hashed) and call `identify`
+   - Attach non-PII traits (language, premium status flag)
+
+6) Instrument key events (minimal set)
+   - `premium_unlock_clicked`, `premium_purchase_started`, `premium_purchase_completed`
+   - `theme_started`, `theme_completed`
+   - `survey_started`, `survey_completed`
+   - `app_opened`, `app_backgrounded`
+
+7) Env and privacy controls
+   - Enable analytics only when `VITE_PUBLIC_POSTHOG_KEY` is present and `NODE_ENV !== 'test'`
+   - Provide an in-app toggle (future) to opt-out; respect Do Not Track if feasible
+
+8) Testing & verification
+   - Unit: wrapper is noop without key; init does not throw; identify/capture delegations
+   - E2E: smoke-run app with key to see `capture` network calls; with no key ensure no calls
+   - Build: `npm run build` passes; no TypeScript errors
+
+### Creative Phases Required
+- [x] 🎨 Event Taxonomy Design: finalize event names, properties, and onboarding funnel stages
+- [ ] 🏗️ Architecture Design
+- [ ] ⚙️ Algorithm Design
+
+### Dependencies
+- `posthog-js` (runtime SDK)
+- `@posthog/react` (React provider/hooks)
+
+### Challenges & Mitigations
+- Event taxonomy drift: document a canonical list in repo; add `utils/analytics/events.ts` constants
+- PII risk with Telegram IDs: hash before identify; store minimal traits
+- Vite env exposure: use `VITE_`-prefixed public key only; host optional; avoid secrets in client
+- Test noise: disable analytics in tests via env and wrapper noops
+- SPA routing differences: if no router, manually emit `$pageview` on screen changes
+
+### Testing Strategy
+- Unit tests for `utils/analytics/posthog.ts` (init, noop, capture, identify)
+- Component tests to ensure provider mounts and does not crash
+- E2E smoke to verify events sent when key present and not sent when absent
+
+### Success Criteria
+- No runtime errors without env key (analytics safely disabled)
+- Events visible in PostHog when key present
+- Build and tests pass (ESLint/TS/Vite)
+- Minimal, privacy-conscious identify strategy in Telegram environment
