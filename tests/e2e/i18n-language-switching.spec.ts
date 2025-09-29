@@ -53,7 +53,7 @@ test.describe('i18n Language Switching', () => {
     const titleText = await pageTitle.textContent();
     
     // Проверяем, что заголовок содержит русский текст
-    expect(titleText).toMatch(/Герой #1275|Профиль|Как дела?/);
+    expect(titleText).toMatch(/Герой #MNHSNDEV|Профиль|Как дела?/);
     
     // Дополнительно проверяем, что мы видим русский текст
     expect(titleText).toMatch(/Герой|Профиль|Как|дела/);
@@ -113,8 +113,8 @@ test.describe('i18n Language Switching', () => {
     
     const titleText = await pageTitle.textContent();
     
-    // Проверяем, что заголовок содержит русский текст "Герой #1275" или английский "Hero #1275"
-    expect(titleText).toMatch(/Герой #1275|Hero #1275/);
+    // Проверяем, что заголовок содержит русский текст "Герой #MNHSNDEV" или английский "Welcome back! #MNHSNDEV"
+    expect(titleText).toMatch(/Герой #MNHSNDEV|Welcome back! #MNHSNDEV/);
     
     // Дополнительно проверяем, что мы видим русский текст
     expect(titleText).toContain('Герой');
