@@ -343,7 +343,7 @@ Consistent User ID Display
 
 ---
 
-## New Task: Premium Theme Paywall Navigation
+## ✅ COMPLETED: Premium Theme Paywall Navigation
 
 - **Goal**: If a theme is premium and the user does not have Premium, then on theme card click user should see a locked screen with a message and a "Разблокировать" button that navigates to the purchase screen.
 - **Complexity**: Level 2 (Simple Enhancement)
@@ -375,3 +375,6 @@ Consistent User ID Display
 ### Testing Strategy
 - Unit: Mock `ThemeWelcomeScreen` props and verify that when `isPremiumTheme=true` and `userHasPremium=false`, the CTA label equals "Разблокировать" and calls `onUnlock` on click.
 - E2E: From theme list, tap a premium theme without premium → see lock screen → tap "Разблокировать" → arrive at `PaymentsScreen`.
+
+### Reflection Status
+- ✅ Reflection created: `memory-bank/reflection/reflection-premium-paywall-navigation-20250929.md`
