@@ -47,6 +47,8 @@ import { SurveyResults } from './types/content';
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
+import { PostHogProvider } from '@posthog/react';
+import { initPosthog, capture, shutdown, posthogClient } from './utils/analytics/posthog';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
@@ -265,6 +267,15 @@ function AppContent() {
   const isE2ETestEnvironment = typeof window !== 'undefined' && 
     (window as any).__PLAYWRIGHT__ === true;
   
+  useEffect(() => {
+    initPosthog();
+    capture('app_opened');
+    return () => {
+      capture('app_backgrounded');
+      shutdown();
+    };
+  }, []);
+
   if (isE2ETestEnvironment) {
     console.log('E2E test environment detected, starting with home screen');
   }
@@ -389,6 +400,13 @@ function AppContent() {
   
   // Логируем изменения currentScreen
   
+  useEffect(() => {
+    // Track screen changes as page views
+    try {
+      capture('$pageview', { screen: currentScreen });
+    } catch {}
+  }, [currentScreen]);
+
   // Проверка, является ли текущий экран главной страницей
   // На первой странице онбординга кнопка Back должна закрывать приложение
   const isHomePage = currentScreen === 'home';
@@ -1518,10 +1536,12 @@ function AppContent() {
  */
 export default function App() {
   return (
-    <LanguageProvider>
-      <ContentProvider>
-        <AppContent />
-      </ContentProvider>
-    </LanguageProvider>
+    <PostHogProvider client={posthogClient}>
+      <LanguageProvider>
+        <ContentProvider>
+          <AppContent />
+        </ContentProvider>
+      </LanguageProvider>
+    </PostHogProvider>
   );
 }

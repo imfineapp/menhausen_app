@@ -22,3 +22,5 @@ temp_*.txt
 # Draft documentation
 *draft*
 *not_use*
+
+.env
