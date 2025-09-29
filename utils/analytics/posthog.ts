@@ -65,23 +65,32 @@ export function capture(eventName: string, properties?: Record<string, any>): vo
   if (!isAnalyticsEnabled()) return
   try {
     posthog.capture(eventName, properties)
-  } catch {}
+  } catch {
+    // Swallow analytics errors to avoid breaking UX
+  }
 }
 
 export function identify(distinctId: string, properties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
   try {
     posthog.identify(distinctId, properties)
-  } catch {}
+  } catch {
+    // Swallow analytics errors to avoid breaking UX
+  }
 }
 
 export function shutdown(): void {
   try {
-    ;(posthog as any).shutdown?.()
-    ;(posthog as any).__initialized = false
+    const ph: any = posthog as any
+    if (typeof ph.shutdown === 'function') {
+      ph.shutdown()
+    }
+    ph.__initialized = false
     const w = typeof window !== 'undefined' ? (window as any) : undefined
     if (w) w.__POSTHOG_INIT = false
-  } catch {}
+  } catch {
+    // Ignore shutdown errors
+  }
 }
 
 export const posthogClient = posthog

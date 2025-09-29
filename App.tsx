@@ -47,8 +47,7 @@ import { SurveyResults } from './types/content';
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
-import { PostHogProvider } from '@posthog/react';
-import { initPosthog, capture, shutdown, posthogClient } from './utils/analytics/posthog';
+import { capture } from './utils/analytics/posthog';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
@@ -268,11 +267,11 @@ function AppContent() {
     (window as any).__PLAYWRIGHT__ === true;
   
   useEffect(() => {
-    initPosthog();
-    capture('app_opened');
+    // initPosthog(); // Removed as PostHogProvider handles initialization
+    // capture('app_opened'); // Removed as PostHogProvider handles initialization
     return () => {
-      capture('app_backgrounded');
-      shutdown();
+      // capture('app_backgrounded'); // Removed as PostHogProvider handles initialization
+      // shutdown(); // Removed as PostHogProvider handles initialization
     };
   }, []);
 
@@ -402,9 +401,9 @@ function AppContent() {
   
   useEffect(() => {
     // Track screen changes as page views
-    try {
-      capture('$pageview', { screen: currentScreen });
-    } catch {}
+    // try {
+    //   capture('$pageview', { screen: currentScreen });
+    // } catch {}
   }, [currentScreen]);
 
   // Проверка, является ли текущий экран главной страницей
@@ -692,24 +691,28 @@ function AppContent() {
   const handleSurvey01Next = (answers: string[]) => {
     console.log('Survey 01 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen01: answers }));
+    capture('onboarding_answered', { step: 'survey01', answers });
     navigateTo('survey02');
   };
 
   const handleSurvey02Next = (answers: string[]) => {
     console.log('Survey 02 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen02: answers }));
+    capture('onboarding_answered', { step: 'survey02', answers });
     navigateTo('survey03');
   };
 
   const handleSurvey03Next = (answers: string[]) => {
     console.log('Survey 03 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen03: answers }));
+    capture('onboarding_answered', { step: 'survey03', answers });
     navigateTo('survey04');
   };
 
   const handleSurvey04Next = (answers: string[]) => {
     console.log('Survey 04 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen04: answers }));
+    capture('onboarding_answered', { step: 'survey04', answers });
     navigateTo('survey05');
   };
 
@@ -722,6 +725,8 @@ function AppContent() {
     } as SurveyResults;
     
     setSurveyResults(finalResults);
+    capture('onboarding_answered', { step: 'survey05', answers });
+    capture('onboarding_completed', { results: finalResults });
     
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
@@ -879,6 +884,14 @@ function AppContent() {
     console.log(`Card rated: ${rating} stars for card: ${currentCard.id}`, textMessage ? `with message: ${textMessage}` : 'without message');
     console.log('Current userAnswers before saving:', userAnswers);
     console.log('Final answers to save:', finalAnswers);
+    
+    capture('card_rated', {
+      cardId: currentCard.id,
+      themeId: currentTheme,
+      rating,
+      ratingComment: textMessage || undefined,
+      hasComment: !!textMessage,
+    });
     
     try {
       // Используем finalAnswers для надежности, fallback на userAnswers
@@ -1536,12 +1549,10 @@ function AppContent() {
  */
 export default function App() {
   return (
-    <PostHogProvider client={posthogClient}>
-      <LanguageProvider>
-        <ContentProvider>
-          <AppContent />
-        </ContentProvider>
-      </LanguageProvider>
-    </PostHogProvider>
+    <LanguageProvider>
+      <ContentProvider>
+        <AppContent />
+      </ContentProvider>
+    </LanguageProvider>
   );
 }
