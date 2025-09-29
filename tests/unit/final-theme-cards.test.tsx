@@ -206,10 +206,7 @@ describe('Theme Cards Integration Tests', () => {
       const { setLanguage } = useLanguage();
       
       React.useEffect(() => {
-        // Небольшая задержка для корректной смены языка
-        setTimeout(() => {
-          setLanguage('ru');
-        }, 100);
+        setLanguage('ru');
       }, [setLanguage]);
       
       const ui = getUI();
