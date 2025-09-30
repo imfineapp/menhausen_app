@@ -155,3 +155,19 @@
 
 ### ✅ Final Status
 - Theme Cards Logic Implementation: COMPLETE (progress by attempts, welcome gating, direct start, ratingComment)
+
+### 🗓️ 2025-09-30 — PostHog CSP adjustments
+- Updated CSP to support reverse proxy domain `https://lopata.menhausen.com`:
+  - index.html meta CSP: added to script-src, connect-src, img-src
+  - public/_headers: added to script-src, connect-src, img-src
+  - vite.config.ts dev headers: added to script-src, connect-src
+- Expected result: PostHog remote config and extensions (config.js, recorder.js, dead-clicks-autocapture.js, surveys.js, web-vitals.js) load without CSP violations in dev and prod.
+
+### ✅ COMPLETED: PostHog Analytics Integration (September 30, 2025)
+- Implemented `posthog-js` with `@posthog/react` provider and env-based enablement
+- Added CSP allowances for reverse proxy `lopata.menhausen.com` (script/connect/img) across dev meta, prod headers, and Vite dev headers
+- Verified remote config and extensions load without CSP violations; events flow via reverse proxy
+
+### ��️ Archived: PostHog Analytics Integration (2025-09-30)
+- Archive: `memory-bank/archive/archive-posthog-analytics-20250930.md`
+- Reflection: `memory-bank/reflection/reflection-posthog-analytics-20250930.md`

@@ -23,7 +23,7 @@ export default defineConfig({
       port: 5173,
     },
     headers: {
-      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org; connect-src 'self' https://telegram.org https://*.telegram.org; object-src 'none';"
+      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org https://lopata.menhausen.com; connect-src 'self' https://telegram.org https://*.telegram.org https://lopata.menhausen.com; object-src 'none';"
     }
   },
   build: {
