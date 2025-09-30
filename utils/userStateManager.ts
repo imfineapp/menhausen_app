@@ -304,10 +304,16 @@ export class UserStateManager {
   }
 
   private static getLocalStorageData(key: string): any {
+    const data = localStorage.getItem(key);
+    if (data == null) return null;
+
     try {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : null;
+      return JSON.parse(data);
     } catch (error) {
+      // Fallback: return raw string for simple values like language codes (e.g., "en", "ru")
+      if (typeof data === 'string') {
+        return data;
+      }
       console.error(`Failed to parse localStorage data for key ${key}:`, error);
       return null;
     }

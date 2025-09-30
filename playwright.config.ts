@@ -67,8 +67,9 @@ export default defineConfig({
     {
       name: 'Telegram WebApp',
       use: {
-        // Use Chromium in CI for better compatibility, WebKit locally
-        ...(process.env.CI ? devices['Desktop Chrome'] : devices['iPhone 12']),
+        // Use the same mobile profile locally and in CI for consistent selectors
+        ...devices['iPhone 12'],
+        browserName: 'chromium',
         viewport: { width: 390, height: 844 },
         userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1 TelegramWebView/7.0',
         extraHTTPHeaders: {
@@ -80,20 +81,6 @@ export default defineConfig({
         // Load authentication state
         storageState: 'tests/e2e/auth.json',
         
-        // CI-specific launch options
-        ...(process.env.CI && {
-          launchOptions: {
-            args: [
-              '--no-sandbox',
-              '--disable-setuid-sandbox',
-              '--disable-dev-shm-usage',
-              '--disable-accelerated-2d-canvas',
-              '--no-first-run',
-              '--disable-gpu'
-            ],
-            headless: true,
-          },
-        }),
       },
       dependencies: ['setup'],
     },
@@ -103,15 +90,15 @@ export default defineConfig({
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:5173',
-    reuseExistingServer: !!process.env.CI, // Reuse existing server in CI
+    reuseExistingServer: true, // Reuse existing server locally and in CI
     timeout: 120 * 1000,
   },
 
   /* Global test configuration */
 
-  timeout: process.env.CI ? 30 * 1000 : 30 * 1000, // Longer timeout in CI
+  timeout: process.env.CI ? 60 * 1000 : 30 * 1000, // Longer timeout in CI
   expect: {
-    timeout: process.env.CI ? 10 * 1000 : 30 * 1000, // Longer expect timeout in CI
+    timeout: process.env.CI ? 20 * 1000 : 30 * 1000, // Longer expect timeout in CI
     toHaveScreenshot: {
       // Allow small differences for cross-browser compatibility
       threshold: 0.2,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -28,6 +28,7 @@ import { FinalCardMessageScreen } from './components/FinalCardMessageScreen';
 import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
+import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 
@@ -45,8 +46,212 @@ import { SurveyResults } from './types/content';
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
+import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
+import { capture } from './utils/analytics/posthog';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+
+/**
+ * Компонент для загрузки вопросов и отображения QuestionScreen01
+ */
+function QuestionScreen01WithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardQuestions, 
+  currentLanguage 
+}: {
+  onBack: () => void;
+  onNext: (answer: string) => void;
+  cardId: string;
+  cardTitle: string;
+  getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
+  currentLanguage: string;
+}) {
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const cardQuestions = await getCardQuestions(cardId, currentLanguage);
+        setQuestions(cardQuestions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
+  }, [cardId, currentLanguage, getCardQuestions]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading questions...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  const questionText = questions[0] || "Question not found";
+  
+  return (
+    <QuestionScreen01
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      questionText={questionText}
+    />
+  );
+}
+
+/**
+ * Компонент для загрузки вопросов и отображения QuestionScreen02
+ */
+function QuestionScreen02WithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardQuestions, 
+  currentLanguage,
+  previousAnswer
+}: {
+  onBack: () => void;
+  onNext: (answer: string) => void;
+  cardId: string;
+  cardTitle: string;
+  getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
+  currentLanguage: string;
+  previousAnswer: string;
+}) {
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const cardQuestions = await getCardQuestions(cardId, currentLanguage);
+        setQuestions(cardQuestions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuestions();
+  }, [cardId, currentLanguage, getCardQuestions]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading questions...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  const questionText = questions[1] || "Question not found";
+  
+  return (
+    <QuestionScreen02
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      questionText={questionText}
+      previousAnswer={previousAnswer}
+    />
+  );
+}
+
+/**
+ * Компонент для загрузки данных и отображения FinalCardMessageScreen
+ */
+function FinalCardMessageScreenWithLoader({ 
+  onBack, 
+  onNext, 
+  cardId, 
+  cardTitle, 
+  getCardMessageData, 
+  currentLanguage
+}: {
+  onBack: () => void;
+  onNext: () => void;
+  cardId: string;
+  cardTitle: string;
+  getCardMessageData: (cardId: string, language: string) => Promise<{
+    finalMessage: string;
+    practiceTask: string;
+    whyExplanation: string;
+  }>;
+  currentLanguage: string;
+}) {
+  const [messageData, setMessageData] = useState<{
+    finalMessage: string;
+    practiceTask: string;
+    whyExplanation: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const loadMessageData = async () => {
+      try {
+        const data = await getCardMessageData(cardId, currentLanguage);
+        setMessageData(data);
+      } catch (error) {
+        console.error('Error loading message data:', error);
+        setMessageData({
+          finalMessage: "Technique not found",
+          practiceTask: "Practice task not found",
+          whyExplanation: "Explanation not found"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMessageData();
+  }, [cardId, currentLanguage, getCardMessageData]);
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg animate-pulse">Loading final message...</div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!messageData) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+        <div className="text-white text-center">
+          <div className="text-lg text-red-400">Error loading message data</div>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <FinalCardMessageScreen
+      onBack={onBack}
+      onNext={onNext}
+      cardId={cardId}
+      cardTitle={cardTitle}
+      finalMessage={messageData.finalMessage}
+      practiceTask={messageData.practiceTask}
+      whyExplanation={messageData.whyExplanation}
+    />
+  );
+}
 
 /**
  * Основной компонент приложения с навигацией
@@ -61,24 +266,97 @@ function AppContent() {
   const isE2ETestEnvironment = typeof window !== 'undefined' && 
     (window as any).__PLAYWRIGHT__ === true;
   
+  useEffect(() => {
+    // initPosthog(); // Removed as PostHogProvider handles initialization
+    // capture('app_opened'); // Removed as PostHogProvider handles initialization
+    return () => {
+      // capture('app_backgrounded'); // Removed as PostHogProvider handles initialization
+      // shutdown(); // Removed as PostHogProvider handles initialization
+    };
+  }, []);
+
   if (isE2ETestEnvironment) {
     console.log('E2E test environment detected, starting with home screen');
   }
+  
+  // Persisted onboarding flow progress (Variant A)
+  type AppFlowProgress = {
+    onboardingCompleted: boolean;
+    surveyCompleted: boolean;
+    pinEnabled: boolean;       // feature flag, disabled for now
+    pinCompleted: boolean;
+    firstCheckinDone: boolean;
+    firstRewardShown: boolean;
+  };
+
+  const FLOW_KEY = 'app-flow-progress';
+
+  const defaultProgress: AppFlowProgress = {
+    onboardingCompleted: false,
+    surveyCompleted: false,
+    pinEnabled: false, // skip PIN in the main flow for now
+    pinCompleted: false,
+    firstCheckinDone: false,
+    firstRewardShown: false
+  };
+
+  const loadProgress = (): AppFlowProgress => {
+    try {
+      const raw = localStorage.getItem(FLOW_KEY);
+      return raw ? { ...defaultProgress, ...JSON.parse(raw) } : defaultProgress;
+    } catch (e) {
+      console.error('Failed to load app flow progress:', e);
+      return defaultProgress;
+    }
+  };
+
+  const saveProgress = (p: AppFlowProgress) => {
+    try {
+      localStorage.setItem(FLOW_KEY, JSON.stringify(p));
+    } catch (e) {
+      console.error('Failed to save app flow progress:', e);
+    }
+  };
+
+  const [flow, setFlow] = useState<AppFlowProgress>(loadProgress());
+  const updateFlow = (updater: (prev: AppFlowProgress) => AppFlowProgress) => {
+    setFlow(prev => {
+      const next = updater(prev);
+      saveProgress(next);
+      return next;
+    });
+  };
   
   // Smart Navigation: Dynamic screen determination based on user state
   const getInitialScreen = (): AppScreen => {
     if (isE2ETestEnvironment) {
       return 'home';
     }
-    
-    try {
-      const userState = UserStateManager.analyzeUserState();
-      const initialScreen = UserStateManager.getInitialScreen(userState);
-      console.log('Smart Navigation: User state analyzed, initial screen:', initialScreen);
-      return initialScreen;
-    } catch (error) {
-      console.error('Smart Navigation: Failed to analyze user state, falling back to onboarding1:', error);
+
+    // Primary: flow-driven initial screen
+    const p = loadProgress();
+
+    if (!p.onboardingCompleted) {
       return 'onboarding1';
+    }
+
+    if (!p.surveyCompleted) {
+      return 'survey01';
+    }
+
+    // Daily check-in logic: Check if check-in is needed today
+    const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+    
+    if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+      // Check-in needed for today
+      return 'checkin';
+    } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+      // Check-in already completed today, go to home
+      return 'home';
+    } else {
+      // Error state, default to check-in
+      console.warn('Daily check-in status error, defaulting to check-in screen');
+      return 'checkin';
     }
   };
 
@@ -89,11 +367,21 @@ function AppContent() {
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
+  const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
-  const [cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
+  const [_cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
   const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
+  const [_hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('has-shown-first-achievement');
+      return saved ? JSON.parse(saved) : false;
+    } catch (error) {
+      console.error('Failed to load hasShownFirstAchievement from localStorage:', error);
+      return false;
+    }
+  });
 
   // =====================================================================================
   // НОВОЕ СОСТОЯНИЕ ДЛЯ СИСТЕМЫ ОПРОСА
@@ -107,10 +395,17 @@ function AppContent() {
   });
 
   // Получение системы контента
-  const { getCard, getTheme, getLocalizedText } = useContent();
+  const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage } = useContent();
   
   // Логируем изменения currentScreen
   
+  useEffect(() => {
+    // Track screen changes as page views
+    // try {
+    //   capture('$pageview', { screen: currentScreen });
+    // } catch {}
+  }, [currentScreen]);
+
   // Проверка, является ли текущий экран главной страницей
   // На первой странице онбординга кнопка Back должна закрывать приложение
   const isHomePage = currentScreen === 'home';
@@ -213,11 +508,29 @@ function AppContent() {
       }
     }
     
+    // Определяем текущую дату на основе локального времени (сутки начинаются в 6 утра)
+    const getCurrentDay = (): string => {
+      const now = new Date();
+      const localTime = now.getTime() + (now.getTimezoneOffset() * 60000); // UTC to local
+      const localDate = new Date(localTime);
+
+      // Если время раньше 6 утра, считаем что это предыдущий день
+      const hour = localDate.getHours();
+      const adjustedDate = new Date(localDate);
+      if (hour < 6) {
+        adjustedDate.setDate(adjustedDate.getDate() - 1);
+      }
+
+      return adjustedDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    };
+
+    const currentDay = getCurrentDay();
+
     // Добавляем текущий чекин
     const currentCheckin = {
       mood,
       timestamp: new Date().toISOString(),
-      date: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      date: currentDay
     };
     checkinHistory.push(currentCheckin);
     
@@ -225,8 +538,14 @@ function AppContent() {
     localStorage.setItem('checkin-data', JSON.stringify(checkinHistory));
     
     // Проверяем достижения
-    const today = new Date().toISOString().split('T')[0];
-    const _checkinsToday = checkinHistory.filter(c => c.date === today);
+    const checkinsToday = checkinHistory.filter(c => c.date === currentDay);
+
+    // Если уже был чекин сегодня, не позволяем делать новый
+    if (checkinsToday.length > 0) {
+      console.log('Check-in already completed today');
+      // TODO: Показать сообщение пользователю что чекин уже сделан
+      return [];
+    }
     const checkinsThisWeek = checkinHistory.filter(c => {
       const checkinDate = new Date(c.date);
       const weekAgo = new Date();
@@ -255,7 +574,7 @@ function AppContent() {
     // Ранняя пташка (чекины в 6 утра 5 дней подряд)
     const earlyCheckins = checkinHistory.filter(c => {
       const hour = new Date(c.timestamp).getHours();
-      return hour >= 5 && hour <= 7;
+      return hour === 6;
     });
     if (earlyCheckins.length >= 5) {
       earnedAchievements.push('early_bird');
@@ -311,6 +630,8 @@ function AppContent() {
   };
 
   const handleShowSurvey = () => {
+    // Mark onboarding as completed and move to survey
+    updateFlow(p => ({ ...p, onboardingCompleted: true }));
     // Загружаем сохраненные результаты если есть
     const savedResults = loadSavedSurveyResults();
     setSurveyResults(prev => ({ ...prev, ...savedResults }));
@@ -331,6 +652,7 @@ function AppContent() {
 
   const handleCompletePinSetup = () => {
     console.log('PIN setup completed');
+    updateFlow(p => ({ ...p, pinCompleted: true }));
     navigateTo('checkin');
   };
 
@@ -340,16 +662,26 @@ function AppContent() {
   };
 
   const handleCheckInSubmit = (_mood: string) => {
-    // ПРИНУДИТЕЛЬНО показываем страницу награды с несколькими достижениями для тестирования
     // В реальном приложении здесь будет логика проверки достижений на бэкэнде
-    const earnedAchievements = ['first_checkin', 'week_streak', 'mood_tracker']; // Принудительно показываем несколько достижений
-    
     // Smart Navigation: Refresh user state after check-in completion
     refreshUserState();
-    
-    // Всегда показываем страницу награды
-    setEarnedAchievementIds(earnedAchievements);
-    navigateTo('reward');
+
+    // Update flow for first check-in
+    updateFlow(p => ({ ...p, firstCheckinDone: true }));
+
+    // Показываем достижение только если не показывали раньше
+    if (!flow.firstRewardShown) {
+      setEarnedAchievementIds(['first_checkin']);
+      setHasShownFirstAchievement(true);
+      localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
+      updateFlow(p => ({ ...p, firstRewardShown: true }));
+      navigateTo('reward');
+      return;
+    }
+
+    // If reward already shown, go home directly
+    setEarnedAchievementIds([]);
+    navigateTo('home');
   };
 
   // =====================================================================================
@@ -359,24 +691,28 @@ function AppContent() {
   const handleSurvey01Next = (answers: string[]) => {
     console.log('Survey 01 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen01: answers }));
+    capture('onboarding_answered', { step: 'survey01', answers });
     navigateTo('survey02');
   };
 
   const handleSurvey02Next = (answers: string[]) => {
     console.log('Survey 02 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen02: answers }));
+    capture('onboarding_answered', { step: 'survey02', answers });
     navigateTo('survey03');
   };
 
   const handleSurvey03Next = (answers: string[]) => {
     console.log('Survey 03 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen03: answers }));
+    capture('onboarding_answered', { step: 'survey03', answers });
     navigateTo('survey04');
   };
 
   const handleSurvey04Next = (answers: string[]) => {
     console.log('Survey 04 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen04: answers }));
+    capture('onboarding_answered', { step: 'survey04', answers });
     navigateTo('survey05');
   };
 
@@ -389,19 +725,28 @@ function AppContent() {
     } as SurveyResults;
     
     setSurveyResults(finalResults);
+    capture('onboarding_answered', { step: 'survey05', answers });
+    capture('onboarding_completed', { results: finalResults });
     
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
+
+    // Mark survey completed in flow
+    updateFlow(p => ({ ...p, surveyCompleted: true }));
+
+    // Decide next step: skip PIN if disabled
+    const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+
     if (saveSuccess) {
       console.log('Survey completed successfully');
       
       // Smart Navigation: Refresh user state after survey completion
       refreshUserState();
       
-      navigateTo('pin');
+      navigateTo(nextScreen);
     } else {
       console.error('Failed to save survey, but continuing...');
-      navigateTo('pin');
+      navigateTo(nextScreen);
     }
   };
 
@@ -411,7 +756,7 @@ function AppContent() {
   const handleBackToSurvey03 = () => navigateTo('survey03');
   const handleBackToSurvey04 = () => navigateTo('survey04');
 
-  const handleGoToCheckIn = () => {
+  const _handleGoToCheckIn = () => {
     navigateTo('checkin');
   };
 
@@ -439,7 +784,23 @@ function AppContent() {
     
     if (theme) {
       setCurrentTheme(themeId);
-      navigateTo('theme-welcome');
+
+      // Собираем список всех карточек темы в правильном порядке
+      const allCardIds: string[] = Array.isArray(theme.cards)
+        ? theme.cards.map((c: any) => c.id)
+        : Array.isArray(theme.cardIds)
+          ? theme.cardIds
+          : [];
+
+      // Если нет карточек — безопасно перейти на список карточек
+      if (allCardIds.length === 0) {
+        navigateTo('theme-home');
+        return;
+      }
+
+      // Показываем Welcome только если первая карточка не начиналась
+      const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeId, allCardIds);
+      navigateTo(shouldShowWelcome ? 'theme-welcome' : 'theme-home');
     } else {
       console.error('Theme not found:', themeId);
     }
@@ -476,7 +837,7 @@ function AppContent() {
     navigateTo('card-details');
   };
 
-  const handleBackToCardWelcome = () => {
+  const _handleBackToCardWelcome = () => {
     navigateTo('card-welcome');
   };
 
@@ -504,8 +865,13 @@ function AppContent() {
 
   const handleCompleteExercise = (answer: string) => {
     console.log(`Question 2 answered for card: ${currentCard.id}`, answer);
+    console.log('Current userAnswers before updating:', userAnswers);
     const finalAnswers = { ...userAnswers, question2: answer };
+    console.log('Final answers to be set:', finalAnswers);
     setUserAnswers(finalAnswers);
+    
+    // Сохраняем финальные ответы в дополнительном состоянии для надежности
+    setFinalAnswers(finalAnswers);
     navigateTo('final-message');
   };
 
@@ -516,26 +882,53 @@ function AppContent() {
 
   const handleCompleteRating = (rating: number, textMessage?: string) => {
     console.log(`Card rated: ${rating} stars for card: ${currentCard.id}`, textMessage ? `with message: ${textMessage}` : 'without message');
+    console.log('Current userAnswers before saving:', userAnswers);
+    console.log('Final answers to save:', finalAnswers);
     
-    setCardRating(rating);
-    setCompletedCards(prev => new Set([...prev, currentCard.id]));
-    setCardCompletionCounts(prev => ({
-      ...prev,
-      [currentCard.id]: (prev[currentCard.id] || 0) + 1
-    }));
-    
-    const completionData = {
+    capture('card_rated', {
       cardId: currentCard.id,
-      cardTitle: currentCard.title,
-      rating: rating,
-      hasMessage: !!textMessage,
-      completedAt: new Date().toISOString(),
-      completionCount: (cardCompletionCounts[currentCard.id] || 0) + 1
-    };
+      themeId: currentTheme,
+      rating,
+      ratingComment: textMessage || undefined,
+      hasComment: !!textMessage,
+    });
     
-    console.log('Exercise completed with data:', completionData);
+    try {
+      // Используем finalAnswers для надежности, fallback на userAnswers
+      const answersToSave = Object.keys(finalAnswers).length > 0 ? finalAnswers : userAnswers;
+      
+      // Сохраняем завершенную попытку через ThemeCardManager
+      const completedAttempt = ThemeCardManager.addCompletedAttempt(
+        currentCard.id,
+        answersToSave, // Все ответы пользователя (question1, question2)
+        rating,
+        textMessage
+      );
+      
+      console.log('Exercise completed and saved:', {
+        cardId: currentCard.id,
+        answers: answersToSave,
+        rating: rating,
+        attemptId: completedAttempt.completedAttempts[completedAttempt.completedAttempts.length - 1]?.attemptId,
+        totalAttempts: completedAttempt.totalCompletedAttempts
+      });
+      
+      // Обновляем локальные состояния для UI
+      setCardRating(rating);
+      setCompletedCards(prev => new Set([...prev, currentCard.id]));
+      setCardCompletionCounts(prev => ({
+        ...prev,
+        [currentCard.id]: completedAttempt.totalCompletedAttempts
+      }));
+      
+    } catch (error) {
+      console.error('Error saving completed attempt:', error);
+      // Показываем пользователю ошибку, но не блокируем навигацию
+    }
     
+    // Очищаем состояние и переходим к домашней странице темы
     setUserAnswers({});
+    setFinalAnswers({});
     setCardRating(0);
     setCurrentCard({id: ''});
     
@@ -552,7 +945,8 @@ function AppContent() {
 
   const handleOpenCardExercise = () => {
     console.log(`Opening exercise for card: ${currentCard.id}`);
-    navigateTo('card-welcome');
+    // Пропускаем CardWelcomeScreen и сразу переходим к первому вопросу
+    navigateTo('question-01');
   };
 
   const handleOpenCheckin = (checkinId: string, cardTitle: string, date: string) => {
@@ -568,9 +962,9 @@ function AppContent() {
   /**
    * Обработка клика по карточке - теперь использует систему контента
    */
-  const handleThemeCardClick = (cardId: string) => {
+  const handleThemeCardClick = async (cardId: string) => {
     console.log(`Card clicked: ${cardId}`);
-    const cardData = getCardData(cardId);
+    const cardData = await getCardData(cardId, currentLanguage);
     setCurrentCard(cardData);
     navigateTo('card-details');
   };
@@ -578,40 +972,120 @@ function AppContent() {
   /**
    * Получение данных карточки из централизованной системы
    */
-  const getCardData = (cardId: string) => {
-    const card = getCard(cardId);
-    
-    if (!card) {
-      console.error('Card not found:', cardId);
+  const getCardData = async (cardId: string, language: string) => {
+    try {
+      // Используем ThemeLoader для получения данных карточки
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      // Определяем themeId из cardId (например, STRESS-01 -> stress-management)
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return {
+        id: cardId,
+        title: card.id, // Используем ID как заголовок
+        description: card.introduction // Используем introduction как описание
+      };
+    } catch (error) {
+      console.error('Error loading card data:', error);
       return {
         id: cardId,
         title: 'Card',
         description: 'Card description will be available soon.'
       };
     }
-    
-    return {
-      id: cardId,
-      title: getLocalizedText(card.title),
-      description: getLocalizedText(card.description)
-    };
+  };
+
+  /**
+   * Получение вопросов карточки из новой системы
+   */
+  const getCardQuestions = async (cardId: string, language: string) => {
+    try {
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return card.questions || [];
+    } catch (error) {
+      console.error('Error loading card questions:', error);
+      return [];
+    }
+  };
+
+  /**
+   * Получение данных карточки для FinalCardMessageScreen
+   */
+  const getCardMessageData = async (cardId: string, language: string) => {
+    try {
+      const { ThemeLoader } = await import('./utils/ThemeLoader');
+      
+      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
+                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
+                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      
+      const theme = await ThemeLoader.loadTheme(themeId, language);
+      if (!theme) {
+        throw new Error(`Theme ${themeId} not found`);
+      }
+      
+      const card = theme.cards.find(c => c.id === cardId);
+      if (!card) {
+        throw new Error(`Card ${cardId} not found in theme ${themeId}`);
+      }
+      
+      return {
+        finalMessage: card.technique || "Technique not found",
+        practiceTask: card.recommendation || "Practice task not found", 
+        whyExplanation: card.mechanism || "Explanation not found"
+      };
+    } catch (error) {
+      console.error('Error loading card message data:', error);
+      return {
+        finalMessage: "Technique not found",
+        practiceTask: "Practice task not found",
+        whyExplanation: "Explanation not found"
+      };
+    }
   };
 
   /**
    * Поиск следующей доступной карточки
    */
-  const handleOpenNextLevel = () => {
+  const handleOpenNextLevel = async () => {
     console.log('Opening next level');
     
     // Получить карточки текущей темы
     const theme = getTheme(currentTheme);
     if (!theme) return;
     
-    const nextCard = theme.cardIds.find(cardId => !completedCards.has(cardId));
+    const nextCard = theme.cardIds?.find(cardId => !completedCards.has(cardId));
     
     if (nextCard) {
       console.log(`Opening next available card: ${nextCard}`);
-      const cardData = getCardData(nextCard);
+      const cardData = await getCardData(nextCard, currentLanguage);
       setCurrentCard(cardData);
       navigateTo('card-details');
     } else {
@@ -720,7 +1194,12 @@ function AppContent() {
   const handlePurchaseComplete = () => {
     console.log('Premium purchase completed, updating user subscription status');
     setUserHasPremium(true);
-    navigateTo('profile');
+    // Если пользователь покупал премиум из контекста темы, возвращаем его в текущую тему
+    if (currentTheme) {
+      navigateTo('theme-home');
+    } else {
+      navigateTo('profile');
+    }
   };
 
   const handleBackToProfileFromPayments = () => {
@@ -743,7 +1222,7 @@ function AppContent() {
   // ФУНКЦИИ НАВИГАЦИИ ДЛЯ МЕНТАЛЬНЫХ ТЕХНИК
   // =====================================================================================
 
-  const handleOpenMentalTechnique = (techniqueId: string) => {
+  const _handleOpenMentalTechnique = (techniqueId: string) => {
     console.log(`Opening mental technique: ${techniqueId}`);
     navigateTo(techniqueId as AppScreen);
   };
@@ -823,13 +1302,10 @@ function AppContent() {
         return <CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />;
       case 'home':
         return (
-          <HomeScreen 
-            onGoToCheckIn={handleGoToCheckIn} 
+          <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
-            onOpenMentalTechnique={handleOpenMentalTechnique}
             userHasPremium={userHasPremium}
-            onGoToSurvey={handleShowSurvey}
           />
         );
       case 'theme-welcome': {
@@ -852,9 +1328,7 @@ function AppContent() {
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
             onOpenNextLevel={handleOpenNextLevel}
-            themeTitle={currentTheme}
-            completedCards={completedCards}
-            cardCompletionCounts={cardCompletionCounts}
+            themeId={currentTheme}
           />
         );
       }
@@ -865,7 +1339,7 @@ function AppContent() {
             onOpenCard={handleOpenCardExercise}
             onOpenCheckin={handleOpenCheckin}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
             cardDescription={currentCard.description}
           />
         );
@@ -884,52 +1358,47 @@ function AppContent() {
             onBack={handleBackToCardDetailsFromWelcome}
             onNext={handleStartCardExercise}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
             cardDescription={currentCard.description}
           />
         );
       case 'question-01': {
-        const card1 = getCard(currentCard.id);
-        const question1 = card1?.questions[0];
-        
+        // Используем новую систему для получения вопросов
         return (
-          <QuestionScreen01
-            onBack={handleBackToCardWelcome}
+          <QuestionScreen01WithLoader
+            onBack={handleBackToCardDetails}
             onNext={handleNextQuestion}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            questionText={question1 ? getLocalizedText(question1.text) : "What in other people's behavior most often irritates or offends you?"}
+            cardTitle={currentCard.title || ''}
+            getCardQuestions={getCardQuestions}
+            currentLanguage={currentLanguage}
           />
         );
       }
       case 'question-02': {
-        const card2 = getCard(currentCard.id);
-        const question2 = card2?.questions[1];
-        
+        // Используем новую систему для получения вопросов
         return (
-          <QuestionScreen02
+          <QuestionScreen02WithLoader
             onBack={handleBackToQuestion01}
             onNext={handleCompleteExercise}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            questionText={question2 ? getLocalizedText(question2.text) : "What are your expectations behind this reaction?"}
-            previousAnswer={userAnswers.question1}
+            cardTitle={currentCard.title || ''}
+            getCardQuestions={getCardQuestions}
+            currentLanguage={currentLanguage}
+            previousAnswer={userAnswers.question1 || ''}
           />
         );
       }
       case 'final-message': {
-        const cardFinal = getCard(currentCard.id);
-        const finalMessage = cardFinal?.finalMessage;
-        
+        // Используем новую систему для получения данных финального сообщения
         return (
-          <FinalCardMessageScreen
+          <FinalCardMessageScreenWithLoader
             onBack={handleBackToQuestion02}
             onNext={handleCompleteFinalMessage}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
-            finalMessage={finalMessage ? getLocalizedText(finalMessage.message) : "Awareness of expectations reduces the automaticity of emotional reactions."}
-            practiceTask={finalMessage ? getLocalizedText(finalMessage.practiceTask) : "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments."}
-            whyExplanation={finalMessage ? getLocalizedText(finalMessage.whyExplanation) : "You learn to distinguish people's behavior from your own projections."}
+            cardTitle={currentCard.title || ''}
+            getCardMessageData={getCardMessageData}
+            currentLanguage={currentLanguage}
           />
         );
       }
@@ -939,7 +1408,7 @@ function AppContent() {
             onBack={handleBackToFinalMessage}
             onNext={handleCompleteRating}
             cardId={currentCard.id}
-            cardTitle={currentCard.title}
+            cardTitle={currentCard.title || ''}
           />
         );
       case 'profile':

@@ -2,40 +2,45 @@
 // УТИЛИТЫ ДЛЯ РАБОТЫ С КОНТЕНТОМ И МИГРАЦИИ ДАННЫХ
 // ========================================================================================
 
-import { appContent } from '../data/content';
-import { CardData, ThemeData, LocalizedContent } from '../types/content';
+import { CardData, ThemeData, LocalizedContent, AppContent } from '../types/content';
 
 /**
  * Утилиты для работы с темами приложения
+ * Теперь используют ContentContext вместо прямого импорта
  */
 export const themeUtils = {
   /**
    * Получить все доступные темы
+   * @param content - контент из ContentContext
    */
-  getAllThemes(): ThemeData[] {
-    return Object.values(appContent.themes);
+  getAllThemes(content: AppContent): ThemeData[] {
+    return Object.values(content.themes);
   },
 
   /**
    * Получить бесплатные темы
+   * @param content - контент из ContentContext
    */
-  getFreeThemes(): ThemeData[] {
-    return Object.values(appContent.themes).filter(theme => !theme.isPremium);
+  getFreeThemes(content: AppContent): ThemeData[] {
+    return Object.values(content.themes).filter(theme => !theme.isPremium);
   },
 
   /**
    * Получить премиум темы
+   * @param content - контент из ContentContext
    */
-  getPremiumThemes(): ThemeData[] {
-    return Object.values(appContent.themes).filter(theme => theme.isPremium);
+  getPremiumThemes(content: AppContent): ThemeData[] {
+    return Object.values(content.themes).filter(theme => theme.isPremium);
   },
 
   /**
    * Найти тему по локализованному названию
-   * Теперь title уже является строкой нужного языка
+   * @param content - контент из ContentContext
+   * @param title - название темы для поиска
+   * @param _language - язык (для совместимости, не используется)
    */
-  findThemeByLocalizedTitle(title: string, _language: 'en' = 'en'): ThemeData | undefined {
-    return Object.values(appContent.themes).find(theme => 
+  findThemeByLocalizedTitle(content: AppContent, title: string, _language: 'en' = 'en'): ThemeData | undefined {
+    return Object.values(content.themes).find(theme => 
       theme.title === title
     );
   }
@@ -43,57 +48,69 @@ export const themeUtils = {
 
 /**
  * Утилиты для работы с карточками
+ * Теперь используют ContentContext вместо прямого импорта
  */
 export const cardUtils = {
   /**
    * Получить все карточки
+   * @param content - контент из ContentContext
    */
-  getAllCards(): CardData[] {
-    return Object.values(appContent.cards);
+  getAllCards(content: AppContent): CardData[] {
+    return Object.values(content.cards);
   },
 
   /**
    * Получить карточки по сложности
+   * @param content - контент из ContentContext
+   * @param difficulty - уровень сложности
    */
-  getCardsByDifficulty(difficulty: 'beginner' | 'intermediate' | 'advanced'): CardData[] {
-    return Object.values(appContent.cards).filter(card => card.difficulty === difficulty);
+  getCardsByDifficulty(content: AppContent, difficulty: 'beginner' | 'intermediate' | 'advanced'): CardData[] {
+    return Object.values(content.cards).filter(card => card.difficulty === difficulty);
   },
 
   /**
    * Получить бесплатные карточки
+   * @param content - контент из ContentContext
    */
-  getFreeCards(): CardData[] {
-    return Object.values(appContent.cards).filter(card => !card.isPremium);
+  getFreeCards(content: AppContent): CardData[] {
+    return Object.values(content.cards).filter(card => !card.isPremium);
   },
 
   /**
    * Получить карточки темы в правильном порядке
+   * @param content - контент из ContentContext
+   * @param themeId - ID темы
    */
-  getThemeCardsInOrder(themeId: string): CardData[] {
-    const theme = appContent.themes[themeId];
+  getThemeCardsInOrder(content: AppContent, themeId: string): CardData[] {
+    const theme = content.themes[themeId];
     if (!theme) return [];
 
     return theme.cardIds
-      .map(cardId => appContent.cards[cardId])
-      .filter((card): card is CardData => card !== undefined);
+      ?.map(cardId => content.cards[cardId])
+      .filter((card): card is CardData => card !== undefined) || [];
   },
 
   /**
    * Получить следующую доступную карточку в теме
+   * @param content - контент из ContentContext
+   * @param themeId - ID темы
+   * @param completedCardIds - массив ID завершенных карточек
    */
-  getNextAvailableCard(themeId: string, completedCardIds: string[]): CardData | null {
-    const themeCards = this.getThemeCardsInOrder(themeId);
+  getNextAvailableCard(content: AppContent, themeId: string, completedCardIds: string[]): CardData | null {
+    const themeCards = this.getThemeCardsInOrder(content, themeId);
     return themeCards.find(card => !completedCardIds.includes(card.id)) || null;
   }
 };
 
 /**
  * Утилиты для локализации
+ * Теперь используют ContentContext вместо прямого импорта
  */
 export const localizationUtils = {
   /**
    * Получить текст для указанного языка с fallback
-   * Теперь content уже является строкой нужного языка
+   * @param content - локализованный контент
+   * @param _language - язык (для совместимости, не используется)
    */
   getText(content: LocalizedContent, _language: 'en' = 'en'): string {
     return content || '';
@@ -101,7 +118,8 @@ export const localizationUtils = {
 
   /**
    * Проверить, есть ли перевод для языка
-   * Теперь content уже является строкой нужного языка
+   * @param content - локализованный контент
+   * @param _language - язык (для совместимости, не используется)
    */
   hasTranslation(content: LocalizedContent, _language: string): boolean {
     return !!content;
@@ -109,7 +127,7 @@ export const localizationUtils = {
 
   /**
    * Получить все доступные языки для контента
-   * Теперь content уже является строкой нужного языка
+   * @param content - локализованный контент
    */
   getAvailableLanguages(content: LocalizedContent): string[] {
     return content ? ['current'] : [];
@@ -118,35 +136,28 @@ export const localizationUtils = {
 
 /**
  * Утилиты для миграции существующих данных в новую систему
+ * @deprecated Эти утилиты больше не нужны после миграции
  */
 export const migrationUtils = {
   /**
    * Преобразовать старый cardMapping в новый формат (для справки)
+   * @deprecated Больше не используется
    */
   convertLegacyCardMapping() {
-    const legacyMapping = {
-      'card-1': { title: 'Card #1', description: 'Understanding yourself and your reactions to social situations.' },
-      'card-2': { title: 'Card #1', description: 'Building confidence in social interactions through self-awareness.' },
-      'card-3': { title: 'Card #2', description: 'Managing anxiety in social settings and finding your comfort zone.' },
-      'card-4': { title: 'Card #3', description: 'Effective communication strategies for better relationships.' },
-      'card-5': { title: 'Card #4', description: 'Overcoming social barriers and building meaningful connections.' },
-      'card-6': { title: 'Card #5', description: 'Advanced social skills and conflict resolution techniques.' },
-      'card-7': { title: 'Card #6', description: 'Leadership and influence in social and professional settings.' },
-      'card-8': { title: 'Card #7', description: 'Emotional intelligence and empathy in relationships.' },
-      'card-9': { title: 'Card #8', description: 'Maintaining healthy boundaries in personal and professional life.' },
-      'card-10': { title: 'Card #9', description: 'Advanced interpersonal skills and social mastery.' },
-      'card-11': { title: 'Card #10', description: 'Integration and application of all learned social skills.' }
-    };
-
-    console.log('Legacy card mapping converted to new content system');
-    return legacyMapping;
+    console.warn('migrationUtils.convertLegacyCardMapping is deprecated and no longer needed');
+    return {};
   },
 
   /**
    * Получить данные карточки в старом формате для совместимости
+   * @deprecated Используйте cardUtils.getAllCards(content) вместо этого
+   * @param content - контент из ContentContext
+   * @param cardId - ID карточки
    */
-  getCardDataLegacyFormat(cardId: string): {id: string; title: string; description: string} {
-    const card = appContent.cards[cardId];
+  getCardDataLegacyFormat(content: AppContent, cardId: string): {id: string; title: string; description: string} {
+    console.warn('migrationUtils.getCardDataLegacyFormat is deprecated. Use cardUtils.getAllCards(content) instead');
+    
+    const card = content.cards[cardId];
     
     if (!card) {
       return {
@@ -166,17 +177,19 @@ export const migrationUtils = {
 
 /**
  * Утилиты для валидации контента
+ * Теперь используют ContentContext вместо прямого импорта
  */
 export const validationUtils = {
   /**
    * Проверить, что все карточки в темах существуют
+   * @param content - контент из ContentContext
    */
-  validateThemeCardReferences(): boolean {
-    const allCardIds = Object.keys(appContent.cards);
+  validateThemeCardReferences(content: AppContent): boolean {
+    const allCardIds = Object.keys(content.cards);
     let isValid = true;
 
-    Object.values(appContent.themes).forEach(theme => {
-      theme.cardIds.forEach(cardId => {
+    Object.values(content.themes).forEach(theme => {
+      theme.cardIds?.forEach(cardId => {
         if (!allCardIds.includes(cardId)) {
           console.error(`Theme "${theme.id}" references non-existent card: ${cardId}`);
           isValid = false;
@@ -189,11 +202,12 @@ export const validationUtils = {
 
   /**
    * Проверить, что все карточки имеют корректную структуру
+   * @param content - контент из ContentContext
    */
-  validateCardStructure(): boolean {
+  validateCardStructure(content: AppContent): boolean {
     let isValid = true;
 
-    Object.values(appContent.cards).forEach(card => {
+    Object.values(content.cards).forEach(card => {
       // Проверить обязательные поля
       if (!card.id || !card.title || !card.description) {
         console.error(`Card "${card.id}" missing required fields`);
@@ -207,7 +221,7 @@ export const validationUtils = {
       }
 
       // Проверить, что themeId корректный
-      if (!appContent.themes[card.themeId]) {
+      if (!content.themes[card.themeId]) {
         console.error(`Card "${card.id}" references non-existent theme: ${card.themeId}`);
         isValid = false;
       }
@@ -218,12 +232,13 @@ export const validationUtils = {
 
   /**
    * Запустить все проверки валидации
+   * @param content - контент из ContentContext
    */
-  validateAll(): boolean {
+  validateAll(content: AppContent): boolean {
     console.log('Running content validation...');
     
-    const themeValidation = this.validateThemeCardReferences();
-    const cardValidation = this.validateCardStructure();
+    const themeValidation = this.validateThemeCardReferences(content);
+    const cardValidation = this.validateCardStructure(content);
     
     const allValid = themeValidation && cardValidation;
     
@@ -239,15 +254,17 @@ export const validationUtils = {
 
 /**
  * Статистика и аналитика контента
+ * Теперь используют ContentContext вместо прямого импорта
  */
 export const contentStats = {
   /**
    * Получить статистику по контенту
+   * @param content - контент из ContentContext
    */
-  getStats() {
-    const themes = Object.values(appContent.themes);
-    const cards = Object.values(appContent.cards);
-    const emergencyCards = Object.values(appContent.emergencyCards);
+  getStats(content: AppContent) {
+    const themes = Object.values(content.themes);
+    const cards = Object.values(content.cards);
+    const emergencyCards = Object.values(content.emergencyCards);
 
     return {
       totalThemes: themes.length,
@@ -268,9 +285,29 @@ export const contentStats = {
 
   /**
    * Вывести статистику в консоль
+   * @param content - контент из ContentContext
    */
-  logStats() {
-    const stats = this.getStats();
+  logStats(content: AppContent) {
+    const stats = this.getStats(content);
     console.table(stats);
   }
+};
+
+/**
+ * Удобные хуки для использования утилит с ContentContext
+ * Эти хуки можно использовать в компонентах React
+ */
+export const useContentUtils = () => {
+  // Этот хук должен использоваться внутри компонентов с ContentContext
+  // Пример использования:
+  // const { content } = useContent();
+  // const themes = themeUtils.getAllThemes(content);
+  
+  return {
+    themeUtils,
+    cardUtils,
+    localizationUtils,
+    validationUtils,
+    contentStats
+  };
 };

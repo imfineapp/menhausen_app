@@ -1,6 +1,7 @@
 // Tests the new smart navigation system based on user progress
 
 import { test, expect } from '@playwright/test';
+import { skipOnboarding } from './utils/skip-survey';
 
 test.describe('Smart Navigation', () => {
   test.beforeEach(async ({ page: _page }) => {
@@ -11,6 +12,7 @@ test.describe('Smart Navigation', () => {
   test('should route new users to survey (smart navigation)', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // With smart navigation, new users go directly to survey
     await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
@@ -20,6 +22,7 @@ test.describe('Smart Navigation', () => {
   test('should show survey screen with proper layout', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should show survey screen with proper layout
     await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
@@ -30,6 +33,7 @@ test.describe('Smart Navigation', () => {
   test('should show survey options and continue button', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should show survey options
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
@@ -42,6 +46,7 @@ test.describe('Smart Navigation', () => {
   test('should allow survey option selection', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should be able to select survey options
     const firstOption = page.locator('[data-name="Survey option"]').first();
@@ -57,6 +62,7 @@ test.describe('Smart Navigation', () => {
   test('should show survey options with proper styling', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should show survey options with proper styling
     const options = page.locator('[data-name="Survey option"]');
@@ -70,6 +76,7 @@ test.describe('Smart Navigation', () => {
   test('should handle survey option interactions', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should handle survey option interactions
     const options = page.locator('[data-name="Survey option"]');
@@ -85,6 +92,7 @@ test.describe('Smart Navigation', () => {
   test('should load app gracefully with smart navigation', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should load the app gracefully with smart navigation
     await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
@@ -94,6 +102,7 @@ test.describe('Smart Navigation', () => {
   test('should show all survey options', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Should show all expected survey options
     const expectedOptions = [
@@ -113,6 +122,7 @@ test.describe('Smart Navigation', () => {
   test('should enable continue button after selection', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    await skipOnboarding(page);
 
     // Initially continue button should be disabled
     const continueButton = page.locator('[data-name="Next button"]');

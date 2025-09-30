@@ -7,7 +7,10 @@
     "continue": "Continue",
     "send": "Send",
     "start": "Start",
-    "unlock": "Unlock"
+    "unlock": "Unlock",
+    "previous": "Previous",
+    "morePages": "More pages",
+    "more": "More"
   },
   "common": {
     "loading": "Loading...",
@@ -16,7 +19,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "close": "Close"
   },
   "home": {
     "greeting": "Good morning",
@@ -44,6 +48,20 @@
       "weeklyCheckins": "Check-ins",
       "points": "points",
       "target": "target"
+    },
+    "emergencyHelp": {
+      "breathing": {
+        "title": "Emergency breathing patterns",
+        "description": "Calm your mind with guided breathing exercises for immediate relief."
+      },
+      "meditation": {
+        "title": "Quick meditation techniques",
+        "description": "Calm your mind with guided meditation exercises for immediate relief."
+      },
+      "grounding": {
+        "title": "Grounding techniques",
+        "description": "Ground yourself in the present moment with proven techniques."
+      }
     }
   },
   "profile": {
@@ -54,7 +72,10 @@
     "deleteAccount": "Delete account",
     "payments": "Subscription",
     "heroTitle": "Hero #1275",
-    "level": "Level"
+    "level": "Level",
+    "premium": "Premium",
+    "free": "Free",
+    "follow": "Follow"
   },
   "about": {
     "title": "About Menhausen",
@@ -145,13 +166,16 @@
     },
     "home": {
       "progress": "Progress",
-      "checkins": "Checkins",
+      "attempts": "Attempts",
+      "attemptsCounter": "attempts",
       "level": "Level",
       "nextLevel": "Next Level"
     }
   },
   "cards": {
-    "checkins": "Checkins",
+    "attempts": "Attempts",
+    "noAttempts": "No attempts yet. Start your first attempt by opening the card!",
+    "startExercise": "Ready to start the exercise?",
     "welcome": {
       "title": "Card",
       "subtitle": "Ready to start the exercise?"
@@ -187,7 +211,8 @@
       "level3": "Level 3",
       "level4": "Level 4",
       "level5": "Level 5",
-      "description": "Some text about card and more."
+      "description": "Some text about card and more.",
+      "attemptsLabel": "Attempts"
     }
   },
   "badges": {

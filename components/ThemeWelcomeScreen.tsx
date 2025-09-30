@@ -2,6 +2,7 @@
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { ThemeCardManager } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
 interface ThemeWelcomeScreenProps {
@@ -96,8 +97,27 @@ export function ThemeWelcomeScreen({
   // Получаем данные темы
   const themeData = themeTitle ? getTheme(themeTitle) : null;
   
+  // Определяем ID всех карточек в теме (упорядоченный список)
+  const allCardIds: string[] = themeData
+    ? (Array.isArray((themeData as any).cards)
+        ? (themeData as any).cards.map((c: any) => c.id)
+        : Array.isArray((themeData as any).cardIds)
+          ? (themeData as any).cardIds
+          : [])
+    : [];
+
+  // Проверяем, должна ли показываться приветственная страница
+  const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || "Stress", allCardIds);
+  
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;
+  
+  // Если первая карточка уже завершена, не показываем приветственную страницу
+  if (!shouldShowWelcome) {
+    // Перенаправляем на главную страницу темы
+    onStart();
+    return null;
+  }
   
   // Определяем текст кнопки и обработчик клика
   const buttonText = isThemeLocked ? 'Unlock' : 'Start';
@@ -111,7 +131,8 @@ export function ThemeWelcomeScreen({
     themeTitle,
     themeData,
     welcomeMessage,
-    isThemeLocked
+    isThemeLocked,
+    shouldShowWelcome
   });
   
   return (
