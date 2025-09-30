@@ -6,7 +6,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
-import { mockContent } from '../mocks/content-provider-mock';
+// Моки больше не используются - все тесты используют реальный контент
 
 /**
  * React контекст для централизованного управления контентом
@@ -103,9 +103,15 @@ export function ContentProvider({ children }: ContentProviderProps) {
     const theme = content?.themes[themeId];
     if (!theme) return [];
     
+    // В новой архитектуре карточки находятся внутри темы
+    if (theme.cards && Array.isArray(theme.cards)) {
+      return theme.cards;
+    }
+    
+    // Fallback для старой структуры
     return theme.cardIds
-      .map(cardId => content?.cards[cardId])
-      .filter((card): card is CardData => card !== undefined);
+      ?.map(cardId => content?.cards[cardId])
+      .filter((card): card is CardData => card !== undefined) || [];
   }, [content]);
 
   /**
@@ -181,7 +187,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
         continue: 'Continue',
         send: 'Send',
         start: 'Start',
-        unlock: 'Unlock'
+        unlock: 'Unlock',
+        previous: 'Previous',
+        morePages: 'More pages',
+        more: 'More'
       },
       common: {
         loading: 'Loading...',
@@ -190,7 +199,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
         save: 'Save',
         cancel: 'Cancel',
         delete: 'Delete',
-        edit: 'Edit'
+        edit: 'Edit',
+        close: 'Close'
       },
       home: {
         greeting: 'Hello',
@@ -205,7 +215,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
           content: 'Daily check-in is a simple yet powerful tool for improving your mental health. Here\'s why it\'s important:\n\n• Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\n• Early detection: Allows you to notice mood changes before they become serious problems\n\n• Care habit: Forms a beneficial habit of paying attention to your psychological state\n\n• Progress tracking: Helps track changes in your emotional state over time\n\n• Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being.'
         },
         whatWorriesYou: 'What worries you?',
-        heroTitle: 'Hero #1275',
+        heroTitle: 'Welcome back! #MNHSNDEV', // Dynamic: Telegram user ID or development fallback
         level: 'Level',
         progress: 'Progress',
         use80PercentUsers: 'Use 80% users',
@@ -216,6 +226,20 @@ export function ContentProvider({ children }: ContentProviderProps) {
           streakLabel: 'days streak',
           progressLabel: 'Progress',
           weeklyCheckins: 'Weekly check-ins'
+        },
+        emergencyHelp: {
+          breathing: {
+            title: 'Emergency breathing patterns',
+            description: 'Calm your mind with guided breathing exercises for immediate relief.'
+          },
+          meditation: {
+            title: 'Quick meditation techniques',
+            description: 'Calm your mind with guided meditation exercises for immediate relief.'
+          },
+          grounding: {
+            title: 'Grounding techniques',
+            description: 'Ground yourself in the present moment with proven techniques.'
+          }
         }
       },
       profile: {
@@ -225,8 +249,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
         terms: 'Terms',
         deleteAccount: 'Delete account',
         payments: 'Payments',
-        heroTitle: 'Hero #1275',
-        level: 'Level'
+        heroTitle: 'Welcome back! #MNHSNDEV', // Dynamic: Telegram user ID or development fallback
+        level: 'Level',
+        premium: 'Premium',
+        free: 'Free'
       },
       survey: {
         progress: 'Step {current} of {total}',
@@ -282,13 +308,16 @@ export function ContentProvider({ children }: ContentProviderProps) {
         },
         home: {
           progress: 'Progress',
-          checkins: 'Check-ins',
+          attempts: 'Attempts',
+          attemptsCounter: 'attempts',
           level: 'Level',
           nextLevel: 'Next Level'
         }
       },
       cards: {
-        checkins: 'Check-ins',
+        attempts: 'Attempts',
+        noAttempts: 'No attempts yet. Start your first attempt by opening the card!',
+        startExercise: 'Ready to start the exercise?',
         welcome: {
           subtitle: 'Welcome to card'
         },
@@ -549,18 +578,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getLocalizedBadges
   };
 
-  // В E2E тестовой среде используем мок
-  const isE2ETestEnvironment = typeof window !== 'undefined' && 
-    (window as any).__PLAYWRIGHT__ === true;
-  
-  if (isE2ETestEnvironment) {
-    console.log('Using mock content for E2E tests');
-    return (
-      <ContentContext.Provider value={mockContent}>
-        {children}
-      </ContentContext.Provider>
-    );
-  }
+  // E2E тесты теперь используют реальный контент из JSON файлов
 
   // Показываем загрузку или ошибку
   if (isLoading) {

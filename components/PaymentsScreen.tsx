@@ -20,7 +20,7 @@ interface PaymentsScreenProps {
 function Light() {
   return (
     <div
-      className="absolute h-[130px] top-[-65px] translate-x-[-50%] w-[185px]"
+      className="absolute h-[130px] top-[-65px] translate-x-[-50%] w-[185px] pointer-events-none"
       data-name="Light"
       style={{ left: "calc(50% + 1px)" }}
     >

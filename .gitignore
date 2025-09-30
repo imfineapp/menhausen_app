@@ -3,4 +3,24 @@ node_modules
 dist
 playwright-report
 test-results
+coverage
 nvm
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+
+# Temporary files
+temp_*.txt
+*.tmp
+
+# Draft documentation
+*draft*
+*not_use*
+
+.env

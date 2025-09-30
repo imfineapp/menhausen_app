@@ -1,0 +1,45 @@
+{
+  "id": "anxiety-management",
+  "title": "Anxiety",
+  "description": "Learning to manage anxiety and develop self-regulation skills.",
+  "isPremium": true,
+  "welcomeMessage": "Take control of your anxiety. Master techniques for managing anxious thoughts and restoring inner calm.",
+  "cards": [
+    {
+      "id": "ANXIETY-01",
+      "level": 1,
+      "introduction": "Anxiety often starts with physical sensations. Let's learn to recognize them.",
+      "questions": [
+        "What physical sensations do you experience when anxious?",
+        "Where in your body do you feel tension?"
+      ],
+      "recommendation": "Record physical anxiety symptoms throughout the week. Why: helps track patterns and early signals.",
+      "mechanism": "Increased awareness of bodily anxiety manifestations.",
+      "technique": "Body awareness (ACT)"
+    },
+    {
+      "id": "ANXIETY-02",
+      "level": 1,
+      "introduction": "Breathing is our main tool for calming the nervous system.",
+      "questions": [
+        "How do you breathe when anxious?",
+        "What happens to your breathing in calm moments?"
+      ],
+      "recommendation": "Practice the '4-7-8' technique: inhale for 4 counts, hold for 7, exhale for 8. Why: activates the parasympathetic nervous system.",
+      "mechanism": "Activation of the parasympathetic nervous system.",
+      "technique": "Breathing techniques (ACT)"
+    },
+    {
+      "id": "ANXIETY-03",
+      "level": 2,
+      "introduction": "Anxious thoughts often catastrophize the future. Time to stop them.",
+      "questions": [
+        "What anxious thoughts most often run through your head?",
+        "How realistic is the probability of what you're anxious about?"
+      ],
+      "recommendation": "Divide anxious thoughts into 'facts' and 'interpretations'. Work only with facts. Why: reduces catastrophizing.",
+      "mechanism": "Separation of facts and interpretations.",
+      "technique": "Cognitive restructuring (CBT)"
+    }
+  ]
+}

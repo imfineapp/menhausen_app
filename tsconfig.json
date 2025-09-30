@@ -6,7 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "allowJs": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": ["vitest/globals", "@testing-library/jest-dom", "vite/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",

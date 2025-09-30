@@ -363,6 +363,8 @@ tg?.expand();
 
 ## 🚀 Deployment
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b3969c03-dbab-4c50-bcb5-2f212e6979e6/deploy-status)](https://app.netlify.com/projects/menhausen/deploys) - stage bot https://t.me/mnhsn_staging_bot/app?startapp=staging
+
 ### Environment Setup
 ```bash
 # .env.local

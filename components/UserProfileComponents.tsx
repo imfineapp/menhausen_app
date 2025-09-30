@@ -2,6 +2,7 @@
 import svgPaths from "../imports/svg-x18dvlov3w";
 import { ArrowIcon } from './UserProfileIcons';
 import { useContent } from './ContentContext';
+import { getUserDisplayId } from '../utils/telegramUserUtils';
 
 /**
  * Адаптивный аватар пользователя
@@ -46,11 +47,16 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
  */
 export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
   const { getUI } = useContent();
+  const userDisplayId = getUserDisplayId();
+  // Extract text part without any ID and combine with dynamic user ID
+  const heroTitle = getUI().profile?.heroTitle || 'Welcome back! #MNHSNDEV';
+  const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
+  const displayText = `${textPart} ${userDisplayId}`;
   
   return (
     <div className="flex flex-col gap-2.5 items-center justify-start w-full" data-name="User info block">
       <div className="typography-h2 text-[#e1ff00] text-center">
-        <h2 className="block">{getUI().profile.heroTitle}</h2>
+        <h2 className="block">{displayText}</h2>
       </div>
       <div className="flex items-center justify-center">
         <UserAccountStatus isPremium={userHasPremium} />

@@ -1,0 +1,107 @@
+/**
+ * Telegram User ID Utility Functions
+ * Provides utilities for detecting Telegram environment and formatting user IDs
+ */
+
+/**
+ * Check if the application is running in Telegram WebApp environment
+ * @returns {boolean} True if running in Telegram WebApp, false otherwise
+ */
+export function isTelegramEnvironment(): boolean {
+  try {
+    return !!(window.Telegram?.WebApp);
+  } catch (error) {
+    console.warn('Error checking Telegram environment:', error);
+    return false;
+  }
+}
+
+/**
+ * Get the Telegram user ID from WebApp API
+ * @returns {string | null} User ID as string, or null if not available
+ */
+export function getTelegramUserId(): string | null {
+  try {
+    if (!isTelegramEnvironment()) {
+      return null;
+    }
+
+    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    return userId ? String(userId) : null;
+  } catch (error) {
+    console.warn('Error getting Telegram user ID:', error);
+    return null;
+  }
+}
+
+/**
+ * Format user ID for display with # prefix
+ * @param {number | string} userId - User ID to format
+ * @returns {string} Formatted user ID with # prefix
+ */
+export function formatUserDisplayId(userId?: number | string): string {
+  if (userId === null || userId === undefined || userId === '') {
+    return '#MNHSNDEV';
+  }
+  
+  const idString = String(userId);
+  return `#${idString}`;
+}
+
+/**
+ * Get the user display ID based on environment
+ * Returns Telegram user ID if in Telegram environment, otherwise returns development fallback
+ * @returns {string} Formatted user ID for display
+ */
+export function getUserDisplayId(): string {
+  try {
+    if (isTelegramEnvironment()) {
+      const telegramUserId = getTelegramUserId();
+      if (telegramUserId) {
+        return formatUserDisplayId(telegramUserId);
+      }
+    }
+    
+    // Fallback to development mode
+    return '#MNHSNDEV';
+  } catch (error) {
+    console.warn('Error getting user display ID:', error);
+    return '#MNHSNDEV';
+  }
+}
+
+/**
+ * Get additional Telegram user information for debugging/logging
+ * @returns {object | null} User information object or null if not available
+ */
+export function getTelegramUserInfo(): {
+  id?: string;
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  languageCode?: string;
+  isPremium?: boolean;
+} | null {
+  try {
+    if (!isTelegramEnvironment()) {
+      return null;
+    }
+
+    const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id ? String(user.id) : undefined,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      username: user.username,
+      languageCode: user.language_code,
+      isPremium: user.is_premium
+    };
+  } catch (error) {
+    console.warn('Error getting Telegram user info:', error);
+    return null;
+  }
+}

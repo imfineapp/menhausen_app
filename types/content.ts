@@ -17,7 +17,8 @@ export interface ThemeData {
   description: LocalizedContent;
   welcomeMessage: LocalizedContent;
   isPremium: boolean;
-  cardIds: string[]; // Связанные карточки
+  cardIds?: string[]; // Связанные карточки (для старой архитектуры)
+  cards?: CardData[]; // Карточки темы (для новой архитектуры)
 }
 
 /**
@@ -150,6 +151,9 @@ export interface UITexts {
     send: LocalizedContent;
     start: LocalizedContent;
     unlock: LocalizedContent;
+    previous: LocalizedContent;
+    morePages: LocalizedContent;
+    more: LocalizedContent;
   };
   common: {
     loading: LocalizedContent;
@@ -159,6 +163,7 @@ export interface UITexts {
     cancel: LocalizedContent;
     delete: LocalizedContent;
     edit: LocalizedContent;
+    close: LocalizedContent;
   };
   home: {
     greeting: LocalizedContent;
@@ -185,6 +190,20 @@ export interface UITexts {
       progressLabel: LocalizedContent;
       weeklyCheckins: LocalizedContent;
     };
+    emergencyHelp: {
+      breathing: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
+      meditation: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
+      grounding: {
+        title: LocalizedContent;
+        description: LocalizedContent;
+      };
+    };
   };
   profile: {
     title: LocalizedContent;
@@ -195,6 +214,9 @@ export interface UITexts {
     payments: LocalizedContent;
     heroTitle: LocalizedContent;
     level: LocalizedContent;
+    premium: LocalizedContent;
+    free: LocalizedContent;
+    follow?: LocalizedContent;
   };
   about: {
     title: LocalizedContent;
@@ -275,13 +297,16 @@ export interface UITexts {
     };
     home: {
       progress: LocalizedContent;
-      checkins: LocalizedContent;
+      attempts: LocalizedContent;
+      attemptsCounter: LocalizedContent;
       level: LocalizedContent;
       nextLevel: LocalizedContent;
     };
   };
-  cards: {
-    checkins: LocalizedContent;
+    cards: {
+      attempts: LocalizedContent;
+      noAttempts: LocalizedContent;
+      startExercise: LocalizedContent;
     welcome: {
       subtitle: LocalizedContent;
     };

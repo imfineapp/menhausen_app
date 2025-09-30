@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame } from 'lucide-react';
 import { ActivityData } from '../types/content';
 import { useContent } from './ContentContext';
+import { DailyCheckinManager } from '../utils/DailyCheckinManager';
 
 interface ActivityBlockNewProps {
   activityData?: ActivityData;
@@ -10,9 +11,13 @@ interface ActivityBlockNewProps {
 export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const { getUI } = useContent();
   
-  // Данные по умолчанию для демонстрации
+  // Get real check-in data from DailyCheckinManager
+  const totalCheckins = DailyCheckinManager.getTotalCheckins();
+  const _currentStreak = DailyCheckinManager.getCheckinStreak();
+  
+  // Данные по умолчанию для демонстрации (fallback)
   const defaultData: ActivityData = {
-    streakDays: 142,
+    streakDays: totalCheckins > 0 ? totalCheckins : 0,
     currentPoints: 5863,
     targetPoints: 8000,
     weeklyCheckins: {
