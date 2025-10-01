@@ -321,7 +321,8 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
     });
     
     if (attemptedCards.length === allCardIds.length) {
-      return "🎉 All Cards Attempted!";
+      const txt = content.ui.themes?.home?.allCardsAttempted || 'All cards attempted!';
+      return getLocalizedText(txt);
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;
       return `Start Card #${nextCardIndex}`;
@@ -332,7 +333,7 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getButtonText()}
+      {getButtonText() || ''}
     </BottomFixedButton>
   );
 }

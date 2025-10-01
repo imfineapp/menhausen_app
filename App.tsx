@@ -1099,8 +1099,8 @@ function AppContent() {
       setCurrentCard(cardData);
       navigateTo('card-details');
     } else {
-      console.log('All cards have been completed!');
-      alert('Congratulations! You have completed all cards in this theme.');
+      console.log('All cards have been completed! Navigating to home.');
+      navigateTo('home');
     }
   };
 

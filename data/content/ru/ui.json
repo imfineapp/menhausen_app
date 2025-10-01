@@ -169,7 +169,8 @@
       "attempts": "Подходы",
       "attemptsCounter": "подходов",
       "level": "Уровень",
-      "nextLevel": "Следующий уровень"
+      "nextLevel": "Следующий уровень",
+      "allCardsAttempted": "Все карточки пройдены!"
     }
   },
   "cards": {

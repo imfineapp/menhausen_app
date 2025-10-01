@@ -302,6 +302,7 @@ export interface UITexts {
       attemptsCounter: LocalizedContent;
       level: LocalizedContent;
       nextLevel: LocalizedContent;
+      allCardsAttempted?: LocalizedContent;
     };
   };
     cards: {
