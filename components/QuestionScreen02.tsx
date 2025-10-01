@@ -74,6 +74,8 @@ function LockShieldFilled() {
  * Адаптивный блок информации о шифровании
  */
 function EncryptInfoBlock() {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -81,7 +83,7 @@ function EncryptInfoBlock() {
     >
       <LockShieldFilled />
       <div className="typography-caption text-[#696969] text-left flex-1">
-        <p className="block">Your answers are fully protected with AES-256 encryption</p>
+        <p className="block">{content.ui.cards.question.encryption}</p>
       </div>
     </div>
   );
@@ -137,6 +139,8 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
  * Адаптивный блок ответа с полем ввода и информацией о шифровании
  */
 function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChange: (value: string) => void }) {
+  const { content } = useContent();
+  
   return (
     <div
       className="box-border content-stretch flex flex-col gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
@@ -145,7 +149,7 @@ function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChang
       <InputAnswerBlock 
         value={answer}
         onChange={onAnswerChange}
-        placeholder="Share your thoughts here..."
+        placeholder={content.ui.cards.question.placeholder}
       />
       <EncryptInfoBlock />
     </div>
