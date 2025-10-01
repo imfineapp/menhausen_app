@@ -47,7 +47,7 @@ import { SurveyResults } from './types/content';
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
-import { capture } from './utils/analytics/posthog';
+import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
@@ -691,28 +691,28 @@ function AppContent() {
   const handleSurvey01Next = (answers: string[]) => {
     console.log('Survey 01 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen01: answers }));
-    capture('onboarding_answered', { step: 'survey01', answers });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey01', answers, language: currentLanguage });
     navigateTo('survey02');
   };
 
   const handleSurvey02Next = (answers: string[]) => {
     console.log('Survey 02 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen02: answers }));
-    capture('onboarding_answered', { step: 'survey02', answers });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey02', answers, language: currentLanguage });
     navigateTo('survey03');
   };
 
   const handleSurvey03Next = (answers: string[]) => {
     console.log('Survey 03 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen03: answers }));
-    capture('onboarding_answered', { step: 'survey03', answers });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey03', answers, language: currentLanguage });
     navigateTo('survey04');
   };
 
   const handleSurvey04Next = (answers: string[]) => {
     console.log('Survey 04 answers:', answers);
     setSurveyResults(prev => ({ ...prev, screen04: answers }));
-    capture('onboarding_answered', { step: 'survey04', answers });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey04', answers, language: currentLanguage });
     navigateTo('survey05');
   };
 
@@ -725,8 +725,8 @@ function AppContent() {
     } as SurveyResults;
     
     setSurveyResults(finalResults);
-    capture('onboarding_answered', { step: 'survey05', answers });
-    capture('onboarding_completed', { results: finalResults });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey05', answers, language: currentLanguage });
+    capture(AnalyticsEvent.ONBOARDING_COMPLETED, { results: finalResults, language: currentLanguage });
     
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
@@ -885,12 +885,13 @@ function AppContent() {
     console.log('Current userAnswers before saving:', userAnswers);
     console.log('Final answers to save:', finalAnswers);
     
-    capture('card_rated', {
+    capture(AnalyticsEvent.CARD_RATED, {
       cardId: currentCard.id,
       themeId: currentTheme,
       rating,
       ratingComment: textMessage || undefined,
       hasComment: !!textMessage,
+      language: currentLanguage,
     });
     
     try {

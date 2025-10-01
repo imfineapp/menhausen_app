@@ -12,7 +12,7 @@ function getEnv(key: string): string | undefined {
 
 const PUBLIC_KEY = getEnv('VITE_PUBLIC_POSTHOG_KEY')
 const PUBLIC_HOST = getEnv('VITE_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com'
-const ENABLE_IN_TELEGRAM = (getEnv('VITE_ENABLE_ANALYTICS_IN_TELEGRAM') || 'false').toLowerCase() === 'true'
+const POSTHOG_ENABLED = (getEnv('VITE_POSTHOG_ENABLE') || 'false').toLowerCase() === 'true'
 
 function isTestMode(): boolean {
   try {
@@ -22,19 +22,12 @@ function isTestMode(): boolean {
   }
 }
 
-function isTelegramEnvironment(): boolean {
-  try {
-    return typeof window !== 'undefined' && !!(window as any).Telegram?.WebApp
-  } catch {
-    return false
-  }
-}
-
 export function isAnalyticsEnabled(): boolean {
   if (typeof window === 'undefined') return false
+  // Check if PostHog is explicitly enabled via environment variable
+  if (!POSTHOG_ENABLED) return false
   if (!PUBLIC_KEY || isTestMode()) return false
-  // Telegram Mini App may enforce CSP that blocks external analytics; disable by default
-  if (isTelegramEnvironment() && !ENABLE_IN_TELEGRAM) return false
+
   return true
 }
 
@@ -64,7 +57,8 @@ export function initPosthog(): void {
 export function capture(eventName: string, properties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
   try {
-    posthog.capture(eventName, properties)
+    const defaultEventProps = { source: 'web' }
+    posthog.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
@@ -73,7 +67,50 @@ export function capture(eventName: string, properties?: Record<string, any>): vo
 export function identify(distinctId: string, properties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
   try {
-    posthog.identify(distinctId, properties)
+    const defaultProps: Record<string, any> = {}
+
+    // Platform details for segmentation
+    try {
+      const nav = typeof navigator !== 'undefined' ? (navigator as any) : undefined
+      const uaData = nav?.userAgentData
+      const ua: string | undefined = nav?.userAgent
+      const platform: string | undefined = nav?.platform
+
+      // High-level device type
+      let deviceType = 'unknown'
+      if (uaData?.mobile === true) deviceType = 'mobile'
+      else if (ua && /(Mobi|Android|iPhone)/i.test(ua)) deviceType = 'mobile'
+      else if (ua && /(iPad|Tablet)/i.test(ua)) deviceType = 'tablet'
+      else deviceType = 'desktop'
+
+      defaultProps.platform_device_type = deviceType
+      if (platform) defaultProps.platform_name = platform
+      if (ua) defaultProps.platform_user_agent = ua
+      if (uaData?.brands && Array.isArray(uaData.brands)) {
+        defaultProps.platform_brands = uaData.brands.map((b: any) => `${b.brand}:${b.version}`).join(', ')
+      }
+    } catch {
+      void 0
+    }
+
+    // Telegram Mini App context (if present)
+    try {
+      const w = typeof window !== 'undefined' ? (window as any) : undefined
+      const tgUser = w?.Telegram?.WebApp?.initDataUnsafe?.user
+      if (tgUser?.id) {
+        defaultProps.telegram_user = true
+        defaultProps.telegram_user_id = String(tgUser.id)
+        if (tgUser.username) defaultProps.telegram_username = tgUser.username
+        if (tgUser.language_code) defaultProps.telegram_language_code = tgUser.language_code
+      }
+    } catch {
+      void 0
+    }
+
+    // Merge caller-provided properties last so caller can override defaults
+    const mergedProps = { ...defaultProps, ...(properties || {}) }
+
+    posthog.identify(distinctId, mergedProps)
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
@@ -94,3 +131,12 @@ export function shutdown(): void {
 }
 
 export const posthogClient = posthog
+
+// Centralized event names to avoid typos across the app
+export const AnalyticsEvent = {
+  CARD_RATED: 'card_rated',
+  ONBOARDING_ANSWERED: 'onboarding_answered',
+  ONBOARDING_COMPLETED: 'onboarding_completed',
+} as const
+
+export type AnalyticsEventName = typeof AnalyticsEvent[keyof typeof AnalyticsEvent]

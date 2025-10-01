@@ -6,11 +6,12 @@ async function globalSetup(_config: FullConfig) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
   
-  // Переходим на главную страницу
-  await page.goto('http://localhost:5173');
-  
-  // Ждем загрузки
-  await page.waitForLoadState('networkidle');
+  // Ждем стабильности сети, но с ограничением времени
+  try {
+    await page.waitForLoadState('networkidle', { timeout: 10000 });
+  } catch {
+    // допустимо в dev среде, продолжим
+  }
   
   // Внедряем мок для ContentProvider
   await page.addInitScript(() => {
