@@ -224,9 +224,14 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
       }
 
       // Получаем данные карточки через ThemeLoader
-      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
-                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
-                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      const themeId = cardId.startsWith('STRESS') ? 'stress' : 
+                     cardId.startsWith('REL') ? 'relationships' :
+                     cardId.startsWith('IDNT') ? 'self-identity' :
+                     cardId.startsWith('ANGR') ? 'anger' :
+                     cardId.startsWith('DEPR') ? 'depression-coping' :
+                     cardId.startsWith('LOSS') ? 'grief-loss' :
+                     cardId.startsWith('BURN') ? 'burnout-recovery' :
+                     cardId.startsWith('ANX') ? 'anxiety' : 'stress';
       
       const theme = await ThemeLoader.loadTheme(themeId, currentLanguage);
       const cardData = theme?.cards?.find(c => c.id === cardId);
@@ -237,11 +242,11 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
       }
       
       // Получаем переведенные вопросы и рекомендации из карточки
-      const question1 = cardData.questions?.[0] || "What in other people's behavior most often irritates or offends you?";
-      const question2 = cardData.questions?.[1] || "What are your expectations behind this reaction?";
-      const instructions = cardData.technique || "Awareness of expectations reduces the automaticity of emotional reactions.";
-      const practiceTask = cardData.recommendation || "Track 3 irritating reactions over the course of a week and write down what you expected to happen at those moments.";
-      const whyNote = cardData.mechanism || "You learn to distinguish people's behavior from your own projections.";
+      const question1 = cardData.questions?.[0] || "Question 1";
+      const question2 = cardData.questions?.[1] || "Question 2";
+      const instructions = cardData.technique || "Technique";
+      const practiceTask = cardData.recommendation || "Practice task";
+      const whyNote = cardData.mechanism || "Mechanism";
 
       // Форматируем дату
       const formatDate = (dateStr: string) => {
