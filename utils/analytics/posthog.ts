@@ -12,7 +12,7 @@ function getEnv(key: string): string | undefined {
 
 const PUBLIC_KEY = getEnv('VITE_PUBLIC_POSTHOG_KEY')
 const PUBLIC_HOST = getEnv('VITE_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com'
-const ENABLE_IN_TELEGRAM = (getEnv('VITE_ENABLE_ANALYTICS_IN_TELEGRAM') || 'false').toLowerCase() === 'true'
+const POSTHOG_ENABLED = (getEnv('VITE_POSTHOG_ENABLE') || 'false').toLowerCase() === 'true'
 
 function isTestMode(): boolean {
   try {
@@ -22,19 +22,12 @@ function isTestMode(): boolean {
   }
 }
 
-function isTelegramEnvironment(): boolean {
-  try {
-    return typeof window !== 'undefined' && !!(window as any).Telegram?.WebApp
-  } catch {
-    return false
-  }
-}
-
 export function isAnalyticsEnabled(): boolean {
   if (typeof window === 'undefined') return false
+  // Check if PostHog is explicitly enabled via environment variable
+  if (!POSTHOG_ENABLED) return false
   if (!PUBLIC_KEY || isTestMode()) return false
-  // Telegram Mini App may enforce CSP that blocks external analytics; disable by default
-  if (isTelegramEnvironment() && !ENABLE_IN_TELEGRAM) return false
+
   return true
 }
 

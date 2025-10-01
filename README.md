@@ -372,6 +372,13 @@ VITE_APP_VERSION=1.0.0
 VITE_API_BASE_URL=https://api.menhausen.app
 VITE_TELEGRAM_BOT_NAME=@menhausen_bot
 VITE_ENVIRONMENT=development
+
+# PostHog Analytics (Optional)
+# Set to 'true' to enable PostHog analytics in production
+# Set to 'false' or leave unset to disable (recommended for local development and deploy previews)
+VITE_POSTHOG_ENABLE=false
+VITE_PUBLIC_POSTHOG_KEY=your_posthog_key_here
+VITE_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
 ### Build Process
@@ -397,11 +404,24 @@ netlify deploy --prod
 
 ## 📈 Analytics & Monitoring
 
-### Privacy-Compliant Analytics
+### Privacy-Compliant Analytics (PostHog)
+PostHog analytics is **disabled by default** and can be enabled via environment variable.
+
+#### Configuration
+- **Environment Control**: Set `VITE_POSTHOG_ENABLE=true` to enable analytics
 - **Anonymous Data**: No PII collection
-- **User Consent**: Opt-in analytics
+- **User Consent**: Opt-in analytics via environment configuration
 - **Local Storage**: Client-side data preference
 - **GDPR Compliance**: Data protection by design
+- **Production Only**: Recommended to enable only in production environment
+
+#### Analytics Controls
+```typescript
+// Analytics will only initialize when ALL conditions are met:
+// 1. VITE_POSTHOG_ENABLE=true
+// 2. VITE_PUBLIC_POSTHOG_KEY is set
+// 3. Not in test mode
+```
 
 ### Monitoring Setup
 ```typescript
