@@ -375,9 +375,17 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
         isPremium: !!theme.isPremium,
         isAvailable: userHasPremium || !theme.isPremium,
         themeId: theme.id,
+        order: theme.order || 999, // Используем порядок из файла, если не указан - в конец
       };
     })
-    .sort((a, b) => Number(b.isAvailable) - Number(a.isAvailable));
+    .sort((a, b) => {
+      // Сначала сортируем по порядку файлов (01-*, 02-*, и т.д.)
+      const orderDiff = a.order - b.order;
+      if (orderDiff !== 0) return orderDiff;
+      
+      // Потом сортируем по доступности (премиум или нет)
+      return Number(b.isAvailable) - Number(a.isAvailable);
+    });
 
   const handleThemeClick = (themeId: string, _isAvailable: boolean) => {
     // Всегда открываем экран темы. Для премиум тем без подписки

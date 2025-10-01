@@ -1,0 +1,129 @@
+{
+  "id": "self-identity",
+  "title": "Self-esteem and Identity",
+  "description": "Strengthening self-esteem and forming healthy identity.",
+  "isPremium": true,
+  "welcomeMessage": "Develop healthy self-esteem and sense of self-worth. Learn to accept yourself and build a positive identity.",
+  "cards": [
+    {
+      "id": "IDNT-01",
+      "level": 1,
+      "introduction": "Sometimes you judge yourself more harshly than anyone else. Let's figure out where this comes from.",
+      "questions": [
+        "What phrase do you most often say to yourself when something goes wrong?",
+        "Whose voice or experience stands behind this phrase?"
+      ],
+      "recommendation": "Awareness reduces fusion with the inner critic.\n\nNotice when this 'voice' activates during the day. Just record it. Recognizing triggers is the first step to weakening them.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-02",
+      "level": 1,
+      "introduction": "The inner critic loves to generalize. But you're more than one mistake.",
+      "questions": [
+        "What 'labels' do you most often attach to yourself?",
+        "In what situations does this especially manifest?"
+      ],
+      "recommendation": "Cognitive restructuring of 'self-identity'.\n\nFor a week, every time a label appears, replace it with an action description. Transition from 'I am a failure' to 'I made a mistake' reduces pressure.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-03",
+      "level": 2,
+      "introduction": "Low self-esteem often masquerades as striving to 'be better'.",
+      "questions": [
+        "Where lately have you felt 'not good enough'?",
+        "What ideal idea is hidden behind this — and where did it come from?"
+      ],
+      "recommendation": "Liberation from external normativity.\n\nWrite how this 'ideal' would look without judgment — and what of it you actually choose. Return to your values, not imposed ones.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-04",
+      "level": 2,
+      "introduction": "Self-esteem isn't a constant, but a process that can be directed.",
+      "questions": [
+        "When did you feel confident in yourself in recent months?",
+        "What actions or traits of yours were involved then?"
+      ],
+      "recommendation": "Positive re-identification.\n\nCreate a 'resource list': 5 qualities that help you cope. Hang it in a visible place. Reminding yourself of strengths reduces inner uncertainty.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-05",
+      "level": 3,
+      "introduction": "Often you live in others' scripts, forgetting your own.",
+      "questions": [
+        "Whose expectations do you most often try to meet — parental, social, partner?",
+        "What personally matters to you in these areas — regardless of others' opinions?"
+      ],
+      "recommendation": "Moving from heteronomy to your own values.\n\nFor a week, before important decisions, ask yourself: 'Is this my choice or a reaction to others' expectations?' Develop autonomy and self-determination.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-06",
+      "level": 3,
+      "introduction": "We tend to ignore successes and focus on failures.",
+      "questions": [
+        "What did you do well in the last 3 weeks but didn't acknowledge?",
+        "What prevents you from recognizing this as valuable?"
+      ],
+      "recommendation": "Refocusing attention on success.\n\nKeep an 'achievement diary': 1 entry per day for 5 days. Regular noticing of efforts forms healthy self-esteem.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-07",
+      "level": 4,
+      "introduction": "Being yourself doesn't mean being perfect.",
+      "questions": [
+        "What traits do you hide or consider 'flaws'?",
+        "What good might be hidden behind these traits?"
+      ],
+      "recommendation": "Transforming 'shadow' into resource.\n\nFind at least one context where this trait could be a strength, and consciously apply it. This returns wholeness and self-acceptance.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-08",
+      "level": 4,
+      "introduction": "How you talk to yourself shapes your inner space.",
+      "questions": [
+        "What tone and style do you use in self-talk — strict, contemptuous, anxious?",
+        "How would your state change if you changed your communication style with yourself?"
+      ],
+      "recommendation": "Changing inner dialogue reduces self-criticism.\n\nTry talking to yourself as you would to a close friend — 1 time per day in difficult situations. Train self-compassion.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-09",
+      "level": 5,
+      "introduction": "Often true confidence comes after action.",
+      "questions": [
+        "What have you long wanted to do but put off from fear of 'not coping'?",
+        "How can you test this through a small 15-minute step?"
+      ],
+      "recommendation": "Behavioral activation increases self-efficacy.\n\nFor 3 days, take this mini-step and record what happened. Action reduces fear's influence.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "IDNT-10",
+      "level": 5,
+      "introduction": "Values aren't about 'who I am', but about 'who I want to be'.",
+      "questions": [
+        "Name 3 qualities you'd like to develop in yourself as part of your identity.",
+        "How can you manifest at least one of them in practice every day?"
+      ],
+      "recommendation": "Identification through value-based actions.\n\nFor 5 days, do one action that strengthens the chosen quality. You're forming not an 'ideal', but a stable self-image.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

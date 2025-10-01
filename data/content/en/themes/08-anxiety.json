@@ -1,0 +1,117 @@
+{
+  "id": "anxiety",
+  "title": "Anxiety and Uncertainty",
+  "description": "Anxiety and developing self-confidence.",
+  "isPremium": true,
+  "welcomeMessage": "Learn to cope with anxiety and worry. Develop self-confidence and ability to act despite fear.",
+  "cards": [
+    {
+      "id": "ANX-01",
+      "level": 1,
+      "introduction": "You're not the first to be overwhelmed by anxiety. But it needs to be given form — then it becomes manageable.",
+      "questions": [
+        "What specific fear from the 'most likely' list is relevant today?",
+        "What do you feel in your body when you think about this fear?"
+      ],
+      "recommendation": "Clear threat definition activates frontal lobes, not the limbic system.\n\nWrite this fear as 'If X, then Y' (1 prediction). Formulating specific concerns helps reduce anxiety vagueness.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-02",
+      "level": 2,
+      "introduction": "The body often knows about anxiety before the mind does. Let's see where it's hiding now.",
+      "questions": [
+        "Describe current anxiety level on a 1-10 scale and location of sensations.",
+        "What signs start 'triggering' anxiety?"
+      ],
+      "recommendation": "Increased awareness of bodily signals activates parasympathetic system.\n\nSpend 2 minutes on conscious body scan (focus on breathing and sensations). Developing body awareness allows interrupting automatic anxiety reactions.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-03",
+      "level": 2,
+      "introduction": "To not be a target for anxiety, it's worth knowing when and where it attacks.",
+      "questions": [
+        "When did you first feel anxiety today?",
+        "What thought or situation might have triggered it?"
+      ],
+      "recommendation": "Monitoring automatic thoughts reduces their strength.\n\nKeep an anxiety thoughts diary (record 1-2 times per day). Awareness of triggers makes reactions more manageable.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-04",
+      "level": 3,
+      "introduction": "Behind every anxious thought hides a deep fear. Let's get to the bottom of it.",
+      "questions": [
+        "What's most frightening in the anxious situation?",
+        "What deep thought or belief stands behind this fear?"
+      ],
+      "recommendation": "'Vertical arrow' helps identify deep fears behind surface anxiety.\n\nUse 'vertical arrow' technique to reach core beliefs. Clarifying basic attitudes reduces reaction irrationality.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-05",
+      "level": 3,
+      "introduction": "Avoidance is protection. But often it interferes with living. Time to face it.",
+      "questions": [
+        "What do you usually do to avoid anxious situations?",
+        "What consequences of this avoidance have you already noticed?"
+      ],
+      "recommendation": "Confronting avoidance reduces its power over behavior.\n\nTry one day not using your usual form of avoidance. Conscious work with avoidance develops psychological flexibility.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-06",
+      "level": 4,
+      "introduction": "We confuse thoughts with facts. But they're just hypotheses. Let's separate one from the other.",
+      "questions": [
+        "What do you know for certain about the anxious situation (facts)?",
+        "Which of your thoughts are assumptions, not facts?"
+      ],
+      "recommendation": "Cognitive restructuring reduces irrational threat assessments.\n\nConduct 'thought investigation': separate facts from interpretations. Reducing cognitive distortions decreases anxiety.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-07",
+      "level": 4,
+      "introduction": "The most frightening scenarios rarely come true. Let's test this in practice.",
+      "questions": [
+        "What's the worst that could happen in the anxious situation?",
+        "What real experience contradicts this outcome?"
+      ],
+      "recommendation": "Countering catastrophic thinking reduces anxiety intensity. Make a list of situations where fear didn't materialize. This gradually dissolves catastrophizing.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-08",
+      "level": 5,
+      "introduction": "Enough guessing what will be. Time to test your fears in real life.",
+      "questions": [
+        "What anxious prediction are you ready to test in practice?",
+        "What could you do today to test it safely?"
+      ],
+      "recommendation": "Conduct a behavioral experiment for 1 day. Testing predictions develops trust in reality, not thoughts.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANX-09",
+      "level": 5,
+      "introduction": "Anxiety takes away freedom. You can only return it through action — even minimal.",
+      "questions": [
+        "In what situation do you usually avoid acting due to fear?",
+        "What minimal step can you take to meet this fear?"
+      ],
+      "recommendation": "Complete a mini-action despite anxiety (≤ 3 min). This reinforces new behavioral patterns.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

@@ -12,6 +12,7 @@ export interface ThemeData {
   isPremium: boolean;
   welcomeMessage: string;
   cards: CardData[];
+  order?: number; // Порядок сортировки из имени файла (01, 02, и т.д.)
 }
 
 export interface CardData {
@@ -58,8 +59,11 @@ export class ThemeLoader {
       
       console.log(`[ThemeLoader] Loaded ${themes.length} themes for language ${language}`);
       
-      // Сортируем по ID
-      return themes.sort((a, b) => a.id.localeCompare(b.id));
+      // Добавляем поле order на основе позиции в массиве (порядок файлов 01-*, 02-*, и т.д.)
+      return themes.map((theme, index) => ({
+        ...theme,
+        order: index + 1
+      }));
     } catch (error) {
       console.error('Error loading themes via static imports:', error);
       return [];
