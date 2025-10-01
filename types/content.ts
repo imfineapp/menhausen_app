@@ -19,6 +19,7 @@ export interface ThemeData {
   isPremium: boolean;
   cardIds?: string[]; // Связанные карточки (для старой архитектуры)
   cards?: CardData[]; // Карточки темы (для новой архитектуры)
+  order?: number; // Порядок сортировки из имени файла (01, 02, и т.д.)
 }
 
 /**
@@ -301,6 +302,7 @@ export interface UITexts {
       attemptsCounter: LocalizedContent;
       level: LocalizedContent;
       nextLevel: LocalizedContent;
+      allCardsAttempted?: LocalizedContent;
     };
   };
     cards: {

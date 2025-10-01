@@ -1,0 +1,129 @@
+{
+  "id": "relationships",
+  "title": "Relationships",
+  "description": "Developing healthy relationships and communication skills.",
+  "isPremium": true,
+  "welcomeMessage": "Improve your relationships with loved ones. Learn to communicate effectively and build healthy connections.",
+  "cards": [
+    {
+      "id": "REL-01",
+      "level": 1,
+      "introduction": "Difficulties with others often begin with uncertainty within ourselves. Let's figure out what exactly touches us.",
+      "questions": [
+        "What in other people's behavior most often causes irritation or resentment in you?",
+        "What expectations of yours stand behind this reaction?"
+      ],
+      "recommendation": "Awareness of expectations reduces the automaticity of emotional reactions.\n\nTrack 3 irritation reactions during the week and record what you expected in those moments. You learn to distinguish people's behavior from your own projections.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-02",
+      "level": 1,
+      "introduction": "When feelings go off the charts, it's hard to understand where you are and where the other person is.",
+      "questions": [
+        "When did you last feel that your boundaries were being violated in a relationship?",
+        "How did you react then — and how much did it help?"
+      ],
+      "recommendation": "Mental rehearsal strengthens boundary-setting skills.\n\nNotice situations where you want to say 'no' — and try formulating this mentally. This is the first step to forming healthy boundaries.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-03",
+      "level": 2,
+      "introduction": "Often we react not to the action itself, but to what it means to us.",
+      "questions": [
+        "Describe a recent conflict using the formula: 'When you [action], I felt [emotion], because I thought [thought]'",
+        "What other interpretations are possible?"
+      ],
+      "recommendation": "Cognitive separation of emotions and thoughts reduces tension.\n\nOnce a day, analyze one of your emotional reactions through this formula. You'll begin to separate fact from your interpretation.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-04",
+      "level": 2,
+      "introduction": "Sometimes in arguments we become defenders, not partners.",
+      "questions": [
+        "What are you trying to prove in conflicts with loved ones?",
+        "What are you afraid of if you don't defend your position?"
+      ],
+      "recommendation": "Reducing polarization from 'me against' → 'me with'.\n\nNotice what's more important to you — being right or being understood. This switches focus from fighting to dialogue.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-05",
+      "level": 3,
+      "introduction": "In relationships, we often repeat the same scenarios. And don't notice it.",
+      "questions": [
+        "What 3 phrases do you most often say in arguments?",
+        "What do you really want to convey in those moments?"
+      ],
+      "recommendation": "Replacing defensive form with vulnerable content facilitates contact.\n\nWrite alternative formulations that would accurately convey your need. Learn to be heard without escalation.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-06",
+      "level": 3,
+      "introduction": "We expect from others what we can't always give ourselves.",
+      "questions": [
+        "What expectations do you often place on loved ones?",
+        "What of this can you start giving yourself?"
+      ],
+      "recommendation": "Shifting focus from external to internal source of support.\n\nOnce a day, do for yourself what you'd want from others. Why? Dependence on others' reactions decreases.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-07",
+      "level": 4,
+      "introduction": "Sometimes the other person isn't an enemy — but a mirror of our weak spots.",
+      "questions": [
+        "In what situations do you feel that the other person is 'deliberately hurting' you?",
+        "What old wounds or complexes might they be activating?"
+      ],
+      "recommendation": "Containing vulnerabilities reduces the need to defend.\n\nTry perceiving sharp moments as signals about your vulnerabilities. This switches reaction from attack to exploration.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-08",
+      "level": 4,
+      "introduction": "When you stop clinging to the other's reaction, freedom to be yourself appears.",
+      "questions": [
+        "What do you often hesitate to say in relationships?",
+        "What fear prevents you from expressing this?"
+      ],
+      "recommendation": "Mental rehearsal reduces fear of confrontation.\n\nTry saying this at least mentally, writing it as a letter. This way you train honest expression skills.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-09",
+      "level": 5,
+      "introduction": "Difficult conversations aren't a risk, but a path to true intimacy.",
+      "questions": [
+        "Who should you have an honest conversation with soon?",
+        "What 2 things do you want to convey — and how to formulate them without accusations?"
+      ],
+      "recommendation": "'I-messages' reduce the other's defensive reaction.\n\nPrepare a speech for an open conversation using 'I-messages'. This reduces defense in the interlocutor and increases chances of being heard.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "REL-10",
+      "level": 5,
+      "introduction": "Sometimes relationships can be saved simply by starting to act differently.",
+      "questions": [
+        "What one new behavior could you try in a difficult situation?",
+        "When and how will you test this behavior in practice?"
+      ],
+      "recommendation": "Behavior changes context and creates feedback.\n\nConduct a behavioral experiment for 3 days and note the result. Because new actions create new experience.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

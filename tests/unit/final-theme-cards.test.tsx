@@ -51,8 +51,8 @@ const TestCardComponent = () => {
   const { getTheme, getThemeCards, getUI } = useContent();
   
   // Используем существующую тему из новой архитектуры
-  const theme = getTheme('stress-management');
-  const cards = getThemeCards('stress-management');
+  const theme = getTheme('stress');
+  const cards = getThemeCards('stress');
   const ui = getUI();
   
   return (

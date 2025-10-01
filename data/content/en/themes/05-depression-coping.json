@@ -1,0 +1,129 @@
+{
+  "id": "depression-coping",
+  "title": "Depressive States",
+  "description": "Overcoming depressive states and developing resilience.",
+  "isPremium": true,
+  "welcomeMessage": "Find a path out of depressive state. Master practical techniques for restoring energy and interest in life.",
+  "cards": [
+    {
+      "id": "DEPR-01",
+      "level": 1,
+      "introduction": "When it seems there's no strength, it's important to first simply see: 'what's wrong with me?'",
+      "questions": [
+        "What do you most often say to yourself when you feel apathy or helplessness?",
+        "How does this affect your desire to do anything?"
+      ],
+      "recommendation": "Identifying negative thoughts helps break fusion with them.\n\nFor a week, notice your automatic thoughts in moments of apathy. Write down at least three. Awareness reduces their impact strength.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-02",
+      "level": 1,
+      "introduction": "Sometimes 'not wanting anything' is a way to avoid pain, not laziness.",
+      "questions": [
+        "What tasks do you most often postpone when you're feeling bad?",
+        "What do you feel when you look at this list?"
+      ],
+      "recommendation": "Behavioral activation reduces helplessness levels.\n\nBreak one task into micro-steps ≤5 minutes and start with the first. Even minimal action gives a sense of influence.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-03",
+      "level": 2,
+      "introduction": "Thoughts in a state of melancholy often sound like truth, though they're not facts.",
+      "questions": [
+        "What do you think about yourself in moments when you're 'overwhelmed'?",
+        "Are there examples that directly contradict these thoughts?"
+      ],
+      "recommendation": "Reformulating negative schemas reduces inner criticism.\n\nKeep an 'anti-thought diary': one negative thought — one counterargument. Why: you develop skills for challenging cognitive distortions.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-04",
+      "level": 2,
+      "introduction": "We often devalue what we do — even if it's important.",
+      "questions": [
+        "What did you accomplish this week despite fatigue or resistance?",
+        "How do you usually react to such efforts — acknowledge or ignore?"
+      ],
+      "recommendation": "Strengthen positive feedback.\n\nOnce a day, praise yourself for one completed action. Even a small one. This strengthens motivation and action value.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-05",
+      "level": 3,
+      "introduction": "Feelings of hopelessness often arise when focus is on everything at once.",
+      "questions": [
+        "What three areas in life currently seem 'stuck' to you?",
+        "What can you change in each by at least 1%?"
+      ],
+      "recommendation": "Shift focus from global to specific.\n\nChoose one area and define an action that takes ≤10 minutes. Do it today. Even a small step can change feelings of hopelessness.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-06",
+      "level": 3,
+      "introduction": "The brain in depression constantly 'filters out' positive things. But this can be trained.",
+      "questions": [
+        "What good or neutral things happened to you in the last 3 days?",
+        "What actions of yours contributed to this?"
+      ],
+      "recommendation": "For 5 days, keep a diary: 1 positive + 1 your action that led to it. Through training positive perception, the connection between effort and result is restored.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-07",
+      "level": 4,
+      "introduction": "Isolation is one of the main factors that intensifies depressive state.",
+      "questions": [
+        "Who in your circle gives you a sense of acceptance and warmth?",
+        "How can you reach out to this person in the next 2 days?"
+      ],
+      "recommendation": "Social activation restores sense of connection.\n\nOrganize 1 live or online contact with such a person within 48 hours. Contact with support is an antidote to loneliness.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-08",
+      "level": 4,
+      "introduction": "Sometimes you lose contact with who you are. But it can be restored.",
+      "questions": [
+        "What 3 things were important to you before — but you stopped paying attention to them?",
+        "What of this would you like to return?"
+      ],
+      "recommendation": "Restoring interrupted identities.\n\nFor 3 days, try including 1 old hobby in your life. Even for 10 minutes. This restores contact with yourself.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-09",
+      "level": 5,
+      "introduction": "Even on the hardest days, you can act. It's important not to wait for motivation.",
+      "questions": [
+        "What one task have you been putting off for more than a week that you could do in 10 minutes?",
+        "When specifically are you ready to complete it within 48 hours?"
+      ],
+      "recommendation": "Behavior forms motivation, not the other way around.\n\nTake this action without evaluating the result. Just the fact itself. This strengthens the connection between 'I do' and 'I influence'.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "DEPR-10",
+      "level": 5,
+      "introduction": "Depression narrows perspective. But you're not just today's state.",
+      "questions": [
+        "Who do you want to be — despite fatigue, doubts, fears?",
+        "What can you do every day to move toward this image?"
+      ],
+      "recommendation": "Write 3 qualities of your 'future self' — and for 3 days, manifest them through action. This way you build a bridge from state to identity.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}
