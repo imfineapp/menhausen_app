@@ -9,7 +9,7 @@ export async function skipSurvey(page: Page): Promise<void> {
   await skipOnboarding(page);
 
   // Проверяем, показывается ли опрос
-  const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
+  const surveyVisible = await page.locator('text=How old are you?').isVisible();
   
   if (surveyVisible) {
     
@@ -61,29 +61,29 @@ export async function skipSurvey(page: Page): Promise<void> {
  * Проходим весь опрос (5 экранов)
  */
 async function completeSurvey(page: Page): Promise<void> {
-  // Survey01: "What challenges are you facing right now?"
-  await page.click('text=I struggle with anxiety');
+  // Survey01: "How old are you?"
+  await page.click('text=18-25 years old');
   await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
   
-  // Survey02: "How long have you been experiencing these challenges?"
-  await page.click('text=A few months');
+  // Survey02: "How often do you face emotional difficulties?"
+  await page.click('text=Sometimes (1–2 times a week)');
   await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
   
-  // Survey03: "What time of day do you feel most motivated?"
-  await page.click('text=Morning (8-11 AM)');
+  // Survey03: "What experiences worry you the most?" (multiple choice)
+  await page.click('text=Work stress');
   await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
   
-  // Survey04: "How much time can you dedicate to mental health exercises?"
-  await page.click('text=10 minutes daily');
+  // Survey04: "Have you ever sought psychological help from specialists?"
+  await page.click('text=No, never');
   await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
   
-  // Survey05: "What's your main goal with mental health support?"
-  await page.click('text=Better stress management');
-  await page.click('text=Complete Setup');
+  // Survey05: "Which of these statements seems true to you?" (multiple choice)
+  await page.click('text=All are wrong');
+  await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
 }
 

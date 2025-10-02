@@ -63,7 +63,7 @@ test.describe('i18n Language Switching', () => {
     await page.waitForLoadState('networkidle');
     
     // Пропускаем опрос если он показывается после переключения языка
-    const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
+    const surveyVisible = await page.locator('text=How old are you?').isVisible();
     if (surveyVisible) {
       await skipSurvey(page);
     } else {
@@ -124,7 +124,7 @@ test.describe('i18n Language Switching', () => {
     await page.waitForLoadState('networkidle');
     
     // Пропускаем опрос если он показывается после переключения языка
-    const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
+    const surveyVisible = await page.locator('text=How old are you?').isVisible();
     if (surveyVisible) {
       await skipSurvey(page);
     } else {
@@ -158,7 +158,7 @@ test.describe('i18n Language Switching', () => {
     await page.waitForLoadState('networkidle');
     
     // Пропускаем опрос если он показывается после переключения языка
-    const surveyVisible = await page.locator('text=What challenges are you facing right now?').isVisible();
+    const surveyVisible = await page.locator('text=How old are you?').isVisible();
     if (surveyVisible) {
       await skipSurvey(page);
     } else {
