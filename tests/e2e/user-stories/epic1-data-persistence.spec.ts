@@ -43,6 +43,10 @@ async function clickNextWhenEnabled(page: any) {
  * Completes post-survey flow: check-in + reward, then reaches home
  */
 async function completePostSurveyFlow(page: any) {
+  // Use the updated skipSurvey function that handles all 6 survey screens
+  const { skipSurvey } = await import('../utils/skip-survey');
+  await skipSurvey(page);
+  
   // Check-in screen
   const checkinTitle = page.getByText('How are you?');
   if (await checkinTitle.isVisible().catch(() => false)) {
@@ -105,7 +109,7 @@ test.describe('User Story 1.1: Robust Data Recovery', () => {
     await skipOnboarding(page);
 
     // With smart navigation, new users go directly to survey
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
 
     // Screen 1
@@ -147,7 +151,7 @@ test.describe('User Story 1.2: API Service Layer Foundation', () => {
     
     // With smart navigation, new users go directly to survey
     // Verify we're on the survey screen
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
     
     // Quick survey completion with stable selectors
@@ -178,7 +182,7 @@ test.describe('User Story 1.2: API Service Layer Foundation', () => {
     
     // Start survey with smart navigation
     // Verify we're on the survey screen
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
     
     // Complete survey quickly
@@ -205,7 +209,7 @@ test.describe('User Story 1.2: API Service Layer Foundation', () => {
     
     // Start survey with smart navigation
     // Verify we're on the survey screen
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
     
     // Complete first screen
@@ -234,7 +238,7 @@ test.describe('Integration: Data Persistence + Navigation', () => {
     
     // Start survey with smart navigation
     // Verify we're on the survey screen
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
     
     // Complete the entire user journey

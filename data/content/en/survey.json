@@ -2,34 +2,34 @@
   "screen01": {
     "id": "screen01",
     "step": 1,
-    "totalSteps": 5,
-    "title": "What challenges are you facing right now?",
-    "subtitle": "Select all that apply. This helps us personalize your experience.",
-    "questionType": "multiple-choice",
+    "totalSteps": 6,
+    "title": "How old are you?",
+    "subtitle": "Your answers will help us understand which age groups face difficulties most often and how experiences change during different life periods.",
+    "questionType": "single-choice",
     "options": [
       {
-        "id": "anxiety",
-        "text": "I struggle with anxiety"
+        "id": "18-25",
+        "text": "18-25 years old"
       },
       {
-        "id": "stress",
-        "text": "I have trouble managing stress"
+        "id": "25-30",
+        "text": "25–30 years old"
       },
       {
-        "id": "mood",
-        "text": "My mood feels unstable"
+        "id": "31-35",
+        "text": "31–35 years old"
       },
       {
-        "id": "relationships",
-        "text": "I have relationship difficulties"
+        "id": "36-40",
+        "text": "36–40 years old"
       },
       {
-        "id": "motivation",
-        "text": "I lack motivation or purpose"
+        "id": "41-45",
+        "text": "41-45 years old"
       },
       {
-        "id": "sleep",
-        "text": "I have sleep problems"
+        "id": "45-plus",
+        "text": "45 and older"
       }
     ],
     "buttonText": "Continue",
@@ -38,30 +38,26 @@
   "screen02": {
     "id": "screen02",
     "step": 2,
-    "totalSteps": 5,
-    "title": "How long have you been experiencing these challenges?",
-    "subtitle": "This helps us understand your current situation better.",
+    "totalSteps": 6,
+    "title": "How often do you face emotional difficulties?",
+    "subtitle": "We want to better understand the real burden and state of our audience.",
     "questionType": "single-choice",
     "options": [
       {
-        "id": "recent",
-        "text": "Recently (within the last month)"
+        "id": "never",
+        "text": "Never"
       },
       {
-        "id": "few-months",
-        "text": "A few months"
+        "id": "rarely",
+        "text": "Rarely (1–2 times a month)"
       },
       {
-        "id": "half-year",
-        "text": "About 6 months"
+        "id": "sometimes",
+        "text": "Sometimes (1–2 times a week)"
       },
       {
-        "id": "year-plus",
-        "text": "Over a year"
-      },
-      {
-        "id": "always",
-        "text": "As long as I can remember"
+        "id": "often",
+        "text": "Often (almost every day)"
       }
     ],
     "buttonText": "Continue",
@@ -70,38 +66,46 @@
   "screen03": {
     "id": "screen03",
     "step": 3,
-    "totalSteps": 5,
-    "title": "What time of day do you feel most motivated?",
-    "subtitle": "We'll suggest the best times for your practice sessions.",
-    "questionType": "single-choice",
+    "totalSteps": 6,
+    "title": "What experiences worry you the most?",
+    "subtitle": "Everyone faces different challenges. This question helps identify what concerns men most often.",
+    "questionType": "multiple-choice",
     "options": [
       {
-        "id": "early-morning",
-        "text": "Early morning (6-8 AM)"
+        "id": "work-stress",
+        "text": "Work stress"
       },
       {
-        "id": "morning",
-        "text": "Morning (8-11 AM)"
+        "id": "anger",
+        "text": "Anger or irritability"
       },
       {
-        "id": "midday",
-        "text": "Midday (11 AM-2 PM)"
+        "id": "burnout",
+        "text": "Burnout"
       },
       {
-        "id": "afternoon",
-        "text": "Afternoon (2-6 PM)"
+        "id": "sadness",
+        "text": "Sadness or apathy"
       },
       {
-        "id": "evening",
-        "text": "Evening (6-9 PM)"
+        "id": "anxiety",
+        "text": "Anxiety or worry"
       },
       {
-        "id": "night",
-        "text": "Late night (9 PM+)"
+        "id": "low-confidence",
+        "text": "Low self-confidence"
       },
       {
-        "id": "varies",
-        "text": "It varies day to day"
+        "id": "relationship-problems",
+        "text": "Relationship problems"
+      },
+      {
+        "id": "family-problems",
+        "text": "Family problems"
+      },
+      {
+        "id": "nothing-bothers",
+        "text": "I'm a rock. Nothing can really shake me."
       }
     ],
     "buttonText": "Continue",
@@ -110,34 +114,26 @@
   "screen04": {
     "id": "screen04",
     "step": 4,
-    "totalSteps": 5,
-    "title": "How much time can you dedicate to mental health exercises?",
-    "subtitle": "Be honest - consistency matters more than duration.",
+    "totalSteps": 6,
+    "title": "Have you ever sought psychological help from specialists?",
+    "subtitle": "This will help us understand what experience men already have with psychologists and what barriers prevent them from seeking help.",
     "questionType": "single-choice",
     "options": [
       {
-        "id": "5-min",
-        "text": "5 minutes daily"
+        "id": "regularly",
+        "text": "Yes, regularly"
       },
       {
-        "id": "10-min",
-        "text": "10 minutes daily"
+        "id": "sometimes",
+        "text": "Yes, sometimes"
       },
       {
-        "id": "15-min",
-        "text": "15 minutes daily"
+        "id": "tried-not-suitable",
+        "text": "Tried, but it didn't work for me"
       },
       {
-        "id": "20-min",
-        "text": "20+ minutes daily"
-      },
-      {
-        "id": "few-times",
-        "text": "A few times per week"
-      },
-      {
-        "id": "when-needed",
-        "text": "Only when I really need it"
+        "id": "never",
+        "text": "No, never"
       }
     ],
     "buttonText": "Continue",
@@ -146,38 +142,86 @@
   "screen05": {
     "id": "screen05",
     "step": 5,
-    "totalSteps": 5,
-    "title": "What's your main goal with mental health support?",
-    "subtitle": "This helps us prioritize what matters most to you.",
+    "totalSteps": 6,
+    "title": "Which of these statements seems true to you?",
+    "subtitle": "We want to know which attitudes and beliefs about psychology and male strength are closer to men today.",
+    "questionType": "multiple-choice",
+    "options": [
+      {
+        "id": "real-man-copes-alone",
+        "text": "A real man handles things on his own"
+      },
+      {
+        "id": "emotions-weakness",
+        "text": "Emotions are a sign of weakness"
+      },
+      {
+        "id": "psychologist-psychiatrist",
+        "text": "Psychologist = psychiatrist"
+      },
+      {
+        "id": "female-psychologist-wont-understand",
+        "text": "A female psychologist won't understand me"
+      },
+      {
+        "id": "friends-best-therapists",
+        "text": "Friends are the best therapists"
+      },
+      {
+        "id": "only-weak-seek-help",
+        "text": "Only crazy or weak people seek help from psychologists"
+      },
+      {
+        "id": "dont-believe-psychological-problems",
+        "text": "I don't believe in the existence of psychological problems at all"
+      },
+      {
+        "id": "all-wrong",
+        "text": "All are wrong"
+      }
+    ],
+    "buttonText": "Continue",
+    "skipAllowed": false
+  },
+  "screen06": {
+    "id": "screen06",
+    "step": 6,
+    "totalSteps": 6,
+    "title": "How did you learn about Menhausen?",
+    "subtitle": "Single choice — to know what brought you here",
     "questionType": "single-choice",
     "options": [
       {
-        "id": "reduce-anxiety",
-        "text": "Reduce anxiety and worry"
+        "id": "telegram-ad",
+        "text": "Advertisement in Telegram channel"
       },
       {
-        "id": "manage-stress",
-        "text": "Better stress management"
+        "id": "friend-recommendation",
+        "text": "Friend or colleague recommended it"
       },
       {
-        "id": "improve-mood",
-        "text": "Improve my overall mood"
+        "id": "blogger-post",
+        "text": "Blogger or influencer post"
       },
       {
-        "id": "better-relationships",
-        "text": "Build better relationships"
+        "id": "telegram-search",
+        "text": "Found in Telegram search"
       },
       {
-        "id": "find-purpose",
-        "text": "Find motivation and purpose"
+        "id": "corporate-channel",
+        "text": "Corporate channel or HR"
       },
       {
-        "id": "daily-support",
-        "text": "Just need daily emotional support"
+        "id": "psychologist-recommendation",
+        "text": "Learned from my psychologist"
       },
       {
-        "id": "crisis-help",
-        "text": "Help during difficult moments"
+        "id": "social-media",
+        "text": "Social media or YouTube"
+      },
+      {
+        "id": "other",
+        "text": "Other"
       }
     ],
     "buttonText": "Complete Setup",

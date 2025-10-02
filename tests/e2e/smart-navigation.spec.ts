@@ -15,8 +15,8 @@ test.describe('Smart Navigation', () => {
     await skipOnboarding(page);
 
     // With smart navigation, new users go directly to survey
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
-    await expect(page.getByText('Select all that apply. This helps us personalize your experience.')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
+    await expect(page.getByText('Your answers will help us understand which age groups face difficulties most often and how experiences change during different life periods.')).toBeVisible();
   });
 
   test('should show survey screen with proper layout', async ({ page }) => {
@@ -25,8 +25,8 @@ test.describe('Smart Navigation', () => {
     await skipOnboarding(page);
 
     // Should show survey screen with proper layout
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
-    await expect(page.getByText('Select all that apply. This helps us personalize your experience.')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
+    await expect(page.getByText('Your answers will help us understand which age groups face difficulties most often and how experiences change during different life periods.')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
   });
 
@@ -95,7 +95,7 @@ test.describe('Smart Navigation', () => {
     await skipOnboarding(page);
 
     // Should load the app gracefully with smart navigation
-    await expect(page.getByText('What challenges are you facing right now?')).toBeVisible();
+    await expect(page.getByText('How old are you?')).toBeVisible();
     await expect(page.locator('[data-name="Survey option"]').first()).toBeVisible();
   });
 
@@ -106,12 +106,12 @@ test.describe('Smart Navigation', () => {
 
     // Should show all expected survey options
     const expectedOptions = [
-      'I struggle with anxiety',
-      'I have trouble managing stress',
-      'My mood feels unstable',
-      'I have relationship difficulties',
-      'I lack motivation or purpose',
-      'I have sleep problems'
+      '18-25 years old',
+      '25–30 years old',
+      '31–35 years old',
+      '36–40 years old',
+      '41-45 years old',
+      '45 and older'
     ];
 
     for (const optionText of expectedOptions) {

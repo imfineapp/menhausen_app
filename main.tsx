@@ -4,6 +4,7 @@ import App from './App'
 import './styles/globals.css'
 import { fontLoader } from './utils/fontLoader'
 import { PostHogProvider } from 'posthog-js/react'
+import { isAnalyticsEnabled } from './utils/analytics/posthog'
 
 // Ensure DOM is ready
 const root = document.getElementById('root')
@@ -17,13 +18,19 @@ const options = {
 }
 
 // Initialize React app
-ReactDOM.createRoot(root).render(
+const app = (
   <React.StrictMode>
-    <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={options}>
+    {isAnalyticsEnabled() ? (
+      <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={options}>
+        <App />
+      </PostHogProvider>
+    ) : (
       <App />
-    </PostHogProvider>
-  </React.StrictMode>,
+    )}
+  </React.StrictMode>
 )
+
+ReactDOM.createRoot(root).render(app)
 
 // Initialize font loading for iOS Safari
 fontLoader.initialize().catch(console.warn)

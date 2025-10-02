@@ -7,6 +7,7 @@ import { SurveyScreen02 } from './components/SurveyScreen02';
 import { SurveyScreen03 } from './components/SurveyScreen03';
 import { SurveyScreen04 } from './components/SurveyScreen04';
 import { SurveyScreen05 } from './components/SurveyScreen05';
+import { SurveyScreen06 } from './components/SurveyScreen06';
 import { PinSetupScreen } from './components/PinSetupScreen';
 import { CheckInScreen } from './components/CheckInScreen';
 import { HomeScreen } from './components/HomeScreen';
@@ -49,7 +50,7 @@ import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -718,14 +719,21 @@ function AppContent() {
 
   const handleSurvey05Next = (answers: string[]) => {
     console.log('Survey 05 answers:', answers);
+    setSurveyResults(prev => ({ ...prev, screen05: answers }));
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey05', answers, language: currentLanguage });
+    navigateTo('survey06');
+  };
+
+  const handleSurvey06Next = (answers: string[]) => {
+    console.log('Survey 06 answers:', answers);
     const finalResults: SurveyResults = {
       ...surveyResults,
-      screen05: answers,
+      screen06: answers,
       completedAt: new Date().toISOString()
     } as SurveyResults;
     
     setSurveyResults(finalResults);
-    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey05', answers, language: currentLanguage });
+    capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey06', answers, language: currentLanguage });
     capture(AnalyticsEvent.ONBOARDING_COMPLETED, { results: finalResults, language: currentLanguage });
     
     // Сохранение результатов
@@ -755,6 +763,7 @@ function AppContent() {
   const handleBackToSurvey02 = () => navigateTo('survey02');
   const handleBackToSurvey03 = () => navigateTo('survey03');
   const handleBackToSurvey04 = () => navigateTo('survey04');
+  const handleBackToSurvey05 = () => navigateTo('survey05');
 
   const _handleGoToCheckIn = () => {
     navigateTo('checkin');
@@ -1297,6 +1306,15 @@ function AppContent() {
             onNext={handleSurvey05Next} 
             onBack={handleBackToSurvey04}
             initialSelections={surveyResults.screen05}
+          />
+        );
+
+      case 'survey06':
+        return (
+          <SurveyScreen06 
+            onNext={handleSurvey06Next} 
+            onBack={handleBackToSurvey05}
+            initialSelections={surveyResults.screen06}
           />
         );
 

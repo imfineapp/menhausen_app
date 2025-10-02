@@ -116,7 +116,7 @@ export interface SurveyScreenData {
 }
 
 /**
- * Контент системы опроса (5 экранов)
+ * Контент системы опроса (6 экранов)
  */
 export interface SurveyContent {
   screen01: SurveyScreenData;
@@ -124,6 +124,7 @@ export interface SurveyContent {
   screen03: SurveyScreenData;
   screen04: SurveyScreenData;
   screen05: SurveyScreenData;
+  screen06: SurveyScreenData;
 }
 
 /**
@@ -135,6 +136,7 @@ export interface SurveyResults {
   screen03: string[];
   screen04: string[];
   screen05: string[];
+  screen06: string[];
   completedAt: string; // ISO timestamp
   userId?: string;
 }
