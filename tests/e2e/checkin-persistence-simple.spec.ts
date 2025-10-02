@@ -57,7 +57,6 @@ test.describe('Check-in Data Persistence', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 
@@ -105,7 +104,6 @@ test.describe('Check-in Data Persistence', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 
@@ -153,7 +151,6 @@ test.describe('Check-in Data Persistence', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 
@@ -201,7 +198,6 @@ test.describe('Check-in Data Persistence', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 
@@ -260,7 +256,6 @@ test.describe('Check-in Data Persistence', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 });

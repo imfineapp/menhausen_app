@@ -32,7 +32,7 @@ test.describe('Home Progress Display', () => {
     }
 
     // Should display 1 day (not 142)
-    await expect(page.locator('text=1 days')).toBeVisible();
+    await expect(page.locator('text=1 day')).toBeVisible();
     await expect(page.locator('text=142 days')).not.toBeVisible();
   });
 
@@ -54,7 +54,7 @@ test.describe('Home Progress Display', () => {
     }
 
     // Should display progress alongside theme cards
-    await expect(page.locator('text=1 days')).toBeVisible();
+    await expect(page.locator('text=1 day')).toBeVisible();
     await expect(page.locator('[data-name="Worries container"]')).toBeVisible();
     await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
   });
@@ -103,7 +103,6 @@ test.describe('Home Progress Display', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 
@@ -151,7 +150,6 @@ test.describe('Home Progress Display', () => {
       await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
     } else {
       // If we're not on either screen, just continue with the test
-      console.log('App is in an unexpected state, but test will pass');
     }
   });
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useContent } from './ContentContext';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { BottomFixedButton } from './BottomFixedButton';
@@ -166,7 +166,7 @@ export function RewardScreen({
 export function useAchievementData() {
   const { getLocalizedBadges } = useContent();
   
-  const createAchievementData = (): Badge[] => {
+  const createAchievementData = useCallback((): Badge[] => {
     const badgesTexts = getLocalizedBadges();
     
     return [
@@ -239,7 +239,7 @@ export function useAchievementData() {
         progress: 20
       }
     ];
-  };
+  }, [getLocalizedBadges]);
 
   return { createAchievementData };
 }

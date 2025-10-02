@@ -2,7 +2,9 @@ import React from 'react';
 import { Flame } from 'lucide-react';
 import { ActivityData } from '../types/content';
 import { useContent } from './ContentContext';
+import { useLanguage } from './LanguageContext';
 import { DailyCheckinManager } from '../utils/DailyCheckinManager';
+import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';
 
 interface ActivityBlockNewProps {
   activityData?: ActivityData;
@@ -10,6 +12,7 @@ interface ActivityBlockNewProps {
 
 export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const { getUI } = useContent();
+  const { language } = useLanguage();
   
   // Get real check-in data from DailyCheckinManager
   const totalCheckins = DailyCheckinManager.getTotalCheckins();
@@ -33,6 +36,15 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
 
   const data = activityData || defaultData;
   const progressPercentage = (data.currentPoints / data.targetPoints) * 100;
+
+  // Функция для получения правильной формы слова "день"
+  const getDayLabel = (count: number) => {
+    if (language === 'ru') {
+      return getRussianDayForm(count);
+    } else {
+      return getEnglishDayForm(count);
+    }
+  };
 
   const daysOfWeek = [
     { key: 'mon', label: 'Mon' },
@@ -69,7 +81,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
           
           {/* Количество дней стрика */}
           <div className="text-lg sm:text-xl font-bold text-white mb-1 text-center">
-            {data.streakDays} {getUI().home.activity.streakLabel}
+            {data.streakDays} {getDayLabel(data.streakDays)}
           </div>
           
           {/* Подпись */}

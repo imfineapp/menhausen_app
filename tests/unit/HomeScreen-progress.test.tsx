@@ -3,13 +3,20 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { HomeScreen } from '../../components/HomeScreen';
 import { ThemeCardManager } from '../../utils/ThemeCardManager';
+import { LanguageProvider } from '../../components/LanguageContext';
 
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => {
     const content = {
       ui: {
         home: {
-          activity: { progressLabel: 'Progress', streakLabel: 'days' },
+          activity: { 
+            progressLabel: 'Progress', 
+            streakLabel: {
+              singular: 'day',
+              plural: 'days'
+            }
+          },
           checkInInfo: { title: 'Info', content: '...' },
           whatWorriesYou: 'What worries you?'
         },
@@ -46,7 +53,11 @@ describe('HomeScreen per-theme progress', () => {
       .mockReturnValueOnce({ completedAttempts: [ { attemptId: '2' } ] })
       .mockReturnValueOnce({ completedAttempts: [] });
 
-    render(<HomeScreen onGoToProfile={() => {}} onGoToTheme={() => {}} userHasPremium={true} />);
+    render(
+      <LanguageProvider>
+        <HomeScreen onGoToProfile={() => {}} onGoToTheme={() => {}} userHasPremium={true} />
+      </LanguageProvider>
+    );
 
     // Label indicates that the progress UI rendered
     expect(screen.getAllByText('Progress').length).toBeGreaterThan(0);

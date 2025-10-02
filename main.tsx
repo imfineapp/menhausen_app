@@ -13,15 +13,16 @@ if (!root) {
   throw new Error('Root element not found')
 }
 
-const options = {
-  api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-}
-
 // Initialize React app
 const app = (
   <React.StrictMode>
     {isAnalyticsEnabled() ? (
-      <PostHogProvider apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} options={options}>
+      <PostHogProvider 
+        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} 
+        options={{
+          api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+        }}
+      >
         <App />
       </PostHogProvider>
     ) : (

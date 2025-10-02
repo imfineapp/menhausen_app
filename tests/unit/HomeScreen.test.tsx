@@ -7,6 +7,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HomeScreen } from '../../components/HomeScreen';
 import { DailyCheckinManager } from '../../utils/DailyCheckinManager';
+import { LanguageProvider } from '../../components/LanguageContext';
 
 // Mock the DailyCheckinManager
 vi.mock('../../utils/DailyCheckinManager', () => ({
@@ -25,7 +26,10 @@ vi.mock('../../components/ContentContext', () => ({
           heroTitle: 'Welcome back!',
           level: 'Level',
           activity: {
-            streakLabel: 'days',
+            streakLabel: {
+              singular: 'day',
+              plural: 'days'
+            },
             progressLabel: 'Progress',
             weeklyCheckins: 'Weekly check-ins'
           },
@@ -61,7 +65,10 @@ vi.mock('../../components/ContentContext', () => ({
         heroTitle: 'Welcome back!',
         level: 'Level',
         activity: {
-          streakLabel: 'days',
+          streakLabel: {
+            singular: 'day',
+            plural: 'days'
+          },
           progressLabel: 'Progress',
           weeklyCheckins: 'Weekly check-ins'
         },
@@ -80,6 +87,15 @@ vi.mock('../../components/ContentContext', () => ({
   })
 }));
 
+// Helper function to render HomeScreen with LanguageProvider
+const renderWithLanguageProvider = (props: any) => {
+  return render(
+    <LanguageProvider>
+      <HomeScreen {...props} />
+    </LanguageProvider>
+  );
+};
+
 describe('HomeScreen', () => {
   const mockOnGoToProfile = vi.fn();
   const mockOnGoToTheme = vi.fn();
@@ -93,13 +109,11 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Should display actual count (5) instead of placeholder (142)
       expect(screen.getByText('5 days')).toBeInTheDocument();
@@ -109,13 +123,11 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(0);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(screen.getByText('0 days')).toBeInTheDocument();
     });
@@ -124,13 +136,11 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(365);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(screen.getByText('365 days')).toBeInTheDocument();
     });
@@ -141,13 +151,11 @@ describe('HomeScreen', () => {
       // Initial count
       mockGetTotalCheckins.mockReturnValue(3);
       
-      const { rerender } = render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      const { rerender } = renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(screen.getByText('3 days')).toBeInTheDocument();
 
@@ -155,11 +163,13 @@ describe('HomeScreen', () => {
       mockGetTotalCheckins.mockReturnValue(4);
       
       rerender(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
+        <LanguageProvider>
+          <HomeScreen 
+            onGoToProfile={mockOnGoToProfile} 
+            onGoToTheme={mockOnGoToTheme} 
+            userHasPremium={false} 
+          />
+        </LanguageProvider>
       );
 
       await waitFor(() => {
@@ -175,13 +185,11 @@ describe('HomeScreen', () => {
       mockGetTotalCheckins.mockReturnValue(5);
       mockGetCheckinStreak.mockReturnValue(5);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // The test should pass if the component renders without errors
       // The ActivityBlockNew component should be present in the DOM
@@ -192,13 +200,11 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(10);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={true} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: true
+      });
 
       // Should show premium status
       expect(screen.getByText('Level 1')).toBeInTheDocument();
@@ -208,13 +214,11 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Should display theme cards
       expect(screen.getByText('Anxiety')).toBeInTheDocument();
@@ -224,13 +228,11 @@ describe('HomeScreen', () => {
 
   describe('User Interface Interactions', () => {
     it('should handle profile navigation', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Find and click profile button - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
@@ -241,13 +243,11 @@ describe('HomeScreen', () => {
     });
 
     it('should handle theme navigation', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Find and click theme card
       const themeCard = screen.getByText('Anxiety');
@@ -257,26 +257,22 @@ describe('HomeScreen', () => {
     });
 
     it('should handle premium theme access correctly', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Premium theme should be visible but not accessible
       expect(screen.getByText('Stress')).toBeInTheDocument();
     });
 
     it('should handle premium theme access with premium user', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={true} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: true
+      });
 
       // Premium theme should be accessible
       const premiumTheme = screen.getByText('Stress');
@@ -298,13 +294,11 @@ describe('HomeScreen', () => {
         value: 375,
       });
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(screen.getByText('5 days')).toBeInTheDocument();
     });
@@ -320,13 +314,11 @@ describe('HomeScreen', () => {
         value: 768,
       });
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(screen.getByText('5 days')).toBeInTheDocument();
     });
@@ -334,13 +326,11 @@ describe('HomeScreen', () => {
 
   describe('Accessibility', () => {
     it('should have proper ARIA labels and roles', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Check for accessibility attributes - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
@@ -348,13 +338,11 @@ describe('HomeScreen', () => {
     });
 
     it('should support keyboard navigation', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Test that theme cards are clickable
       const themeCard = screen.getByText('Anxiety');
@@ -366,13 +354,11 @@ describe('HomeScreen', () => {
     });
 
     it('should have proper focus management', () => {
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Test that interactive elements are present - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
@@ -387,13 +373,11 @@ describe('HomeScreen', () => {
       mockGetTotalCheckins.mockReturnValue(0); // Return safe default instead of throwing
 
       expect(() => {
-        render(
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
-        );
+        renderWithLanguageProvider({
+          onGoToProfile: mockOnGoToProfile,
+          onGoToTheme: mockOnGoToTheme,
+          userHasPremium: false
+        });
       }).not.toThrow();
     });
   });
@@ -403,22 +387,22 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
 
-      const { rerender } = render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      const { rerender } = renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Multiple re-renders should not cause issues
       for (let i = 0; i < 5; i++) {
         rerender(
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
+          <LanguageProvider>
+            <HomeScreen 
+              onGoToProfile={mockOnGoToProfile} 
+              onGoToTheme={mockOnGoToTheme} 
+              userHasPremium={false} 
+            />
+          </LanguageProvider>
         );
       }
 
@@ -429,23 +413,23 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
 
-      const { rerender } = render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      const { rerender } = renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       // Rapid state changes
       for (let i = 0; i < 10; i++) {
         mockGetTotalCheckins.mockReturnValue(i);
         rerender(
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
+          <LanguageProvider>
+            <HomeScreen 
+              onGoToProfile={mockOnGoToProfile} 
+              onGoToTheme={mockOnGoToTheme} 
+              userHasPremium={false} 
+            />
+          </LanguageProvider>
         );
       }
 
@@ -461,13 +445,11 @@ describe('HomeScreen', () => {
       mockGetTotalCheckins.mockReturnValue(10);
       mockGetCheckinStreak.mockReturnValue(5);
 
-      render(
-        <HomeScreen 
-          onGoToProfile={mockOnGoToProfile} 
-          onGoToTheme={mockOnGoToTheme} 
-          userHasPremium={false} 
-        />
-      );
+      renderWithLanguageProvider({
+        onGoToProfile: mockOnGoToProfile,
+        onGoToTheme: mockOnGoToTheme,
+        userHasPremium: false
+      });
 
       expect(mockGetTotalCheckins).toHaveBeenCalled();
       expect(mockGetCheckinStreak).toHaveBeenCalled();
@@ -478,13 +460,11 @@ describe('HomeScreen', () => {
       mockGetTotalCheckins.mockReturnValue(null as any);
 
       expect(() => {
-        render(
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
-        );
+        renderWithLanguageProvider({
+          onGoToProfile: mockOnGoToProfile,
+          onGoToTheme: mockOnGoToTheme,
+          userHasPremium: false
+        });
       }).not.toThrow();
     });
   });
