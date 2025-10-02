@@ -1,4 +1,5 @@
-import posthog from 'posthog-js'
+// Dynamic import to avoid loading PostHog when disabled
+let posthog: any = null
 
 function getEnv(key: string): string | undefined {
   try {
@@ -13,6 +14,20 @@ function getEnv(key: string): string | undefined {
 const PUBLIC_KEY = getEnv('VITE_PUBLIC_POSTHOG_KEY')
 const PUBLIC_HOST = getEnv('VITE_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com'
 const POSTHOG_ENABLED = (getEnv('VITE_POSTHOG_ENABLE') || 'false').toLowerCase() === 'true'
+
+// Dynamically load PostHog only when needed
+async function loadPostHog() {
+  if (posthog) return posthog
+  if (!POSTHOG_ENABLED || !PUBLIC_KEY) return null
+  
+  try {
+    const posthogModule = await import('posthog-js')
+    posthog = posthogModule.default
+    return posthog
+  } catch {
+    return null
+  }
+}
 
 function isTestMode(): boolean {
   try {
@@ -34,16 +49,19 @@ export function isAnalyticsEnabled(): boolean {
   return true
 }
 
-export function initPosthog(): void {
+export async function initPosthog(): Promise<void> {
   if (!isAnalyticsEnabled()) return
 
   // Global idempotent guard to survive StrictMode double-invoke and HMR
   const w = typeof window !== 'undefined' ? (window as any) : undefined
   if (w && w.__POSTHOG_INIT === true) return
 
-  if ((posthog as any).__initialized) return
+  const ph = await loadPostHog()
+  if (!ph) return
 
-  posthog.init(PUBLIC_KEY as string, {
+  if ((ph as any).__initialized) return
+
+  ph.init(PUBLIC_KEY as string, {
     api_host: PUBLIC_HOST,
     capture_pageview: false,
     autocapture: true,
@@ -53,23 +71,29 @@ export function initPosthog(): void {
     // Disable remote config/decide endpoint to avoid loading site apps like ExceptionAutocapture
     advanced_disable_decide: true,
   })
-  ;(posthog as any).__initialized = true
+  ;(ph as any).__initialized = true
   if (w) w.__POSTHOG_INIT = true
 }
 
-export function capture(eventName: string, properties?: Record<string, any>): void {
+export async function capture(eventName: string, properties?: Record<string, any>): Promise<void> {
   if (!isAnalyticsEnabled()) return
   try {
+    const ph = await loadPostHog()
+    if (!ph) return
+    
     const defaultEventProps = { source: 'web' }
-    posthog.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
+    ph.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
 }
 
-export function identify(distinctId: string, properties?: Record<string, any>): void {
+export async function identify(distinctId: string, properties?: Record<string, any>): Promise<void> {
   if (!isAnalyticsEnabled()) return
   try {
+    const ph = await loadPostHog()
+    if (!ph) return
+    
     const defaultProps: Record<string, any> = {}
 
     // Platform details for segmentation
@@ -113,15 +137,17 @@ export function identify(distinctId: string, properties?: Record<string, any>): 
     // Merge caller-provided properties last so caller can override defaults
     const mergedProps = { ...defaultProps, ...(properties || {}) }
 
-    posthog.identify(distinctId, mergedProps)
+    ph.identify(distinctId, mergedProps)
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
 }
 
-export function shutdown(): void {
+export async function shutdown(): Promise<void> {
   try {
-    const ph: any = posthog as any
+    const ph = await loadPostHog()
+    if (!ph) return
+    
     if (typeof ph.shutdown === 'function') {
       ph.shutdown()
     }
@@ -133,7 +159,9 @@ export function shutdown(): void {
   }
 }
 
-export const posthogClient = posthog
+export async function getPostHogClient() {
+  return await loadPostHog()
+}
 
 // Centralized event names to avoid typos across the app
 export const AnalyticsEvent = {
