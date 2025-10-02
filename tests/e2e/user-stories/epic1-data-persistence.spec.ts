@@ -43,6 +43,10 @@ async function clickNextWhenEnabled(page: any) {
  * Completes post-survey flow: check-in + reward, then reaches home
  */
 async function completePostSurveyFlow(page: any) {
+  // Use the updated skipSurvey function that handles all 6 survey screens
+  const { skipSurvey } = await import('../utils/skip-survey');
+  await skipSurvey(page);
+  
   // Check-in screen
   const checkinTitle = page.getByText('How are you?');
   if (await checkinTitle.isVisible().catch(() => false)) {
