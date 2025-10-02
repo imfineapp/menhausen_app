@@ -137,15 +137,18 @@ function MoodProgressBar({
   }, [handleEnd]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleStart(touch.clientX);
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      handleStart(touch.clientX);
+    }
   };
 
   const handleTouchMove = useCallback((e: TouchEvent) => {
     e.preventDefault();
-    const touch = e.touches[0];
-    handleMove(touch.clientX);
+    if (e.touches.length > 0) {
+      const touch = e.touches[0];
+      handleMove(touch.clientX);
+    }
   }, [handleMove]);
 
   const handleTouchEnd = useCallback((e: TouchEvent) => {
@@ -158,7 +161,7 @@ function MoodProgressBar({
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener('touchend', handleTouchEnd, { passive: false });
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);

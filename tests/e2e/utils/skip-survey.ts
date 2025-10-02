@@ -9,14 +9,10 @@ export async function skipSurvey(page: Page): Promise<void> {
   await skipOnboarding(page);
 
   // Проверяем, показывается ли опрос (любой экран)
-  console.log('Checking for survey visibility...');
   const survey01Visible = await page.locator('text=How old are you?').isVisible();
   const survey06Visible = await page.locator('text=How did you learn about Menhausen?').isVisible();
-  console.log('Survey01 visible:', survey01Visible);
-  console.log('Survey06 visible:', survey06Visible);
   
   if (survey01Visible) {
-    console.log('Survey found, starting completeSurvey...');
     // Проходим весь опрос (6 экранов)
     await completeSurvey(page);
     
@@ -29,13 +25,11 @@ export async function skipSurvey(page: Page): Promise<void> {
     // Skip the reward screen as well
     // await skipRewardScreen(page);
   } else if (survey06Visible) {
-    console.log('Found Survey06, completing it...');
     // Пользователь уже на 6-м экране, завершаем его
     await page.click('text=Friend or colleague recommended it');
     await page.waitForTimeout(500);
     await page.click('text=Complete Setup');
     await page.waitForLoadState('networkidle');
-    console.log('Survey06 completed');
     
     // После опроса может идти настройка PIN или сразу check-in
     await skipPinSetup(page);
@@ -82,12 +76,7 @@ export async function skipSurvey(page: Page): Promise<void> {
       try {
         await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 10000 });
       } catch {
-        // If still no home screen found, log current state and continue
-        console.log('Survey06 not found, trying to continue anyway...');
-        const currentUrl = page.url();
-        console.log('Current URL:', currentUrl);
-        const pageContent = await page.textContent('body');
-        console.log('Page content preview:', pageContent?.substring(0, 200));
+        // If still no home screen found, continue anyway
       }
     }
   }
@@ -97,9 +86,7 @@ export async function skipSurvey(page: Page): Promise<void> {
  * Проходим весь опрос (6 экранов)
  */
 async function completeSurvey(page: Page): Promise<void> {
-  console.log('Starting completeSurvey function...');
   // Survey01: "How old are you?"
-  console.log('Starting Survey01...');
   await page.click('text=18-25 years old');
   await page.click('text=Continue');
   await page.waitForLoadState('networkidle');
@@ -125,14 +112,10 @@ async function completeSurvey(page: Page): Promise<void> {
   await page.waitForLoadState('networkidle');
   
   // Survey06: "How did you learn about Menhausen?"
-  console.log('Starting Survey06...');
   await page.click('text=Friend or colleague recommended it');
-  console.log('Selected option for Survey06');
   await page.waitForTimeout(500); // Small delay to ensure selection is processed
   await page.click('text=Complete Setup');
-  console.log('Clicked Complete Setup button');
   await page.waitForLoadState('networkidle');
-  console.log('Survey06 completed, waiting for next screen...');
 }
 
 /**

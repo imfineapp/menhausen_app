@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { RewardScreen, useAchievementData } from './RewardScreen';
 
 interface RewardManagerProps {
@@ -19,6 +19,12 @@ export function RewardManager({
   const { createAchievementData } = useAchievementData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [achievements, setAchievements] = useState<any[]>([]);
+  const onCompleteRef = useRef(onComplete);
+
+  // Обновляем ref при изменении onComplete
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   // Фильтруем только полученные достижения
   useEffect(() => {
@@ -28,11 +34,11 @@ export function RewardManager({
     );
     
     if (earnedAchievements.length === 0) {
-      onComplete();
+      onCompleteRef.current();
     } else {
       setAchievements(earnedAchievements);
     }
-  }, [earnedAchievementIds, createAchievementData, onComplete]);
+  }, [earnedAchievementIds, createAchievementData]);
 
   const handleContinue = () => {
     if (currentIndex < achievements.length - 1) {
