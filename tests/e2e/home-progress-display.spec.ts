@@ -32,7 +32,7 @@ test.describe('Home Progress Display', () => {
     }
 
     // Should display 1 day (not 142)
-    await expect(page.locator('text=1 days')).toBeVisible();
+    await expect(page.locator('text=1 day')).toBeVisible();
     await expect(page.locator('text=142 days')).not.toBeVisible();
   });
 
@@ -54,7 +54,7 @@ test.describe('Home Progress Display', () => {
     }
 
     // Should display progress alongside theme cards
-    await expect(page.locator('text=1 days')).toBeVisible();
+    await expect(page.locator('text=1 day')).toBeVisible();
     await expect(page.locator('[data-name="Worries container"]')).toBeVisible();
     await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
   });

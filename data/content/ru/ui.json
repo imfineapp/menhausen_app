@@ -43,7 +43,11 @@
       "title": "Активность",
       "streak": "4 дня",
       "description": "Только регулярно выполняя упражнения, вы добьетесь результатов.",
-      "streakLabel": "дней",
+      "streakLabel": {
+        "singular": "день",
+        "few": "дня", 
+        "many": "дней"
+      },
       "progressLabel": "Прогресс",
       "weeklyCheckins": "Чекины",
       "points": "очков",

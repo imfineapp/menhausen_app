@@ -43,7 +43,10 @@
       "title": "Activity",
       "streak": "4 days",
       "description": "Only by doing exercises regularly will you achieve results.",
-      "streakLabel": "days",
+      "streakLabel": {
+        "singular": "day",
+        "plural": "days"
+      },
       "progressLabel": "Progress",
       "weeklyCheckins": "Check-ins",
       "points": "points",
