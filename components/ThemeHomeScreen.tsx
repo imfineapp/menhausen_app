@@ -183,21 +183,17 @@ function AttemptsIcon() {
 
 /**
  * Адаптивная карточка темы с min-h-[44px] min-w-[44px] дизайном
- * Поддерживает состояния: доступна, заблокирована, завершена
+ * Поддерживает состояния: доступна, заблокирована, в процессе
  */
 function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) => void }) {
   const { content: _content } = useContent();
   const isLocked = card.isLocked;
-  const isCompleted = card.completionStatus === CardCompletionStatus.COMPLETED;
   const isInProgress = card.completionStatus === CardCompletionStatus.IN_PROGRESS;
   
   // Определяем стили в зависимости от состояния карточки
   const getCardStyles = () => {
     if (isLocked) {
       return "bg-[rgba(217,217,217,0.02)] cursor-not-allowed opacity-50 hover:opacity-60 transition-all duration-300";
-    }
-    if (isCompleted) {
-      return "bg-[rgba(34,197,94,0.1)] cursor-pointer hover:bg-[rgba(34,197,94,0.2)] active:scale-95 border-green-500/20 hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300";
     }
     if (isInProgress) {
       return "bg-[rgba(255,193,7,0.1)] cursor-pointer hover:bg-[rgba(255,193,7,0.15)] active:scale-95 border-yellow-500/20 hover:shadow-lg hover:shadow-yellow-500/20 transition-all duration-300";
@@ -207,14 +203,12 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
 
   const getTitleStyles = () => {
     if (isLocked) return "text-[#696969]";
-    if (isCompleted) return "text-[#22c55e]";
     if (isInProgress) return "text-[#fbbf24]"; // Amber color for in-progress
     return "text-[#e1ff00]";
   };
 
   const getDescriptionStyles = () => {
     if (isLocked) return "text-[#696969]";
-    if (isCompleted) return "text-[#ffffff]";
     return "text-[#ffffff]";
   };
 
@@ -233,21 +227,11 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
       <div
         aria-hidden="true"
         className={`absolute border border-solid inset-0 pointer-events-none rounded-xl ${
-          isLocked ? "border-[#505050]" : 
-          isCompleted ? "border-[#22c55e]/30" : 
-          "border-[#505050]"
+          isLocked ? "border-[#505050]" : "border-[#505050]"
         }`}
       />
       
-      {/* Индикатор состояния */}
-      {isCompleted && (
-        <div className="absolute top-2 right-2 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center animate-pulse">
-          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-        </div>
-      )}
-      
+      {/* Индикаторы состояния */}
       {isInProgress && (
         <div className="absolute top-2 right-2 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center animate-pulse">
           <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -273,16 +257,12 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
             {!isLocked && (
               <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
                 <div className={`typography-h2 text-nowrap text-right ${
-                  isInProgress ? 'text-[#fbbf24]' : 
-                  isCompleted ? 'text-[#22c55e]' : 
-                  'text-[#e1ff00]'
+                  isInProgress ? 'text-[#fbbf24]' : 'text-[#e1ff00]'
                 }`}>
                   <h2 className="block whitespace-pre">{card.attempts}</h2>
                 </div>
                 <div className={`transition-colors duration-300 ${
-                  isInProgress ? 'text-[#fbbf24]' : 
-                  isCompleted ? 'text-[#22c55e]' : 
-                  'text-[#e1ff00]'
+                  isInProgress ? 'text-[#fbbf24]' : 'text-[#e1ff00]'
                 }`}>
                   <AttemptsIcon />
                 </div>
@@ -341,7 +321,8 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
     });
     
     if (attemptedCards.length === allCardIds.length) {
-      return "🎉 All Cards Attempted!";
+      const txt = content.ui.themes?.home?.allCardsAttempted || 'All cards attempted!';
+      return getLocalizedText(txt);
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;
       return `Start Card #${nextCardIndex}`;
@@ -352,7 +333,7 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getButtonText()}
+      {getButtonText() || ''}
     </BottomFixedButton>
   );
 }

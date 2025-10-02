@@ -1,0 +1,129 @@
+{
+  "id": "burnout-recovery",
+  "title": "Emotional Burnout",
+  "description": "Prevention and recovery from emotional burnout.",
+  "isPremium": true,
+  "welcomeMessage": "Overcome emotional burnout. Learn to restore resources and find balance between work and rest.",
+  "cards": [
+    {
+      "id": "BURN-01",
+      "level": 1,
+      "introduction": "Burnout often starts with 'not wanting anything'. Let's try to see — when did this begin.",
+      "questions": [
+        "When did you last feel that 'everything is annoying'?",
+        "What changed in your life during that period?"
+      ],
+      "recommendation": "Identify 1 event or phase after which burnout began. This gives understanding of what's the cause, not just the consequence.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-02",
+      "level": 1,
+      "introduction": "Burnout feels like: 'I should, but I can't'.",
+      "questions": [
+        "What phrases do you most often say to yourself when you're 'stuck'?",
+        "What do these phrases make you feel?"
+      ],
+      "recommendation": "Replace one of these phrases with a gentle one: 'Right now it's hard for me, but I'm doing what I can'. Repeat for 3 days straight. Restructuring inner dialogue reduces tension.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-03",
+      "level": 2,
+      "introduction": "In burnout state, you might forget about your boundaries.",
+      "questions": [
+        "In what situations do you most often say 'yes' when you want to say 'no'?",
+        "What are you afraid of losing if you start defending boundaries?"
+      ],
+      "recommendation": "Start small: in one situation per day, consciously choose refusal or break. Why: this trains resource preservation skills.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-04",
+      "level": 2,
+      "introduction": "In burnout, you seem to have given yourself away 'for later'. Let's return a piece.",
+      "questions": [
+        "When did you last do something exclusively for yourself?",
+        "What was it? Why did you stop?"
+      ],
+      "recommendation": "Schedule yourself a 'personal hour' during the week. Without benefit. Just for pleasure. This restores the sense of 'I exist'.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-05",
+      "level": 3,
+      "introduction": "In burnout, every day is like the previous one. And this pulls down.",
+      "questions": [
+        "What 3 actions do you do 'on autopilot' and don't notice?",
+        "How could you bring awareness to one of them?"
+      ],
+      "recommendation": "Awareness interrupts monotony and returns interest.\n\nFor 3 days — do 1 action per day with full attention (eating, walking, showering). Returning to the moment reduces the effect of 'empty days'.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-06",
+      "level": 3,
+      "introduction": "Often burnout isn't just fatigue. It's loss of meaning.",
+      "questions": [
+        "What parts of your work or responsibilities were important to you before?",
+        "What changed — why don't they bring joy anymore?"
+      ],
+      "recommendation": "Find 1 task in the week that can still give satisfaction. Do it consciously. This way you reboot your meaning.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-07",
+      "level": 4,
+      "introduction": "Behavior is our anchor. Even in chaos, you can choose one action.",
+      "questions": [
+        "What everyday activity calms you (even slightly)?",
+        "When did you last do this? Why did you stop?"
+      ],
+      "recommendation": "Take 1 ritual and do it every evening for 5 days straight. Why: repetitive actions create sense of stability.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-08",
+      "level": 4,
+      "introduction": "Self-worth isn't a reward, but a setting. Especially in burnout.",
+      "questions": [
+        "In what situations do you forget you have the right to rest?",
+        "How can you remind yourself of the right to pause?"
+      ],
+      "recommendation": "Micro-breaks contribute to nervous system recovery.\n\nIntroduce 1 micro-pause per day (2-3 minutes without screens, noise, and tasks). Regular reboots support cognitive resources.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-09",
+      "level": 5,
+      "introduction": "To burn out, you first have to 'burn' for something. Time to return focus.",
+      "questions": [
+        "What's truly important to you — even if you're tired?",
+        "What can you do tomorrow to get a little closer to this?"
+      ],
+      "recommendation": "Every day for 1 week, do 1 mini-action related to your values. Values return meaning to actions.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "BURN-10",
+      "level": 5,
+      "introduction": "Sometimes, to get out, you need to see yourself — not as a performer, but as a person.",
+      "questions": [
+        "Who are you beyond your role (work, function)?",
+        "What actions can remind you of this?"
+      ],
+      "recommendation": "Role decompression restores energy and meaning.\n\nOnce a week, do 1 action unrelated to work or benefit. This is an act of restoring yourself. This returns personal autonomy.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

@@ -105,31 +105,26 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
   return (
     <button
       onClick={() => onClick?.(attempt.attemptId)}
-      className="relative shrink-0 w-full cursor-pointer hover:bg-[rgba(34,197,94,0.15)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] opacity-100 p-4"
+      className="relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] active:scale-98 transition-all duration-200 min-h-[44px] min-w-[44px] opacity-100 p-4"
       data-name="Completed Attempt"
     >
-      <div className="absolute inset-0 rounded-xl bg-[rgba(34,197,94,0.1)]" data-name="Background">
+      <div className="absolute inset-0 rounded-xl bg-[rgba(217,217,217,0.04)]" data-name="Background">
         <div
           aria-hidden="true"
-          className="absolute border border-solid inset-0 pointer-events-none rounded-xl border-[#22c55e]/30"
+          className="absolute border border-solid inset-0 pointer-events-none rounded-xl border-[#505050]"
         />
       </div>
       <div className="relative text-left pr-8">
-        <p className="typography-body block text-[#22c55e]">
+        <p className="typography-body block text-[#e1ff00]">
           {formatDate(attempt.date)}
         </p>
-        <div className="typography-caption text-[#22c55e] mt-1 space-y-1">
+        <div className="typography-caption text-[#ffffff] mt-1 space-y-1">
           {Object.entries(attempt.answers).map(([questionKey, answer]) => (
             <p key={questionKey} className="break-words">
               {answer || 'No answer provided'}
             </p>
           ))}
         </div>
-      </div>
-      <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full flex items-center justify-center">
-        <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-        </svg>
       </div>
     </button>
   );

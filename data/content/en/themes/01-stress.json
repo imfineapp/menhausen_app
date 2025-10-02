@@ -1,0 +1,129 @@
+{
+  "id": "stress",
+  "title": "Stress",
+  "description": "Learning to cope with daily stress and develop healthy coping mechanisms.",
+  "isPremium": false,
+  "welcomeMessage": "Take control of your stress levels. Master practical techniques for managing daily pressures and building resilience.",
+  "cards": [
+    {
+      "id": "STRESS-01",
+      "level": 1,
+      "introduction": "Sometimes the body signals before we realize we're experiencing stress. Let's start there.",
+      "questions": [
+        "How do you feel stress in your body right now (location, level from 1 to 10)?",
+        "What happened shortly before these sensations appeared?"
+      ],
+      "recommendation": "For a week, notice and record physical stress signals. Why: this helps track early markers of overload.",
+      "mechanism": "Increased awareness of physical symptoms.",
+      "technique": "Body awareness (ACT)"
+    },
+    {
+      "id": "STRESS-02",
+      "level": 1,
+      "introduction": "Sleep suffers first. Stress rarely goes away if we don't rest.",
+      "questions": [
+        "How often do you wake up at night or feel tired in the morning?",
+        "What thoughts or worries prevent you from relaxing before sleep?"
+      ],
+      "recommendation": "Create a 'shutdown ritual': 30 minutes before sleep — no screens, list 3 good events of the day. Why: restores circadian rhythm and improves sleep quality.",
+      "mechanism": "Regulation of wake-sleep cycle reduces cortisol levels.",
+      "technique": "Sleep hygiene (CBT)"
+    },
+    {
+      "id": "STRESS-03",
+      "level": 2,
+      "introduction": "You don't have to be productive 24/7. Even machines overheat.",
+      "questions": [
+        "What expectations do you place on yourself throughout the day?",
+        "What in these expectations is unrealistic?"
+      ],
+      "recommendation": "Choose 1 task per day that you consciously 'won't do'. Why: you learn to allow pauses and reality.",
+      "mechanism": "Reducing perfectionist pressure.",
+      "technique": "Conscious non-doing (ACT)"
+    },
+    {
+      "id": "STRESS-04",
+      "level": 2,
+      "introduction": "Thoughts in stress are often fast, sharp, and accusatory. Time to slow them down.",
+      "questions": [
+        "What thoughts most often appear to you during overload?",
+        "What would you say to a friend if they thought this about themselves?"
+      ],
+      "recommendation": "Find 1 thought and 1 alternative view of it. Repeat this exercise 3 times per week. Why: you train self-support.",
+      "mechanism": "Weakening destructive cognitions.",
+      "technique": "Cognitive restructuring (CBT)"
+    },
+    {
+      "id": "STRESS-05",
+      "level": 3,
+      "introduction": "Stress often turns the future into a catastrophe. But it's just a scenario.",
+      "questions": [
+        "What negative prediction do you often replay in your head?",
+        "What's the probability it will come true? What alternatives exist?"
+      ],
+      "recommendation": "Write down your fear, breaking it into 'real' and 'possible'. Why: this reduces automatic catastrophizing.",
+      "mechanism": "Separating facts from interpretations.",
+      "technique": "Decatastrophization (CBT)"
+    },
+    {
+      "id": "STRESS-06",
+      "level": 3,
+      "introduction": "When everything falls apart — it's important to understand what's really under control.",
+      "questions": [
+        "What can't you change in your current situation?",
+        "What's in your sphere of influence?"
+      ],
+      "recommendation": "Divide everything that worries you into 2 columns: 'can influence' and 'cannot'. Work only with the first. Why: this reduces anxious brain activity.",
+      "mechanism": "Localizing efforts in the control zone.",
+      "technique": "Focus techniques (ACT/CBT)"
+    },
+    {
+      "id": "STRESS-07",
+      "level": 4,
+      "introduction": "Stress affects attention. We lose focus, and everything seems worse.",
+      "questions": [
+        "When did you last notice you simply 'dropped out' of the process?",
+        "What happened 10-15 minutes before that?"
+      ],
+      "recommendation": "Once a day, take a 3-minute pause observing your breathing. Why: this trains focus and stability.",
+      "mechanism": "Mindfulness reduces cortisol levels and switches from 'autopilot'.",
+      "technique": "Conscious pause (ACT)"
+    },
+    {
+      "id": "STRESS-08",
+      "level": 4,
+      "introduction": "Chronic stress makes us hypersensitive.",
+      "questions": [
+        "What little things irritate you especially strongly lately?",
+        "What might this be related to besides current events?"
+      ],
+      "recommendation": "Arrange a 'day of silence' — turn off notifications and minimize external irritants. Why: minimizing stimuli reduces sensory overload.",
+      "mechanism": "Restoring sensory balance.",
+      "technique": "Sensory unloading (ACT)"
+    },
+    {
+      "id": "STRESS-09",
+      "level": 5,
+      "introduction": "Your body is not an enemy. It knows how to release tension.",
+      "questions": [
+        "What physical actions help you release stress (movement, breathing, water)?",
+        "When did you last use one of them?"
+      ],
+      "recommendation": "Choose 1 method (e.g., 'square breathing' 4-4-4-4) and use it 2 times a day for 5 days. Why: you form self-regulation skills.",
+      "mechanism": "Influence on the sympathetic nervous system.",
+      "technique": "Body regulation (ACT)"
+    },
+    {
+      "id": "STRESS-10",
+      "level": 5,
+      "introduction": "You have the right to stop. Even for 15 minutes.",
+      "questions": [
+        "What would you like to do right now if you had no obligations?",
+        "What prevents you from doing this, at least partially?"
+      ],
+      "recommendation": "For a week, do a 15-minute 'reboot' during the day: silence, tea, window, walk. Why: returns contact with yourself and reduces emotional tension.",
+      "mechanism": "Reducing overload through attention switching.",
+      "technique": "Behavioral grounding (ACT)"
+    }
+  ]
+}

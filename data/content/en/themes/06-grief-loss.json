@@ -1,0 +1,129 @@
+{
+  "id": "grief-loss",
+  "title": "Loss of a Loved One",
+  "description": "Processing grief and recovery after loss.",
+  "isPremium": true,
+  "welcomeMessage": "Find support in the grieving process. Learn to process loss and move forward while preserving memory of your loved one.",
+  "cards": [
+    {
+      "id": "LOSS-01",
+      "level": 1,
+      "introduction": "Loss doesn't disappear, but it can transform. Let's start with an honest look.",
+      "questions": [
+        "What emotion arises in you when you remember this person?",
+        "What thoughts come after this emotion?"
+      ],
+      "recommendation": "Emotional acknowledgment reduces repression and tension.\n\nAllow yourself 10 minutes to simply be with this emotion — without judgment. Awareness and acceptance start the grief processing.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-02",
+      "level": 1,
+      "introduction": "Loss can cause guilt. Even if you did nothing wrong.",
+      "questions": [
+        "Do you have thoughts like 'I could have...', 'I didn't have time...'?",
+        "What would you say to a friend in this situation?"
+      ],
+      "recommendation": "Shifting focus and role reduces destructive self-esteem.\n\nWrite a short letter to yourself from a friend's perspective: with kindness, without accusations. This reduces guilt through compassion.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-03",
+      "level": 2,
+      "introduction": "We often avoid memories because we fear pain. But warmth is also in them.",
+      "questions": [
+        "What memories simultaneously cause pain and gratitude?",
+        "What of these memories would you like to preserve in yourself?"
+      ],
+      "recommendation": "Keep 1 photo or object that evokes good memories. Let it be nearby. Conscious memory helps connect pain with warmth.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-04",
+      "level": 2,
+      "introduction": "Sometimes pain doesn't release because dialogue with the departed is unfinished.",
+      "questions": [
+        "What would you like to say to this person — but didn't have time?",
+        "What words would you like to hear from them now?"
+      ],
+      "recommendation": "Write a letter to this person by hand. Say everything. Keep it or burn it — as you need. Unfinished can be completed through symbolic act.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-05",
+      "level": 3,
+      "introduction": "Grieving doesn't equal weakness. It's an act of love and restoration.",
+      "questions": [
+        "What are you afraid of when you start feeling loss pain?",
+        "What would change if you allowed yourself to grieve?"
+      ],
+      "recommendation": "Controlled emotion processing reduces inner tension.\n\nCreate a 'safe window': 15 minutes of silence, music, remembrance. Just be in it. Time-limited grieving reduces avoidance.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-06",
+      "level": 3,
+      "introduction": "After loss, life often seems meaningless. This isn't the end. It's a transition.",
+      "questions": [
+        "What started seeming 'unimportant' to you after the loss?",
+        "What small actions bring you at least some sense of life?"
+      ],
+      "recommendation": "For 3 days, do 1 'living' action per day (music, walk, taste). Why: physical contact with the present reduces emptiness.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-07",
+      "level": 4,
+      "introduction": "Relationship doesn't end with death. It just changes.",
+      "questions": [
+        "What qualities of the departed person did you especially value?",
+        "How can you embody these qualities in your life?"
+      ],
+      "recommendation": "Do one action per week through which this person 'continues' in you. This gives meaning and strengthens inner connection.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-08",
+      "level": 4,
+      "introduction": "Life after loss isn't betrayal. It's a way to preserve meaning.",
+      "questions": [
+        "If this person could see you now, what would they wish for you?",
+        "How can you honor this message through your behavior?"
+      ],
+      "recommendation": "Behavioral expression of memory reduces guilt for 'living on'.\n\nWrite 1 action that would be in their honor — and do it. Actions filled with meaning help move forward.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-09",
+      "level": 5,
+      "introduction": "Loss changes not only your life — but you. This is normal.",
+      "questions": [
+        "What changed in you as a person after this experience?",
+        "What of this would you like to preserve and develop further?"
+      ],
+      "recommendation": "Record 3 qualities that became stronger after the loss, and manifest at least one for 3 days. New identity is part of healing. You reconstruct yourself as a bearer of value, not just loss.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "LOSS-10",
+      "level": 5,
+      "introduction": "Sometimes we feel we don't have the right to be happy after loss. But that's not true.",
+      "questions": [
+        "What fears do you have related to returning to joy?",
+        "What could be the first small step toward life?"
+      ],
+      "recommendation": "Take this step — not because you forget, but because you live. The right to joy isn't betrayal of memory, but its continuation. Accept life as space for both pain and happiness.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

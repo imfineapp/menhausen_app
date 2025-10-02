@@ -1,0 +1,129 @@
+{
+  "id": "anger",
+  "title": "Anger and Irritability",
+  "description": "Anger and developing emotional regulation.",
+  "isPremium": true,
+  "welcomeMessage": "Learn to control anger and irritation. Master emotional regulation techniques for a calmer life.",
+  "cards": [
+    {
+      "id": "ANGR-01",
+      "level": 1,
+      "introduction": "Anger doesn't arise out of nowhere. It's a signal. Let's figure out what it's telling us.",
+      "questions": [
+        "In what situations do you most often get angry — at home, at work, on the road?",
+        "What's common between these situations?"
+      ],
+      "recommendation": "Identifying triggers is the first step to managing impulses.\n\nFor a week, note anger triggers and what's common between them. You'll see what triggers the reaction — and can work with it.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-02",
+      "level": 1,
+      "introduction": "Anger often covers something more vulnerable.",
+      "questions": [
+        "What did you feel a minute before your last anger outburst?",
+        "What fear, pain, or helplessness might have been behind this anger?"
+      ],
+      "recommendation": "Unpacking emotions reduces destructive charge.\n\nAfter each strong reaction, write 2 assumptions: 'What did I feel before anger?' This reveals deep causes, not just consequences.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-03",
+      "level": 2,
+      "introduction": "Our body speaks before we do. Especially in anger.",
+      "questions": [
+        "How do you feel anger in your body? Where does it live: in your chest, jaw, fists?",
+        "What physical signals appear before outbursts?"
+      ],
+      "recommendation": "Physical reaction and emotion are connected.\n\nNotice physical signals as 'first warning' — and take a breathing pause. Early recognition gives a chance to stop the reaction.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-04",
+      "level": 2,
+      "introduction": "Not every irritation is worth turning into conflict.",
+      "questions": [
+        "When did you last regret your outburst?",
+        "What could you have done differently in that moment?"
+      ],
+      "recommendation": "Visualizing alternatives reduces impulsiveness.\n\nImagine a similar situation and create an alternative scenario with pause and choice. This trains emotional flexibility.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-05",
+      "level": 3,
+      "introduction": "Often we're not angry at the real person, but at our interpretation of their words.",
+      "questions": [
+        "What did you think about the person or situation in the moment of anger?",
+        "What other explanations could there be for their behavior?"
+      ],
+      "recommendation": "Cognitive flexibility reduces emotional reaction strength.\n\nIn moments of irritation, ask yourself: 'What else could this mean?' This reduces tendency toward automatic accusations.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-06",
+      "level": 3,
+      "introduction": "Sometimes anger arises from mismatch between expectations and reality.",
+      "questions": [
+        "What expectation was violated in your last case of irritation?",
+        "How realistic was it?"
+      ],
+      "recommendation": "Rationalizing emotional attitudes.\n\nAfter each outburst, analyze whether your expectation was flexible or rigid. Adjusting expectations reduces anger triggers.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-07",
+      "level": 4,
+      "introduction": "Being angry doesn't mean being bad. What matters is what you do with it.",
+      "questions": [
+        "How do you usually express anger: with words, actions, silence?",
+        "What of this helps you, and what destroys relationships or yourself?"
+      ],
+      "recommendation": "Find one safe release method (sports, writing, screaming into a pillow) and use it 2 times per week. Anger energy should be released ecologically.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-08",
+      "level": 4,
+      "introduction": "Irritation can be a hint that something's wrong with boundaries.",
+      "questions": [
+        "Where do you most often endure until the last moment — then explode?",
+        "How could you gently mark your boundary beforehand?"
+      ],
+      "recommendation": "Preventive boundary expression reduces tension buildup.\n\nPractice the phrase: 'This doesn't work for me' — 1 time per day in safe situations. This strengthens assertiveness skills.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-09",
+      "level": 5,
+      "introduction": "Better one experiment than a thousand theories. Time to test.",
+      "questions": [
+        "In what situation do you most often lose control — and would like to react differently?",
+        "How can you test a new behavioral strategy in the next 3 days?"
+      ],
+      "recommendation": "Behavior changes how you interact with the world.\n\nConduct a behavioral experiment: test a new reaction in a known situation. New behavior forms new neural connections.",
+      "mechanism": "",
+      "technique": ""
+    },
+    {
+      "id": "ANGR-10",
+      "level": 5,
+      "introduction": "Sometimes anger is a signal that you need to protect, not destroy.",
+      "questions": [
+        "What or whom would you like to protect when you're angry?",
+        "How can you express this protection more constructively?"
+      ],
+      "recommendation": "Write a short manifesto — what you stand for and how you want to express it. Anger can become a tool of value, not destruction.",
+      "mechanism": "",
+      "technique": ""
+    }
+  ]
+}

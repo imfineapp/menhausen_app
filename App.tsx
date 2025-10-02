@@ -970,6 +970,21 @@ function AppContent() {
   };
 
   /**
+   * Получение themeId из префикса cardId
+   */
+  const getThemeIdFromCardId = (cardId: string): string => {
+    if (cardId.startsWith('STRESS')) return 'stress';
+    if (cardId.startsWith('REL')) return 'relationships';
+    if (cardId.startsWith('IDNT')) return 'self-identity';
+    if (cardId.startsWith('ANGR')) return 'anger';
+    if (cardId.startsWith('DEPR')) return 'depression-coping';
+    if (cardId.startsWith('LOSS')) return 'grief-loss';
+    if (cardId.startsWith('BURN')) return 'burnout-recovery';
+    if (cardId.startsWith('ANX')) return 'anxiety';
+    return 'stress'; // fallback
+  };
+
+  /**
    * Обработка клика по карточке - теперь использует систему контента
    */
   const handleThemeCardClick = async (cardId: string) => {
@@ -987,10 +1002,8 @@ function AppContent() {
       // Используем ThemeLoader для получения данных карточки
       const { ThemeLoader } = await import('./utils/ThemeLoader');
       
-      // Определяем themeId из cardId (например, STRESS-01 -> stress-management)
-      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
-                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
-                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      // Определяем themeId из префикса cardId
+      const themeId = getThemeIdFromCardId(cardId);
       
       const theme = await ThemeLoader.loadTheme(themeId, language);
       if (!theme) {
@@ -1024,9 +1037,7 @@ function AppContent() {
     try {
       const { ThemeLoader } = await import('./utils/ThemeLoader');
       
-      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
-                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
-                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      const themeId = getThemeIdFromCardId(cardId);
       
       const theme = await ThemeLoader.loadTheme(themeId, language);
       if (!theme) {
@@ -1052,9 +1063,7 @@ function AppContent() {
     try {
       const { ThemeLoader } = await import('./utils/ThemeLoader');
       
-      const themeId = cardId.startsWith('STRESS') ? 'stress-management' : 
-                     cardId.startsWith('ANXIETY') ? 'anxiety-management' :
-                     cardId.startsWith('SLEEP') ? 'sleep-improvement' : 'stress-management';
+      const themeId = getThemeIdFromCardId(cardId);
       
       const theme = await ThemeLoader.loadTheme(themeId, language);
       if (!theme) {
@@ -1099,8 +1108,8 @@ function AppContent() {
       setCurrentCard(cardData);
       navigateTo('card-details');
     } else {
-      console.log('All cards have been completed!');
-      alert('Congratulations! You have completed all cards in this theme.');
+      console.log('All cards have been completed! Navigating to home.');
+      navigateTo('home');
     }
   };
 
