@@ -27,6 +27,17 @@ setup('authenticate', async ({ page }) => {
     // Игнорируем, если loading экран не найден
   }
   
-  // Сохраняем состояние аутентификации
-  await page.context().storageState({ path: 'tests/e2e/auth.json' });
+  // Сохраняем состояние аутентификации, затем очищаем PostHog артефакты
+  const state = await page.context().storageState();
+  const sanitized = {
+    cookies: (state.cookies || []).filter(c => !c.name.startsWith('ph_')),
+    origins: (state.origins || []).map(o => ({
+      origin: o.origin,
+      localStorage: (o.localStorage || []).filter(item => !item.name.startsWith('ph_')),
+    })),
+  } as typeof state;
+
+  // Записываем очищенное состояние
+  const fs = await import('node:fs');
+  fs.writeFileSync('tests/e2e/auth.json', JSON.stringify(sanitized, null, 2), 'utf-8');
 });

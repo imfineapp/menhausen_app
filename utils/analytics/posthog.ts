@@ -26,7 +26,10 @@ export function isAnalyticsEnabled(): boolean {
   if (typeof window === 'undefined') return false
   // Check if PostHog is explicitly enabled via environment variable
   if (!POSTHOG_ENABLED) return false
-  if (!PUBLIC_KEY || isTestMode()) return false
+  // Then check if we have a valid key
+  if (!PUBLIC_KEY) return false
+  // Disable in test mode
+  if (isTestMode()) return false
 
   return true
 }
