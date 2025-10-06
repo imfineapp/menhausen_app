@@ -471,6 +471,7 @@ export interface AppContent {
   about: AboutContent;
   badges: BadgesContent;
   activityData?: ActivityData;
+  payments: PaymentsContent;
 }
 
 /**
@@ -640,5 +641,55 @@ export interface BadgesContent {
       title: LocalizedContent;
       description: LocalizedContent;
     };
+  };
+}
+
+/**
+ * Контент для страницы оплаты/подписки
+ */
+export interface PaymentsContent {
+  currentPlan: LocalizedContent;
+  freePlan: LocalizedContent;
+  premiumTitle: LocalizedContent;
+  benefitsTitle: LocalizedContent;
+  keyBenefits?: LocalizedContent[];
+  premiumThemes?: LocalizedContent[];
+  benefits: {
+    angry: LocalizedContent;
+    sadness: LocalizedContent;
+    anxiety: LocalizedContent;
+    confidence: LocalizedContent;
+    relationships: LocalizedContent;
+  };
+  plans: {
+    monthly: LocalizedContent;
+    annually: LocalizedContent;
+    lifetime: LocalizedContent;
+    perMonth: LocalizedContent;
+    perYear: LocalizedContent;
+    perLifetime: LocalizedContent;
+    savingsBadge?: LocalizedContent; // e.g., "Save 40%"
+    mostPopularBadge?: LocalizedContent; // e.g., "Most popular"
+  };
+  cta: {
+    buy: LocalizedContent;
+    processing: LocalizedContent;
+  };
+  messages: {
+    successWithPlan: LocalizedContent; // содержит {plan}
+    error: LocalizedContent;
+  };
+  legal?: {
+    disclaimer: LocalizedContent;
+    termsText: LocalizedContent;
+    privacyText: LocalizedContent;
+    termsHref?: LocalizedContent;
+    privacyHref?: LocalizedContent;
+  };
+  promo?: {
+    placeholder: LocalizedContent;
+    apply: LocalizedContent;
+    applied: LocalizedContent;
+    invalid: LocalizedContent;
   };
 }

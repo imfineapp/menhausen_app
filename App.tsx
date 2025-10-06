@@ -1231,6 +1231,10 @@ function AppContent() {
     navigateTo('under-construction');
   };
 
+  const handleShowDonations = () => {
+    handleShowUnderConstruction('Donations');
+  };
+
   const handleBackToProfileFromUnderConstruction = () => {
     console.log('Returning to profile from Under Construction');
     setCurrentFeatureName('');
@@ -1449,6 +1453,7 @@ function AppContent() {
             onShowTerms={handleShowTermsFromProfile}
             onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
+            onShowDonations={handleShowDonations}
             onShowUnderConstruction={handleShowUnderConstruction}
             onGoToBadges={handleGoToBadges}
             onGoToLevels={handleGoToLevels}

@@ -2,7 +2,7 @@
 // УНИВЕРСАЛЬНЫЙ КОМПОНЕНТ ЭКРАНА ОПРОСА
 // ========================================================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSurveyScreen, useUIText } from './ContentContext';
 import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
@@ -35,6 +35,8 @@ export function SurveyScreenTemplate({
   const [selectedOptions, setSelectedOptions] = useState<string[]>(initialSelections);
   const [textInput, setTextInput] = useState<string>('');
   const [showError, setShowError] = useState<boolean>(false);
+  const [logoOpacity, setLogoOpacity] = useState<number>(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // =====================================================================================
   // ЭФФЕКТЫ
@@ -46,6 +48,29 @@ export function SurveyScreenTemplate({
       setShowError(false);
     }
   }, [selectedOptions, textInput, showError]);
+
+  // Отслеживание скролла для логотипа
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      
+      if (scrollTop <= 1) {
+        setLogoOpacity(1);
+      } else if (scrollTop >= 50) {
+        setLogoOpacity(0);
+      } else {
+        // Плавное затухание от 1px до 50px
+        const opacity = 1 - (scrollTop - 1) / (50 - 1);
+        setLogoOpacity(Math.max(0, opacity));
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // =====================================================================================
   // ОБРАБОТЧИКИ СОБЫТИЙ
@@ -164,7 +189,7 @@ export function SurveyScreenTemplate({
             <button
               key={option.id}
               onClick={() => handleOptionSelect(option.id)}
-              className={`w-full min-h-[56px] px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left min-h-[44px] min-w-[44px] ${
+              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left min-h-[44px] min-w-[44px] ${
                 isSelected 
                   ? 'border-[#e1ff00] bg-[#e1ff00]/10 text-white' 
                   : 'border-[#3a3a3a] bg-[#2a2a2a] text-[#d4d4d4] hover:border-[#4a4a4a] hover:bg-[#333333]'
@@ -173,7 +198,7 @@ export function SurveyScreenTemplate({
               data-id={option.id}
             >
               <div className="flex items-center space-x-3">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
+                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors duration-200 flex-shrink-0 self-center ${
                   isSelected 
                     ? 'border-[#e1ff00] bg-[#e1ff00]' 
                     : 'border-[#666666]'
@@ -182,7 +207,7 @@ export function SurveyScreenTemplate({
                     <div className="w-2 h-2 rounded-full bg-black" />
                   )}
                 </div>
-                <span className="typography-body">{option.text}</span>
+                <span className="typography-body leading-relaxed">{option.text}</span>
               </div>
             </button>
           );
@@ -226,10 +251,12 @@ export function SurveyScreenTemplate({
       <Light />
       
       {/* Логотип */}
-      <MiniStripeLogo />
+      <div style={{ opacity: logoOpacity }}>
+        <MiniStripeLogo />
+      </div>
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             

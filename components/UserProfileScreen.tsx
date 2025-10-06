@@ -35,6 +35,7 @@ interface UserProfileScreenProps {
   onShowTerms: () => void; // Функция для открытия Terms of Use
   onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
+  onShowDonations: () => void; // Функция для перехода к странице донатов
   onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
   onGoToBadges: () => void; // Функция для перехода к странице достижений
   onGoToLevels: () => void; // Функция для перехода к странице уровней
@@ -53,6 +54,7 @@ export function UserProfileScreen({
   onShowTerms, 
   onShowDeleteAccount, 
   onShowPayments, 
+  onShowDonations,
   onShowUnderConstruction, 
   onGoToBadges,
   onGoToLevels,
@@ -80,8 +82,8 @@ export function UserProfileScreen({
   };
 
   const handleDonation = () => {
-    console.log('Opening donation - redirecting to Under Construction');
-    onShowUnderConstruction('Make donation');
+    console.log('Opening donation - navigating to Donations');
+    onShowDonations();
   };
 
   const handleActivity = () => {

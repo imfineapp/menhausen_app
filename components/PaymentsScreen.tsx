@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
+import { useContent } from './ContentContext';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -17,40 +19,7 @@ interface PaymentsScreenProps {
 /**
  * Декоративный световой эффект в верхней части экрана
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[130px] top-[-65px] translate-x-[-50%] w-[185px] pointer-events-none"
-      data-name="Light"
-      style={{ left: "calc(50% + 1px)" }}
-    >
-      <div className="absolute inset-[-196.15%_-137.84%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 695 640">
-          <g id="Light">
-            <g filter="url(#filter0_f_1_395)" id="Ellipse 2">
-              <ellipse cx="347.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-          </g>
-          <defs>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="640"
-              id="filter0_f_1_395"
-              width="695"
-              x="0"
-              y="0"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_1_395" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Фон для блока текущего плана
@@ -72,16 +41,17 @@ function ThemeBlockBackground() {
  * Информация о текущем плане пользователя
  */
 function PlanInfo() {
+  const { content } = useContent();
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center text-nowrap"
+      className="flex flex-col items-center justify-center text-center"
       data-name="Plan Info"
     >
-      <div className="[grid-area:1_/_1] typography-body ml-[74px] mt-0 text-[#ffffff] translate-x-[-50%]">
-        <p className="block">Your current plan</p>
+      <div className="typography-body text-[#ffffff] mb-2">
+        <p className="block">{content.payments.currentPlan}</p>
       </div>
-      <div className="[grid-area:1_/_1] typography-h2 ml-[74px] mt-[30px] text-[#e1ff00] translate-x-[-50%]">
-        <h2 className="block text-nowrap whitespace-pre">FREE</h2>
+      <div className="typography-h2 text-[#e1ff00]">
+        <h2 className="block">{content.payments.freePlan}</h2>
       </div>
     </div>
   );
@@ -108,7 +78,7 @@ function CurrentPlanContainer() {
  */
 function ThemeBlockBackground1() {
   return (
-    <div className="absolute h-[198px] left-0 top-0 w-[351px]" data-name="theme_block_background">
+    <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
         <div
           aria-hidden="true"
@@ -123,34 +93,45 @@ function ThemeBlockBackground1() {
  * Описание Premium плана с преимуществами
  */
 function PremiumContainer() {
+  const { content } = useContent();
   return (
     <div
-      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 h-[198px] items-center justify-start ml-0 mt-0 px-[19px] py-4 relative w-[351px]"
+      className="[grid-area:1_/_1] box-border content-stretch flex flex-col gap-2.5 items-center justify-start ml-0 mt-0 px-[19px] py-4 relative w-[351px] min-h-[198px]"
       data-name="Container"
     >
       <ThemeBlockBackground1 />
       <div className="typography-h2 text-[#e1ff00] text-center text-nowrap">
-        <h2 className="block whitespace-pre">Premium</h2>
+        <h2 className="block whitespace-pre">{content.payments.premiumTitle}</h2>
       </div>
-      <div className="typography-body h-[131px] text-[#ffffff] text-left w-[310px]">
-        <p className="block mb-0">Opened all themes and cards</p>
-        <ul className="css-ed5n1g list-disc">
-          <li className="mb-0 ms-[30px]">
-            <span className="leading-none">Angry</span>
-          </li>
-          <li className="mb-0 ms-[30px]">
-            <span className="leading-none">Sadness and apathy</span>
-          </li>
-          <li className="mb-0 ms-[30px]">
-            <span className="leading-none">Anxiety</span>
-          </li>
-          <li className="mb-0 ms-[30px]">
-            <span className="leading-none">Lack and self-confidence</span>
-          </li>
-          <li className="ms-[30px]">
-            <span className="leading-none">Relationships and family</span>
-          </li>
-        </ul>
+      <div className="typography-body text-[#ffffff] text-left w-[310px]">
+        <p className="block mb-0">{content.payments.benefitsTitle}</p>
+        {Array.isArray(content.payments.premiumThemes) && content.payments.premiumThemes.length > 0 ? (
+          <ul className="css-ed5n1g list-disc">
+            {content.payments.premiumThemes.map((theme, idx) => (
+              <li key={idx} className={idx < (content.payments.premiumThemes?.length || 0) - 1 ? 'mb-0 ms-[30px]' : 'ms-[30px]'}>
+                <span className="leading-none">{theme}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="css-ed5n1g list-disc">
+            <li className="mb-0 ms-[30px]">
+              <span className="leading-none">{content.payments.benefits.angry}</span>
+            </li>
+            <li className="mb-0 ms-[30px]">
+              <span className="leading-none">{content.payments.benefits.sadness}</span>
+            </li>
+            <li className="mb-0 ms-[30px]">
+              <span className="leading-none">{content.payments.benefits.anxiety}</span>
+            </li>
+            <li className="mb-0 ms-[30px]">
+              <span className="leading-none">{content.payments.benefits.confidence}</span>
+            </li>
+            <li className="ms-[30px]">
+              <span className="leading-none">{content.payments.benefits.relationships}</span>
+            </li>
+          </ul>
+        )}
       </div>
     </div>
   );
@@ -190,7 +171,7 @@ function PlanComparisonContainer() {
  */
 function ThemeBlockBackground2() {
   return (
-    <div className="absolute h-[82px] left-0 top-0 w-[351px]" data-name="theme_block_background">
+    <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
       <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block" />
     </div>
   );
@@ -319,30 +300,46 @@ function RadioButton({ isSelected, color }: { isSelected: boolean; color: string
  * Опция выбора плана
  */
 function PlanOption({ 
+  id,
   title, 
   price, 
   period, 
   isSelected, 
-  isHighlighted 
+  isHighlighted, 
+  badge
 }: { 
+  id: string;
   title: string; 
   price: string; 
   period: string; 
   isSelected: boolean; 
   isHighlighted: boolean;
+  badge?: string;
 }) {
   const color = isHighlighted ? '#2d2b2b' : '#ffffff';
   
   return (
-    <div
-      className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-[310px]"
+    <label
+      htmlFor={id}
+      className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-[310px] cursor-pointer"
       data-name="Plan Option"
+      role="radio"
+      aria-checked={isSelected}
+      tabIndex={0}
     >
-      <PlanDetails title={title} price={price} period={period} color={color} />
+      <div className="flex flex-col gap-1">
+        {!!badge && (
+          <div className="self-start text-[#111] bg-[#e1ff00] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+            {badge}
+          </div>
+        )}
+        <PlanDetails title={title} price={price} period={period} color={color} />
+      </div>
       <div className="min-h-[44px] min-w-[44px] flex items-center justify-center">
+        <input id={id} name="plan" type="radio" checked={isSelected} readOnly className="appearance-none w-0 h-0 absolute" />
         <RadioButton isSelected={isSelected} color={color} />
       </div>
-    </div>
+    </label>
   );
 }
 
@@ -350,17 +347,18 @@ function PlanOption({
  * Контейнер месячного плана
  */
 function MonthlyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; onSelect: () => void }) {
+  const { content } = useContent();
   return (
     <button 
       onClick={onSelect}
-      className="h-[82px] relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]" 
+      className="relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] focus:outline-none focus:ring-2 focus:ring-[#e1ff00] rounded-xl" 
       data-name="Container"
     >
-      <div className="flex flex-col items-center justify-center relative size-full">
-        <div className="box-border content-stretch flex flex-col gap-2.5 h-[82px] items-center justify-center px-5 py-[15px] relative w-full">
+      <div className="flex flex-col items-center justify-center relative">
+        <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-[15px] relative w-full min-h-[82px]">
           {isSelected && <ThemeBlockBackground2 />}
           {!isSelected && (
-            <div className="absolute h-[82px] left-0 top-0 w-[351px]" data-name="theme_block_background">
+            <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
               <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
                 <div
                   aria-hidden="true"
@@ -370,9 +368,10 @@ function MonthlyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; o
             </div>
           )}
           <PlanOption 
-            title="Monthly" 
-            price="150" 
-            period="/ month" 
+            id="plan-monthly"
+            title={content.payments.plans.monthly} 
+            price={"150"} 
+            period={content.payments.plans.perMonth} 
             isSelected={isSelected}
             isHighlighted={isSelected}
           />
@@ -386,16 +385,17 @@ function MonthlyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; o
  * Контейнер годового плана
  */
 function AnnuallyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; onSelect: () => void }) {
+  const { content } = useContent();
   return (
     <button 
       onClick={onSelect}
-      className="h-[82px] relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]" 
+      className="relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] focus:outline-none focus:ring-2 focus:ring-[#e1ff00] rounded-xl" 
       data-name="Container"
     >
-      <div className="flex flex-col items-center justify-center relative size-full">
-        <div className="box-border content-stretch flex flex-col gap-2.5 h-[82px] items-center justify-center px-5 py-[15px] relative w-full">
-          <div className="absolute h-[82px] left-0 top-0 w-[351px]" data-name="theme_block_background">
-            <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+      <div className="flex flex-col items-center justify-center relative">
+        <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-[15px] relative w-full min-h-[82px]">
+          <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
+            <div className={`absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl ${isSelected ? 'border border-[#e1ff00]' : ''}`} data-name="Block">
               <div
                 aria-hidden="true"
                 className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
@@ -403,11 +403,49 @@ function AnnuallyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; 
             </div>
           </div>
           <PlanOption 
-            title="Annually" 
-            price="150" 
-            period="/ year" 
+            id="plan-annually"
+            title={content.payments.plans.annually} 
+            price={"1500"} 
+            period={content.payments.plans.perYear} 
             isSelected={isSelected}
             isHighlighted={false}
+            badge={content.payments.plans.savingsBadge || content.payments.plans.mostPopularBadge}
+          />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/**
+ * Контейнер бессрочного плана
+ */
+function LifetimePlanContainer({ isSelected, onSelect }: { isSelected: boolean; onSelect: () => void }) {
+  const { content } = useContent();
+  return (
+    <button 
+      onClick={onSelect}
+      className="relative shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] focus:outline-none focus:ring-2 focus:ring-[#e1ff00] rounded-xl" 
+      data-name="Container"
+    >
+      <div className="flex flex-col items-center justify-center relative">
+        <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-[15px] relative w-full min-h-[82px]">
+          <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
+            <div className={`absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl ${isSelected ? 'border border-[#e1ff00]' : ''}`} data-name="Block">
+              <div
+                aria-hidden="true"
+                className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+              />
+            </div>
+          </div>
+          <PlanOption 
+            id="plan-lifetime"
+            title={content.payments.plans.lifetime} 
+            price={"2500"} 
+            period={content.payments.plans.perLifetime} 
+            isSelected={isSelected}
+            isHighlighted={false}
+            badge={content.payments.plans.mostPopularBadge}
           />
         </div>
       </div>
@@ -422,8 +460,8 @@ function PlanSelectionContainer({
   selectedPlan, 
   onSelectPlan 
 }: { 
-  selectedPlan: 'monthly' | 'annually'; 
-  onSelectPlan: (plan: 'monthly' | 'annually') => void;
+  selectedPlan: 'monthly' | 'annually' | 'lifetime'; 
+  onSelectPlan: (plan: 'monthly' | 'annually' | 'lifetime') => void;
 }) {
   return (
     <div
@@ -438,6 +476,10 @@ function PlanSelectionContainer({
         isSelected={selectedPlan === 'annually'} 
         onSelect={() => onSelectPlan('annually')} 
       />
+      <LifetimePlanContainer 
+        isSelected={selectedPlan === 'lifetime'} 
+        onSelect={() => onSelectPlan('lifetime')} 
+      />
     </div>
   );
 }
@@ -447,11 +489,22 @@ function PlanSelectionContainer({
  */
 function MainContainer({ 
   selectedPlan, 
-  onSelectPlan 
+  onSelectPlan,
+  promo,
+  setPromo,
+  promoStatus,
+  setPromoStatus,
+  applyPromo
 }: { 
-  selectedPlan: 'monthly' | 'annually'; 
-  onSelectPlan: (plan: 'monthly' | 'annually') => void;
+  selectedPlan: 'monthly' | 'annually' | 'lifetime'; 
+  onSelectPlan: (plan: 'monthly' | 'annually' | 'lifetime') => void;
+  promo: string;
+  setPromo: (value: string) => void;
+  promoStatus: 'idle' | 'applied' | 'invalid';
+  setPromoStatus: (status: 'idle' | 'applied' | 'invalid') => void;
+  applyPromo: () => void;
 }) {
+  const { content } = useContent();
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 w-full"
@@ -459,6 +512,50 @@ function MainContainer({
     >
       <PlanComparisonContainer />
       <PlanSelectionContainer selectedPlan={selectedPlan} onSelectPlan={onSelectPlan} />
+      {content.payments.keyBenefits && content.payments.keyBenefits.length > 0 && (
+        <div className="mt-2 text-[#ffffff]">
+          <ul className="list-disc ms-[18px]">
+            {content.payments.keyBenefits.slice(0, 5).map((item, idx) => (
+              <li key={idx} className="mb-1">{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      
+      {/* Промокод */}
+      {content.payments.promo && (
+        <div className="mt-4 flex items-center gap-2 w-full">
+          <input
+            type="text"
+            value={promo}
+            onChange={(e) => { setPromo(e.target.value); setPromoStatus('idle'); }}
+            placeholder={content.payments.promo.placeholder}
+            className="flex-1 bg-[#1a1a1a] border border-[#212121] rounded-lg px-3 py-2 text-[#fff] placeholder-[#8a8a8a] focus:outline-none focus:ring-2 focus:ring-[#e1ff00]"
+          />
+          <button
+            onClick={applyPromo}
+            className="px-3 py-2 bg-[#e1ff00] text-[#111] rounded-lg hover:opacity-90"
+          >
+            {content.payments.promo.apply}
+          </button>
+        </div>
+      )}
+      {promoStatus !== 'idle' && (
+        <div className={`text-[12px] ${promoStatus === 'applied' ? 'text-[#9be15d]' : 'text-[#ff6b6b]'}`}>
+          {promoStatus === 'applied' ? content.payments.promo?.applied : content.payments.promo?.invalid}
+        </div>
+      )}
+      
+      {content.payments.legal && (
+        <div className="max-w-[351px] text-[#9a9a9a] text-[12px] leading-4 mt-2">
+          {content.payments.legal.disclaimer}
+          <div className="mt-1">
+            <a className="underline" href={content.payments.legal.termsHref || '/terms'} target="_blank" rel="noreferrer">{content.payments.legal.termsText}</a>
+            {' '}
+            <a className="underline" href={content.payments.legal.privacyHref || '/privacy'} target="_blank" rel="noreferrer">{content.payments.legal.privacyText}</a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -467,11 +564,41 @@ function MainContainer({
 /**
  * Основной компонент экрана покупки Premium подписки
  */
-export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete }: PaymentsScreenProps) {
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annually'>('monthly');
+export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchaseComplete }: PaymentsScreenProps) {
+  const { content } = useContent();
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'annually' | 'lifetime'>('monthly');
   const [isLoading, setIsLoading] = useState(false);
+  const [promo, setPromo] = useState('');
+  const [promoStatus, setPromoStatus] = useState<'idle' | 'applied' | 'invalid'>('idle');
+  const [logoOpacity, setLogoOpacity] = useState(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const handlePlanSelect = (plan: 'monthly' | 'annually') => {
+  // Отслеживание скролла для изменения прозрачности логотипа
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      const fadeStart = 1; // Начинаем затухание после 1px скролла
+      const fadeEnd = 50; // Полностью прозрачный после 50px скролла
+      
+      if (scrollTop <= fadeStart) {
+        setLogoOpacity(1);
+      } else if (scrollTop >= fadeEnd) {
+        setLogoOpacity(0);
+      } else {
+        // Плавное затухание между fadeStart и fadeEnd
+        const fadeProgress = (scrollTop - fadeStart) / (fadeEnd - fadeStart);
+        setLogoOpacity(1 - fadeProgress);
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handlePlanSelect = (plan: 'monthly' | 'annually' | 'lifetime') => {
     setSelectedPlan(plan);
   };
 
@@ -491,16 +618,25 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete }: Payments
       console.log('Premium purchase completed');
       
       // Показываем уведомление об успешной покупке
-      alert(`Premium ${selectedPlan} subscription activated successfully! Welcome to Premium!`);
+      alert(content.payments.messages.successWithPlan);
 
       // Вызываем callback для завершения покупки
-      onPurchaseComplete();
+      // onPurchaseComplete(); // Временно отключено до настройки транзакций
 
     } catch (error) {
       console.error('Error purchasing Premium:', error);
-      alert('An error occurred while processing your purchase. Please try again.');
+      alert(content.payments.messages.error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const applyPromo = () => {
+    // Простая имитация валидации промокода
+    if (promo.trim().toLowerCase() === 'save40') {
+      setPromoStatus('applied');
+    } else {
+      setPromoStatus('invalid');
     }
   };
 
@@ -510,15 +646,28 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete }: Payments
       <Light />
       
       {/* Логотип */}
-      <MiniStripeLogo />
+      <div 
+        className="fixed top-0 left-0 right-0 z-10 transition-opacity duration-300"
+        style={{ opacity: logoOpacity }}
+      >
+        <MiniStripeLogo />
+      </div>
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             
             {/* Основной контейнер с информацией и выбором планов */}
-            <MainContainer selectedPlan={selectedPlan} onSelectPlan={handlePlanSelect} />
+            <MainContainer 
+              selectedPlan={selectedPlan} 
+              onSelectPlan={handlePlanSelect}
+              promo={promo}
+              setPromo={setPromo}
+              promoStatus={promoStatus}
+              setPromoStatus={setPromoStatus}
+              applyPromo={applyPromo}
+            />
 
           </div>
         </div>
@@ -530,7 +679,7 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete }: Payments
         disabled={isLoading}
         className={isLoading ? 'opacity-70 cursor-not-allowed' : ''}
       >
-        {isLoading ? 'Processing...' : 'Buy Premium'}
+        {isLoading ? content.payments.cta.processing : content.payments.cta.buy}
       </BottomFixedButton>
 
     </div>

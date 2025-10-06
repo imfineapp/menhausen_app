@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 import { useContent } from './ContentContext';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { ThemeLoader } from '../utils/ThemeLoader';
@@ -33,39 +34,7 @@ interface CheckinData {
 /**
  * Адаптивный компонент световых эффектов для фона
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[917px] sm:h-[1000px] md:h-[1100px] left-1/2 top-[-65px] translate-x-[-50%] w-[211px] sm:w-[240px] md:w-[280px] overflow-hidden"
-      data-name="Light"
-    >
-      <div className="absolute inset-[-27.81%_-120.85%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 721 1427">
-          <g id="Light">
-            <g filter="url(#filter0_f_17_905)" id="Ellipse 2">
-              <ellipse cx="361.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-            <g filter="url(#filter1_f_17_905)" id="Ellipse 1">
-              <ellipse cx="360.5" cy="1113.5" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="105.5" ry="58.5" />
-            </g>
-          </g>
-          <defs>
-            <filter colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse" height="640" id="filter0_f_17_905" width="695" x="14" y="0">
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_17_905" stdDeviation="127.5" />
-            </filter>
-            <filter colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse" height="627" id="filter1_f_17_905" width="721" x="0" y="800">
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_17_905" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Адаптивная линия разделения

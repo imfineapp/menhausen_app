@@ -1,6 +1,7 @@
 // Импортируем SVG пути для страницы Privacy Policy
 import svgPaths from "../imports/svg-e41m9aecp1";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 import { useLanguage } from './LanguageContext';
 
 // Типы для пропсов компонента
@@ -12,56 +13,7 @@ interface PrivacyPolicyScreenProps {
  * Компонент световых эффектов для фона
  * Идентичен эффектам на других экранах
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[917px] top-[-65px] translate-x-[-50%] w-[211px]"
-      data-name="Light"
-      style={{ left: "calc(50% + 1px)" }}
-    >
-      <div className="absolute inset-[-27.81%_-120.85%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 721 1427">
-          <g id="Light">
-            <g filter="url(#filter0_f_1_264)" id="Ellipse 2">
-              <ellipse cx="361.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-            <g filter="url(#filter1_f_1_264)" id="Ellipse 1">
-              <ellipse cx="360.5" cy="1113.5" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="105.5" ry="58.5" />
-            </g>
-          </g>
-          <defs>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="640"
-              id="filter0_f_1_264"
-              width="695"
-              x="14"
-              y="0"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_1_264" stdDeviation="127.5" />
-            </filter>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="627"
-              id="filter1_f_1_264"
-              width="721"
-              x="0"
-              y="800"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_1_264" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Главный контент страницы Privacy Policy
@@ -85,7 +37,7 @@ function MainContent() {
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="typography-caption text-[#ffffff] text-left w-full max-h-[600px] overflow-y-auto pr-2">
+      <div className="typography-caption text-[#ffffff] text-left w-full overflow-y-auto pr-2 h-[calc(100vh-180px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="block leading-none mb-0">{getText('Дата вступления в силу: 2 августа 2025', 'Effective Date: August 2, 2025')}</p>

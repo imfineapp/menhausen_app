@@ -1,7 +1,8 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 
 // Типы для пропсов компонента
 interface SurveyScreenProps {
@@ -29,40 +30,7 @@ const SURVEY_OPTIONS: SurveyOption[] = [
  * Компонент световых эффектов для фона
  * Используется тот же эффект, что и на втором экране онбординга
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[130px] top-[-65px] translate-x-[-50%] w-[185px] pointer-events-none"
-      data-name="Light"
-      style={{ left: "calc(50% + 1px)" }}
-    >
-      <div className="absolute inset-[-196.15%_-137.84%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 695 640">
-          <g id="Light">
-            <g filter="url(#filter0_f_1_796)" id="Ellipse 2">
-              <ellipse cx="347.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-          </g>
-          <defs>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="640"
-              id="filter0_f_1_796"
-              width="695"
-              x="0"
-              y="0"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_1_796" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Компонент radio button для опций опроса
@@ -99,7 +67,7 @@ function SurveyItem({ option, selected, onToggle }: {
   return (
     <button
       onClick={onToggle}
-      className="h-[60px] relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] min-h-[44px] min-w-[44px]"
+      className="relative shrink-0 w-full cursor-pointer hover:bg-[rgba(217,217,217,0.08)] min-h-[44px] min-w-[44px]"
       data-name="Survey_item_box"
     >
       {/* Фон элемента */}
@@ -120,14 +88,16 @@ function SurveyItem({ option, selected, onToggle }: {
       </div>
       
       {/* Контент элемента */}
-      <div className="absolute box-border content-stretch flex flex-row gap-5 items-center justify-start left-[5.7%] p-0 right-[5.7%] top-1/2 translate-y-[-50%]">
-        <RadioButton selected={selected} />
+      <div className="box-border content-stretch flex flex-row gap-5 items-center justify-start p-4">
+        <div className="flex-shrink-0 self-center">
+          <RadioButton selected={selected} />
+        </div>
         <div 
-          className={`typography-body text-left ${
+          className={`typography-body text-left flex-1 ${
             selected ? 'text-[#e1ff00]' : 'text-[#ffffff]'
           }`}
         >
-          <p className="block leading-none whitespace-pre">{option.label}</p>
+          <p className="block leading-relaxed">{option.label}</p>
         </div>
       </div>
     </button>
@@ -246,6 +216,31 @@ function ProgressBar() {
 export function SurveyScreen({ onComplete, onBack: _onBack }: SurveyScreenProps) {
   // Состояние для отслеживания выбранных опций
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
+  const [logoOpacity, setLogoOpacity] = useState<number>(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Отслеживание скролла для логотипа
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      
+      if (scrollTop <= 1) {
+        setLogoOpacity(1);
+      } else if (scrollTop >= 50) {
+        setLogoOpacity(0);
+      } else {
+        // Плавное затухание от 1px до 50px
+        const opacity = 1 - (scrollTop - 1) / (50 - 1);
+        setLogoOpacity(Math.max(0, opacity));
+      }
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll);
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, []);
 
   /**
    * Функция для переключения выбора опции
@@ -283,7 +278,9 @@ export function SurveyScreen({ onComplete, onBack: _onBack }: SurveyScreenProps)
       <Light />
       
       {/* Логотип */}
-      <MiniStripeLogo />
+      <div style={{ opacity: logoOpacity }}>
+        <MiniStripeLogo />
+      </div>
       
       {/* Прогресс-бар */}
       <div className="absolute top-[120px] left-0 right-0 px-[16px] sm:px-[20px] md:px-[21px]">
@@ -293,7 +290,7 @@ export function SurveyScreen({ onComplete, onBack: _onBack }: SurveyScreenProps)
       </div>
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[160px] pb-[200px]">
           <div className="max-w-[351px] mx-auto">
             

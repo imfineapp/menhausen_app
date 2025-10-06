@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
@@ -32,40 +33,7 @@ interface MainPageContentBlockProps {
 /**
  * Адаптивный компонент световых эффектов для фона
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[100px] sm:h-[120px] md:h-[130px] top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] overflow-hidden"
-      data-name="Light"
-      style={{ left: "calc(50% + 1px)" }}
-    >
-      <div className="absolute inset-[-196.15%_-137.84%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 695 640">
-          <g id="Light">
-            <g filter="url(#filter0_f_1_796)" id="Ellipse 2">
-              <ellipse cx="347.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-          </g>
-          <defs>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="640"
-              id="filter0_f_1_796"
-              width="695"
-              x="0"
-              y="0"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_1_796" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Адаптивный аватар пользователя
@@ -102,7 +70,7 @@ function UserInfo() {
       data-name="User info"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-[140px] sm:w-[160px] md:w-[164px]">
-        <h2 className="block">{displayText}</h2>
+        <h2 className="block text-nowrap">{displayText}</h2>
       </div>
     </div>
   );
@@ -115,10 +83,10 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
   const { content } = useContent();
   return (
     <div
-      className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-center justify-center p-0 relative rounded-xl shrink-0 ${
+      className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-center justify-center px-[6px] sm:px-[7px] md:px-[8px] relative rounded-xl shrink-0 ${
         isPremium 
-          ? 'bg-[#e1ff00] w-[60px] sm:w-[65px] md:w-[69px]' 
-          : 'bg-[#2d2b2b] w-[55px] sm:w-[58px] md:w-[62px]'
+          ? 'bg-[#e1ff00]'
+          : 'bg-[#2d2b2b]'
       }`}
       data-name="User_account_status"
     >
