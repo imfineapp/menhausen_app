@@ -238,6 +238,7 @@ describe('i18n System Tests', () => {
               onShowTerms={mockOnShowTerms}
               onShowDeleteAccount={mockOnShowDeleteAccount}
               onShowPayments={mockOnShowPayments}
+              onShowDonations={mockOnShowUnderConstruction}
               onShowUnderConstruction={mockOnShowUnderConstruction}
               onGoToBadges={vi.fn()}
               onGoToLevels={vi.fn()}

@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
@@ -15,55 +16,7 @@ interface RateCardScreenProps {
 /**
  * Адаптивный компонент световых эффектов для фона
  */
-function Light() {
-  return (
-    <div
-      className="absolute h-[320px] sm:h-[400px] md:h-[460px] lg:h-[520px] xl:h-[580px] left-1/2 top-[-50px] sm:top-[-60px] md:top-[-65px] translate-x-[-50%] w-[140px] sm:w-[165px] md:w-[185px] lg:w-[200px] xl:w-[211px]"
-      data-name="Light"
-    >
-      <div className="absolute inset-[-27.81%_-120.85%]">
-        <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 721 1427">
-          <g id="Light">
-            <g filter="url(#filter0_f_17_905)" id="Ellipse 2">
-              <ellipse cx="361.5" cy="320" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="92.5" ry="65" />
-            </g>
-            <g filter="url(#filter1_f_17_905)" id="Ellipse 1">
-              <ellipse cx="360.5" cy="1113.5" fill="var(--fill-0, #999999)" fillOpacity="0.3" rx="105.5" ry="58.5" />
-            </g>
-          </g>
-          <defs>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="640"
-              id="filter0_f_17_905"
-              width="695"
-              x="14"
-              y="0"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_17_905" stdDeviation="127.5" />
-            </filter>
-            <filter
-              colorInterpolationFilters="sRGB"
-              filterUnits="userSpaceOnUse"
-              height="627"
-              id="filter1_f_17_905"
-              width="721"
-              x="0"
-              y="800"
-            >
-              <feFlood floodOpacity="0" result="BackgroundImageFix" />
-              <feBlend in="SourceGraphic" in2="BackgroundImageFix" mode="normal" result="shape" />
-              <feGaussianBlur result="effect1_foregroundBlur_17_905" stdDeviation="127.5" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-    </div>
-  );
-}
+// Light переиспользуется из общего компонента
 
 /**
  * Адаптивный символ логотипа

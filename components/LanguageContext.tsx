@@ -226,6 +226,31 @@ export function useTranslation() {
         'en': 'Delete account',
         'ru': 'Удалить аккаунт'
       },
+      // Страница донатов
+      'donations_title': {
+        'en': 'Make a donation',
+        'ru': 'Сделать пожертвование'
+      },
+      'donations_description': {
+        'en': 'You can support the project by sending TON or USDT (TON). All donations will be used solely to maintain the technical infrastructure (servers, hosting, monitoring, analytics) so that the app remains fast and stable.',
+        'ru': 'Вы можете поддержать проект переводом на TON или USDT (TON). Все пожертвования будут направлены исключительно на поддержание технической инфраструктуры (серверы, хостинг, мониторинг, аналитика), чтобы приложение оставалось быстрым и стабильным.'
+      },
+      'donations_currency_ton': {
+        'en': 'TON',
+        'ru': 'TON'
+      },
+      'donations_currency_usdt_ton': {
+        'en': 'USDT (TON)',
+        'ru': 'USDT (TON)'
+      },
+      'copy': {
+        'en': 'Copy',
+        'ru': 'Скопировать'
+      },
+      'copied': {
+        'en': 'Copied',
+        'ru': 'Скопировано'
+      },
       // Переводы для страницы "О приложении"
       'about_menhausen': {
         'en': 'About Menhausen',

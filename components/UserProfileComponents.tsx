@@ -24,6 +24,7 @@ export function UserAvatar() {
  * Адаптивный статус аккаунта
  */
 export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
+  const { content } = useContent();
   return (
     <div
       className={`flex items-center justify-center px-3 py-1 rounded-xl ${
@@ -31,11 +32,11 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
       }`}
       data-name="User account status"
     >
-      <div className={`typography-caption text-center ${
+      <div className={`typography-caption text-center text-nowrap ${
         isPremium ? 'text-[#2d2b2b]' : 'text-[#696969]'
       }`}>
-        <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">
-          {isPremium ? 'Premium' : 'Free'}
+        <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px] whitespace-pre">
+          {isPremium ? content.ui.profile.premium : content.ui.profile.free}
         </p>
       </div>
     </div>

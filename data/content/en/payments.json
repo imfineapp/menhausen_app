@@ -1,0 +1,61 @@
+{
+  "currentPlan": "Your current plan",
+  "freePlan": "Free",
+  "premiumTitle": "Premium",
+  "benefitsTitle": "Unlock all themes and cards",
+  "keyBenefits": [
+    "All themes and cards unlocked",
+    "Daily check-ins and progress",
+    "Guided techniques and exercises",
+    "Personalized recommendations",
+    "Priority updates"
+  ],
+  "premiumThemes": [
+    "Relationships",
+    "Self-esteem and identity",
+    "Anger and irritability",
+    "Depressive states",
+    "Loss of a loved one",
+    "Emotional state",
+    "Anxiety and insecurity"
+  ],
+  "benefits": {
+    "angry": "Anger",
+    "sadness": "Sadness and apathy",
+    "anxiety": "Anxiety",
+    "confidence": "Lack and self-confidence",
+    "relationships": "Relationships and family"
+  },
+  "plans": {
+    "monthly": "Monthly",
+    "annually": "Annually",
+    "lifetime": "Lifetime",
+    "perMonth": "/ month",
+    "perYear": "/ year",
+    "perLifetime": "forever",
+    "savingsBadge": "Save 16%",
+    "mostPopularBadge": "Most popular"
+  },
+  "cta": {
+    "buy": "Buy Premium",
+    "processing": "Processing..."
+  },
+  "messages": {
+    "successWithPlan": "Thank you for your interest in Premium! The purchase functionality will be added in upcoming updates.",
+    "error": "An error occurred while processing your purchase. Please try again."
+  },
+  "legal": {
+    "disclaimer": "Payments renew automatically. You can cancel anytime in settings.",
+    "termsText": "Terms of Use",
+    "privacyText": "Privacy Policy",
+    "termsHref": "/terms",
+    "privacyHref": "/privacy"
+  },
+  "promo": {
+    "placeholder": "Promo code",
+    "apply": "Apply",
+    "applied": "Promo applied",
+    "invalid": "Invalid promo code"
+  }
+}
+
