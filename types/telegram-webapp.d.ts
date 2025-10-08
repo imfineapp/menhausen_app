@@ -177,9 +177,19 @@ declare global {
         ready: () => void;
         
         /**
-         * Развернуть приложение
+         * Развернуть приложение (compact → fullsize)
          */
         expand: () => void;
+        
+        /**
+         * Запросить полноэкранный режим (fullsize → fullscreen)
+         */
+        requestFullscreen: () => void;
+        
+        /**
+         * Выйти из полноэкранного режима (fullscreen → fullsize)
+         */
+        exitFullscreen: () => void;
         
         /**
          * Закрыть приложение

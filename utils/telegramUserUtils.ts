@@ -105,3 +105,47 @@ export function getTelegramUserInfo(): {
     return null;
   }
 }
+
+/**
+ * Detect if the app is opened via direct-link (t.me/bot/app) vs inline mode
+ * Uses multiple detection methods for reliable identification
+ * @returns {boolean} True if opened via direct-link, false otherwise
+ */
+export function isDirectLinkMode(): boolean {
+  try {
+    if (!isTelegramEnvironment()) return false;
+
+    // Method 1: Check URL parameters for direct-link indicators
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasStartParam = urlParams.has('startapp') || urlParams.has('tgWebAppStartParam');
+
+    // Method 2: Check WebApp start_param (set by direct-link)
+    const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+
+    // Method 3: Check if URL path indicates direct-link (t.me/bot/app format)
+    const isDirectLinkPath = window.location.pathname.includes('/') &&
+                           window.location.hostname === 't.me';
+
+    // Consider it a direct link if any of these indicators are present
+    const isLikelyDirectLink = hasStartParam || !!webAppStartParam || isDirectLinkPath;
+
+    return isLikelyDirectLink;
+  } catch (error) {
+    console.warn('Error detecting direct link mode:', error);
+    return false;
+  }
+}
+
+/**
+ * Get the Telegram platform (iOS, Android, Desktop)
+ * Useful for platform-specific optimizations
+ * @returns {'ios' | 'android' | 'desktop' | 'unknown'} The detected platform
+ */
+export function getTelegramPlatform(): 'ios' | 'android' | 'desktop' | 'unknown' {
+  try {
+    const platform = window.Telegram?.WebApp?.platform || 'unknown';
+    return platform as 'ios' | 'android' | 'desktop' | 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
