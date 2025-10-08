@@ -280,41 +280,30 @@ function AppContent() {
         // Small delay to ensure WebApp is fully ready before expanding
         setTimeout(() => {
           try {
-            // Use expand() method for fullscreen mode (documented solution for direct-link issues)
-            // This is the primary method that should be used for expanding mini-apps to fullscreen
+            // Step 1: Use expand() to go from compact to fullsize
             if (window.Telegram?.WebApp?.expand) {
               window.Telegram.WebApp.expand();
-              console.log('Telegram WebApp expanded to fullscreen');
-
-              // Multiple expand attempts for better compatibility
-              setTimeout(() => {
-                try {
-                  if (window.Telegram?.WebApp?.expand) {
-                    console.log('Second expand attempt...');
-                    window.Telegram.WebApp.expand();
-                  }
-                } catch (secondExpandError) {
-                  console.warn('Second expand failed:', secondExpandError);
-                }
-              }, 300);
-
-              // Additional fallback: try requestFullscreen after expand
-              setTimeout(() => {
-                try {
-                  if (window.Telegram?.WebApp?.requestFullscreen && !window.Telegram.WebApp.isExpanded) {
-                    console.log('Trying requestFullscreen as fallback...');
-                    window.Telegram.WebApp.requestFullscreen();
-                    console.log('requestFullscreen called');
-                  }
-                } catch (fullscreenError) {
-                  console.warn('requestFullscreen fallback failed:', fullscreenError);
-                }
-              }, 500);
+              console.log('Telegram WebApp expand() called (compact → fullsize)');
             } else {
               console.warn('Expand method not available');
             }
+
+            // Step 2: Use requestFullscreen() to go from fullsize to fullscreen
+            setTimeout(() => {
+              try {
+                if (window.Telegram?.WebApp?.requestFullscreen) {
+                  console.log('Calling requestFullscreen() to enter true fullscreen mode (fullsize → fullscreen)...');
+                  window.Telegram.WebApp.requestFullscreen();
+                  console.log('✅ requestFullscreen() called successfully');
+                } else {
+                  console.warn('❌ requestFullscreen method not available');
+                }
+              } catch (fullscreenError) {
+                console.warn('❌ requestFullscreen failed:', fullscreenError);
+              }
+            }, 300);
           } catch (expandError) {
-            console.warn('Error expanding WebApp:', expandError);
+            console.warn('Error in WebApp initialization:', expandError);
           }
         }, 100);
 
