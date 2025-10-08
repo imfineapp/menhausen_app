@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Light } from './Light';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { useTranslation } from './LanguageContext';
+import { useContent } from './ContentContext';
 
 interface DonationsScreenProps {
 	onBack: () => void;
@@ -9,7 +9,17 @@ interface DonationsScreenProps {
 
 export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 	const [copied, setCopied] = useState(false);
-    const { t } = useTranslation();
+    const { content } = useContent();
+
+	// Получаем переводы с fallback значениями
+	const donationsContent = content?.donations || {
+		title: 'Поддержать проект',
+		description: 'Если вам нравится приложение и вы хотите поддержать его развитие, вы можете сделать донат:',
+		currency_ton: 'TON',
+		currency_usdt_ton: 'USDT (TON)',
+		copy: 'Копировать',
+		copied: 'Скопировано'
+	};
 
 	// Адреса кошельков
 	const tonAddress = 'UQDbAzauqW8a6eAmbIhl6G5VuvC_op6PVAkhJ6hcZC6epLbk';
@@ -37,14 +47,14 @@ export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 			<div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
 				<div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[120px]">
 					<div className="w-full max-w-[351px] mx-auto flex flex-col gap-6">
-						<h1 className="typography-h1 text-left text-white">{t('donations_title')}</h1>
+						<h1 className="typography-h1 text-left text-white">{donationsContent.title}</h1>
 						<p className="typography-subtitle text-left text-[#ADADAD]">
-							{t('donations_description')}
+							{donationsContent.description}
 						</p>
 
 						{/* TON */}
 						<div className="flex flex-col gap-3">
-							<label className="typography-caption text-[#ADADAD]">{t('donations_currency_ton')}</label>
+							<label className="typography-caption text-[#ADADAD]">{donationsContent.currency_ton}</label>
 							<div className="flex items-center gap-2">
 								<input
 									readOnly
@@ -55,14 +65,14 @@ export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 									onClick={() => handleCopy(tonAddress)}
 									className="min-w-[112px] px-4 py-3 rounded-[12px] bg-[#e1ff00] text-black font-medium active:opacity-80"
 								>
-									{copied ? t('copied') : t('copy')}
+									{copied ? donationsContent.copied : donationsContent.copy}
 								</button>
 							</div>
 						</div>
 
 						{/* USDT (TON) */}
 						<div className="flex flex-col gap-3">
-							<label className="typography-caption text-[#ADADAD]">{t('donations_currency_usdt_ton')}</label>
+							<label className="typography-caption text-[#ADADAD]">{donationsContent.currency_usdt_ton}</label>
 							<div className="flex items-center gap-2">
 								<input
 									readOnly
@@ -73,7 +83,7 @@ export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 									onClick={() => handleCopy(usdtTonAddress)}
 									className="min-w-[112px] px-4 py-3 rounded-[12px] bg-[#e1ff00] text-black font-medium active:opacity-80"
 								>
-									{copied ? t('copied') : t('copy')}
+									{copied ? donationsContent.copied : donationsContent.copy}
 								</button>
 							</div>
 						</div>

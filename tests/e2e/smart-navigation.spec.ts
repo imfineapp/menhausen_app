@@ -64,9 +64,12 @@ test.describe('Smart Navigation', () => {
     await page.waitForLoadState('networkidle');
     await skipOnboarding(page);
 
+    // Wait for survey screen to load
+    await expect(page.getByText('How old are you?')).toBeVisible();
+    
     // Should show survey options with proper styling
     const options = page.locator('[data-name="Survey option"]');
-    await expect(options.first()).toBeVisible();
+    await expect(options.first()).toBeVisible({ timeout: 10000 });
     
     // Check that options have proper styling (updated to match actual classes)
     const firstOption = options.first();

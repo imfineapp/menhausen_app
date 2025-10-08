@@ -297,6 +297,10 @@ export interface UITexts {
       subtitle: LocalizedContent;
       start: LocalizedContent;
       unlock: LocalizedContent;
+      freeWarning: {
+        title: LocalizedContent;
+        text: LocalizedContent;
+      };
     };
     home: {
       progress: LocalizedContent;
@@ -472,6 +476,7 @@ export interface AppContent {
   badges: BadgesContent;
   activityData?: ActivityData;
   payments: PaymentsContent;
+  donations: DonationsContent;
 }
 
 /**
@@ -642,6 +647,18 @@ export interface BadgesContent {
       description: LocalizedContent;
     };
   };
+}
+
+/**
+ * Контент для страницы донатов
+ */
+export interface DonationsContent {
+  title: LocalizedContent;
+  description: LocalizedContent;
+  currency_ton: LocalizedContent;
+  currency_usdt_ton: LocalizedContent;
+  copy: LocalizedContent;
+  copied: LocalizedContent;
 }
 
 /**

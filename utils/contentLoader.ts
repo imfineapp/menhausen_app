@@ -48,7 +48,15 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       emergencyCards: emergencyCards.default,
       badges: ui.default.badges,
       about: ui.default.about,
-      payments: payments.default
+      payments: payments.default,
+      donations: ui.default.donations || {
+        title: 'Support the project',
+        description: 'If you like the app and want to support its development, you can make a donation:',
+        currency_ton: 'TON',
+        currency_usdt_ton: 'USDT (TON)',
+        copy: 'Copy',
+        copied: 'Copied'
+      }
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);
