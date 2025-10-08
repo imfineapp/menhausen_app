@@ -9,8 +9,6 @@ import { test, expect } from '@playwright/test';
 const _mockTelegramWebApp = {
   ready: () => console.log('WebApp ready called'),
   expand: () => console.log('WebApp expand called'),
-  requestFullscreen: () => console.log('WebApp requestFullscreen called'),
-  exitFullscreen: () => console.log('WebApp exitFullscreen called'),
   BackButton: {
     show: () => console.log('Back button shown'),
     hide: () => console.log('Back button hidden'),
@@ -42,8 +40,6 @@ test.describe('Telegram Direct-Link Full Screen & Back Button', () => {
         WebApp: {
           ready: () => console.log('WebApp ready called'),
           expand: () => console.log('WebApp expand called'),
-          requestFullscreen: () => console.log('WebApp requestFullscreen called'),
-          exitFullscreen: () => console.log('WebApp exitFullscreen called'),
           BackButton: {
             show: () => console.log('Back button shown'),
             hide: () => console.log('Back button hidden'),
@@ -90,7 +86,6 @@ test.describe('Telegram Direct-Link Full Screen & Back Button', () => {
     // Check console for WebApp initialization logs
     const webAppLogs = logs.filter(log =>
       log.includes('Telegram WebApp initialized') ||
-      log.includes('Telegram WebApp requested fullscreen') ||
       log.includes('Telegram WebApp expanded')
     );
 
