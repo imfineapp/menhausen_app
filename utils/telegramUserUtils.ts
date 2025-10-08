@@ -126,10 +126,6 @@ export function isDirectLinkMode(): boolean {
     const isDirectLinkPath = window.location.pathname.includes('/') &&
                            window.location.hostname === 't.me';
 
-    // Method 4: Check referrer (might be empty for direct links)
-    const hasTelegramReferrer = document.referrer.includes('t.me') ||
-                               document.referrer.includes('telegram');
-
     // Consider it a direct link if any of these indicators are present
     const isLikelyDirectLink = hasStartParam || !!webAppStartParam || isDirectLinkPath;
 
