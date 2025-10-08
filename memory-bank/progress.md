@@ -168,6 +168,24 @@
 - Added CSP allowances for reverse proxy `lopata.menhausen.com` (script/connect/img) across dev meta, prod headers, and Vite dev headers
 - Verified remote config and extensions load without CSP violations; events flow via reverse proxy
 
-### ��️ Archived: PostHog Analytics Integration (2025-09-30)
+### 🗂️ Archived: PostHog Analytics Integration (2025-09-30)
 - Archive: `memory-bank/archive/archive-posthog-analytics-20250930.md`
 - Reflection: `memory-bank/reflection/reflection-posthog-analytics-20250930.md`
+
+### ✅ COMPLETED: Telegram Direct-Link Full Screen & Back Button Fix (October 8, 2025)
+- **Task Type**: Level 2 (Simple Enhancement)
+- **Problem**: Direct-link opens (`t.me/bot/app`) didn't open in fullscreen, back button not accessible
+- **Solution**: Implemented two-step fullscreen process (`expand()` + `requestFullscreen()`)
+- **Key Discovery**: Telegram has three modes (compact, fullsize, fullscreen) - direct-links default to fullsize
+- **Implementation**: 
+  - Enhanced App.tsx with two-step fullscreen initialization
+  - Added `isDirectLinkMode()` and `getTelegramPlatform()` utilities
+  - Updated TypeScript types with `requestFullscreen()` and `exitFullscreen()`
+  - Enhanced back button support for direct-link mode
+- **Testing**: 311/311 tests passing (230 unit + 81 E2E), verified on real Android device
+- **Quality**: 0 ESLint warnings, 0 TypeScript errors, production build successful
+- **Status**: ✅ **COMPLETED** - Production ready, zero technical debt
+
+### 🗂️ Archived: Telegram Direct-Link Full Screen & Back Button Fix (2025-10-08)
+- Archive: `memory-bank/archive/archive-direct-link-fullscreen-20251008.md`
+- Reflection: `memory-bank/reflection/reflection-direct-link-fullscreen-20251008.md`
