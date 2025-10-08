@@ -1,27 +1,33 @@
 # Memory Bank: Active Context
 
 ## Current Focus
-🎯 **MEMORY BANK READY** - Previous task completed and archived, ready for next task assignment
-
-🎯 PostHog Analytics Integration — COMPLETED
+🎯 **NEW TASK INITIATED** - Telegram Direct-Link Full Screen & Back Button Fix
 
 ## Status
 ✅ VAN MODE INITIALIZATION: Platform detection, Memory Bank verification, and complexity determination completed
 ✅ PLATFORM DETECTED: macOS (Darwin) with proper command adaptations
 ✅ MEMORY BANK VERIFIED: Complete structure with all required files present
-✅ QA VALIDATION: Previous validation status PASS - system ready for development
 ✅ COMPLEXITY DETERMINED: Level 2 (Simple Enhancement) task identified
-✅ TASK INITIATED: UserInfoBlock Telegram User ID Display Implementation
-✅ PLANNING COMPLETE: Comprehensive 4-phase implementation plan with detailed requirements, checklists, and risk assessment
-✅ IMPLEMENTATION COMPLETE: All 4 phases successfully implemented with comprehensive testing
+🎯 TASK INITIATED: Telegram Direct-Link Full Screen & Back Button Fix
+⏭️ NEXT REQUIRED MODE: PLAN MODE (Comprehensive planning required for Level 2 task)
+
+## Task Summary
+**Problem**: Telegram Mini App opened via direct-link does not expand to full screen and back button is not available
+
+**Solution Approach**:
+1. Call `Telegram.WebApp.ready()` for proper initialization
+2. Call `Telegram.WebApp.expand()` to enable full screen mode
+3. Implement `Telegram.WebApp.BackButton.show()` and event handling
+4. Integrate with existing navigation system
 
 ## Latest Changes
-- PostHog integration: CSP updated to allow reverse proxy `https://lopata.menhausen.com` for script/connect/img sources (dev meta, prod headers, Vite dev server).
+- New task documented in tasks.md with complexity assessment
+- Identified as Level 2 (Simple Enhancement) task
+- Ready for PLAN mode transition per Memory Bank workflow
 
 ## Next Steps
-**🎯 MEMORY BANK READY:**
-- **Task Status**: PostHog Analytics Integration completed and archived
-- **Documentation**: Reflection and archive created for PostHog task
-- **Quality Metrics**: ESLint 0 warnings/errors, TypeScript OK
-- **Memory Bank**: All files updated with completion status and links
-- **Ready for**: Next task assignment via VAN MODE initialization
+**🎯 MODE TRANSITION REQUIRED:**
+- **Current Mode**: VAN (Initialization) - COMPLETE
+- **Next Mode**: PLAN MODE - REQUIRED for Level 2 task
+- **Action**: Type 'PLAN' to begin comprehensive planning phase
+- **Documentation**: Full implementation plan with detailed requirements, checklists, and risk assessment
