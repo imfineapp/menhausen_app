@@ -2,12 +2,14 @@
  * Unit tests for telegramUserUtils
  */
 
-import { 
-  isTelegramEnvironment, 
-  getTelegramUserId, 
-  formatUserDisplayId, 
+import {
+  isTelegramEnvironment,
+  getTelegramUserId,
+  formatUserDisplayId,
   getUserDisplayId,
-  getTelegramUserInfo 
+  getTelegramUserInfo,
+  isDirectLinkMode,
+  getTelegramPlatform
 } from '../../utils/telegramUserUtils';
 
 // Mock window.Telegram for testing
@@ -21,11 +23,41 @@ const mockTelegramWebApp = {
       language_code: 'en',
       is_premium: false
     }
-  }
+  },
+  platform: 'ios'
 };
 
 const mockTelegramWebAppWithoutUser = {
   initDataUnsafe: {}
+};
+
+const mockTelegramWebAppWithStartParam = {
+  initDataUnsafe: {
+    user: {
+      id: 123456789,
+      first_name: 'John',
+      last_name: 'Doe',
+      username: 'johndoe',
+      language_code: 'en',
+      is_premium: false
+    },
+    start_param: 'test_param'
+  },
+  platform: 'android'
+};
+
+const mockTelegramWebAppDesktop = {
+  initDataUnsafe: {
+    user: {
+      id: 123456789,
+      first_name: 'John',
+      last_name: 'Doe',
+      username: 'johndoe',
+      language_code: 'en',
+      is_premium: false
+    }
+  },
+  platform: 'desktop'
 };
 
 describe('telegramUserUtils', () => {
@@ -230,6 +262,76 @@ describe('telegramUserUtils', () => {
 
       expect(getTelegramUserInfo()).toBe(null);
       
+      // Restore original window
+      global.window = originalWindow;
+    });
+  });
+
+  describe('isDirectLinkMode', () => {
+    it('should return true when start_param is present', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithStartParam };
+      expect(isDirectLinkMode()).toBe(true);
+    });
+
+    it('should return false when not in Telegram environment', () => {
+      expect(isDirectLinkMode()).toBe(false);
+    });
+
+    it('should return false when no start_param or tgWebAppStartParam', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebApp };
+      expect(isDirectLinkMode()).toBe(false);
+    });
+
+    it('should handle errors gracefully', () => {
+      const originalWindow = global.window;
+      global.window = {
+        get Telegram() {
+          throw new Error('Access denied');
+        }
+      } as any;
+
+      expect(isDirectLinkMode()).toBe(false);
+
+      // Restore original window
+      global.window = originalWindow;
+    });
+  });
+
+  describe('getTelegramPlatform', () => {
+    it('should return ios when platform is ios', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebApp };
+      expect(getTelegramPlatform()).toBe('ios');
+    });
+
+    it('should return android when platform is android', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithStartParam };
+      expect(getTelegramPlatform()).toBe('android');
+    });
+
+    it('should return desktop when platform is desktop', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebAppDesktop };
+      expect(getTelegramPlatform()).toBe('desktop');
+    });
+
+    it('should return unknown when platform is not available', () => {
+      (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithoutUser };
+      expect(getTelegramPlatform()).toBe('unknown');
+    });
+
+    it('should return unknown when not in Telegram environment', () => {
+      expect(getTelegramPlatform()).toBe('unknown');
+    });
+
+    it('should handle errors gracefully', () => {
+      const originalWindow = global.window;
+      global.window = {
+        get Telegram() {
+          throw new Error('Access denied');
+        }
+      } as any;
+
+      expect(getTelegramPlatform()).toBe('unknown');
+
       // Restore original window
       global.window = originalWindow;
     });

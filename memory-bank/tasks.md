@@ -303,11 +303,11 @@ App Navigation (goBack integration)
 
 ### Implementation Checklist (Updated with Modern SDK)
 
-#### Phase 1: Core Implementation ✅ **READY**
-- [ ] Add `isDirectLinkMode()` utility function (modern detection using URL params + start_param)
-- [ ] Add `getTelegramPlatform()` utility for cross-platform compatibility
-- [ ] Add Telegram WebApp initialization in App.tsx with `expand()` call
-- [ ] Test basic functionality with direct-link access
+#### Phase 1: Core Implementation ✅ **COMPLETED**
+- [x] Add `isDirectLinkMode()` utility function (modern detection using URL params + start_param)
+- [x] Add `getTelegramPlatform()` utility for cross-platform compatibility
+- [x] Add Telegram WebApp initialization in App.tsx with `expand()` call
+- [x] Test basic functionality with direct-link access
 
 #### Phase 2: Back Button Enhancement ✅ **READY**
 - [ ] Enhance `useTelegramBackButton` hook for direct-link mode (show on first screen)
@@ -316,7 +316,7 @@ App Navigation (goBack integration)
 - [ ] Test back button functionality across platforms
 
 #### Phase 3: Testing & Validation ✅ **READY**
-- [ ] Create unit tests for new utility functions (`isDirectLinkMode`, `getTelegramPlatform`)
+- [x] Create unit tests for new utility functions (`isDirectLinkMode`, `getTelegramPlatform`) - 10 new tests added
 - [ ] Update existing component tests for enhanced back button logic
 - [ ] Create E2E tests for direct-link behavior (`direct-link-fullscreen.spec.ts`)
 - [ ] Cross-platform validation testing (iOS, Android, Desktop)

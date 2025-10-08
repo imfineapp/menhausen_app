@@ -33,6 +33,9 @@ import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт д�
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 
+// Telegram utilities for direct-link support
+import { isTelegramEnvironment, isDirectLinkMode } from './utils/telegramUserUtils';
+
 // Импорты ментальных техник
 import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
 import { SquareBreathingScreen } from './components/mental-techniques/SquareBreathingScreen';
@@ -261,12 +264,36 @@ function FinalCardMessageScreenWithLoader({
 function AppContent() {
 
   // =====================================================================================
+  // TELEGRAM WEBAPP INITIALIZATION (Direct-Link Full Screen Support)
+  // =====================================================================================
+  useEffect(() => {
+    if (isTelegramEnvironment()) {
+      try {
+        // Ensure WebApp is properly initialized (documented fix for direct-link issues)
+        if (window.Telegram?.WebApp?.ready) {
+          window.Telegram.WebApp.ready();
+          console.log('Telegram WebApp initialized successfully');
+        }
+
+        // Expand to full screen for direct-link opens (addresses documented issue)
+        // This fixes the problem where direct links don't auto-expand
+        if (window.Telegram?.WebApp?.expand) {
+          window.Telegram.WebApp.expand();
+          console.log('Telegram WebApp expanded to full screen');
+        }
+      } catch (error) {
+        console.warn('Error initializing Telegram WebApp:', error);
+      }
+    }
+  }, []);
+
+  // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
   // =====================================================================================
   // В E2E тестовой среде начинаем с главной страницы
-  const isE2ETestEnvironment = typeof window !== 'undefined' && 
+  const isE2ETestEnvironment = typeof window !== 'undefined' &&
     (window as any).__PLAYWRIGHT__ === true;
-  
+
   useEffect(() => {
     // initPosthog(); // Removed as PostHogProvider handles initialization
     // capture('app_opened'); // Removed as PostHogProvider handles initialization
@@ -437,17 +464,22 @@ function AppContent() {
     }
   };
 
-  // Функция для возврата на предыдущий экран
+  // Функция для возврата на предыдущий экран (Enhanced for direct-link mode)
   const goBack = () => {
     if (navigationHistory.length > 1) {
+      // Standard navigation back
       const newHistory = [...navigationHistory];
       newHistory.pop(); // Удаляем текущий экран
       const previousScreen = newHistory[newHistory.length - 1];
       setNavigationHistory(newHistory);
       setCurrentScreen(previousScreen);
-    } else {
-      // Если это первый экран, закрываем приложение
+    } else if (isDirectLinkMode()) {
+      // For direct-link mode, close app when no navigation history
+      // This addresses the issue where direct-link back button should close the app
       closeApp();
+    } else {
+      // Fallback for non-Telegram environments
+      window.history.back();
     }
   };
 
