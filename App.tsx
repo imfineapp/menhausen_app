@@ -285,6 +285,31 @@ function AppContent() {
             if (window.Telegram?.WebApp?.expand) {
               window.Telegram.WebApp.expand();
               console.log('Telegram WebApp expanded to fullscreen');
+
+              // Multiple expand attempts for better compatibility
+              setTimeout(() => {
+                try {
+                  if (window.Telegram?.WebApp?.expand) {
+                    console.log('Second expand attempt...');
+                    window.Telegram.WebApp.expand();
+                  }
+                } catch (secondExpandError) {
+                  console.warn('Second expand failed:', secondExpandError);
+                }
+              }, 300);
+
+              // Additional fallback: try requestFullscreen after expand
+              setTimeout(() => {
+                try {
+                  if (window.Telegram?.WebApp?.requestFullscreen && !window.Telegram.WebApp.isExpanded) {
+                    console.log('Trying requestFullscreen as fallback...');
+                    window.Telegram.WebApp.requestFullscreen();
+                    console.log('requestFullscreen called');
+                  }
+                } catch (fullscreenError) {
+                  console.warn('requestFullscreen fallback failed:', fullscreenError);
+                }
+              }, 500);
             } else {
               console.warn('Expand method not available');
             }
@@ -297,13 +322,21 @@ function AppContent() {
         setTimeout(() => {
           try {
             const isExpanded = window.Telegram?.WebApp?.isExpanded;
+            const platform = window.Telegram?.WebApp?.platform;
+            const viewportHeight = window.innerHeight;
+            const viewportWidth = window.innerWidth;
+
             console.log('🔍 FULLSCREEN MODE STATUS CHECK:', {
               isExpanded,
               mode: isExpanded ? 'FULLSCREEN' : 'WINDOWED',
               timestamp: new Date().toISOString(),
+              platform,
+              viewportHeight,
+              viewportWidth,
               webAppAvailable: !!window.Telegram?.WebApp,
               expandAvailable: !!window.Telegram?.WebApp?.expand,
-              isExpandedAvailable: !!window.Telegram?.WebApp?.isExpanded
+              isExpandedAvailable: !!window.Telegram?.WebApp?.isExpanded,
+              requestFullscreenAvailable: !!window.Telegram?.WebApp?.requestFullscreen
             });
 
             // Listen for viewport changes to track fullscreen mode changes

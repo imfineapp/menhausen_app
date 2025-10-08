@@ -63,6 +63,7 @@ Direct-Link Open → WebApp Detection → Full Screen Expansion → Back Button 
 - ✅ **BACK BUTTON ENHANCEMENT**: Enhanced `useTelegramBackButton` hook to show back button for direct-link mode
 - ✅ **NAVIGATION INTEGRATION**: Updated `goBack()` function to properly handle direct-link mode (closes app when no history)
 - ✅ **FULLSCREEN STATUS LOGGING**: Added comprehensive logging for fullscreen mode status (`isExpanded`) and viewport changes
+- 🔄 **ADVANCED FULLSCREEN STRATEGIES**: Added multiple expand attempts and requestFullscreen fallback
 - ✅ **UNIT TESTS**: Added 10 new tests for utility functions (all passing)
 - ✅ **E2E TESTS**: Added 6 new E2E tests for direct-link behavior (all passing)
 - ✅ **BUILD VERIFICATION**: Production build successful with no errors
@@ -93,11 +94,13 @@ Direct-Link Open → WebApp Detection → Full Screen Expansion → Back Button 
 - ✅ **Fullscreen Status Logging**: Added comprehensive logging for `isExpanded` status and viewport changes
 
 **Key Achievements:**
-- **Direct-Link Fullscreen**: App opens in true fullscreen when accessed via `t.me/bot/app` (uses `expand()` method)
+- **Direct-Link Fullscreen**: App attempts fullscreen when accessed via `t.me/bot/app` (uses `expand()` method with fallbacks)
 - **Back Button Support**: Back button appears and functions correctly for direct-link mode
 - **Cross-Platform Compatibility**: Works across iOS, Android, and Desktop platforms
 - **Zero Regression**: All existing functionality preserved and tested
 - **Modern Implementation**: Uses documented Telegram SDK patterns (primary `expand()` method with proper initialization)
+- **Advanced Strategies**: Multiple expand attempts and requestFullscreen fallback for better compatibility
+- **Comprehensive Logging**: Detailed fullscreen mode status logging for debugging
 
 **Ready for Reflection**: Complete implementation successfully deployed and tested
 

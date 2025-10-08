@@ -151,11 +151,11 @@ App Navigation (goBack integration)
 
 3. **Back Button Integration Enhancement**:
    - **Location**: `utils/useTelegramBackButton.ts` (enhancement)
-   - **Changes**:
+   - **Changes**: 
      - Import `isDirectLinkMode` from telegramUserUtils
      - Modify visibility logic to account for direct-link mode
      - Ensure back button shows for direct-link opens even on first screen
-   - **Implementation**:
+   - **Implementation**: 
      ```typescript
      export function useTelegramBackButton(isVisible: boolean, onBack: () => void) {
        useEffect(() => {
@@ -182,11 +182,11 @@ App Navigation (goBack integration)
 
 4. **App Navigation Integration**:
    - **Location**: `components/App.tsx` (lines 440-452)
-   - **Changes**:
+   - **Changes**: 
      - Import `isDirectLinkMode` from telegramUserUtils
      - Modify `goBack()` function to handle direct-link back button
      - Ensure proper fallback behavior for direct-link mode
-   - **Implementation**:
+   - **Implementation**: 
      ```typescript
      const goBack = () => {
        if (navigationHistory.length > 1) {
@@ -211,10 +211,10 @@ App Navigation (goBack integration)
 
 5. **Platform-Specific Optimizations**:
    - **Location**: `utils/telegramUserUtils.ts` (platform detection enhancement)
-   - **Changes**:
+   - **Changes**: 
      - Add platform detection for iOS, Android, Desktop
      - Apply platform-specific optimizations if needed
-   - **Implementation**:
+   - **Implementation**: 
      ```typescript
      export function getTelegramPlatform(): 'ios' | 'android' | 'desktop' | 'unknown' {
        try {
@@ -351,16 +351,19 @@ App Navigation (goBack integration)
 ## 📋 **IMPLEMENTATION SUMMARY**
 
 ### ✅ **COMPLETED FEATURES**
-1. **Direct-Link Full Screen Mode**: App now opens in full screen when accessed via `t.me/bot/app`
+1. **Direct-Link Full Screen Mode**: App attempts to open in full screen when accessed via `t.me/bot/app`
 2. **Back Button Support**: Back button appears and functions correctly for direct-link mode
 3. **Cross-Platform Compatibility**: Works across iOS, Android, and Desktop platforms
 4. **Zero Regression**: All existing functionality preserved and thoroughly tested
+5. **Advanced Fullscreen Strategies**: Multiple expand attempts and requestFullscreen fallback implemented
 
 ### 🔧 **TECHNICAL IMPLEMENTATION**
 - **Utility Functions**: Added `isDirectLinkMode()` and `getTelegramPlatform()` utilities
 - **WebApp Initialization**: Enhanced App.tsx with `ready()` and `expand()` calls
 - **Back Button Enhancement**: Modified `useTelegramBackButton` hook for direct-link mode
 - **Navigation Integration**: Updated `goBack()` function for proper direct-link behavior
+- **Advanced Fullscreen Strategies**: Multiple expand attempts and requestFullscreen fallback
+- **Comprehensive Logging**: Added detailed fullscreen mode status logging
 - **Testing**: Added comprehensive unit and E2E tests (311 total tests passing)
 
 ### 📊 **QUALITY METRICS**
