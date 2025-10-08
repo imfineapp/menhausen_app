@@ -293,6 +293,38 @@ function AppContent() {
           }
         }, 100);
 
+        // Enhanced logging for fullscreen mode status
+        setTimeout(() => {
+          try {
+            const isExpanded = window.Telegram?.WebApp?.isExpanded;
+            console.log('🔍 FULLSCREEN MODE STATUS CHECK:', {
+              isExpanded,
+              mode: isExpanded ? 'FULLSCREEN' : 'WINDOWED',
+              timestamp: new Date().toISOString(),
+              webAppAvailable: !!window.Telegram?.WebApp,
+              expandAvailable: !!window.Telegram?.WebApp?.expand,
+              isExpandedAvailable: !!window.Telegram?.WebApp?.isExpanded
+            });
+
+            // Listen for viewport changes to track fullscreen mode changes
+            if (window.Telegram?.WebApp?.onEvent) {
+              window.Telegram.WebApp.onEvent('viewportChanged', () => {
+                const newIsExpanded = window.Telegram?.WebApp?.isExpanded;
+                console.log('🔄 FULLSCREEN MODE CHANGED:', {
+                  isExpanded: newIsExpanded,
+                  mode: newIsExpanded ? 'FULLSCREEN' : 'WINDOWED',
+                  timestamp: new Date().toISOString()
+                });
+              });
+              console.log('✅ Viewport change listener registered');
+            } else {
+              console.log('❌ onEvent method not available for viewport changes');
+            }
+          } catch (statusError) {
+            console.warn('Error checking fullscreen status:', statusError);
+          }
+        }, 200);
+
       } catch (error) {
         console.warn('Error initializing Telegram WebApp:', error);
       }

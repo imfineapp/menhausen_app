@@ -62,6 +62,7 @@ Direct-Link Open → WebApp Detection → Full Screen Expansion → Back Button 
 - ✅ **WEBAPP INITIALIZATION**: Added `expand()` call in App.tsx for documented direct-link full screen fix
 - ✅ **BACK BUTTON ENHANCEMENT**: Enhanced `useTelegramBackButton` hook to show back button for direct-link mode
 - ✅ **NAVIGATION INTEGRATION**: Updated `goBack()` function to properly handle direct-link mode (closes app when no history)
+- ✅ **FULLSCREEN STATUS LOGGING**: Added comprehensive logging for fullscreen mode status (`isExpanded`) and viewport changes
 - ✅ **UNIT TESTS**: Added 10 new tests for utility functions (all passing)
 - ✅ **E2E TESTS**: Added 6 new E2E tests for direct-link behavior (all passing)
 - ✅ **BUILD VERIFICATION**: Production build successful with no errors
@@ -89,6 +90,7 @@ Direct-Link Open → WebApp Detection → Full Screen Expansion → Back Button 
 - ✅ Comprehensive error handling and fallbacks implemented
 - ✅ Platform-specific optimizations with cross-platform detection
 - ✅ Backward compatibility maintained with existing implementation
+- ✅ **Fullscreen Status Logging**: Added comprehensive logging for `isExpanded` status and viewport changes
 
 **Key Achievements:**
 - **Direct-Link Fullscreen**: App opens in true fullscreen when accessed via `t.me/bot/app` (uses `expand()` method)
