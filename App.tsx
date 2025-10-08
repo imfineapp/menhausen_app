@@ -269,18 +269,34 @@ function AppContent() {
   useEffect(() => {
     if (isTelegramEnvironment()) {
       try {
+        console.log('Telegram environment detected, initializing WebApp...');
+
         // Ensure WebApp is properly initialized (documented fix for direct-link issues)
         if (window.Telegram?.WebApp?.ready) {
           window.Telegram.WebApp.ready();
           console.log('Telegram WebApp initialized successfully');
         }
 
-        // Expand to full screen for direct-link opens (addresses documented issue)
-        // This fixes the problem where direct links don't auto-expand
-        if (window.Telegram?.WebApp?.expand) {
-          window.Telegram.WebApp.expand();
-          console.log('Telegram WebApp expanded to full screen');
-        }
+        // Small delay to ensure WebApp is fully ready before requesting fullscreen
+        setTimeout(() => {
+          try {
+            // Request fullscreen mode for direct-link opens (proper fullscreen, not just expanded)
+            // This addresses the documented issue where direct links don't open in true fullscreen
+            if (window.Telegram?.WebApp?.requestFullscreen) {
+              window.Telegram.WebApp.requestFullscreen();
+              console.log('Telegram WebApp requested fullscreen mode');
+            } else if (window.Telegram?.WebApp?.expand) {
+              // Fallback to expand if requestFullscreen is not available
+              window.Telegram.WebApp.expand();
+              console.log('Telegram WebApp expanded (fallback to expand)');
+            } else {
+              console.warn('No fullscreen or expand methods available');
+            }
+          } catch (fullscreenError) {
+            console.warn('Error requesting fullscreen:', fullscreenError);
+          }
+        }, 100);
+
       } catch (error) {
         console.warn('Error initializing Telegram WebApp:', error);
       }

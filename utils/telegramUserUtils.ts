@@ -108,19 +108,40 @@ export function getTelegramUserInfo(): {
 
 /**
  * Detect if the app is opened via direct-link (t.me/bot/app) vs inline mode
- * Uses URL parameters and WebApp start_param for reliable detection
+ * Uses multiple detection methods for reliable identification
  * @returns {boolean} True if opened via direct-link, false otherwise
  */
 export function isDirectLinkMode(): boolean {
   try {
     if (!isTelegramEnvironment()) return false;
 
-    // Modern detection: check URL parameters and start_param
+    // Method 1: Check URL parameters for direct-link indicators
     const urlParams = new URLSearchParams(window.location.search);
-    const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+    const hasStartParam = urlParams.has('startapp') || urlParams.has('tgWebAppStartParam');
 
-    // Direct link pattern: has startapp parameter or specific URL structure
-    return !!(startParam || urlParams.has('tgWebAppStartParam'));
+    // Method 2: Check WebApp start_param (set by direct-link)
+    const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+
+    // Method 3: Check if URL path indicates direct-link (t.me/bot/app format)
+    const isDirectLinkPath = window.location.pathname.includes('/') &&
+                           window.location.hostname === 't.me';
+
+    // Method 4: Check referrer (might be empty for direct links)
+    const hasTelegramReferrer = document.referrer.includes('t.me') ||
+                               document.referrer.includes('telegram');
+
+    // Consider it a direct link if any of these indicators are present
+    const isLikelyDirectLink = hasStartParam || !!webAppStartParam || isDirectLinkPath;
+
+    console.log('Direct-link detection:', {
+      hasStartParam,
+      webAppStartParam,
+      isDirectLinkPath,
+      hasTelegramReferrer,
+      result: isLikelyDirectLink
+    });
+
+    return isLikelyDirectLink;
   } catch (error) {
     console.warn('Error detecting direct link mode:', error);
     return false;
