@@ -304,7 +304,11 @@ export function ContentProvider({ children }: ContentProviderProps) {
           title: 'Theme Welcome',
           subtitle: 'Welcome to theme',
           start: 'Start',
-          unlock: 'Unlock'
+          unlock: 'Unlock',
+          freeWarning: {
+            title: 'Important Warning',
+            text: 'Cards in the free version have not yet been validated by a psychologist and are placed only as an example (prototype). All responsibility for consequences arising after completing this technique lies with the user. By clicking the button, you confirm that you understand all risks and take them upon yourself.'
+          }
         },
         home: {
           progress: 'Progress',

@@ -17,6 +17,7 @@ import { PrivacyPolicyScreen } from './components/PrivacyPolicyScreen';
 import { TermsOfUseScreen } from './components/TermsOfUseScreen';
 import { DeleteAccountScreen } from './components/DeleteAccountScreen';
 import { PaymentsScreen } from './components/PaymentsScreen';
+import { DonationsScreen } from './components/DonationsScreen';
 import { UnderConstructionScreen } from './components/UnderConstructionScreen';
 import { ThemeWelcomeScreen } from './components/ThemeWelcomeScreen';
 import { ThemeHomeScreen } from './components/ThemeHomeScreen';
@@ -50,7 +51,7 @@ import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -1232,7 +1233,13 @@ function AppContent() {
   };
 
   const handleShowDonations = () => {
-    handleShowUnderConstruction('Donations');
+    console.log('Opening donations screen');
+    setCurrentScreen('donations');
+  };
+
+  const handleBackToProfileFromDonations = () => {
+    console.log('Returning to profile from donations');
+    navigateTo('profile');
   };
 
   const handleBackToProfileFromUnderConstruction = () => {
@@ -1494,6 +1501,12 @@ function AppContent() {
           <PaymentsScreen 
             onBack={handleBackToProfileFromPayments}
             onPurchaseComplete={handlePurchaseComplete}
+          />
+        );
+      case 'donations':
+        return (
+          <DonationsScreen 
+            onBack={handleBackToProfileFromDonations}
           />
         );
       case 'under-construction':
