@@ -266,92 +266,43 @@ function AppContent() {
   // =====================================================================================
   // TELEGRAM WEBAPP INITIALIZATION (Direct-Link Full Screen Support)
   // =====================================================================================
-  useEffect(() => {
-    if (isTelegramEnvironment()) {
-      try {
-        console.log('Telegram environment detected, initializing WebApp...');
+      useEffect(() => {
+      if (isTelegramEnvironment()) {
+        try {
+          // Initialize Telegram WebApp
+          if (window.Telegram?.WebApp?.ready) {
+            window.Telegram.WebApp.ready();
+          }
 
-        // Ensure WebApp is properly initialized (documented fix for direct-link issues)
-        if (window.Telegram?.WebApp?.ready) {
-          window.Telegram.WebApp.ready();
-          console.log('Telegram WebApp initialized successfully');
-        }
-
-        // Small delay to ensure WebApp is fully ready before expanding
-        setTimeout(() => {
-          try {
-            // Step 1: Use expand() to go from compact to fullsize
-            if (window.Telegram?.WebApp?.expand) {
-              window.Telegram.WebApp.expand();
-              console.log('Telegram WebApp expand() called (compact → fullsize)');
-            } else {
-              console.warn('Expand method not available');
-            }
-
-            // Step 2: Use requestFullscreen() to go from fullsize to fullscreen
-            setTimeout(() => {
-              try {
-                if (window.Telegram?.WebApp?.requestFullscreen) {
-                  console.log('Calling requestFullscreen() to enter true fullscreen mode (fullsize → fullscreen)...');
-                  window.Telegram.WebApp.requestFullscreen();
-                  console.log('✅ requestFullscreen() called successfully');
-                } else {
-                  console.warn('❌ requestFullscreen method not available');
-                }
-              } catch (fullscreenError) {
-                console.warn('❌ requestFullscreen failed:', fullscreenError);
+          // Expand to fullscreen mode (two-step process for direct-link compatibility)
+          setTimeout(() => {
+            try {
+              // Step 1: expand() - transitions from compact to fullsize mode
+              if (window.Telegram?.WebApp?.expand) {
+                window.Telegram.WebApp.expand();
               }
-            }, 300);
-          } catch (expandError) {
-            console.warn('Error in WebApp initialization:', expandError);
-          }
-        }, 100);
 
-        // Enhanced logging for fullscreen mode status
-        setTimeout(() => {
-          try {
-            const isExpanded = window.Telegram?.WebApp?.isExpanded;
-            const platform = window.Telegram?.WebApp?.platform;
-            const viewportHeight = window.innerHeight;
-            const viewportWidth = window.innerWidth;
-
-            console.log('🔍 FULLSCREEN MODE STATUS CHECK:', {
-              isExpanded,
-              mode: isExpanded ? 'FULLSCREEN' : 'WINDOWED',
-              timestamp: new Date().toISOString(),
-              platform,
-              viewportHeight,
-              viewportWidth,
-              webAppAvailable: !!window.Telegram?.WebApp,
-              expandAvailable: !!window.Telegram?.WebApp?.expand,
-              isExpandedAvailable: !!window.Telegram?.WebApp?.isExpanded,
-              requestFullscreenAvailable: !!window.Telegram?.WebApp?.requestFullscreen
-            });
-
-            // Listen for viewport changes to track fullscreen mode changes
-            if (window.Telegram?.WebApp?.onEvent) {
-              window.Telegram.WebApp.onEvent('viewportChanged', () => {
-                const newIsExpanded = window.Telegram?.WebApp?.isExpanded;
-                console.log('🔄 FULLSCREEN MODE CHANGED:', {
-                  isExpanded: newIsExpanded,
-                  mode: newIsExpanded ? 'FULLSCREEN' : 'WINDOWED',
-                  timestamp: new Date().toISOString()
-                });
-              });
-              console.log('✅ Viewport change listener registered');
-            } else {
-              console.log('❌ onEvent method not available for viewport changes');
+              // Step 2: requestFullscreen() - transitions from fullsize to fullscreen mode
+              // This is required for direct-link opens which default to fullsize mode
+              setTimeout(() => {
+                try {
+                  if (window.Telegram?.WebApp?.requestFullscreen) {
+                    window.Telegram.WebApp.requestFullscreen();
+                  }
+                } catch (fullscreenError) {
+                  console.warn('Failed to request fullscreen:', fullscreenError);
+                }
+              }, 300);
+            } catch (expandError) {
+              console.warn('Failed to expand WebApp:', expandError);
             }
-          } catch (statusError) {
-            console.warn('Error checking fullscreen status:', statusError);
-          }
-        }, 200);
+          }, 100);
 
-      } catch (error) {
-        console.warn('Error initializing Telegram WebApp:', error);
+        } catch (error) {
+          console.warn('Error initializing Telegram WebApp:', error);
+        }
       }
-    }
-  }, []);
+    }, []);
 
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ

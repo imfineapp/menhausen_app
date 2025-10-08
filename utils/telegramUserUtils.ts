@@ -133,14 +133,6 @@ export function isDirectLinkMode(): boolean {
     // Consider it a direct link if any of these indicators are present
     const isLikelyDirectLink = hasStartParam || !!webAppStartParam || isDirectLinkPath;
 
-    console.log('Direct-link detection:', {
-      hasStartParam,
-      webAppStartParam,
-      isDirectLinkPath,
-      hasTelegramReferrer,
-      result: isLikelyDirectLink
-    });
-
     return isLikelyDirectLink;
   } catch (error) {
     console.warn('Error detecting direct link mode:', error);
