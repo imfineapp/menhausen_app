@@ -136,7 +136,7 @@ export function getTelegramPlatform(): 'ios' | 'android' | 'desktop' | 'unknown'
   try {
     const platform = window.Telegram?.WebApp?.platform || 'unknown';
     return platform as 'ios' | 'android' | 'desktop' | 'unknown';
-  } catch (error) {
+  } catch {
     return 'unknown';
   }
 }
