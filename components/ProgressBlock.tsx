@@ -17,7 +17,8 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
   const _uiContent = getUI();
   const [totalEarned, setTotalEarned] = useState<number>(0);
   const [nextTarget, setNextTarget] = useState<number>(1000);
-  const level = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
+  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
+  const level = Math.max(1, computedLevel);
 
   useEffect(() => {
     const read = () => {
