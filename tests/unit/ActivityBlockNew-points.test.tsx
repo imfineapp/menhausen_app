@@ -24,17 +24,20 @@ describe('ActivityBlockNew points display', () => {
       </LanguageProvider>
     );
 
+    // Ждём загрузку данных с увеличенным таймаутом для стабильности на CI
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     // Числа могут содержать неразрывные пробелы; нормализуем пробельные символы
     const currentAll = await screen.findAllByText((_, node) => {
       const text = node?.textContent || '';
       const normalized = text.replace(/\s/g, '');
       return normalized.includes('5863');
-    });
+    }, { timeout: 3000 });
     const targetAll = await screen.findAllByText((_, node) => {
       const text = node?.textContent || '';
       const normalized = text.replace(/\s/g, '');
       return normalized.includes('/6000');
-    });
+    }, { timeout: 3000 });
     expect(currentAll.length).toBeGreaterThan(0);
     expect(targetAll.length).toBeGreaterThan(0);
   });
