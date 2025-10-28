@@ -50,7 +50,7 @@ export function LevelsScreen({ onBack: _onBack, onGoToBadges }: LevelsScreenProp
 
   // Получаем локализованные тексты для действий
   const getLocalizedAction = (transaction: PointsTransaction) => {
-    const actions = uiContent.cards.levels.actions;
+    const actions = uiContent.levels.actions;
     switch (transaction.correlationId?.split('_')[0]) { // Use correlationId prefix for specific actions
       case 'checkin':
         return actions.dailyCheckin;
@@ -130,7 +130,7 @@ export function LevelsScreen({ onBack: _onBack, onGoToBadges }: LevelsScreenProp
                 
                 {/* Контент блока */}
                 <div className="relative z-10">
-                  <h3 className="text-white text-lg font-semibold mb-4">{uiContent.cards.levels.pointsHistory}</h3>
+                  <h3 className="text-white text-lg font-semibold mb-4">{uiContent.levels.pointsHistory}</h3>
                   <div className="space-y-3">
                     {pointsHistory.map((tx, index) => (
                       <div key={tx.id || index} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-b-0">

@@ -356,17 +356,17 @@ export function ContentProvider({ children }: ContentProviderProps) {
           level4: 'Level 4',
           level5: 'Level 5',
           description: 'Card description'
-        },
-        levels: {
-          title: 'Levels',
-          yourLevel: 'Your Level',
-          toNextLevel: 'To Next Level',
-          pointsHistory: 'Points History',
-          actions: {
-            dailyCheckin: 'Daily Check-in',
-            exerciseComplete: 'Exercise Complete',
-            achievementEarned: 'Achievement Earned'
-          }
+        }
+      },
+      levels: {
+        title: 'Levels',
+        yourLevel: 'Your Level',
+        toNextLevel: 'To Next Level',
+        pointsHistory: 'Points History',
+        actions: {
+          dailyCheckin: 'Daily Check-in',
+          exerciseComplete: 'Exercise Complete',
+          achievementEarned: 'Achievement Earned'
         }
       },
         about: {

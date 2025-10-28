@@ -350,16 +350,16 @@ export interface UITexts {
       level5: LocalizedContent;
       description: LocalizedContent;
     };
-    levels: {
-      title: LocalizedContent;
-      yourLevel: LocalizedContent;
-      toNextLevel: LocalizedContent;
-      pointsHistory: LocalizedContent;
-      actions: {
-        dailyCheckin: LocalizedContent;
-        exerciseComplete: LocalizedContent;
-        achievementEarned: LocalizedContent;
-      };
+  };
+  levels: {
+    title: LocalizedContent;
+    yourLevel: LocalizedContent;
+    toNextLevel: LocalizedContent;
+    pointsHistory: LocalizedContent;
+    actions: {
+      dailyCheckin: LocalizedContent;
+      exerciseComplete: LocalizedContent;
+      achievementEarned: LocalizedContent;
     };
   };
 }
