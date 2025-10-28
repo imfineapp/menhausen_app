@@ -20,19 +20,81 @@ afterEach(() => {
 
 // Setup global mocks
 beforeEach(() => {
-  // Mock localStorage
+  // Create event listeners storage for dispatchEvent
+  const eventListeners: Record<string, Array<(event: Event) => void>> = {};
+
+  // Mock window.addEventListener and removeEventListener
+  const addEventListenerMock = vi.fn((event: string, handler: EventListenerOrEventListenerObject, _options?: any) => {
+    if (typeof handler === 'function') {
+      if (!eventListeners[event]) {
+        eventListeners[event] = [];
+      }
+      eventListeners[event].push(handler);
+    }
+  });
+
+  const removeEventListenerMock = vi.fn((event: string, handler: EventListenerOrEventListenerObject, _options?: any) => {
+    if (typeof handler === 'function') {
+      if (eventListeners[event]) {
+        const index = eventListeners[event].indexOf(handler);
+        if (index > -1) {
+          eventListeners[event].splice(index, 1);
+        }
+      }
+    }
+  });
+
+  const dispatchEventMock = vi.fn((event: Event) => {
+    if (eventListeners[event.type]) {
+      eventListeners[event.type].forEach(handler => {
+        if (typeof handler === 'function') {
+          handler(event);
+        }
+      });
+    }
+    return true;
+  });
+
+  Object.defineProperty(window, 'addEventListener', {
+    value: addEventListenerMock,
+    writable: true,
+    configurable: true,
+  });
+
+  Object.defineProperty(window, 'removeEventListener', {
+    value: removeEventListenerMock,
+    writable: true,
+    configurable: true,
+  });
+
+  Object.defineProperty(window, 'dispatchEvent', {
+    value: dispatchEventMock,
+    writable: true,
+    configurable: true,
+  });
+
+  // Mock localStorage with event emission
   const localStorageMock = {
     getItem: vi.fn((key: string) => {
       return localStorageMock.storage[key] || null;
     }),
     setItem: vi.fn((key: string, value: string) => {
       localStorageMock.storage[key] = value;
+      // Emit storage event to simulate browser behavior
+      const storageEvent = new Event('storage');
+      dispatchEventMock(storageEvent);
     }),
     removeItem: vi.fn((key: string) => {
       delete localStorageMock.storage[key];
+      // Emit storage event
+      const storageEvent = new Event('storage');
+      dispatchEventMock(storageEvent);
     }),
     clear: vi.fn(() => {
       localStorageMock.storage = {};
+      // Emit storage event
+      const storageEvent = new Event('storage');
+      dispatchEventMock(storageEvent);
     }),
     key: vi.fn(),
     length: 0,
