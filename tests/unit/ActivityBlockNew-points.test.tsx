@@ -32,12 +32,12 @@ describe('ActivityBlockNew points display', () => {
       const text = node?.textContent || '';
       const normalized = text.replace(/\s/g, '');
       return normalized.includes('5863');
-    }, { timeout: 3000 });
+    }, {}, { timeout: 3000 });
     const targetAll = await screen.findAllByText((_, node) => {
       const text = node?.textContent || '';
       const normalized = text.replace(/\s/g, '');
       return normalized.includes('/6000');
-    }, { timeout: 3000 });
+    }, {}, { timeout: 3000 });
     expect(currentAll.length).toBeGreaterThan(0);
     expect(targetAll.length).toBeGreaterThan(0);
   });
