@@ -36,7 +36,9 @@ vi.mock('../../components/ContentContext', () => ({
       content,
       getUI: () => content.ui
     };
-  }
+  },
+  useArticles: () => [],
+  useArticle: () => null
 }));
 
 vi.spyOn(ThemeCardManager, 'getCardProgress');
@@ -55,7 +57,13 @@ describe('HomeScreen per-theme progress', () => {
 
     render(
       <LanguageProvider>
-        <HomeScreen onGoToProfile={() => {}} onGoToTheme={() => {}} userHasPremium={true} />
+        <HomeScreen 
+          onGoToProfile={() => {}} 
+          onGoToTheme={() => {}} 
+          onGoToArticle={() => {}} 
+          onGoToAllArticles={() => {}} 
+          userHasPremium={true} 
+        />
       </LanguageProvider>
     );
 

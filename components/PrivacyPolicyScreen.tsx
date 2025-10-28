@@ -37,7 +37,7 @@ function MainContent() {
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
-      <div className="typography-caption text-[#ffffff] text-left w-full overflow-y-auto pr-2 h-[calc(100vh-180px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
+      <div className="typography-caption text-[#ffffff] text-left w-full max-h-[600px] overflow-y-auto pr-2">
         <div className="space-y-4">
           <div className="space-y-1">
             <p className="block leading-none mb-0">{getText('Дата вступления в силу: 2 августа 2025', 'Effective Date: August 2, 2025')}</p>

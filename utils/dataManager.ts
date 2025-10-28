@@ -1,6 +1,12 @@
 // Enhanced Data Persistence System
 // Based on creative phase decisions for robust data management
 
+import type { 
+  PointsTransaction, 
+  PointsTransactionType, 
+  PointsSourceCategory 
+} from '../types/userState';
+
 interface DataSchema {
   version: number;
   createdAt: string;
@@ -46,6 +52,20 @@ interface ProgressData {
   completedExercises: number;
   lastActivity: string;
   achievements: string[];
+}
+
+interface UserPointsData {
+  totalPoints: number;
+  transactions: PointsTransaction[];
+  breakdown: {
+    checkins: number;
+    exercises: number;
+    achievements: number;
+    bonuses: number;
+    other: number;
+  };
+  lastUpdated: string;
+  createdAt: string;
 }
 
 export class CriticalDataManager {
@@ -205,6 +225,19 @@ export class CriticalDataManager {
         completedExercises: 0,
         lastActivity: new Date().toISOString(),
         achievements: []
+      },
+      userPoints: data.userPoints || {
+        totalPoints: 0,
+        transactions: [],
+        breakdown: {
+          checkins: 0,
+          exercises: 0,
+          achievements: 0,
+          bonuses: 0,
+          other: 0
+        },
+        lastUpdated: new Date().toISOString(),
+        createdAt: new Date().toISOString()
       }
     };
   }
@@ -262,6 +295,36 @@ export class CriticalDataManager {
       lastActivity: new Date().toISOString(),
       achievements: []
     };
+  }
+
+  // User points management
+  async saveUserPoints(points: UserPointsData): Promise<boolean> {
+    return this.saveCriticalData('user_points', points);
+  }
+
+  async loadUserPoints(): Promise<UserPointsData | null> {
+    const points = await this.loadCriticalData<UserPointsData>('user_points');
+    return points || null;
+  }
+
+  // Initialize points for new user
+  async initializeUserPoints(): Promise<UserPointsData> {
+    const defaultPoints: UserPointsData = {
+      totalPoints: 0,
+      transactions: [],
+      breakdown: {
+        checkins: 0,
+        exercises: 0,
+        achievements: 0,
+        bonuses: 0,
+        other: 0
+      },
+      lastUpdated: new Date().toISOString(),
+      createdAt: new Date().toISOString()
+    };
+    
+    await this.saveUserPoints(defaultPoints);
+    return defaultPoints;
   }
 
   // Data cleanup and maintenance

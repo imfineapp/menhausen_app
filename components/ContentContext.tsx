@@ -97,6 +97,21 @@ export function ContentProvider({ children }: ContentProviderProps) {
   }, [content]);
 
   /**
+   * Получение статьи по ID
+   */
+  const getArticle = useCallback((articleId: string) => {
+    return content?.articles[articleId];
+  }, [content]);
+
+  /**
+   * Получение всех статей
+   */
+  const getAllArticles = useCallback(() => {
+    if (!content?.articles) return [];
+    return Object.values(content.articles).sort((a, b) => a.order - b.order);
+  }, [content]);
+
+  /**
    * Получение всех карточек для конкретной темы
    */
   const getThemeCards = useCallback((themeId: string): CardData[] => {
@@ -581,6 +596,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getTheme,
     getCard,
     getEmergencyCard,
+    getArticle,
+    getAllArticles,
     getThemeCards,
     getSurveyScreen,
     getMentalTechnique,
@@ -877,5 +894,41 @@ export function useMentalTechniquesMenu() {
         }
       }
     }
+  };
+}
+
+/**
+ * Хук для работы со статьями
+ */
+export function useArticles() {
+  const { getAllArticles, getLocalizedText } = useContent();
+  
+  const articles = getAllArticles();
+  
+  return articles.map(article => ({
+    ...article,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content)
+  }));
+}
+
+/**
+ * Хук для работы с отдельной статьей
+ */
+export function useArticle(articleId: string) {
+  const { getArticle, getLocalizedText } = useContent();
+  
+  const article = getArticle(articleId);
+  
+  if (!article) {
+    return null;
+  }
+  
+  return {
+    ...article,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content)
   };
 }

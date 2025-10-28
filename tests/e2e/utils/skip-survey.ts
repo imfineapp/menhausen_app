@@ -165,7 +165,7 @@ export async function skipOnboarding(page: Page): Promise<void> {
   // Дополнительные экраны если есть
   let attempts = 0;
   while (attempts < 3) {
-    const anyContinueBtn = page.locator('text=Continue').or(page.locator('text=Get Started')).or(page.locator('text=Start'));
+    const anyContinueBtn = page.locator('button:has-text("Continue")').or(page.locator('[role="button"]:has-text("Continue")')).or(page.locator('button:has-text("Get Started")')).or(page.locator('[role="button"]:has-text("Get Started")')).or(page.locator('button:has-text("Start")')).or(page.locator('[role="button"]:has-text("Start")'));
     if (await anyContinueBtn.isVisible() && await anyContinueBtn.isEnabled()) {
       await anyContinueBtn.click();
       await page.waitForLoadState('networkidle');
