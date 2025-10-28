@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     container:
-      image: mcr.microsoft.com/playwright:v1.54.2-jammy
+      image: mcr.microsoft.com/playwright:v1.56.1-jammy
     
     steps:
       - name: 📥 Checkout code
