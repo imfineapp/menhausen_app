@@ -32,14 +32,24 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   });
 
   useEffect(() => {
-    try {
-      const total = PointsManager.getTotalEarned();
-      const target = PointsManager.getNextLevelTarget(1000);
-      setEarnedPoints(total);
-      setNextTarget(target);
-    } catch (error) {
-      console.warn('ActivityBlockNew: failed to load points/level target', error);
-    }
+    const readPoints = () => {
+      try {
+        const total = PointsManager.getTotalEarned();
+        const target = PointsManager.getNextLevelTarget(1000);
+        setEarnedPoints(total);
+        setNextTarget(target);
+      } catch (error) {
+        console.warn('ActivityBlockNew: failed to load points/level target', error);
+      }
+    };
+    readPoints();
+    const onUpdate = () => readPoints();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
   }, []);
 
   useEffect(() => {

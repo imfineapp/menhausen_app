@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { ActivityBlockNew } from '../../components/ActivityBlockNew';
 import { PointsManager } from '../../utils/PointsManager';
@@ -24,22 +24,26 @@ describe('ActivityBlockNew points display', () => {
       </LanguageProvider>
     );
 
-    // Ждём загрузку данных с увеличенным таймаутом для стабильности на CI
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Ждём появления очков с помощью waitFor
+    await waitFor(() => {
+      // Ищем число 5863 (текущие очки)
+      const currentAll = screen.queryAllByText((_, node) => {
+        const text = node?.textContent || '';
+        const normalized = text.replace(/\s/g, '');
+        return normalized.includes('5863');
+      });
+      return currentAll.length > 0;
+    }, { timeout: 5000 });
 
-    // Числа могут содержать неразрывные пробелы; нормализуем пробельные символы
-    const currentAll = await screen.findAllByText((_, node) => {
-      const text = node?.textContent || '';
-      const normalized = text.replace(/\s/g, '');
-      return normalized.includes('5863');
-    }, {}, { timeout: 3000 });
-    const targetAll = await screen.findAllByText((_, node) => {
-      const text = node?.textContent || '';
-      const normalized = text.replace(/\s/g, '');
-      return normalized.includes('/6000');
-    }, {}, { timeout: 3000 });
-    expect(currentAll.length).toBeGreaterThan(0);
-    expect(targetAll.length).toBeGreaterThan(0);
+    // Ищем следующую цель /6000
+    await waitFor(() => {
+      const targetAll = screen.queryAllByText((_, node) => {
+        const text = node?.textContent || '';
+        const normalized = text.replace(/\s/g, '');
+        return normalized.includes('/6000');
+      });
+      return targetAll.length > 0;
+    }, { timeout: 5000 });
   });
 });
 
