@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProgressRow } from './ProgressRow';
 import { LevelIcon } from './UserProfileIcons';
 import { useContent } from './ContentContext';
+import { PointsManager } from '../utils/PointsManager';
 
 interface ProgressBlockProps {
   onBadgesClick?: () => void;
@@ -14,6 +15,25 @@ interface ProgressBlockProps {
 export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockProps) {
   const { getUI } = useContent();
   const _uiContent = getUI();
+  const [totalEarned, setTotalEarned] = useState<number>(0);
+  const [nextTarget, setNextTarget] = useState<number>(1000);
+  const level = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
+
+  useEffect(() => {
+    const read = () => {
+      const t = PointsManager.getTotalEarned();
+      setTotalEarned(t);
+      setNextTarget(PointsManager.getNextLevelTarget(1000));
+    };
+    read();
+    const onUpdate = () => read();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
+  }, []);
 
   return (
     <div className="w-full">
@@ -36,7 +56,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
             <div className="flex-1">
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
-                  <span className="text-[#e1ff00] text-3xl font-bold">25</span>
+                  <span className="text-[#e1ff00] text-3xl font-bold">{level.toLocaleString()}</span>
                   <span className="text-gray-400 text-sm">Твой уровень</span>
                 </div>
               </div>
@@ -46,7 +66,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
             <div className="flex-1">
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
-                  <span className="text-white text-2xl font-semibold">2500/8000</span>
+                  <span className="text-white text-2xl font-semibold">{totalEarned.toLocaleString()}/{nextTarget.toLocaleString()}</span>
                   <span className="text-gray-400 text-sm">До следующего уровня</span>
                 </div>
               </div>
@@ -57,8 +77,8 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
           <div className="bg-black/50 rounded-lg p-3">
             <ProgressRow
               icon={<div className="text-[#e1ff00]"><LevelIcon /></div>}
-              value="+1"
-              progress={80} // 80% заполнения
+              value={"+" + (level + 1)}
+              progress={Math.min(100, Math.floor(((totalEarned % 1000) / 1000) * 100))}
             />
           </div>
         </div>

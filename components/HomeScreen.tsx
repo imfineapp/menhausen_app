@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -9,6 +9,7 @@ import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
+import { PointsManager } from '../utils/PointsManager';
 
 
 // Типы для пропсов компонента
@@ -108,13 +109,29 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
   const { content } = useContent();
+  const [totalEarned, setTotalEarned] = useState<number>(0);
+  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
+  const displayLevel = Math.max(1, computedLevel);
+
+  useEffect(() => {
+    const read = () => setTotalEarned(PointsManager.getTotalEarned());
+    read();
+    const onUpdate = () => read();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
+  }, []);
+
   return (
     <div
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
       <div className="typography-body text-[#696969] text-left text-nowrap">
-        <p className="block whitespace-pre">{content.ui.home.level} 1</p>
+        <p className="block whitespace-pre">{content.ui.home.level} {displayLevel.toLocaleString()}</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>

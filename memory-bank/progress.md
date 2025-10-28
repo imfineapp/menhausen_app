@@ -189,3 +189,27 @@
 ### 🗂️ Archived: Telegram Direct-Link Full Screen & Back Button Fix (2025-10-08)
 - Archive: `memory-bank/archive/archive-direct-link-fullscreen-20251008.md`
 - Reflection: `memory-bank/reflection/reflection-direct-link-fullscreen-20251008.md`
+
+### ✅ COMPLETED: User Points and Rewards System (January 13, 2025)
+- **Task Type**: Level 3 (Intermediate Feature)
+- **Problem**: Need to implement a points system with transactions, levels, and rewards
+- **Solution**: Created comprehensive points management system with transaction tracking and dynamic UI updates
+- **Implementation**: 
+  - Created `types/points.ts` with `PointsTransaction` and `PointsChangeResult` interfaces
+  - Implemented `utils/PointsManager.ts` with earn/spend transactions, balance tracking, total earned calculation
+  - Added level calculation: `Math.floor(totalEarned / 1000)` with next level target calculation
+  - Enhanced `DailyCheckinManager` to award 10 points per daily check-in with idempotency via correlationId
+  - Updated UI components:
+    - `ActivityBlockNew`: Dynamic weekly check-ins display with I18N weekday labels using Intl.DateTimeFormat
+    - `ProgressBlock`: Displays actual user level and progress towards next level
+    - `HomeScreen`: Shows dynamic user level based on total earned points
+    - `LevelsScreen`: Displays total earned points and full transaction history with I18N actions
+  - Added event-driven updates: `window.dispatchEvent('points:updated')` for real-time UI reactivity
+  - Implemented I18N for transaction types in Russian and English
+- **Testing**: 328/328 tests passing (247 unit + 81 E2E), all tests passing
+- **Quality**: 0 ESLint warnings, 0 TypeScript errors, production build successful
+- **Status**: ✅ **COMPLETED** - Production ready, zero technical debt
+
+### 🗂️ Archived: User Points and Rewards System (2025-01-13)
+- Archive: `memory-bank/archive/archive-user-points-rewards-20250113.md`
+- Reflection: `memory-bank/reflection/reflection-user-points-rewards-20250113.md`
