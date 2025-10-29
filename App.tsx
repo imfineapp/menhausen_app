@@ -33,6 +33,8 @@ import { BadgesScreen } from './components/BadgesScreen'; // Импорт стр
 import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
+import { PointsManager } from './utils/PointsManager';
+import { getPointsForLevel } from './utils/pointsLevels';
 
 // Telegram utilities for direct-link support
 import { isTelegramEnvironment, isDirectLinkMode } from './utils/telegramUserUtils';
@@ -973,6 +975,21 @@ function AppContent() {
         totalAttempts: completedAttempt.totalCompletedAttempts
       });
       
+      // Начисляем баллы за прохождение карточки по уровню сложности (синхронно)
+      try {
+        const lastAttempt = completedAttempt.completedAttempts[completedAttempt.completedAttempts.length - 1];
+        const attemptId = `card_${lastAttempt?.attemptId || `${currentCard.id}_${Date.now()}`}`;
+        const level = (currentCard as any).level ?? 1;
+        const themeId = (currentCard as any).themeId ?? getThemeIdFromCardId(currentCard.id);
+        const amount = getPointsForLevel(level);
+        if (amount > 0) {
+          const note = `Card ${currentCard.id} completed (level ${level}, theme ${themeId})`;
+          PointsManager.earn(amount, { correlationId: attemptId, note });
+        }
+      } catch (earnError) {
+        console.warn('Failed to award points for card completion', earnError);
+      }
+
       // Обновляем локальные состояния для UI
       setCardRating(rating);
       setCompletedCards(prev => new Set([...prev, currentCard.id]));
@@ -1068,7 +1085,9 @@ function AppContent() {
       return {
         id: cardId,
         title: card.id, // Используем ID как заголовок
-        description: card.introduction // Используем introduction как описание
+        description: card.introduction, // Используем introduction как описание
+        level: card.level,
+        themeId
       };
     } catch (error) {
       console.error('Error loading card data:', error);

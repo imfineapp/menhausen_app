@@ -299,6 +299,9 @@
       "achievementEarned": "Achievement Earned"
     }
   },
+  "points": {
+    "cardCompleted": "Awarded for card {{cardId}} (level {{level}})"
+  },
   "donations": {
     "title": "Support the Project",
     "description": "If you like the app and want to support its development, you can make a donation:",
