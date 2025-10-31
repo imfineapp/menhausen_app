@@ -213,3 +213,10 @@
 ### 🗂️ Archived: User Points and Rewards System (2025-01-13)
 - Archive: `memory-bank/archive/archive-user-points-rewards-20250113.md`
 - Reflection: `memory-bank/reflection/reflection-user-points-rewards-20250113.md`
+
+### ✅ COMPLETED: Global i18n migration for user-visible strings (October 31, 2025)
+- Migrated visible UI strings to centralized i18n
+- Fixed points refresh and level consistency; points now sourced from balance
+- Status: ✅ COMPLETED
+- Reflection: `memory-bank/reflection/reflection-i18n-migration-user-point-manager.md`
+- Archive: `memory-bank/archive/archive-i18n-migration-user-point-manager.md`

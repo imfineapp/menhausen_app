@@ -4,29 +4,26 @@
 🎯 **READY FOR NEW TASK** - Awaiting task assignment
 
 ## Status
-⏸️ **IDLE MODE**: Previous task completed
-✅ **LAST TASK**: User Points and Rewards System (2025-01-13)
-✅ **COMPLETED**: Points system with transactions, levels, rewards integrated
+⏸️ **IDLE MODE**: Previous task completed and archived
+✅ **LAST TASK**: Global i18n migration for user-visible strings (2025-10-31)
+✅ **COMPLETED**: i18n migration, points/level consistency, balance-based totals
 🎯 **NEXT**: Use VAN MODE to initialize next task
 
 ## Previous Task Summary
-**Task**: User Points and Rewards System  
-**Completed**: January 13, 2025  
+**Task**: Global i18n migration for user-visible strings  
+**Completed**: October 31, 2025  
 **Status**: ✅ **COMPLETED**
 
-**Problem**: Need to implement a points system with transactions, levels, and rewards for user engagement
+**Problem**: Hardcoded user-visible strings and inconsistent points/level display across components
 
-**Solution**: Created comprehensive points management system with transaction tracking, level calculation, and dynamic UI updates. Integrated 10-point rewards for daily check-ins with idempotency. Implemented I18N for all transaction types and weekday labels.
+**Solution**: Migrated strings to i18n, added missing keys, standardized level logic, and switched to balance-based totals. Ensured live UI updates via events.
 
 **Key Achievements:**
-- ✅ Created PointsManager with earn/spend transactions
-- ✅ Implemented level calculation and next level targets
-- ✅ Awarded 10 points per daily check-in (idempotent)
-- ✅ Updated ActivityBlockNew, ProgressBlock, HomeScreen, LevelsScreen with dynamic data
-- ✅ Added event-driven UI updates with `points:updated` events
-- ✅ Implemented I18N for transaction types and weekday labels
-- ✅ 328/328 tests passing (247 unit + 81 E2E)
-- ✅ Zero technical debt, production-ready
+- ✅ i18n for `App.tsx`, `HomeScreen.tsx`, `ProgressBlock.tsx`, `StatusBlocksRow.tsx`
+- ✅ Added missing UI keys in `ContentContext.tsx` with fallbacks
+- ✅ Consistent level calculation (min 1) across UI
+- ✅ Points pulled from `menhausen_points_balance`, targets computed from balance
+- ✅ All tests passing (unit and e2e), type-check and lint clean
 
 ## Ready for New Task
 
@@ -39,21 +36,3 @@
 1. Type `VAN` to enter VAN MODE
 2. Provide task description
 3. System will analyze and create plan
-
-## Latest Task Completion
-**Task**: User Points and Rewards System  
-**Date**: January 13, 2025  
-**Status**: ✅ **COMPLETED**
-
-**Key Achievements:**
-- ✅ Created PointsManager with earn/spend transactions
-- ✅ Implemented level calculation and rewards
-- ✅ 328/328 tests passing (247 unit + 81 E2E)
-- ✅ Zero technical debt, production-ready
-
----
-
-## 🎯 Next Steps
-**Ready for new task!**
-
-Type `VAN` to initialize next task assignment.

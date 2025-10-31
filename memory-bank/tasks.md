@@ -5,7 +5,9 @@
 
 Mode: **VAN**  
 Complexity Level: **Level 2 (Simple Enhancement)**  
-Status: ▶️ **ACTIVE**
+- Status: ✅ **COMPLETED** (Archived)
+- Archive: `memory-bank/archive/archive-i18n-migration-user-point-manager.md`
+- Reflection: `memory-bank/reflection/reflection-i18n-migration-user-point-manager.md`
 
 ### Goal
 Migrate all user-visible text to the centralized i18n/content system to ensure consistency and easy localization. Prioritize changes introduced or touched in this branch.
@@ -17,15 +19,15 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
 - Maintain existing design and spacing; no UI regressions.
 
 ### Checklist
-- [ ] Audit this branch for hardcoded user-visible strings
-- [ ] For each string, create/extend keys in `content.ui.*` (respect existing naming conventions)
-- [ ] Replace usages with i18n lookups via `useContent()`
-- [ ] Add safe fallbacks where necessary to avoid runtime errors
-- [ ] Verify Russian and English display for affected screens
-- [ ] Lint and type-check pass (`npm run lint:all`)
-- [ ] BugBot: Add `storage` and `points:updated` listeners in `ActivityBlockNew` for points refresh (earnedPoints/nextTarget)
-- [ ] BugBot: Align level calculation across UI (min level should be 1 everywhere: `HomeScreen`, `ProgressBlock`)
-- [ ] Points source: Use `menhausen_points_balance` as the source of truth for total points display (avoid recomputing from transactions)
+- [x] Audit this branch for hardcoded user-visible strings
+- [x] For each string, create/extend keys in `content.ui.*` (respect existing naming conventions)
+- [x] Replace usages with i18n lookups via `useContent()`
+- [x] Add safe fallbacks where necessary to avoid runtime errors
+- [x] Verify Russian and English display for affected screens
+- [x] Lint and type-check pass (`npm run lint:all`)
+- [x] BugBot: Add `storage` and `points:updated` listeners in `ActivityBlockNew` for points refresh (earnedPoints/nextTarget)
+- [x] BugBot: Align level calculation across UI (min level should be 1 everywhere: `HomeScreen`, `ProgressBlock`)
+- [x] Points source: Use `menhausen_points_balance` as the source of truth for total points display (avoid recomputing from transactions)
 
 ### Acceptance Criteria
 - All user-facing strings in changed files are sourced from i18n/content.
@@ -81,12 +83,13 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
 ## 📋 **Task History**
 
 ### Recent Completions
-1. **User Points and Rewards System** (2025-01-13) - Level 3
-2. **Telegram Direct-Link Full Screen & Back Button Fix** (2025-10-08) - Level 2
-3. **PostHog Analytics Integration** (2025-09-30) - Level 2
-4. **Theme Cards Logic Implementation** (2025-09-29) - Level 3
-5. **Premium Theme Paywall Navigation** (2025-09-29) - Level 2
-6. **Telegram User ID Display** (2025-09-29) - Level 2
+1. **Global i18n migration for user-visible strings** (2025-10-31) - Level 2
+2. **User Points and Rewards System** (2025-01-13) - Level 3
+3. **Telegram Direct-Link Full Screen & Back Button Fix** (2025-10-08) - Level 2
+4. **PostHog Analytics Integration** (2025-09-30) - Level 2
+5. **Theme Cards Logic Implementation** (2025-09-29) - Level 3
+6. **Premium Theme Paywall Navigation** (2025-09-29) - Level 2
+7. **Telegram User ID Display** (2025-09-29) - Level 2
 
 ---
 
