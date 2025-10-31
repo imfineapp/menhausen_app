@@ -76,6 +76,7 @@ function QuestionScreen01WithLoader({
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>;
   currentLanguage: string;
 }) {
+  const { getUI } = useContent();
   const [questions, setQuestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -98,13 +99,13 @@ function QuestionScreen01WithLoader({
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg animate-pulse">Loading questions...</div>
+          <div className="text-lg animate-pulse">{getUI().common.loadingQuestions}</div>
         </div>
       </div>
     );
   }
   
-  const questionText = questions[0] || "Question not found";
+  const questionText = questions[0] || getUI().cards.questionNotFound;
   
   return (
     <QuestionScreen01
@@ -137,6 +138,7 @@ function QuestionScreen02WithLoader({
   currentLanguage: string;
   previousAnswer: string;
 }) {
+  const { getUI } = useContent();
   const [questions, setQuestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -159,13 +161,13 @@ function QuestionScreen02WithLoader({
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg animate-pulse">Loading questions...</div>
+          <div className="text-lg animate-pulse">{getUI().common.loadingQuestions}</div>
         </div>
       </div>
     );
   }
   
-  const questionText = questions[1] || "Question not found";
+  const questionText = questions[1] || getUI().cards.questionNotFound;
   
   return (
     <QuestionScreen02
@@ -201,6 +203,7 @@ function FinalCardMessageScreenWithLoader({
   }>;
   currentLanguage: string;
 }) {
+  const { getUI } = useContent();
   const [messageData, setMessageData] = useState<{
     finalMessage: string;
     practiceTask: string;
@@ -216,32 +219,32 @@ function FinalCardMessageScreenWithLoader({
       } catch (error) {
         console.error('Error loading message data:', error);
         setMessageData({
-          finalMessage: "Technique not found",
-          practiceTask: "Practice task not found",
-          whyExplanation: "Explanation not found"
+          finalMessage: getUI().cards.techniqueNotFound || 'Technique not found',
+          practiceTask: getUI().cards.practiceTaskNotFound || 'Practice task not found',
+          whyExplanation: getUI().cards.explanationNotFound || 'Explanation not found'
         });
       } finally {
         setLoading(false);
       }
     };
     loadMessageData();
-  }, [cardId, currentLanguage, getCardMessageData]);
+  }, [cardId, currentLanguage, getCardMessageData, getUI]);
   
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">Loading final message...</div>
+      if (loading) {
+      return (
+        <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+          <div className="text-white text-center">
+            <div className="text-lg animate-pulse">{getUI().common.loadingFinalMessage || getUI().common.loading}</div>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
   
   if (!messageData) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg text-red-400">Error loading message data</div>
+          <div className="text-lg text-red-400">{getUI().common.errorLoadingMessageData || getUI().common.error}</div>
         </div>
       </div>
     );
@@ -443,7 +446,7 @@ function AppContent() {
   });
 
   // Получение системы контента
-  const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage } = useContent();
+  const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage, getUI } = useContent();
   
   // Логируем изменения currentScreen
   
@@ -1093,8 +1096,8 @@ function AppContent() {
       console.error('Error loading card data:', error);
       return {
         id: cardId,
-        title: 'Card',
-        description: 'Card description will be available soon.'
+        title: getUI().cards.fallbackTitle || 'Card',
+        description: getUI().cards.fallbackDescription || 'Card description will be available soon.'
       };
     }
   };
@@ -1145,16 +1148,16 @@ function AppContent() {
       }
       
       return {
-        finalMessage: card.technique || "Technique not found",
-        practiceTask: card.recommendation || "Practice task not found", 
-        whyExplanation: card.mechanism || "Explanation not found"
+        finalMessage: card.technique || (getUI().cards.techniqueNotFound || 'Technique not found'),
+        practiceTask: card.recommendation || (getUI().cards.practiceTaskNotFound || 'Practice task not found'), 
+        whyExplanation: card.mechanism || (getUI().cards.explanationNotFound || 'Explanation not found')
       };
     } catch (error) {
       console.error('Error loading card message data:', error);
       return {
-        finalMessage: "Technique not found",
-        practiceTask: "Practice task not found",
-        whyExplanation: "Explanation not found"
+        finalMessage: getUI().cards.techniqueNotFound || 'Technique not found',
+        practiceTask: getUI().cards.practiceTaskNotFound || 'Practice task not found',
+        whyExplanation: getUI().cards.explanationNotFound || 'Explanation not found'
       };
     }
   };

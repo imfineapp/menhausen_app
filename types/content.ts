@@ -167,6 +167,9 @@ export interface UITexts {
     delete: LocalizedContent;
     edit: LocalizedContent;
     close: LocalizedContent;
+    loadingQuestions?: LocalizedContent;
+    loadingFinalMessage?: LocalizedContent;
+    errorLoadingMessageData?: LocalizedContent;
   };
   home: {
     greeting: LocalizedContent;
@@ -220,6 +223,7 @@ export interface UITexts {
     premium: LocalizedContent;
     free: LocalizedContent;
     follow?: LocalizedContent;
+    openProfile?: LocalizedContent;
   };
   about: {
     title: LocalizedContent;
@@ -350,6 +354,12 @@ export interface UITexts {
       level5: LocalizedContent;
       description: LocalizedContent;
     };
+    questionNotFound?: LocalizedContent;
+    techniqueNotFound?: LocalizedContent;
+    practiceTaskNotFound?: LocalizedContent;
+    explanationNotFound?: LocalizedContent;
+    fallbackTitle?: LocalizedContent;
+    fallbackDescription?: LocalizedContent;
   };
   levels: {
     title: LocalizedContent;

@@ -157,12 +157,13 @@ function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
  * Адаптивный полный блок пользователя с аватаром и информацией
  */
 function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; userHasPremium: boolean }) {
+  const { content } = useContent();
   return (
     <button
       onClick={onClick}
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0 w-full cursor-pointer rounded-lg min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]"
       data-name="User frame info block"
-      aria-label="Open user profile"
+      aria-label={content.ui.profile.openProfile || 'Open user profile'}
     >
       <UserAvatar />
       <UserInfoBlock userHasPremium={userHasPremium} />
