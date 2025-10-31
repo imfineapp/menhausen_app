@@ -34,7 +34,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   useEffect(() => {
     const readPoints = () => {
       try {
-        const total = PointsManager.getTotalEarned();
+        const total = PointsManager.getBalance();
         const target = PointsManager.getNextLevelTarget(1000);
         setEarnedPoints(total);
         setNextTarget(target);

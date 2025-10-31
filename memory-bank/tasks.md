@@ -23,12 +23,18 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
 - [ ] Add safe fallbacks where necessary to avoid runtime errors
 - [ ] Verify Russian and English display for affected screens
 - [ ] Lint and type-check pass (`npm run lint:all`)
+- [ ] BugBot: Add `storage` and `points:updated` listeners in `ActivityBlockNew` for points refresh (earnedPoints/nextTarget)
+- [ ] BugBot: Align level calculation across UI (min level should be 1 everywhere: `HomeScreen`, `ProgressBlock`)
+- [ ] Points source: Use `menhausen_points_balance` as the source of truth for total points display (avoid recomputing from transactions)
 
 ### Acceptance Criteria
 - All user-facing strings in changed files are sourced from i18n/content.
 - RU/EN switch renders correctly without missing keys.
 - No changes to analytics event/property names.
 - CI passes; no new eslint/type errors.
+- ActivityBlockNew updates points (earned/target) live on `storage` and `points:updated`.
+- Level value is consistent across `HomeScreen` and `ProgressBlock` (never shows 0; min 1).
+- Total points displayed come from `menhausen_points_balance` balance key, not from aggregated transactions.
 
 ### Implementation Plan (Level 2)
 
@@ -39,6 +45,8 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
   - `App.tsx` (any toasts/messages if present)
   - `components/LevelsScreen.tsx` (verify strings are from `content.ui.levels`)
   - `components/ContentContext.tsx` (add/organize keys under `content.ui.*`)
+  - `components/ProgressBlock.tsx` (i18n for labels, consistent level logic, points source)
+  - `components/StatusBlocksRow.tsx` (i18n for titles)
 - Steps:
   1) Audit the listed files for visible literals and list missing keys.
   2) Add keys to `ContentContext` under appropriate namespaces (`ui.home`, `ui.activity`, `ui.levels`, etc.).
@@ -46,6 +54,10 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
   4) Ensure weekday labels are generated via i18n content or locale logic consistently.
   5) Verify both RU and EN outputs visually and via quick checks.
   6) Run `npm run lint:all` and fix any issues.
+- Bug Fixes (from BugBot remarks):
+  - ActivityBlockNew: add live refresh for points using `storage` and `points:updated` listeners; ensure `earnedPoints` and `nextTarget` update.
+  - Level display: standardize min-level logic (use `Math.max(1, computedLevel)`); apply to `ProgressBlock` and `HomeScreen`.
+  - Points balance source: read total points from `menhausen_points_balance` (persisted balance) instead of recomputing from transactions; update `PointsManager` accessors or call-sites accordingly.
 - Potential Challenges:
   - Avoid localizing analytics/event identifiers.
   - Keep spacing and layout unchanged when replacing strings.
@@ -54,6 +66,7 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
   - Manual smoke test for the three affected screens.
   - Toggle language to RU/EN and verify labels render.
   - Lint check (`npm run lint:all`) and quick type check build.
+  - Unit tests around points display and level consistency.
 
 ---
 

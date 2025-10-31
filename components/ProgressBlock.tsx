@@ -22,7 +22,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
 
   useEffect(() => {
     const read = () => {
-      const t = PointsManager.getTotalEarned();
+      const t = PointsManager.getBalance();
       setTotalEarned(t);
       setNextTarget(PointsManager.getNextLevelTarget(1000));
     };

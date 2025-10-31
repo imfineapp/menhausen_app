@@ -114,7 +114,7 @@ function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
   const displayLevel = Math.max(1, computedLevel);
 
   useEffect(() => {
-    const read = () => setTotalEarned(PointsManager.getTotalEarned());
+    const read = () => setTotalEarned(PointsManager.getBalance());
     read();
     const onUpdate = () => read();
     window.addEventListener('storage', onUpdate);

@@ -70,12 +70,12 @@ export class PointsManager {
   }
 
   static getNextLevelTarget(step: number = 1000): number {
-    const totalEarned = this.getTotalEarned();
+    const total = readBalance();
     if (step <= 0) step = 1000;
-    if (totalEarned <= 0) return step;
-    return totalEarned % step === 0
-      ? totalEarned + step
-      : Math.ceil(totalEarned / step) * step;
+    if (total <= 0) return step;
+    return total % step === 0
+      ? total + step
+      : Math.ceil(total / step) * step;
   }
 
   static earn(amount: number, meta?: { note?: string; correlationId?: string }): PointsChangeResult {
