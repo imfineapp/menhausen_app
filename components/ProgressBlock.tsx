@@ -14,7 +14,7 @@ interface ProgressBlockProps {
  */
 export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockProps) {
   const { getUI } = useContent();
-  const _uiContent = getUI();
+  const ui = getUI();
   const [totalEarned, setTotalEarned] = useState<number>(0);
   const [nextTarget, setNextTarget] = useState<number>(1000);
   const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
@@ -58,7 +58,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
                   <span className="text-[#e1ff00] text-3xl font-bold">{level.toLocaleString()}</span>
-                  <span className="text-gray-400 text-sm">Твой уровень</span>
+                  <span className="text-gray-400 text-sm">{ui.levels.yourLevel}</span>
                 </div>
               </div>
             </div>
@@ -68,7 +68,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
                   <span className="text-white text-2xl font-semibold">{totalEarned.toLocaleString()}/{nextTarget.toLocaleString()}</span>
-                  <span className="text-gray-400 text-sm">До следующего уровня</span>
+                  <span className="text-gray-400 text-sm">{ui.levels.toNextLevel}</span>
                 </div>
               </div>
             </div>

@@ -256,7 +256,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
         level: 'Level',
         premium: 'Premium',
         free: 'Free',
-        openProfile: 'Open user profile'
+        openProfile: 'Open user profile',
+        status: 'Status'
       },
       survey: {
         progress: 'Step {current} of {total}',

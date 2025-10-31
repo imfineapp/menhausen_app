@@ -1,6 +1,7 @@
 import React from 'react';
 import { StatusBlock } from './StatusBlock';
 import { BadgeIcon, LevelIcon, MentalStatusIcon } from './UserProfileIcons';
+import { useContent } from './ContentContext';
 
 interface StatusBlocksRowProps {
   onBadgesClick?: () => void;
@@ -17,6 +18,9 @@ export function StatusBlocksRow({
   onLevelClick, 
   onStatusClick 
 }: StatusBlocksRowProps) {
+  const { getUI, getLocalizedBadges } = useContent();
+  const ui = getUI();
+  const badges = getLocalizedBadges();
 
   return (
     <div className="flex flex-row gap-3 sm:gap-4 w-full" data-name="Status blocks row">
@@ -24,7 +28,7 @@ export function StatusBlocksRow({
       <div className="flex-1">
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><BadgeIcon /></div>}
-          title="Достижения"
+          title={badges.title}
           value="12"
           subtitle=""
           onClick={onBadgesClick}
@@ -35,7 +39,7 @@ export function StatusBlocksRow({
       <div className="flex-1">
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><LevelIcon /></div>}
-          title="Твой уровень"
+          title={ui.levels.yourLevel}
           value="25"
           subtitle=""
           onClick={onLevelClick}
@@ -46,7 +50,7 @@ export function StatusBlocksRow({
       <div className="flex-1">
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><MentalStatusIcon /></div>}
-          title="Состояние"
+          title={ui.profile.status || 'Status'}
           value="3/5"
           subtitle=""
           onClick={onStatusClick}

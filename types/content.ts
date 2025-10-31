@@ -224,6 +224,7 @@ export interface UITexts {
     free: LocalizedContent;
     follow?: LocalizedContent;
     openProfile?: LocalizedContent;
+    status?: LocalizedContent;
   };
   about: {
     title: LocalizedContent;
