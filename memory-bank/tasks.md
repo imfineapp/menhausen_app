@@ -1,9 +1,36 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🎯 **READY FOR NEW TASK** - Awaiting task assignment
+🎯 **Global i18n migration for user-visible strings** (branch: `user-point-manager`)
 
-Status: ⏸️ **IDLE** - Use VAN MODE to initialize next task
+Mode: **VAN**  
+Complexity Level: **Level 2 (Simple Enhancement)**  
+Status: ▶️ **ACTIVE**
+
+### Goal
+Migrate all user-visible text to the centralized i18n/content system to ensure consistency and easy localization. Prioritize changes introduced or touched in this branch.
+
+### Scope
+- Extract hardcoded user-facing strings from components, screens, and utils into `ContentContext`/i18n structures.
+- Prioritize files changed in this branch (e.g., `App.tsx`, `components/ActivityBlockNew.tsx`, `components/HomeScreen.tsx`).
+- Preserve analytics/event names and internal identifiers (do not localize event keys).
+- Maintain existing design and spacing; no UI regressions.
+
+### Checklist
+- [ ] Audit this branch for hardcoded user-visible strings
+- [ ] For each string, create/extend keys in `content.ui.*` (respect existing naming conventions)
+- [ ] Replace usages with i18n lookups via `useContent()`
+- [ ] Add safe fallbacks where necessary to avoid runtime errors
+- [ ] Verify Russian and English display for affected screens
+- [ ] Lint and type-check pass (`npm run lint:all`)
+
+### Acceptance Criteria
+- All user-facing strings in changed files are sourced from i18n/content.
+- RU/EN switch renders correctly without missing keys.
+- No changes to analytics event/property names.
+- CI passes; no new eslint/type errors.
+
+---
 
 ## Previous Task (Completed)
 **Task**: User Points and Rewards System  
