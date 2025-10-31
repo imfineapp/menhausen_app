@@ -167,6 +167,9 @@ export interface UITexts {
     delete: LocalizedContent;
     edit: LocalizedContent;
     close: LocalizedContent;
+    loadingQuestions?: LocalizedContent;
+    loadingFinalMessage?: LocalizedContent;
+    errorLoadingMessageData?: LocalizedContent;
   };
   home: {
     greeting: LocalizedContent;
@@ -220,6 +223,8 @@ export interface UITexts {
     premium: LocalizedContent;
     free: LocalizedContent;
     follow?: LocalizedContent;
+    openProfile?: LocalizedContent;
+    status?: LocalizedContent;
   };
   about: {
     title: LocalizedContent;
@@ -350,16 +355,22 @@ export interface UITexts {
       level5: LocalizedContent;
       description: LocalizedContent;
     };
-    levels: {
-      title: LocalizedContent;
-      yourLevel: LocalizedContent;
-      toNextLevel: LocalizedContent;
-      pointsHistory: LocalizedContent;
-      actions: {
-        dailyCheckin: LocalizedContent;
-        exerciseComplete: LocalizedContent;
-        achievementEarned: LocalizedContent;
-      };
+    questionNotFound?: LocalizedContent;
+    techniqueNotFound?: LocalizedContent;
+    practiceTaskNotFound?: LocalizedContent;
+    explanationNotFound?: LocalizedContent;
+    fallbackTitle?: LocalizedContent;
+    fallbackDescription?: LocalizedContent;
+  };
+  levels: {
+    title: LocalizedContent;
+    yourLevel: LocalizedContent;
+    toNextLevel: LocalizedContent;
+    pointsHistory: LocalizedContent;
+    actions: {
+      dailyCheckin: LocalizedContent;
+      exerciseComplete: LocalizedContent;
+      achievementEarned: LocalizedContent;
     };
   };
 }

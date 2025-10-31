@@ -78,7 +78,7 @@
     "vaul": "^1.1.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
+    "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/jest-dom": "^6.1.0",
     "@testing-library/react": "^13.4.0",
@@ -103,7 +103,7 @@
     "tailwindcss": "^4.1.12",
     "terser": "^5.43.1",
     "typescript": "^5.0.2",
-    "vite": "^7.1.2",
+    "vite": "7.1.12",
     "vitest": "^3.2.4",
     "wait-on": "^7.2.0"
   }

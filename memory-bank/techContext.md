@@ -30,6 +30,8 @@
 - **React Hooks**: useState, useEffect for local state
 - **Context API**: Content management and global state
 - **Local Storage**: Data persistence
+- **Points System**: Transaction-based points with idempotency
+- **Event-Driven Updates**: `points:updated` events for real-time UI reactivity
 
 ### Build Configuration
 - **TypeScript**: Strict typing throughout

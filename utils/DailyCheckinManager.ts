@@ -1,3 +1,5 @@
+import { PointsManager } from './PointsManager';
+
 /**
  * DailyCheckinManager - Utility class for managing daily check-in logic
  * 
@@ -27,6 +29,7 @@ export enum DailyCheckinStatus {
 export class DailyCheckinManager {
   private static readonly STORAGE_KEY_PREFIX = 'daily_checkin_';
   private static readonly RESET_HOUR = 6; // 6 AM reset time
+  private static readonly CHECKIN_REWARD = 10; // points per successful daily check-in
 
   /**
    * Generate day-based key for current day (YYYY-MM-DD format)
@@ -88,6 +91,23 @@ export class DailyCheckinManager {
       };
 
       localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
+
+      // Award daily check-in points once per day
+      try {
+        const correlationId = `checkin_${currentDayKey}`;
+        const alreadyAwarded = PointsManager
+          .getTransactions()
+          .some(t => t.correlationId === correlationId && t.type === 'earn' && t.amount === this.CHECKIN_REWARD);
+
+        if (!alreadyAwarded) {
+          PointsManager.earn(this.CHECKIN_REWARD, {
+            correlationId,
+            note: 'Daily check-in reward'
+          });
+        }
+      } catch (awardError) {
+        console.warn('DailyCheckinManager: failed to award check-in points', awardError);
+      }
       return true;
     } catch (error) {
       console.error('Error saving check-in data:', error);
@@ -258,6 +278,57 @@ export class DailyCheckinManager {
     } catch (error) {
       console.error('Error retrieving all check-ins:', error);
       return [];
+    }
+  }
+
+  /**
+   * Get weekly check-ins status (Monday-Sunday of current week)
+   * @returns object with mon-sun boolean status
+   */
+  static getWeeklyCheckinsStatus(): Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', boolean> {
+    try {
+      const today = new Date();
+      const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday ...
+
+      // Calculate Monday of the current week
+      const monday = new Date(today);
+      monday.setHours(0, 0, 0, 0);
+      monday.setDate(today.getDate() - ((dayOfWeek === 0 ? 7 : dayOfWeek) - 1));
+
+      const weeklyStatus: Record<'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun', boolean> = {
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
+        sat: false,
+        sun: false
+      };
+
+      const dayNames: Array<'sun' | 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat'> = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
+      // Check each day of the week
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(monday);
+        checkDate.setDate(monday.getDate() + i);
+
+        const year = checkDate.getFullYear();
+        const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+        const day = String(checkDate.getDate()).padStart(2, '0');
+        const dateKey = `${year}-${month}-${day}`;
+
+        const checkinData = this.getCheckin(dateKey);
+        const name = dayNames[checkDate.getDay()];
+        if (checkinData && checkinData.completed) {
+          // only set true, never force false if already true
+          (weeklyStatus as any)[name] = true;
+        }
+      }
+
+      return weeklyStatus;
+    } catch (error) {
+      console.error('Error getting weekly check-ins status:', error);
+      return { mon: false, tue: false, wed: false, thu: false, fri: false, sat: false, sun: false };
     }
   }
 }

@@ -5,6 +5,8 @@ import { useContent } from './ContentContext';
 import { useLanguage } from './LanguageContext';
 import { DailyCheckinManager } from '../utils/DailyCheckinManager';
 import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';
+import { PointsManager } from '../utils/PointsManager';
+import { useEffect, useMemo, useState } from 'react';
 
 interface ActivityBlockNewProps {
   activityData?: ActivityData;
@@ -17,21 +19,64 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   // Get real check-in data from DailyCheckinManager
   const totalCheckins = DailyCheckinManager.getTotalCheckins();
   const _currentStreak = DailyCheckinManager.getCheckinStreak();
+  const [earnedPoints, setEarnedPoints] = useState<number>(0);
+  const [nextTarget, setNextTarget] = useState<number>(1000);
+  const [weeklyCheckins, setWeeklyCheckins] = useState<Record<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun', boolean>>({
+    mon: false,
+    tue: false,
+    wed: false,
+    thu: false,
+    fri: false,
+    sat: false,
+    sun: false
+  });
+
+  useEffect(() => {
+    const readPoints = () => {
+      try {
+        const total = PointsManager.getBalance();
+        const target = PointsManager.getNextLevelTarget(1000);
+        setEarnedPoints(total);
+        setNextTarget(target);
+      } catch (error) {
+        console.warn('ActivityBlockNew: failed to load points/level target', error);
+      }
+    };
+    readPoints();
+    const onUpdate = () => readPoints();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const readWeekly = () => {
+      try {
+        const weekly = DailyCheckinManager.getWeeklyCheckinsStatus();
+        setWeeklyCheckins(weekly);
+      } catch (error) {
+        console.warn('ActivityBlockNew: failed to load weekly check-ins', error);
+      }
+    };
+    readWeekly();
+    const onUpdate = () => readWeekly();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
+  }, []);
   
   // Данные по умолчанию для демонстрации (fallback)
   const defaultData: ActivityData = {
     streakDays: totalCheckins > 0 ? totalCheckins : 0,
-    currentPoints: 5863,
-    targetPoints: 8000,
-    weeklyCheckins: {
-      mon: true,
-      tue: true,
-      wed: true,
-      thu: false,
-      fri: false,
-      sat: false,
-      sun: false
-    }
+    currentPoints: earnedPoints,
+    targetPoints: nextTarget,
+    weeklyCheckins: weeklyCheckins
   };
 
   const data = activityData || defaultData;
@@ -46,15 +91,32 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
     }
   };
 
-  const daysOfWeek = [
-    { key: 'mon', label: 'Mon' },
-    { key: 'tue', label: 'Tue' },
-    { key: 'wed', label: 'Wed' },
-    { key: 'thu', label: 'Thu' },
-    { key: 'fri', label: 'Fri' },
-    { key: 'sat', label: 'Sat' },
-    { key: 'sun', label: 'Sun' }
-  ];
+  const daysOfWeek = useMemo(() => {
+    const locale = language === 'ru' ? 'ru-RU' : 'en-US';
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+
+    // Compute Monday of current week to keep order Mon..Sun
+    const today = new Date();
+    const dow = today.getDay(); // 0=Sun..6=Sat
+    const monday = new Date(today);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(today.getDate() - ((dow === 0 ? 7 : dow) - 1));
+
+    const keys: Array<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun'> = ['mon','tue','wed','thu','fri','sat','sun'];
+    const days = [] as Array<{ key: typeof keys[number]; label: string }>;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      let label = formatter.format(d);
+      // Normalize: remove trailing dot and trim, capitalize first letter for en
+      label = label.replace(/\.$/, '').trim();
+      if (language !== 'ru' && label) {
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+      }
+      days.push({ key: keys[i], label });
+    }
+    return days;
+  }, [language]);
 
   return (
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">

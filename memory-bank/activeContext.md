@@ -5,20 +5,25 @@
 
 ## Status
 ⏸️ **IDLE MODE**: Previous task completed and archived
-✅ **LAST TASK**: Telegram Direct-Link Full Screen & Back Button Fix (2025-10-08)
-✅ **ARCHIVED**: Complete documentation in Memory Bank
+✅ **LAST TASK**: Global i18n migration for user-visible strings (2025-10-31)
+✅ **COMPLETED**: i18n migration, points/level consistency, balance-based totals
 🎯 **NEXT**: Use VAN MODE to initialize next task
 
 ## Previous Task Summary
-**Task**: Telegram Direct-Link Full Screen & Back Button Fix  
-**Completed**: October 8, 2025  
-**Status**: ✅ **ARCHIVED**
+**Task**: Global i18n migration for user-visible strings  
+**Completed**: October 31, 2025  
+**Status**: ✅ **COMPLETED**
 
-**Problem**: Telegram Mini App opened via direct-link did not expand to full screen and back button was not available
+**Problem**: Hardcoded user-visible strings and inconsistent points/level display across components
 
-**Solution**: Implemented two-step fullscreen process (`expand()` + `requestFullscreen()`) with enhanced back button support
+**Solution**: Migrated strings to i18n, added missing keys, standardized level logic, and switched to balance-based totals. Ensured live UI updates via events.
 
-**Archive**: [archive-direct-link-fullscreen-20251008.md](archive/archive-direct-link-fullscreen-20251008.md)
+**Key Achievements:**
+- ✅ i18n for `App.tsx`, `HomeScreen.tsx`, `ProgressBlock.tsx`, `StatusBlocksRow.tsx`
+- ✅ Added missing UI keys in `ContentContext.tsx` with fallbacks
+- ✅ Consistent level calculation (min 1) across UI
+- ✅ Points pulled from `menhausen_points_balance`, targets computed from balance
+- ✅ All tests passing (unit and e2e), type-check and lint clean
 
 ## Ready for New Task
 
@@ -31,25 +36,3 @@
 1. Type `VAN` to enter VAN MODE
 2. Provide task description
 3. System will analyze and create plan
-
-## Latest Task Completion
-**Task**: Telegram Direct-Link Full Screen & Back Button Fix  
-**Date**: October 8, 2025  
-**Status**: ✅ **ARCHIVED**
-
-**Key Achievements:**
-- ✅ Implemented two-step fullscreen process (`expand()` + `requestFullscreen()`)
-- ✅ 311/311 tests passing (230 unit + 81 E2E)
-- ✅ Verified on real Android device
-- ✅ Zero technical debt, production-ready
-
-**Documentation:**
-- Archive: [archive-direct-link-fullscreen-20251008.md](archive/archive-direct-link-fullscreen-20251008.md)
-- Reflection: [reflection-direct-link-fullscreen-20251008.md](reflection/reflection-direct-link-fullscreen-20251008.md)
-
----
-
-## 🎯 Next Steps
-**Ready for new task!**
-
-Type `VAN` to initialize next task assignment.

@@ -200,7 +200,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
         cancel: 'Cancel',
         delete: 'Delete',
         edit: 'Edit',
-        close: 'Close'
+        close: 'Close',
+        loadingQuestions: 'Loading questions...',
+        loadingFinalMessage: 'Loading final message...',
+        errorLoadingMessageData: 'Error loading message data'
       },
       home: {
         greeting: 'Hello',
@@ -252,7 +255,9 @@ export function ContentProvider({ children }: ContentProviderProps) {
         heroTitle: 'Welcome back! #MNHSNDEV', // Dynamic: Telegram user ID or development fallback
         level: 'Level',
         premium: 'Premium',
-        free: 'Free'
+        free: 'Free',
+        openProfile: 'Open user profile',
+        status: 'Status'
       },
       survey: {
         progress: 'Step {current} of {total}',
@@ -357,16 +362,22 @@ export function ContentProvider({ children }: ContentProviderProps) {
           level5: 'Level 5',
           description: 'Card description'
         },
-        levels: {
-          title: 'Levels',
-          yourLevel: 'Your Level',
-          toNextLevel: 'To Next Level',
-          pointsHistory: 'Points History',
-          actions: {
-            dailyCheckin: 'Daily Check-in',
-            exerciseComplete: 'Exercise Complete',
-            achievementEarned: 'Achievement Earned'
-          }
+        questionNotFound: 'Question not found',
+        techniqueNotFound: 'Technique not found',
+        practiceTaskNotFound: 'Practice task not found',
+        explanationNotFound: 'Explanation not found',
+        fallbackTitle: 'Card',
+        fallbackDescription: 'Card description will be available soon.'
+      },
+      levels: {
+        title: 'Levels',
+        yourLevel: 'Your Level',
+        toNextLevel: 'To Next Level',
+        pointsHistory: 'Points History',
+        actions: {
+          dailyCheckin: 'Daily Check-in',
+          exerciseComplete: 'Exercise Complete',
+          achievementEarned: 'Achievement Earned'
         }
       },
         about: {
@@ -667,7 +678,8 @@ export function useUIText() {
       privacy: getLocalizedText(content.ui.profile.privacy),
       terms: getLocalizedText(content.ui.profile.terms),
       deleteAccount: getLocalizedText(content.ui.profile.deleteAccount),
-      payments: getLocalizedText(content.ui.profile.payments)
+      payments: getLocalizedText(content.ui.profile.payments),
+      openProfile: getLocalizedText(content.ui.profile.openProfile || '')
     },
     survey: {
       progress: getLocalizedText(content.ui.survey.progress),

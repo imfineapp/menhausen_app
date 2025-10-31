@@ -2,6 +2,7 @@
 // Based on creative phase architecture decisions
 
 import { UserState, UserStateAnalysis, Recommendation, ProgressIndicator, AppScreen } from '../types/userState';
+import { PointsTransaction } from '../types/points';
 
 export class UserStateManager {
   private static cache: Map<string, any> = new Map();
@@ -208,6 +209,34 @@ export class UserStateManager {
       return this.lastAnalysis;
     }
     return null;
+  }
+
+  /**
+   * Points helpers (localStorage based)
+   */
+  static getUserPointsBalance(): number {
+    try {
+      const raw = localStorage.getItem('menhausen_points_balance');
+      if (raw == null) return 0;
+      const n = Number(raw);
+      return Number.isInteger(n) && n >= 0 ? n : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  static getUserPointsRecentTransactions(n: number): PointsTransaction[] {
+    try {
+      const raw = localStorage.getItem('menhausen_points_transactions');
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      const txs = arr as PointsTransaction[];
+      if (n <= 0) return [];
+      return txs.slice(-n);
+    } catch {
+      return [];
+    }
   }
 
   // Private methods
