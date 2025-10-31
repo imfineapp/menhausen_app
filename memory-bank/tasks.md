@@ -30,6 +30,31 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
 - No changes to analytics event/property names.
 - CI passes; no new eslint/type errors.
 
+### Implementation Plan (Level 2)
+
+- Overview: Centralize visible strings into `ContentContext` and replace hardcoded literals in this branch’s touched files.
+- Files to Modify:
+  - `components/HomeScreen.tsx` (user level label, any visible labels/messages)
+  - `components/ActivityBlockNew.tsx` (weekday labels, headings, streak text if visible)
+  - `App.tsx` (any toasts/messages if present)
+  - `components/LevelsScreen.tsx` (verify strings are from `content.ui.levels`)
+  - `components/ContentContext.tsx` (add/organize keys under `content.ui.*`)
+- Steps:
+  1) Audit the listed files for visible literals and list missing keys.
+  2) Add keys to `ContentContext` under appropriate namespaces (`ui.home`, `ui.activity`, `ui.levels`, etc.).
+  3) Replace literals with `useContent()` lookups; provide fallbacks where necessary.
+  4) Ensure weekday labels are generated via i18n content or locale logic consistently.
+  5) Verify both RU and EN outputs visually and via quick checks.
+  6) Run `npm run lint:all` and fix any issues.
+- Potential Challenges:
+  - Avoid localizing analytics/event identifiers.
+  - Keep spacing and layout unchanged when replacing strings.
+  - Ensure no missing keys for either language.
+- Testing Strategy:
+  - Manual smoke test for the three affected screens.
+  - Toggle language to RU/EN and verify labels render.
+  - Lint check (`npm run lint:all`) and quick type check build.
+
 ---
 
 ## Previous Task (Completed)
