@@ -310,5 +310,11 @@
     "currency_usdt_ton": "USDT (TON)",
     "copy": "Копировать",
     "copied": "Скопировано"
+  },
+  "articles": {
+    "title": "Полезные статьи",
+    "viewAll": "Все статьи",
+    "relatedThemes": "Связанные темы",
+    "noArticles": "Статьи скоро появятся"
   }
 }

@@ -69,10 +69,13 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.55.0",
+    "react-markdown": "^10.1.0",
     "react-resizable-panels": "^3.0.4",
     "react-responsive-masonry": "^2.1.7",
     "react-slick": "^0.29.0",
     "recharts": "^2.8.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "sonner": "^1.5.0",
     "tailwind-merge": "^1.14.0",
     "vaul": "^1.1.2"

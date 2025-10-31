@@ -14,7 +14,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
   try {
     console.log(`loadContent: Loading content for language: ${language}`);
     
-    // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
+    // Загружаем все секции контента параллельно (кроме themes, cards и articles - они загружаются отдельно)
     console.log(`loadContent: Starting parallel imports for language: ${language}`);
     const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments] = await Promise.all([
       import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
@@ -37,6 +37,48 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       themesRecord[theme.id] = theme;
     });
     
+    // Загружаем статьи из отдельных файлов
+    console.log(`loadContent: Loading articles from separate files for language: ${language}`);
+    
+    // Используем статический импорт для каждого языка
+    let articles: Record<string, any> = {};
+    
+    if (language === 'ru') {
+      const [stressManagement, anxietyCoping, emotionalRegulation, sleepHygiene, mindfulnessBasics] = await Promise.all([
+        import('../data/content/ru/articles/stress-management.json'),
+        import('../data/content/ru/articles/anxiety-coping.json'),
+        import('../data/content/ru/articles/emotional-regulation.json'),
+        import('../data/content/ru/articles/sleep-hygiene.json'),
+        import('../data/content/ru/articles/mindfulness-basics.json')
+      ]);
+      
+      articles = {
+        'stress-management': stressManagement.default,
+        'anxiety-coping': anxietyCoping.default,
+        'emotional-regulation': emotionalRegulation.default,
+        'sleep-hygiene': sleepHygiene.default,
+        'mindfulness-basics': mindfulnessBasics.default
+      };
+    } else if (language === 'en') {
+      const [stressManagement, anxietyCoping, emotionalRegulation, sleepHygiene, mindfulnessBasics] = await Promise.all([
+        import('../data/content/en/articles/stress-management.json'),
+        import('../data/content/en/articles/anxiety-coping.json'),
+        import('../data/content/en/articles/emotional-regulation.json'),
+        import('../data/content/en/articles/sleep-hygiene.json'),
+        import('../data/content/en/articles/mindfulness-basics.json')
+      ]);
+      
+      articles = {
+        'stress-management': stressManagement.default,
+        'anxiety-coping': anxietyCoping.default,
+        'emotional-regulation': emotionalRegulation.default,
+        'sleep-hygiene': sleepHygiene.default,
+        'mindfulness-basics': mindfulnessBasics.default
+      };
+    }
+    
+    console.log(`loadContent: Loaded ${Object.keys(articles).length} articles from separate files`);
+    
     const content: AppContent = {
       themes: themesRecord,
       cards: {}, // Пустой объект, так как карточки теперь загружаются через ThemeLoader
@@ -56,7 +98,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
         currency_usdt_ton: 'USDT (TON)',
         copy: 'Copy',
         copied: 'Copied'
-      }
+      },
+      articles: articles
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);

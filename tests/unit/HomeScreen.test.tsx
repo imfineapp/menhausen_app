@@ -84,7 +84,9 @@ vi.mock('../../components/ContentContext', () => ({
         premium: 'Premium'
       }
     })
-  })
+  }),
+  useArticles: () => [],
+  useArticle: () => null
 }));
 
 // Helper function to render HomeScreen with LanguageProvider
@@ -167,6 +169,8 @@ describe('HomeScreen', () => {
           <HomeScreen 
             onGoToProfile={mockOnGoToProfile} 
             onGoToTheme={mockOnGoToTheme} 
+            onGoToArticle={() => {}} 
+            onGoToAllArticles={() => {}} 
             userHasPremium={false} 
           />
         </LanguageProvider>
@@ -400,6 +404,8 @@ describe('HomeScreen', () => {
             <HomeScreen 
               onGoToProfile={mockOnGoToProfile} 
               onGoToTheme={mockOnGoToTheme} 
+              onGoToArticle={() => {}} 
+              onGoToAllArticles={() => {}} 
               userHasPremium={false} 
             />
           </LanguageProvider>
@@ -427,6 +433,8 @@ describe('HomeScreen', () => {
             <HomeScreen 
               onGoToProfile={mockOnGoToProfile} 
               onGoToTheme={mockOnGoToTheme} 
+              onGoToArticle={() => {}} 
+              onGoToAllArticles={() => {}} 
               userHasPremium={false} 
             />
           </LanguageProvider>

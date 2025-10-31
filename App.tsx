@@ -35,6 +35,8 @@ import { LevelsScreen } from './components/LevelsScreen'; // Импорт стр
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
+import { ArticleScreen } from './components/ArticleScreen'; // Импорт экрана статьи
+import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт экрана всех статей
 
 // Telegram utilities for direct-link support
 import { isTelegramEnvironment, isDirectLinkMode } from './utils/telegramUserUtils';
@@ -56,7 +58,7 @@ import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'article' | 'all-articles';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -417,6 +419,7 @@ function AppContent() {
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
+  const [currentArticle, setCurrentArticle] = useState<string>('');
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
   const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
@@ -868,6 +871,38 @@ function AppContent() {
     } else {
       console.error('Theme not found:', themeId);
     }
+  };
+
+  /**
+   * Навигация к статье
+   */
+  const handleGoToArticle = (articleId: string) => {
+    console.log(`Opening article: ${articleId}`);
+    setCurrentArticle(articleId);
+    navigateTo('article');
+  };
+
+  /**
+   * Навигация к списку всех статей
+   */
+  const handleGoToAllArticles = () => {
+    console.log('Opening all articles');
+    navigateTo('all-articles');
+  };
+
+  /**
+   * Навигация назад из статьи
+   */
+  const handleBackFromArticle = () => {
+    setCurrentArticle('');
+    navigateTo('home');
+  };
+
+  /**
+   * Навигация назад из списка статей
+   */
+  const handleBackFromAllArticles = () => {
+    navigateTo('home');
   };
 
   const handleBackToHomeFromTheme = () => {
@@ -1415,6 +1450,8 @@ function AppContent() {
           <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
+            onGoToArticle={handleGoToArticle}
+            onGoToAllArticles={handleGoToAllArticles}
             userHasPremium={userHasPremium}
           />
         );
@@ -1626,6 +1663,24 @@ function AppContent() {
               setEarnedAchievementIds([]); // Очищаем достижения
               navigateTo('home');
             }}
+          />
+        );
+      
+      case 'article':
+        return (
+          <ArticleScreen 
+            articleId={currentArticle}
+            onBack={handleBackFromArticle}
+            onViewAllArticles={handleGoToAllArticles}
+            onGoToTheme={handleGoToTheme}
+          />
+        );
+      
+      case 'all-articles':
+        return (
+          <AllArticlesScreen 
+            onBack={handleBackFromAllArticles}
+            onArticleClick={handleGoToArticle}
           />
         );
       
