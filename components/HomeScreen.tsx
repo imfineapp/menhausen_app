@@ -10,6 +10,7 @@ import { ActivityBlockNew } from './ActivityBlockNew';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { PointsManager } from '../utils/PointsManager';
+import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 
 
 // Типы для пропсов компонента
@@ -449,6 +450,9 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
 export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { content: _content } = useContent(); // Content system ready for future use
+  
+  // Автоматическая проверка достижений при изменении статистики
+  useAchievementAutoCheck();
 
   const _handleInfoClick = () => {
     setIsInfoModalOpen(true);

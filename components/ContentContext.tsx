@@ -460,40 +460,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
           congratulations: 'Great!',
           earnedAchievement: 'You earned an achievement'
         },
-        achievements: {
-          first_checkin: {
-            title: 'First Step',
-            description: 'Complete your first check-in'
-          },
-          week_streak: {
-            title: 'Week of Strength',
-            description: 'Check-ins for 7 days in a row'
-          },
-          month_streak: {
-            title: 'Month of Discipline',
-            description: 'Check-ins for 30 days in a row'
-          },
-          first_exercise: {
-            title: 'First Lesson',
-            description: 'Complete your first exercise'
-          },
-          exercise_master: {
-            title: 'Practice Master',
-            description: 'Complete 50 exercises'
-          },
-          mood_tracker: {
-            title: 'Mood Tracker',
-            description: 'Track your mood for 14 days'
-          },
-          early_bird: {
-            title: 'Early Bird',
-            description: 'Check-ins at 6 AM for 5 days in a row'
-          },
-          night_owl: {
-            title: 'Night Owl',
-            description: 'Check-ins at 11 PM for 5 days in a row'
-          }
-        }
+        achievements: {}
       };
     }
     return content.badges;
@@ -535,40 +502,16 @@ export function ContentProvider({ children }: ContentProviderProps) {
         congratulations: getLocalizedText(badgesContent.reward.congratulations),
         earnedAchievement: getLocalizedText(badgesContent.reward.earnedAchievement)
       },
-      achievements: {
-        first_checkin: {
-          title: getLocalizedText(badgesContent.achievements.first_checkin.title),
-          description: getLocalizedText(badgesContent.achievements.first_checkin.description)
-        },
-        week_streak: {
-          title: getLocalizedText(badgesContent.achievements.week_streak.title),
-          description: getLocalizedText(badgesContent.achievements.week_streak.description)
-        },
-        month_streak: {
-          title: getLocalizedText(badgesContent.achievements.month_streak.title),
-          description: getLocalizedText(badgesContent.achievements.month_streak.description)
-        },
-        first_exercise: {
-          title: getLocalizedText(badgesContent.achievements.first_exercise.title),
-          description: getLocalizedText(badgesContent.achievements.first_exercise.description)
-        },
-        exercise_master: {
-          title: getLocalizedText(badgesContent.achievements.exercise_master.title),
-          description: getLocalizedText(badgesContent.achievements.exercise_master.description)
-        },
-        mood_tracker: {
-          title: getLocalizedText(badgesContent.achievements.mood_tracker.title),
-          description: getLocalizedText(badgesContent.achievements.mood_tracker.description)
-        },
-        early_bird: {
-          title: getLocalizedText(badgesContent.achievements.early_bird.title),
-          description: getLocalizedText(badgesContent.achievements.early_bird.description)
-        },
-        night_owl: {
-          title: getLocalizedText(badgesContent.achievements.night_owl.title),
-          description: getLocalizedText(badgesContent.achievements.night_owl.description)
+      achievements: Object.keys(badgesContent.achievements).reduce((acc, key) => {
+        const achievement = badgesContent.achievements[key];
+        if (achievement) {
+          acc[key] = {
+            title: getLocalizedText(achievement.title),
+            description: getLocalizedText(achievement.description)
+          };
         }
-      }
+        return acc;
+      }, {} as Record<string, { title: string; description: string }>)
     };
   }, [getBadges, getLocalizedText]);
 

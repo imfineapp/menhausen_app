@@ -1,0 +1,161 @@
+{
+  "title": "Achievements",
+  "subtitle": "Your mental health progress",
+  "congratulations": "Congratulations!",
+  "unlockedBadge": "You unlocked a new achievement!",
+  "shareButton": "Share",
+  "shareMessage": "I got a new achievement in Menhausen! 🎉",
+  "shareDescription": "Join me in caring for mental health",
+  "appLink": "https://t.me/menhausen_bot/app",
+  "lockedBadge": "Locked",
+  "unlockCondition": "Unlock condition:",
+  "progress": "Progress",
+  "totalBadges": "Total achievements",
+  "unlockedCount": "Unlocked",
+  "inProgress": "In Progress",
+  "points": "points",
+  "motivatingText": "Your dedication helped you get a new achievement! Keep up the great work!",
+  "motivatingTextNoBadges": "Start your journey to mental well-being. Every day is a new opportunity for growth.",
+  "received": "Received",
+  "locked": "Locked",
+  "cancel": "Cancel",
+  "unlocked": "Unlocked",
+  "reward": {
+    "title": "Congratulations!",
+    "subtitle": "You earned an achievement!",
+    "continueButton": "Continue",
+    "nextAchievement": "Next Achievement",
+    "congratulations": "Great!",
+    "earnedAchievement": "You earned an achievement"
+  },
+  "achievements": {
+    "newcomer": {
+      "title": "Newcomer",
+      "description": "Registration + 1 check-in"
+    },
+    "beginner": {
+      "title": "Beginner",
+      "description": "3 cards in free topic (stress)"
+    },
+    "seeker": {
+      "title": "Seeker",
+      "description": "5 cards in free topic"
+    },
+    "apprentice": {
+      "title": "Apprentice",
+      "description": "8 cards in free topic"
+    },
+    "topic_closer": {
+      "title": "Topic Closer",
+      "description": "All 10 cards in free topic"
+    },
+    "basic_reader": {
+      "title": "Basic Reader",
+      "description": "Read 3 free articles"
+    },
+    "hero_secrets": {
+      "title": "Hero’s Secrets",
+      "description": "Repeat 5 cards + 3 consecutive active days"
+    },
+    "keeper_of_wisdom": {
+      "title": "Keeper of Wisdom",
+      "description": "Repeat all cards in 1 topic + 5 active days"
+    },
+    "first_chapter_hero": {
+      "title": "First Chapter Hero",
+      "description": "10 consecutive active days"
+    },
+    "recruiter": {
+      "title": "Recruiter",
+      "description": "Invite 1 user…"
+    },
+    "explorer": {
+      "title": "Explorer",
+      "description": "Opened 8 cards in any premium topic"
+    },
+    "path_chooser": {
+      "title": "Path Chooser",
+      "description": "Completed 1 premium topic"
+    },
+    "knowledge_lover": {
+      "title": "Knowledge Lover",
+      "description": "Read 5 articles"
+    },
+    "spreader": {
+      "title": "Spreader",
+      "description": "Invite 3 users…"
+    },
+    "traveler": {
+      "title": "Traveler",
+      "description": "Opened 5 cards in 2 premium topics"
+    },
+    "fear_conqueror": {
+      "title": "Fear Conqueror",
+      "description": "Completed 2 topics + repeated all in one"
+    },
+    "persistence_master": {
+      "title": "Persistence Master",
+      "description": "14 active days + repeat 10 cards"
+    },
+    "inspirer": {
+      "title": "Inspirer",
+      "description": "Repeated all in 2 premium topics"
+    },
+    "harmony_seeker": {
+      "title": "Harmony Seeker",
+      "description": "5 cards in 3 topics + 7 repeat days"
+    },
+    "enlightened_mind": {
+      "title": "Enlightened Mind",
+      "description": "Read 10 articles"
+    },
+    "ambassador": {
+      "title": "Ambassador",
+      "description": "Invite 5 + 1 bought premium"
+    },
+    "sage": {
+      "title": "Sage",
+      "description": "21 consecutive active days"
+    },
+    "depth_explorer": {
+      "title": "Depth Explorer",
+      "description": "Completed 3 + repeated all in 2"
+    },
+    "doubt_slayer": {
+      "title": "Doubt Slayer",
+      "description": "Repeat 20 premium cards + 10 active days"
+    },
+    "mind_protector": {
+      "title": "Mind Protector",
+      "description": "30 consecutive active days"
+    },
+    "mentor": {
+      "title": "Mentor",
+      "description": "Completed 4 + repeated all in 3"
+    },
+    "pathfinder": {
+      "title": "Pathfinder",
+      "description": "5 cards in 4 topics + 14 repeat days"
+    },
+    "chaos_conqueror": {
+      "title": "Chaos Conqueror",
+      "description": "Completed 5 premium topics"
+    },
+    "balance_keeper": {
+      "title": "Balance Keeper",
+      "description": "Repeated all in 4 + 21 active days"
+    },
+    "legendary_hero": {
+      "title": "Legendary Hero",
+      "description": "Completed 6 + repeated all in 5"
+    },
+    "reading_master": {
+      "title": "Reading Master",
+      "description": "Read all articles"
+    },
+    "menhausen_master": {
+      "title": "Menhausen Master",
+      "description": "Repeated all in 6 topics + 30 active days"
+    }
+  }
+}

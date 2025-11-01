@@ -21,6 +21,7 @@ import {
 } from './UserProfileIcons';
 import { UserInfoSection, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
+import { ReferralSection } from './ProfileReferralSection';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { useAppShare } from './ProfileShareUtils';
 import { StatusBlocksRow } from './StatusBlocksRow';
@@ -177,6 +178,11 @@ export function UserProfileScreen({
             {/* Блок прогресса */}
             <div className="w-full mt-3 sm:mt-4">
               <ProgressBlock onBadgesClick={handleStatusBlockBadges} />
+            </div>
+            
+            {/* Секция реферальной программы */}
+            <div className="w-full mt-3 sm:mt-4">
+              <ReferralSection />
             </div>
             
             {/* Меню без заголовка с отступом 40px */}

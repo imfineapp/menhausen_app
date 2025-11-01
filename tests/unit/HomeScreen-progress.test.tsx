@@ -4,6 +4,85 @@ import { vi } from 'vitest';
 import { HomeScreen } from '../../components/HomeScreen';
 import { ThemeCardManager } from '../../utils/ThemeCardManager';
 import { LanguageProvider } from '../../components/LanguageContext';
+import { AchievementsProvider } from '../../contexts/AchievementsContext';
+
+// Mock achievement services
+vi.mock('../../services/achievementStorage', () => {
+  const mockLoad = vi.fn(() => ({
+    version: 1,
+    achievements: {},
+    totalXP: 0,
+    unlockedCount: 0,
+    lastSyncedAt: null
+  }));
+  
+  return {
+    loadUserAchievements: mockLoad,
+    updateAchievement: vi.fn((id: string, result: any) => {
+      const state = mockLoad();
+      const existing = (state.achievements as Record<string, any>)[id];
+      const now = new Date().toISOString();
+      
+      const updated = {
+        achievementId: id,
+        unlocked: result.unlocked,
+        unlockedAt: result.unlocked && !existing?.unlocked ? now : (existing?.unlockedAt || null),
+        progress: result.progress,
+        xp: result.xp,
+        lastChecked: now
+      };
+      
+      const newAchievements = {
+        ...state.achievements,
+        [id]: updated
+      };
+      
+      const totalXP = Object.values(newAchievements)
+        .filter((a: any) => a.unlocked)
+        .reduce((sum: number, a: any) => sum + a.xp, 0);
+      
+      const unlockedCount = Object.values(newAchievements)
+        .filter((a: any) => a.unlocked).length;
+      
+      return {
+        ...state,
+        achievements: newAchievements,
+        totalXP,
+        unlockedCount
+      };
+    }),
+    saveUserAchievements: vi.fn()
+  };
+});
+
+vi.mock('../../services/achievementChecker', () => ({
+  checkAchievementCondition: vi.fn(() => ({
+    unlocked: false,
+    progress: 0
+  }))
+}));
+
+vi.mock('../../services/userStatsService', () => ({
+  loadUserStats: vi.fn(() => ({
+    totalCheckins: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    totalPoints: 0,
+    level: 1,
+    lastCheckinDate: null
+  }))
+}));
+
+vi.mock('../../utils/achievementsMetadata', () => ({
+  getAllAchievementsMetadata: vi.fn(() => [])
+}));
+
+vi.mock('../../utils/DailyCheckinManager', () => ({
+  DailyCheckinManager: {
+    getTotalCheckins: vi.fn(() => 0),
+    getCheckinStreak: vi.fn(() => 0)
+  }
+}));
 
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => {
@@ -55,7 +134,9 @@ describe('HomeScreen per-theme progress', () => {
 
     render(
       <LanguageProvider>
-        <HomeScreen onGoToProfile={() => {}} onGoToTheme={() => {}} userHasPremium={true} />
+        <AchievementsProvider>
+          <HomeScreen onGoToProfile={() => {}} onGoToTheme={() => {}} userHasPremium={true} />
+        </AchievementsProvider>
       </LanguageProvider>
     );
 

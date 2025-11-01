@@ -75,24 +75,6 @@ function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCar
   // Используем встроенный метод ThemeCardManager для расчета прогресса
   const progressPercentage = ThemeCardManager.getThemeProgressPercentage(allCardIds);
   
-  // Отладочная информация для прогресса
-  console.log('ProgressTheme Debug:', {
-    allCardIds,
-    progressPercentage,
-    attemptedCards: allCardIds.filter(cardId => {
-      const progress = ThemeCardManager.getCardProgress(cardId);
-      return progress && progress.completedAttempts.length > 0;
-    }).length,
-    totalCards: allCardIds.length,
-    cardStatuses: allCardIds.map(cardId => {
-      const progress = ThemeCardManager.getCardProgress(cardId);
-      return {
-        cardId,
-        hasAttempts: progress && progress.completedAttempts.length > 0,
-        attemptsCount: progress ? progress.completedAttempts.length : 0
-      };
-    })
-  });
   
   return (
     <div className="h-6 relative shrink-0 w-full max-w-[351px]" data-name="Progress_theme">
@@ -364,19 +346,14 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       setLoading(true);
       setError(null);
       
-      console.log(`[ThemeHomeScreen] Loading theme ${themeId} for language ${currentLanguage}`);
-      
       const themeData = await ThemeLoader.loadTheme(themeId, currentLanguage);
       
       if (!themeData) {
-        console.error(`[ThemeHomeScreen] Theme ${themeId} not found`);
         throw new Error(`Theme ${themeId} not found`);
       }
       
-      console.log(`[ThemeHomeScreen] Successfully loaded theme:`, themeData);
       setTheme(themeData);
     } catch (err) {
-      console.error('Error loading theme:', err);
       setError(`Ошибка загрузки темы: ${err}`);
     } finally {
       setLoading(false);
@@ -439,18 +416,6 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   }, [allCardIds, lastCompletedCard, theme]);
 
   // Компонент готов к работе
-  
-  // Отладочная информация
-  console.log('ThemeHomeScreen Debug:', {
-    themeId,
-    theme,
-    loading,
-    error,
-    hasContent: !!content,
-    hasUI: !!content?.ui,
-    hasCards: !!content?.ui?.cards,
-    hasThemeHome: !!content?.ui?.cards?.themeHome
-  });
   
   // Состояния загрузки и ошибок
   if (loading) {
@@ -534,14 +499,6 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       const level = `Level ${cardData.level}`;
       const description = cardData.introduction;
       
-      // Отладочные логи
-      console.log(`[ThemeHomeScreen] Card ${cardId}:`, {
-        id: cardData.id,
-        title,
-        description: description.substring(0, 50) + '...',
-        level
-      });
-      
       return {
         id: cardId,
         title,
@@ -552,8 +509,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
         isLocked: !isAvailable,
         completionStatus
       };
-    } catch (error) {
-      console.error(`Error creating card ${cardData.id}:`, error);
+    } catch {
       // Возвращаем fallback карточку
       return {
         id: cardData.id,
@@ -583,7 +539,6 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       onCardClick(nextCardId);
     } else {
       // Если все карточки завершены, можно показать сообщение или выполнить другое действие
-      console.log('All cards completed!');
       onOpenNextLevel();
     }
   };

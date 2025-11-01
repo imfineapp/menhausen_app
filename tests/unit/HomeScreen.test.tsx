@@ -8,6 +8,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HomeScreen } from '../../components/HomeScreen';
 import { DailyCheckinManager } from '../../utils/DailyCheckinManager';
 import { LanguageProvider } from '../../components/LanguageContext';
+import { AchievementsProvider } from '../../contexts/AchievementsContext';
 
 // Mock the DailyCheckinManager
 vi.mock('../../utils/DailyCheckinManager', () => ({
@@ -15,6 +16,77 @@ vi.mock('../../utils/DailyCheckinManager', () => ({
     getTotalCheckins: vi.fn(),
     getCheckinStreak: vi.fn()
   }
+}));
+
+// Mock achievement services
+vi.mock('../../services/achievementStorage', () => {
+  const mockLoad = vi.fn(() => ({
+    version: 1,
+    achievements: {},
+    totalXP: 0,
+    unlockedCount: 0,
+    lastSyncedAt: null
+  }));
+  
+  return {
+    loadUserAchievements: mockLoad,
+    updateAchievement: vi.fn((id: string, result: any) => {
+      const state = mockLoad();
+      const existing = (state.achievements as Record<string, any>)[id];
+      const now = new Date().toISOString();
+      
+      const updated = {
+        achievementId: id,
+        unlocked: result.unlocked,
+        unlockedAt: result.unlocked && !existing?.unlocked ? now : (existing?.unlockedAt || null),
+        progress: result.progress,
+        xp: result.xp,
+        lastChecked: now
+      };
+      
+      const newAchievements = {
+        ...state.achievements,
+        [id]: updated
+      };
+      
+      const totalXP = Object.values(newAchievements)
+        .filter((a: any) => a.unlocked)
+        .reduce((sum: number, a: any) => sum + a.xp, 0);
+      
+      const unlockedCount = Object.values(newAchievements)
+        .filter((a: any) => a.unlocked).length;
+      
+      return {
+        ...state,
+        achievements: newAchievements,
+        totalXP,
+        unlockedCount
+      };
+    }),
+    saveUserAchievements: vi.fn()
+  };
+});
+
+vi.mock('../../services/achievementChecker', () => ({
+  checkAchievementCondition: vi.fn(() => ({
+    unlocked: false,
+    progress: 0
+  }))
+}));
+
+vi.mock('../../services/userStatsService', () => ({
+  loadUserStats: vi.fn(() => ({
+    totalCheckins: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    totalPoints: 0,
+    level: 1,
+    lastCheckinDate: null
+  }))
+}));
+
+vi.mock('../../utils/achievementsMetadata', () => ({
+  getAllAchievementsMetadata: vi.fn(() => [])
 }));
 
 // Mock the ContentContext
@@ -87,11 +159,13 @@ vi.mock('../../components/ContentContext', () => ({
   })
 }));
 
-// Helper function to render HomeScreen with LanguageProvider
+// Helper function to render HomeScreen with all required providers
 const renderWithLanguageProvider = (props: any) => {
   return render(
     <LanguageProvider>
-      <HomeScreen {...props} />
+      <AchievementsProvider>
+        <HomeScreen {...props} />
+      </AchievementsProvider>
     </LanguageProvider>
   );
 };
@@ -164,11 +238,13 @@ describe('HomeScreen', () => {
       
       rerender(
         <LanguageProvider>
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
+          <AchievementsProvider>
+            <HomeScreen 
+              onGoToProfile={mockOnGoToProfile} 
+              onGoToTheme={mockOnGoToTheme} 
+              userHasPremium={false} 
+            />
+          </AchievementsProvider>
         </LanguageProvider>
       );
 
@@ -397,11 +473,13 @@ describe('HomeScreen', () => {
       for (let i = 0; i < 5; i++) {
         rerender(
           <LanguageProvider>
-            <HomeScreen 
-              onGoToProfile={mockOnGoToProfile} 
-              onGoToTheme={mockOnGoToTheme} 
-              userHasPremium={false} 
-            />
+            <AchievementsProvider>
+              <HomeScreen 
+                onGoToProfile={mockOnGoToProfile} 
+                onGoToTheme={mockOnGoToTheme} 
+                userHasPremium={false} 
+              />
+            </AchievementsProvider>
           </LanguageProvider>
         );
       }
@@ -424,11 +502,13 @@ describe('HomeScreen', () => {
         mockGetTotalCheckins.mockReturnValue(i);
         rerender(
           <LanguageProvider>
-            <HomeScreen 
-              onGoToProfile={mockOnGoToProfile} 
-              onGoToTheme={mockOnGoToTheme} 
-              userHasPremium={false} 
-            />
+            <AchievementsProvider>
+              <HomeScreen 
+                onGoToProfile={mockOnGoToProfile} 
+                onGoToTheme={mockOnGoToTheme} 
+                userHasPremium={false} 
+              />
+            </AchievementsProvider>
           </LanguageProvider>
         );
       }

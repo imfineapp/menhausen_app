@@ -29,9 +29,18 @@ export function RewardManager({
   // Фильтруем только полученные достижения
   useEffect(() => {
     const allAchievements = createAchievementData();
-    const earnedAchievements = allAchievements.filter(achievement => 
-      earnedAchievementIds.includes(achievement.id)
-    );
+    const earnedAchievements = allAchievements
+      .filter(achievement => 
+        earnedAchievementIds.includes(achievement.id)
+      )
+      .map(achievement => ({
+        ...achievement,
+        // Принудительно устанавливаем unlocked: true для достижений из списка earned
+        // так как они точно получены, независимо от состояния контекста
+        unlocked: true,
+        // Устанавливаем unlockedAt если его нет
+        unlockedAt: achievement.unlockedAt || new Date().toISOString()
+      }));
     
     if (earnedAchievements.length === 0) {
       onCompleteRef.current();

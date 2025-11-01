@@ -53,7 +53,7 @@ function CardDescription({ description }: { description: string }) {
  * Главный компонент стартовой страницы карточки
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function CardWelcomeScreen({ onBack, onNext, cardId, cardTitle: _cardTitle, cardDescription }: CardWelcomeScreenProps) {
+export function CardWelcomeScreen({ onBack, onNext, cardId: _cardId, cardTitle: _cardTitle, cardDescription }: CardWelcomeScreenProps) {
   const { content } = useContent();
   
   // Используем переданное описание или fallback
@@ -64,7 +64,6 @@ export function CardWelcomeScreen({ onBack, onNext, cardId, cardTitle: _cardTitl
    * Переходит к упражнению карточки
    */
   const handleNext = () => {
-    console.log(`Starting exercise for card: ${cardId}`);
     onNext();
   };
 
@@ -73,7 +72,6 @@ export function CardWelcomeScreen({ onBack, onNext, cardId, cardTitle: _cardTitl
    * Возвращается к предыдущему экрану
    */
   const _handleBack = () => {
-    console.log(`Going back from card welcome: ${cardId}`);
     onBack();
   };
 
