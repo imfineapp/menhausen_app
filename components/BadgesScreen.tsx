@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { BadgesSlider } from './BadgesSlider';
 import { useContent } from './ContentContext';
+import { useAchievements } from '../contexts/AchievementsContext';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { BottomFixedButton } from './BottomFixedButton';
-import { Target, Flame, Calendar, BookOpen, Trophy, Smile, Sunrise, Moon } from 'lucide-react';
+import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
+import { getAchievementIcon } from '../utils/achievementIcons';
 
 interface Badge {
   id: string;
@@ -11,8 +13,9 @@ interface Badge {
   description: string;
   icon: React.ReactNode;
   unlocked: boolean;
-  unlockedAt?: string | null;
-  progress?: number; // прогресс для заблокированных карточек (0-100)
+  unlockedAt: string | null;
+  progress: number;
+  xp: number;
 }
 
 interface BadgesScreenProps {
@@ -20,114 +23,141 @@ interface BadgesScreenProps {
 }
 
 /**
- * Страница достижений с перелистывающимися карточками
+ * Порядок отображения достижений (от первого к последнему)
+ */
+const ACHIEVEMENT_DISPLAY_ORDER = [
+  'newcomer',
+  'beginner',
+  'seeker',
+  'apprentice',
+  'topic_closer',
+  'basic_reader',
+  'hero_secrets',
+  'keeper_of_wisdom',
+  'first_chapter_hero',
+  'recruiter',
+  'explorer',
+  'path_chooser',
+  'knowledge_lover',
+  'spreader',
+  'traveler',
+  'fear_conqueror',
+  'persistence_master',
+  'inspirer',
+  'harmony_seeker',
+  'enlightened_mind',
+  'ambassador',
+  'sage',
+  'depth_explorer',
+  'doubt_slayer',
+  'mind_protector',
+  'mentor',
+  'pathfinder',
+  'chaos_conqueror',
+  'balance_keeper',
+  'legendary_hero',
+  'reading_master',
+  'menhausen_master'
+] as const;
+
+/**
+ * Экран со всеми достижениями пользователя
  */
 export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
   const { getLocalizedBadges } = useContent();
+  const { achievements: userAchievements, totalXP, refreshAchievements } = useAchievements();
   const [badges, setBadges] = useState<Badge[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Загрузка данных о бейджах
+  // Загрузка всех достижений из контента и метаданных
   useEffect(() => {
     const badgesTexts = getLocalizedBadges();
+    const achievementsMetadata = getAllAchievementsMetadata();
+
+    const allBadges = achievementsMetadata
+      .map(metadata => {
+        const achievementContent = badgesTexts.achievements[metadata.id];
+        const userAchievement = userAchievements[metadata.id];
+        const icon = getAchievementIcon(metadata.iconName, { className: 'w-20 h-20' });
+
+        // Если контент недоступен, используем fallback на основе ID
+        if (!achievementContent) {
+          console.warn(`Achievement content not found for: ${metadata.id}, using fallback`);
+          // Преобразуем ID в читаемый формат (например: "topic_closer" -> "Topic Closer")
+          const fallbackTitle = metadata.id
+            .split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          return {
+            id: metadata.id,
+            title: fallbackTitle,
+            description: `Achievement: ${metadata.id}`,
+            icon,
+            unlocked: userAchievement?.unlocked || false,
+            unlockedAt: userAchievement?.unlockedAt ?? null,
+            progress: userAchievement?.progress || 0,
+            xp: metadata.xp
+          };
+        }
+
+        return {
+          id: metadata.id,
+          title: achievementContent.title,
+          description: achievementContent.description,
+          icon,
+          unlocked: userAchievement?.unlocked || false,
+          unlockedAt: userAchievement?.unlockedAt ?? null,
+          progress: userAchievement?.progress || 0,
+          xp: metadata.xp
+        };
+      })
+      .filter((badge): badge is Badge => badge !== null && badge.id !== undefined);
     
-    // В реальном приложении здесь будет загрузка из API
-    const mockBadges: Badge[] = [
-      {
-        id: "first_checkin",
-        title: badgesTexts.achievements.first_checkin.title,
-        description: badgesTexts.achievements.first_checkin.description,
-        icon: <Target className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-15"
-      },
-      {
-        id: "week_streak",
-        title: badgesTexts.achievements.week_streak.title,
-        description: badgesTexts.achievements.week_streak.description,
-        icon: <Flame className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-22"
-      },
-      {
-        id: "month_streak",
-        title: badgesTexts.achievements.month_streak.title,
-        description: badgesTexts.achievements.month_streak.description,
-        icon: <Calendar className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 60 // 18 из 30 дней
-      },
-      {
-        id: "first_exercise",
-        title: badgesTexts.achievements.first_exercise.title,
-        description: badgesTexts.achievements.first_exercise.description,
-        icon: <BookOpen className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-16"
-      },
-      {
-        id: "exercise_master",
-        title: badgesTexts.achievements.exercise_master.title,
-        description: badgesTexts.achievements.exercise_master.description,
-        icon: <Trophy className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 30 // 15 из 50 упражнений
-      },
-      {
-        id: "mood_tracker",
-        title: badgesTexts.achievements.mood_tracker.title,
-        description: badgesTexts.achievements.mood_tracker.description,
-        icon: <Smile className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-20"
-      },
-      {
-        id: "early_bird",
-        title: badgesTexts.achievements.early_bird.title,
-        description: badgesTexts.achievements.early_bird.description,
-        icon: <Sunrise className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 80 // 4 из 5 дней
-      },
-      {
-        id: "night_owl",
-        title: badgesTexts.achievements.night_owl.title,
-        description: badgesTexts.achievements.night_owl.description,
-        icon: <Moon className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 20 // 1 из 5 дней
+    // Сортируем по заданному порядку отображения
+    allBadges.sort((a, b) => {
+      const indexA = ACHIEVEMENT_DISPLAY_ORDER.indexOf(a.id as typeof ACHIEVEMENT_DISPLAY_ORDER[number]);
+      const indexB = ACHIEVEMENT_DISPLAY_ORDER.indexOf(b.id as typeof ACHIEVEMENT_DISPLAY_ORDER[number]);
+      
+      // Если оба ID в списке порядка, сортируем по их позициям
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
       }
-    ];
+      
+      // Если только один в списке, он идет первым
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      
+      // Если ни один не в списке, сохраняем исходный порядок
+      return 0;
+    });
     
-    setBadges(mockBadges);
-  }, [getLocalizedBadges]);
+    setBadges(allBadges);
+  }, [getLocalizedBadges, userAchievements]);
+
+  // Автоматическая проверка достижений при монтировании
+  useEffect(() => {
+    refreshAchievements();
+  }, [refreshAchievements]);
 
   const unlockedCount = badges.filter(badge => badge.unlocked).length;
-  const totalCount = badges.length;
+  const inProgressCount = badges.filter(badge => !badge.unlocked && badge.progress > 0).length;
 
-  // Поделиться достижением в Telegram (центральная карточка)
+  // Поделиться достижением в Telegram
   const handleShare = () => {
-    // Находим активную карточку по currentIndex
     const activeBadge = badges[currentIndex];
     if (!activeBadge || !activeBadge.unlocked) return;
 
     const badgesTexts = getLocalizedBadges();
     const shareMessage = `${badgesTexts.shareMessage}\n\n${activeBadge.title}: ${activeBadge.description}\n\n${badgesTexts.shareDescription}\n\n${badgesTexts.appLink}`;
     
-    // В реальном приложении здесь будет интеграция с Telegram WebApp API
     if (window.Telegram?.WebApp) {
       window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(badgesTexts.appLink)}&text=${encodeURIComponent(shareMessage)}`);
     } else {
-      // Fallback для тестирования
       const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(badgesTexts.appLink)}&text=${encodeURIComponent(shareMessage)}`;
       window.open(shareUrl, '_blank');
     }
   };
-
 
   return (
     <div 
@@ -138,13 +168,13 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
         scrollbarWidth: 'none'
       }}
     >
-      {/* Световые эффекты фона */}
+      {/* Декоративный фон */}
       <Light />
       
       {/* Логотип */}
       <MiniStripeLogo />
       
-      {/* Контент с прокруткой */}
+      {/* Контент и навигация */}
       <div className="flex-1 overflow-y-auto">
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
           {/* Заголовок */}
@@ -154,12 +184,11 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
               <p className="text-gray-400 text-sm mt-1">{getLocalizedBadges().subtitle}</p>
             </div>
 
-            {/* Статистика в стиле StatusBlocksRow */}
+            {/* Статистика достижений */}
             <div className="flex flex-row gap-3 sm:gap-4 w-full">
               {/* Блок "Разблокировано" */}
               <div className="flex-1">
                 <div className="relative rounded-xl p-3 sm:p-4 w-full min-h-[44px] min-w-[44px]">
-                  {/* Подложка блока */}
                   <div className="absolute inset-0">
                     <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl">
                       <div
@@ -169,14 +198,11 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                     </div>
                   </div>
                   
-                  {/* Контент блока */}
                   <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 w-full">
-                    {/* Основное значение */}
                     <div className="text-lg sm:text-xl font-bold text-white text-center leading-tight">
                       {unlockedCount}
                     </div>
                     
-                    {/* Заголовок */}
                     <div className="text-sm text-[#696969] text-center leading-tight">
                       {getLocalizedBadges().unlockedCount}
                     </div>
@@ -187,7 +213,6 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
               {/* Блок "В процессе" */}
               <div className="flex-1">
                 <div className="relative rounded-xl p-3 sm:p-4 w-full min-h-[44px] min-w-[44px]">
-                  {/* Подложка блока */}
                   <div className="absolute inset-0">
                     <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl">
                       <div
@@ -197,14 +222,11 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                     </div>
                   </div>
                   
-                  {/* Контент блока */}
                   <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 w-full">
-                    {/* Основное значение */}
                     <div className="text-lg sm:text-xl font-bold text-white text-center leading-tight">
-                      {totalCount}
+                      {inProgressCount}
                     </div>
                     
-                    {/* Заголовок */}
                     <div className="text-sm text-[#696969] text-center leading-tight">
                       {getLocalizedBadges().inProgress}
                     </div>
@@ -212,10 +234,9 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                 </div>
               </div>
               
-              {/* Блок "Баллы" */}
+              {/* Блок "Очки" */}
               <div className="flex-1">
                 <div className="relative rounded-xl p-3 sm:p-4 w-full min-h-[44px] min-w-[44px]">
-                  {/* Подложка блока */}
                   <div className="absolute inset-0">
                     <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl">
                       <div
@@ -225,14 +246,11 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                     </div>
                   </div>
                   
-                  {/* Контент блока */}
                   <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 w-full">
-                    {/* Основное значение */}
                     <div className="text-lg sm:text-xl font-bold text-white text-center leading-tight">
-                      +1 500
+                      {totalXP}
                     </div>
                     
-                    {/* Заголовок */}
                     <div className="text-sm text-[#696969] text-center leading-tight">
                       {getLocalizedBadges().points}
                     </div>
@@ -251,7 +269,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
           <div className="pb-8">
             <div className="text-center">
               <h2 className="text-xl font-bold mb-2 text-[#e1ff00]">
-                {unlockedCount > 0 ? getLocalizedBadges().congratulations : getLocalizedBadges().congratulations}
+                {getLocalizedBadges().congratulations}
               </h2>
               <p className="text-gray-400 text-sm leading-relaxed">
                 {unlockedCount > 0 
@@ -273,3 +291,4 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
     </div>
   );
 }
+

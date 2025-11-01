@@ -1,0 +1,33 @@
+№,ID,Название уровня (RU),Level name (EN),Условия получения RU,Condition EN,XP,Icon Name,Condition type,Category
+1,newcomer,Новичок,Newcomer,Регистрация + 1 чекин,Registration + 1 check-in,50,user-plus,registration_checkin,Onboarding
+2,beginner,Начинающий,Beginner,3 карточки в бесплатной теме (стресс),3 cards in free topic (stress),120,sprout,cards_opened,Free Topic
+3,seeker,Искатель,Seeker,5 карточек в бесплатной теме,5 cards in free topic,200,search,cards_opened,Free Topic
+4,apprentice,Ученик,Apprentice,8 карточек в бесплатной теме,8 cards in free topic,300,school,cards_opened,Free Topic
+5,topic_closer,Закрыватель темы,Topic Closer,Все 10 карточек в бесплатной теме,All 10 cards in free topic,400,check-circle,topic_completed,Free Topic
+6,basic_reader,Чтец основ,Basic Reader,Прочитано 3 бесплатные статьи,Read 3 free articles,450,book-open,articles_read,Articles
+7,hero_secrets,Секреты героя,Hero’s Secrets,Повтор 5 карточек из любой темы + 3 дня подряд активности,Repeat 5 cards + 3 consecutive active days,500,key,cards_repeated + streak,Repetition & Streak
+8,keeper_of_wisdom,Хранитель знаний,Keeper of Wisdom,Повтор всех карточек в 1 теме + 5 дней подряд активности,Repeat all cards in 1 topic + 5 active days,650,archive,topic_repeated + streak,Repetition & Streak
+9,first_chapter_hero,Герой первой главы,First Chapter Hero,10 дней подряд активности,10 consecutive active days,800,award,streak,Streak
+10,recruiter,Рекрутер,Recruiter,Привести 1 пользователя…,Invite 1 user…,500,user-plus,referral_invite,Referral
+11,explorer,Исследователь,Explorer,Открыто 8 карточек в любой премиум-теме,Opened 8 cards in any premium topic,1000,compass,cards_opened,Premium Topics
+12,path_chooser,Выборщик путей,Path Chooser,Закрыто 1 премиум-тема,Completed 1 premium topic,1200,map-pin,topic_completed,Premium Topics
+13,knowledge_lover,Любитель знаний,Knowledge Lover,Прочитано 5 статей,Read 5 articles,1300,book-heart,articles_read,Articles
+14,spreader,Распространитель,Spreader,Привести 3 пользователей…,Invite 3 users…,1500,share-2,referral_invite,Referral
+15,traveler,Путешественник,Traveler,Открыто по 5 карточек в 2 премиум-темах,Opened 5 cards in 2 premium topics,1400,globe,cards_opened,Premium Topics
+16,fear_conqueror,Победитель страхов,Fear Conqueror,Закрыто 2 премиум-темы + повтор всех в одной,Completed 2 topics + repeated all in one,1600,shield-check,topic_completed + topic_repeated,Premium Topics
+17,persistence_master,Мастер настойчивости,Persistence Master,14 дней подряд + повтор 10 карточек,14 active days + repeat 10 cards,1800,repeat,streak + cards_repeated,Streak & Repetition
+18,inspirer,Вдохновитель,Inspirer,Повтор всех карточек в 2 премиум-темах,Repeated all in 2 premium topics,2000,sparkles,topic_repeated,Premium Topics
+19,harmony_seeker,Искатель гармонии,Harmony Seeker,Открыто по 5 карточек в 3 темах + 7 дней повторений,5 cards in 3 topics + 7 repeat days,2200,scale,cards_opened + streak_repeat,Premium Topics
+20,enlightened_mind,Просветленный ум,Enlightened Mind,Прочитано 10 статей,Read 10 articles,2400,lightbulb,articles_read,Articles
+21,ambassador,Амбассадор,Ambassador,Привести 5 пользователей + 1 купил премиум,Invite 5 + 1 bought premium,3000,users,referral_invite + referral_premium,Referral
+22,sage,Мудрец,Sage,21 день подряд активности,21 consecutive active days,2500,brain,streak,Streak
+23,depth_explorer,Исследователь глубин,Depth Explorer,Закрыто 3 темы + повтор всех в двух,Completed 3 + repeated all in 2,2800,anchor,topic_completed + topic_repeated,Premium Topics
+24,doubt_slayer,Победитель сомнений,Doubt Slayer,Повтор 20 карточек из премиум + 10 дней активности,Repeat 20 premium cards + 10 active days,3100,sword,cards_repeated + streak,Repetition & Streak
+25,mind_protector,Защитник разума,Mind Protector,30 дней подряд активности,30 consecutive active days,3500,shield,streak,Streak
+26,mentor,Наставник,Mentor,Закрыто 4 темы + повтор всех в трёх,Completed 4 + repeated all in 3,3900,user-check,topic_completed + topic_repeated,Premium Topics
+27,pathfinder,Проводник,Pathfinder,Открыто по 5 карточек в 4 темах + 14 дней повторений,5 cards in 4 topics + 14 repeat days,4300,map,cards_opened + streak_repeat,Premium Topics
+28,chaos_conqueror,Победитель хаоса,Chaos Conqueror,Закрыто 5 премиум-тем,Completed 5 premium topics,4800,zap-off,topic_completed,Premium Topics
+29,balance_keeper,Хранитель равновесия,Balance Keeper,Повтор всех карточек в 4 темах + 21 день активности,Repeated all in 4 + 21 active days,5300,scale,topic_repeated + streak,Repetition & Streak
+30,legendary_hero,Герой легенды,Legendary Hero,Закрыто 6 тем + повтор всех в пяти,Completed 6 + repeated all in 5,6000,trophy,topic_completed + topic_repeated,Premium Topics
+31,reading_master,Мастер чтения,Reading Master,Прочитано все статьи,Read all articles,6500,library,articles_read,Articles
+32,menhausen_master,Мастер Менхаузен,Menhausen Master,Повтор всех карточек в 6 темах + 30 дней подряд,Repeated all in 6 topics + 30 active days,7000,crown,topic_repeated + streak,Mastery

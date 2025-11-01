@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { LanguageProvider, useTranslation, useLanguage } from '../../components/LanguageContext';
 import { ContentProvider, useContent } from '../../components/ContentContext';
+import { AchievementsProvider } from '../../contexts/AchievementsContext';
 import { LanguageModal } from '../../components/LanguageModal';
 import { UserProfileScreen } from '../../components/UserProfileScreen';
 import { AboutAppScreen } from '../../components/AboutAppScreen';
@@ -227,23 +228,26 @@ describe('i18n System Tests', () => {
 
   describe('Component Text Localization', () => {
     test('UserProfileScreen должен использовать переводы', async () => {
+      // Увеличиваем timeout для этого теста, так как он может занимать время на загрузку контента
       render(
         <TestWrapper>
           <ContentProvider>
-            <UserProfileScreen
-              onBack={mockOnBack}
-              onShowAboutApp={mockOnShowAboutApp}
-              onShowPinSettings={mockOnShowPinSettings}
-              onShowPrivacy={mockOnShowPrivacy}
-              onShowTerms={mockOnShowTerms}
-              onShowDeleteAccount={mockOnShowDeleteAccount}
-              onShowPayments={mockOnShowPayments}
-              onShowDonations={mockOnShowUnderConstruction}
-              onShowUnderConstruction={mockOnShowUnderConstruction}
-              onGoToBadges={vi.fn()}
-              onGoToLevels={vi.fn()}
-              userHasPremium={false}
-            />
+            <AchievementsProvider>
+              <UserProfileScreen
+                onBack={mockOnBack}
+                onShowAboutApp={mockOnShowAboutApp}
+                onShowPinSettings={mockOnShowPinSettings}
+                onShowPrivacy={mockOnShowPrivacy}
+                onShowTerms={mockOnShowTerms}
+                onShowDeleteAccount={mockOnShowDeleteAccount}
+                onShowPayments={mockOnShowPayments}
+                onShowDonations={mockOnShowUnderConstruction}
+                onShowUnderConstruction={mockOnShowUnderConstruction}
+                onGoToBadges={vi.fn()}
+                onGoToLevels={vi.fn()}
+                userHasPremium={false}
+              />
+            </AchievementsProvider>
           </ContentProvider>
         </TestWrapper>
       );

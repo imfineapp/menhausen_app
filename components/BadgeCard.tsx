@@ -59,6 +59,7 @@ interface BadgeCardProps {
   unlockedAt?: string | null;
   isActive?: boolean;
   progress?: number; // прогресс для заблокированных карточек (0-100)
+  xp?: number; // Количество опыта за достижение
 }
 
 /**
@@ -71,7 +72,8 @@ export function BadgeCard({
   unlocked, 
   unlockedAt: _unlockedAt, 
   isActive = false,
-  progress = 0
+  progress = 0,
+  xp = 500
 }: BadgeCardProps) {
   const { getLocalizedBadges } = useContent();
   return (
@@ -152,7 +154,7 @@ export function BadgeCard({
              {!unlocked && (
                <div className="mt-3">
                  <div className="text-lg font-bold text-[#e1ff00]">
-                   +500
+                   +{xp || 500}
                  </div>
                  <div className="text-xs text-gray-400">
                    баллов за открытие
@@ -164,7 +166,7 @@ export function BadgeCard({
              {unlocked && (
                <div className="mt-3">
                  <div className="text-lg font-bold text-gray-600">
-                   +500
+                   +{xp || 500}
                  </div>
                  <div className="text-xs text-gray-500">
                    баллов за награду

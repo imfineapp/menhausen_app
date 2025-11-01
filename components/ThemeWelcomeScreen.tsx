@@ -98,15 +98,6 @@ export function ThemeWelcomeScreen({
   // Получаем приветственное сообщение темы или используем общий текст
   const welcomeMessage = themeData?.welcomeMessage || getLocalizedText(content.ui.themes.welcome.subtitle);
   
-  // Отладочная информация
-  console.log('ThemeWelcomeScreen Debug:', {
-    themeTitle,
-    themeData,
-    welcomeMessage,
-    isThemeLocked,
-    shouldShowWelcome
-  });
-  
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Световые эффекты */}

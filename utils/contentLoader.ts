@@ -16,14 +16,15 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
     console.log(`loadContent: Starting parallel imports for language: ${language}`);
-    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments] = await Promise.all([
+    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges] = await Promise.all([
       import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques.json`).then(m => { console.log(`loadContent: mental-techniques.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques-menu.json`).then(m => { console.log(`loadContent: mental-techniques-menu.json loaded`); return m; }),
       import(`../data/content/${language}/survey.json`).then(m => { console.log(`loadContent: survey.json loaded`); return m; }),
       import(`../data/content/${language}/onboarding.json`).then(m => { console.log(`loadContent: onboarding.json loaded`); return m; }),
       import(`../data/content/${language}/emergency-cards.json`).then(m => { console.log(`loadContent: emergency-cards.json loaded`); return m; }),
-      import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; })
+      import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; }),
+      import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; })
     ]);
     
     // Загружаем темы через ThemeLoader
@@ -46,7 +47,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       survey: survey.default,
       onboarding: onboarding.default,
       emergencyCards: emergencyCards.default,
-      badges: ui.default.badges,
+      badges: badges.default,
       about: ui.default.about,
       payments: payments.default,
       donations: ui.default.donations || {
