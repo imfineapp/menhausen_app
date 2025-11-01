@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -286,7 +286,7 @@ function AppContent() {
           }
 
           // Expand to fullscreen mode (two-step process for direct-link compatibility)
-          setTimeout(() => {
+          telegramTimeoutRefs.current.expand = setTimeout(() => {
             try {
               // Step 1: expand() - transitions from compact to fullsize mode
               if (window.Telegram?.WebApp?.expand) {
@@ -295,7 +295,7 @@ function AppContent() {
 
               // Step 2: requestFullscreen() - transitions from fullsize to fullscreen mode
               // This is required for direct-link opens which default to fullsize mode
-              setTimeout(() => {
+              telegramTimeoutRefs.current.fullscreen = setTimeout(() => {
                 try {
                   if (window.Telegram?.WebApp?.requestFullscreen) {
                     window.Telegram.WebApp.requestFullscreen();
@@ -313,6 +313,17 @@ function AppContent() {
           console.warn('Error initializing Telegram WebApp:', error);
         }
       }
+      
+      // Cleanup function для очистки таймеров при размонтировании
+      return () => {
+        if (telegramTimeoutRefs.current.expand) {
+          clearTimeout(telegramTimeoutRefs.current.expand);
+        }
+        if (telegramTimeoutRefs.current.fullscreen) {
+          clearTimeout(telegramTimeoutRefs.current.fullscreen);
+        }
+        telegramTimeoutRefs.current = {};
+      };
     }, []);
 
   // =====================================================================================
@@ -456,6 +467,12 @@ function AppContent() {
   // Получение системы достижений
   const { checkAndUnlockAchievements } = useAchievements();
   
+  // Refs для хранения ID таймеров для очистки
+  const telegramTimeoutRefs = useRef<{ expand?: ReturnType<typeof setTimeout>; fullscreen?: ReturnType<typeof setTimeout> }>({});
+  const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const themeCardClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
   // Логируем изменения currentScreen
   
   useEffect(() => {
@@ -563,6 +580,34 @@ function AppContent() {
       return () => clearTimeout(timeoutId);
     }
   }, [currentScreen, checkAndShowAchievements]);
+  
+  // Общий cleanup для всех таймеров при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      // Очищаем все таймеры Telegram WebApp
+      if (telegramTimeoutRefs.current.expand) {
+        clearTimeout(telegramTimeoutRefs.current.expand);
+      }
+      if (telegramTimeoutRefs.current.fullscreen) {
+        clearTimeout(telegramTimeoutRefs.current.fullscreen);
+      }
+      
+      // Очищаем таймер чекина
+      if (checkInTimeoutRef.current) {
+        clearTimeout(checkInTimeoutRef.current);
+      }
+      
+      // Очищаем таймер завершения карточки
+      if (cardExerciseTimeoutRef.current) {
+        clearTimeout(cardExerciseTimeoutRef.current);
+      }
+      
+      // Очищаем таймер клика по карточке темы
+      if (themeCardClickTimeoutRef.current) {
+        clearTimeout(themeCardClickTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Функция для закрытия приложения через Telegram WebApp
   const closeApp = () => {
@@ -826,7 +871,12 @@ function AppContent() {
 
     // Если уже показывали, проверяем новые достижения после чекина
     // Небольшая задержка для завершения записи в localStorage
-    setTimeout(async () => {
+    // Очищаем предыдущий таймер, если он существует
+    if (checkInTimeoutRef.current) {
+      clearTimeout(checkInTimeoutRef.current);
+    }
+    
+    checkInTimeoutRef.current = setTimeout(async () => {
       try {
         const newlyUnlocked = await checkAndUnlockAchievements();
         if (newlyUnlocked.length > 0) {
@@ -839,6 +889,8 @@ function AppContent() {
       } catch (error) {
         console.error('Error checking achievements after check-in:', error);
         navigateTo('home');
+      } finally {
+        checkInTimeoutRef.current = null;
       }
     }, 100);
   };
@@ -1157,8 +1209,14 @@ function AppContent() {
     setCurrentScreen('theme-home');
     
     // Проверяем достижения после завершения карточки (с задержкой, чтобы state обновился)
-    setTimeout(() => {
+    // Очищаем предыдущий таймер, если он существует
+    if (cardExerciseTimeoutRef.current) {
+      clearTimeout(cardExerciseTimeoutRef.current);
+    }
+    
+    cardExerciseTimeoutRef.current = setTimeout(() => {
       checkAndShowAchievements();
+      cardExerciseTimeoutRef.current = null;
     }, 300);
   };
 
@@ -1216,9 +1274,15 @@ function AppContent() {
     
     // Проверяем достижения после навигации (с задержкой, чтобы навигация завершилась)
     if (themeId) {
+      // Очищаем предыдущий таймер, если он существует
+      if (themeCardClickTimeoutRef.current) {
+        clearTimeout(themeCardClickTimeoutRef.current);
+      }
+      
       // Используем setTimeout, чтобы проверить достижения после того, как state обновится
-      setTimeout(() => {
+      themeCardClickTimeoutRef.current = setTimeout(() => {
         checkAndShowAchievements();
+        themeCardClickTimeoutRef.current = null;
       }, 300);
     }
   };
