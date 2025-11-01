@@ -6,6 +6,8 @@ import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { BottomFixedButton } from './BottomFixedButton';
 import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
 import { getAchievementIcon } from '../utils/achievementIcons';
+import { generateReferralLink } from '../utils/referralUtils';
+import { getTelegramUserId } from '../utils/telegramUserUtils';
 
 interface Badge {
   id: string;
@@ -149,13 +151,29 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
     if (!activeBadge || !activeBadge.unlocked) return;
 
     const badgesTexts = getLocalizedBadges();
-    const shareMessage = `${badgesTexts.shareMessage}\n\n${activeBadge.title}: ${activeBadge.description}\n\n${badgesTexts.shareDescription}\n\n${badgesTexts.appLink}`;
+    
+    // Генерируем реферальную ссылку
+    const referralLink = generateReferralLink();
+    const userId = getTelegramUserId();
+    
+    // Логирование для отладки
+    console.log('Share handler called:');
+    console.log('  - User ID:', userId);
+    console.log('  - Generated referral link:', referralLink);
+    console.log('  - App link (fallback):', badgesTexts.appLink);
+    console.log('  - Telegram WebApp available:', !!window.Telegram?.WebApp);
+    
+    // Используем реферальную ссылку, если она была сгенерирована (содержит startapp)
+    // Иначе используем стандартную ссылку
+    const shareUrl = referralLink.includes('startapp=') ? referralLink : badgesTexts.appLink;
+    
+    const shareMessage = `${badgesTexts.shareMessage}\n\n${activeBadge.title}: ${activeBadge.description}\n\n${badgesTexts.shareDescription}\n\n${shareUrl}`;
     
     if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(badgesTexts.appLink)}&text=${encodeURIComponent(shareMessage)}`);
+      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`);
     } else {
-      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(badgesTexts.appLink)}&text=${encodeURIComponent(shareMessage)}`;
-      window.open(shareUrl, '_blank');
+      const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`;
+      window.open(telegramShareUrl, '_blank');
     }
   };
 

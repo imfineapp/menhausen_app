@@ -60,6 +60,8 @@ import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 // Achievements system imports
 import { useAchievements } from './contexts/AchievementsContext';
 import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated } from './services/userStatsService';
+import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
+import { getTelegramUserId } from './utils/telegramUserUtils';
 
 type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
 
@@ -325,6 +327,18 @@ function AppContent() {
         telegramTimeoutRefs.current = {};
       };
     }, []);
+
+  // =====================================================================================
+  // REFERRAL CODE PROCESSING (должен вызываться при инициализации ДО проверки онбординга)
+  // =====================================================================================
+  useEffect(() => {
+    // Обработка реферального кода при первом открытии приложения
+    processReferralCode();
+    
+    // Обновление статистики реферера на основе списка рефералов
+    // Это работает только на устройстве реферера и обновляет его статистику
+    updateReferrerStatsFromList();
+  }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
@@ -949,11 +963,31 @@ function AppContent() {
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
 
-    // Mark survey completed in flow
-    updateFlow(p => ({ ...p, surveyCompleted: true }));
+      // Mark survey completed in flow
+      updateFlow(p => ({ ...p, surveyCompleted: true }));
 
-    // Decide next step: skip PIN if disabled
-    const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+      // =====================================================================================
+      // REFERRAL REGISTRATION (регистрация реферала после завершения опроса)
+      // =====================================================================================
+      const referrerId = getReferrerId();
+      const currentUserId = getTelegramUserId();
+      
+      if (referrerId && currentUserId) {
+        // Пользователь пришел по реферальной ссылке
+        console.log('Registering referral:', { referrerId, currentUserId });
+        
+        // Добавить реферала в список реферера
+        addReferralToList(referrerId, currentUserId);
+        
+        // Отметить, что реферал зарегистрирован
+        markReferralAsRegistered();
+        
+        // Обновление статистики реферера произойдет при следующем открытии приложения реферером
+        // через функцию updateReferrerStatsFromList, которая должна вызываться при инициализации
+      }
+
+      // Decide next step: skip PIN if disabled
+      const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
 
     if (saveSuccess) {
       console.log('Survey completed successfully');
