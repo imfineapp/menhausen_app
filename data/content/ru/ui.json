@@ -300,6 +300,12 @@
       "achievementEarned": "Получение достижения"
     }
   },
+  "articles": {
+    "title": "Статьи",
+    "viewAll": "Все статьи",
+    "relatedThemes": "Связанные темы:",
+    "noArticles": "Статьи скоро появятся"
+  },
   "points": {
     "cardCompleted": "Начислено за карточку {{cardId}} (уровень {{level}})"
   },

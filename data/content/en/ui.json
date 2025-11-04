@@ -299,6 +299,12 @@
       "achievementEarned": "Achievement Earned"
     }
   },
+  "articles": {
+    "title": "Articles",
+    "viewAll": "View All Articles",
+    "relatedThemes": "Related Themes:",
+    "noArticles": "Articles coming soon"
+  },
   "points": {
     "cardCompleted": "Awarded for card {{cardId}} (level {{level}})"
   },

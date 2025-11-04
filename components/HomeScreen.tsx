@@ -7,6 +7,7 @@ import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
+import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { PointsManager } from '../utils/PointsManager';
@@ -17,6 +18,8 @@ import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 interface HomeScreenProps {
   onGoToProfile: () => void; // Функция для перехода к профилю пользователя
   onGoToTheme: (themeId: string) => void; // Функция для перехода к теме
+  onArticleClick?: (articleId: string) => void; // Функция для открытия статьи
+  onViewAllArticles?: () => void; // Функция для просмотра всех статей
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -24,6 +27,8 @@ interface HomeScreenProps {
 interface MainPageContentBlockProps {
   onGoToProfile: () => void;
   onGoToTheme: (themeId: string) => void;
+  onArticleClick?: (articleId: string) => void;
+  onViewAllArticles?: () => void;
   userHasPremium: boolean;
 }
 
@@ -424,7 +429,7 @@ function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (theme
 /**
  * Адаптивный основной контейнер контента главной страницы
  */
-function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
+function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }:
   MainPageContentBlockProps) {
 
   return (
@@ -437,6 +442,12 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
       {/* CheckInBlock скрыт по требованию */}
       {/* <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} /> */}
       <ActivityBlockNew />
+      {onArticleClick && onViewAllArticles && (
+        <ArticlesBlock 
+          onArticleClick={onArticleClick} 
+          onViewAll={onViewAllArticles} 
+        />
+      )}
       <WorriesContainer onGoToTheme={onGoToTheme} userHasPremium={userHasPremium} />
     </div>
   );
@@ -447,7 +458,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, userHasPremium }:
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { content: _content } = useContent(); // Content system ready for future use
   
@@ -485,6 +496,8 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, userHasPremium }: HomeS
           <MainPageContentBlock
             onGoToProfile={onGoToProfile}
             onGoToTheme={onGoToTheme}
+            onArticleClick={onArticleClick}
+            onViewAllArticles={onViewAllArticles}
             userHasPremium={userHasPremium}
           />
         </div>

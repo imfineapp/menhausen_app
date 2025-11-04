@@ -33,6 +33,8 @@ import { BadgesScreen } from './components/BadgesScreen'; // Импорт стр
 import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
+import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт страницы всех статей
+import { ArticleScreen } from './components/ArticleScreen'; // Импорт страницы статьи
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
 
@@ -63,7 +65,7 @@ import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCar
 import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
 import { getTelegramUserId } from './utils/telegramUserUtils';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'all-articles' | 'article';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -447,6 +449,7 @@ function AppContent() {
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
+  const [currentArticle, setCurrentArticle] = useState<string>('');
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
   const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
@@ -1024,6 +1027,38 @@ function AppContent() {
   const handleGoToLevels = () => {
     console.log('Navigating to levels screen');
     navigateTo('levels');
+  };
+
+  /**
+   * Навигация к списку всех статей
+   */
+  const handleGoToAllArticles = () => {
+    console.log('Navigating to all articles screen');
+    navigateTo('all-articles');
+  };
+
+  /**
+   * Навигация к конкретной статье
+   */
+  const handleOpenArticle = (articleId: string) => {
+    console.log(`Opening article: ${articleId}`);
+    setCurrentArticle(articleId);
+    navigateTo('article');
+  };
+
+  /**
+   * Возврат из статьи к списку статей
+   */
+  const handleBackToAllArticles = () => {
+    navigateTo('all-articles');
+  };
+
+  /**
+   * Возврат из списка статей к главной странице
+   */
+  const handleBackToHomeFromArticles = () => {
+    setCurrentArticle('');
+    navigateTo('home');
   };
 
   /**
@@ -1672,6 +1707,8 @@ function AppContent() {
           <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
+            onArticleClick={handleOpenArticle}
+            onViewAllArticles={handleGoToAllArticles}
             userHasPremium={userHasPremium}
           />
         );
@@ -1898,6 +1935,22 @@ function AppContent() {
           <LevelsScreen 
             onBack={goBack}
             onGoToBadges={handleGoToBadges}
+          />
+        );
+      
+      case 'all-articles':
+        return (
+          <AllArticlesScreen
+            onBack={handleBackToHomeFromArticles}
+            onArticleClick={handleOpenArticle}
+          />
+        );
+      
+      case 'article':
+        return (
+          <ArticleScreen
+            articleId={currentArticle}
+            onBack={handleBackToAllArticles}
           />
         );
       

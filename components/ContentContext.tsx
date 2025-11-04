@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
 // Моки больше не используются - все тесты используют реальный контент
@@ -417,6 +417,22 @@ export function ContentProvider({ children }: ContentProviderProps) {
   }, [content]);
 
   /**
+   * Получение статьи по ID
+   */
+  const getArticle = useCallback((articleId: string): ArticleData | undefined => {
+    return content?.articles?.[articleId];
+  }, [content]);
+
+  /**
+   * Получение всех статей, отсортированных по order
+   */
+  const getAllArticles = useCallback((): ArticleData[] => {
+    if (!content?.articles) return [];
+    const articles = Object.values(content.articles);
+    return articles.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [content]);
+
+  /**
    * Получение всех ментальных техник
    */
   const getMentalTechniques = useCallback((): MentalTechniqueData[] => {
@@ -533,6 +549,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getUI,
     getAllThemes,
     getBadges,
+    getArticle,
+    getAllArticles,
     getLocalizedBadges
   };
 
@@ -820,5 +838,45 @@ export function useMentalTechniquesMenu() {
         }
       }
     }
+  };
+}
+
+/**
+ * Хук для получения всех статей
+ */
+export function useArticles() {
+  const { getAllArticles, getLocalizedText } = useContent();
+  
+  const articles = getAllArticles();
+  
+  return articles.map(article => ({
+    id: article.id,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content),
+    relatedThemeIds: article.relatedThemeIds,
+    order: article.order || 0
+  }));
+}
+
+/**
+ * Хук для получения конкретной статьи
+ */
+export function useArticle(articleId: string) {
+  const { getArticle, getLocalizedText } = useContent();
+  
+  const article = getArticle(articleId);
+  
+  if (!article) {
+    return null;
+  }
+  
+  return {
+    id: article.id,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content),
+    relatedThemeIds: article.relatedThemeIds,
+    order: article.order || 0
   };
 }

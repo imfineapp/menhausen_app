@@ -27,6 +27,25 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; })
     ]);
     
+    // Загружаем статьи
+    console.log(`loadContent: Loading articles for language: ${language}`);
+    const articlesList = ['stress-management', 'anxiety-coping', 'emotional-regulation', 'sleep-hygiene', 'mindfulness-basics'];
+    const articlesModules = await Promise.all(
+      articlesList.map(articleId => 
+        import(`../data/content/${language}/articles/${articleId}.json`)
+          .then(m => { console.log(`loadContent: ${articleId}.json loaded`); return m; })
+          .catch(err => { console.warn(`loadContent: Failed to load article ${articleId}:`, err); return null; })
+      )
+    );
+    
+    const articlesRecord: Record<string, any> = {};
+    articlesModules.forEach((module, index) => {
+      if (module && module.default) {
+        articlesRecord[articlesList[index]] = module.default;
+      }
+    });
+    console.log(`loadContent: Loaded ${Object.keys(articlesRecord).length} articles`);
+    
     // Загружаем темы через ThemeLoader
     console.log(`loadContent: Loading themes through ThemeLoader for language: ${language}`);
     const themesData = await ThemeLoader.loadThemes(language);
@@ -57,7 +76,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
         currency_usdt_ton: 'USDT (TON)',
         copy: 'Copy',
         copied: 'Copied'
-      }
+      },
+      articles: articlesRecord
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);

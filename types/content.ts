@@ -373,6 +373,12 @@ export interface UITexts {
       achievementEarned: LocalizedContent;
     };
   };
+  articles?: {
+    title: LocalizedContent;
+    viewAll: LocalizedContent;
+    relatedThemes: LocalizedContent;
+    noArticles: LocalizedContent;
+  };
 }
 
 /**
@@ -472,6 +478,25 @@ export interface AboutContent {
 }
 
 /**
+ * Данные статьи
+ */
+export interface ArticleData {
+  id: string;
+  title: LocalizedContent;
+  preview: LocalizedContent;
+  content: LocalizedContent;
+  relatedThemeIds: string[];
+  order?: number;
+}
+
+/**
+ * Коллекция статей
+ */
+export interface ArticlesCollection {
+  [articleId: string]: ArticleData;
+}
+
+/**
  * Полная структура контента приложения
  */
 export interface AppContent {
@@ -488,6 +513,7 @@ export interface AppContent {
   activityData?: ActivityData;
   payments: PaymentsContent;
   donations: DonationsContent;
+  articles: ArticlesCollection;
 }
 
 /**
@@ -515,6 +541,8 @@ export interface ContentContextType {
   getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
   getBadges: () => BadgesContent;
+  getArticle: (articleId: string) => ArticleData | undefined;
+  getAllArticles: () => ArticleData[];
   getLocalizedBadges: () => {
     title: string;
     subtitle: string;
