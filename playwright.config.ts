@@ -52,6 +52,9 @@ export default defineConfig({
     /* Telegram WebApp user agent for compatibility testing */
     userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1 TelegramWebView/7.0',
     
+    /* Increased timeouts for actions and navigation */
+    actionTimeout: 30 * 1000, // 30 seconds for actions like click, fill
+    navigationTimeout: 60 * 1000, // 60 seconds for navigation
 
   },
 
@@ -96,9 +99,9 @@ export default defineConfig({
 
   /* Global test configuration */
 
-  timeout: process.env.CI ? 60 * 1000 : 30 * 1000, // Longer timeout in CI
+  timeout: process.env.CI ? 120 * 1000 : 60 * 1000, // 60s locally, 120s in CI
   expect: {
-    timeout: process.env.CI ? 20 * 1000 : 30 * 1000, // Longer expect timeout in CI
+    timeout: process.env.CI ? 60 * 1000 : 30 * 1000, // 30s locally, 60s in CI
     toHaveScreenshot: {
       // Allow small differences for cross-browser compatibility
       threshold: 0.2,

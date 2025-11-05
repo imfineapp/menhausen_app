@@ -1,6 +1,8 @@
 // Базовые тесты функциональности приложения
+// Optimized: replaced networkidle with domcontentloaded and element-based waiting
 import { test, expect } from '@playwright/test';
 import { skipSurvey, skipOnboarding } from './utils/skip-survey';
+import { waitForPageLoad, waitForHomeScreen } from './utils/test-helpers';
 
 test.describe('Basic App Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,8 +15,8 @@ test.describe('Basic App Functionality', () => {
     // Переходим на главную страницу приложения
     await page.goto('/');
 
-    // Ждем загрузки приложения
-    await page.waitForLoadState('networkidle');
+    // Ждем загрузки приложения (быстрее чем networkidle)
+    await waitForPageLoad(page);
 
     // Пройдем онбординг
     await skipOnboarding(page);
@@ -23,7 +25,7 @@ test.describe('Basic App Functionality', () => {
     await skipSurvey(page);
 
     // Проверяем, что есть блок пользователя (Герой #1)
-    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
+    await waitForHomeScreen(page);
 
     // Проверяем, что контейнер списка тем виден (язык-независимый селектор)
     await expect(page.locator('[data-name="Worries container"]')).toBeVisible();
@@ -35,24 +37,26 @@ test.describe('Basic App Functionality', () => {
   test('должен открывать профиль при клике на блок пользователя', async ({ page }) => {
     // Переходим на главную страницу
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForPageLoad(page);
 
     // Пройдем онбординг и пропустим первый запуск
     await skipOnboarding(page);
     await skipSurvey(page);
 
+    // Ждем появления блока пользователя
+    await waitForHomeScreen(page);
+
     // Кликаем на блок пользователя
     await page.click('[data-name="User frame info block"]');
-    await page.waitForLoadState('networkidle');
-
-    // Проверяем, что открылась страница профиля
-    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible();
+    
+    // Ждем навигации к профилю (элемент профиля вместо networkidle)
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 10000 });
   });
 
   test('должен переключаться на страницу темы', async ({ page }) => {
     // Переходим на главную страницу
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await waitForPageLoad(page);
     
     // Пропускаем опрос если он показывается
     await skipSurvey(page);
@@ -62,10 +66,8 @@ test.describe('Basic App Functionality', () => {
     
     // Кликаем по первой карточке темы (язык-независимо)
     await page.locator('[data-name="Theme card narrow"]').first().click();
-    await page.waitForLoadState('networkidle');
-
-    // Проверяем, что мы перешли на страницу темы
-    // Главная страница больше не видна, что означает успешную навигацию
-    await expect(page.locator('[data-testid="home-ready"]')).not.toBeVisible();
+    
+    // Ждем навигации (проверяем, что home-ready больше не виден)
+    await expect(page.locator('[data-testid="home-ready"]')).not.toBeVisible({ timeout: 10000 });
   });
 });

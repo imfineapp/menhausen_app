@@ -412,10 +412,6 @@ function AppContent() {
   
   // Smart Navigation: Dynamic screen determination based on user state
   const getInitialScreen = (): AppScreen => {
-    if (isE2ETestEnvironment) {
-      return 'home';
-    }
-
     // Primary: flow-driven initial screen
     const p = loadProgress();
 

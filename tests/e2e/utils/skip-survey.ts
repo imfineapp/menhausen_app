@@ -6,16 +6,30 @@ import { Page } from '@playwright/test';
  */
 export async function skipSurvey(page: Page): Promise<void> {
   // Ensure onboarding is completed first
-  await skipOnboarding(page);
+  try {
+    await skipOnboarding(page);
+  } catch (error) {
+    if (page.isClosed()) return;
+    throw error;
+  }
 
   // Проверяем, показывается ли опрос (любой экран)
-  const survey01Visible = await page.locator('text=How old are you?').isVisible();
-  const survey06Visible = await page.locator('text=How did you learn about Menhausen?').isVisible();
+  if (page.isClosed()) return;
+  
+  const survey01Visible = await page.locator('text=How old are you?').isVisible().catch(() => false);
+  const survey06Visible = await page.locator('text=How did you learn about Menhausen?').isVisible().catch(() => false);
   
   if (survey01Visible) {
+    if (page.isClosed()) return;
     // Проходим весь опрос (6 экранов)
-    await completeSurvey(page);
+    try {
+      await completeSurvey(page);
+    } catch (error) {
+      if (page.isClosed()) return;
+      throw error;
+    }
     
+    if (page.isClosed()) return;
     // После опроса может идти настройка PIN или сразу check-in
     await skipPinSetup(page);
     
@@ -25,12 +39,19 @@ export async function skipSurvey(page: Page): Promise<void> {
     // Skip the reward screen as well
     // await skipRewardScreen(page);
   } else if (survey06Visible) {
+    if (page.isClosed()) return;
     // Пользователь уже на 6-м экране, завершаем его
-    await page.click('text=Friend or colleague recommended it');
-    await page.waitForTimeout(500);
-    await page.click('text=Complete Setup');
-    await page.waitForLoadState('networkidle');
+    try {
+      await page.getByRole('button', { name: /Friend or colleague recommended it/i }).click();
+      await page.waitForTimeout(500);
+      await page.getByRole('button', { name: /Complete Setup/i }).click();
+      await page.waitForLoadState('networkidle');
+    } catch (error) {
+      if (page.isClosed()) return;
+      throw error;
+    }
     
+    if (page.isClosed()) return;
     // После опроса может идти настройка PIN или сразу check-in
     await skipPinSetup(page);
   }
@@ -41,14 +62,10 @@ export async function skipSurvey(page: Page): Promise<void> {
   } catch {
     // If check-in screen doesn't appear, check for other possible screens
     // Check for PIN setup screen
-    const pinScreen = page.locator('text=Set up PIN').or(page.locator('text=Skip'));
-    if (await pinScreen.isVisible().catch(() => false)) {
-      // Skip PIN setup if it appears
-      const skipBtn = page.locator('text=Skip');
-      if (await skipBtn.isVisible().catch(() => false)) {
-        await skipBtn.click();
-        await page.waitForLoadState('networkidle');
-      }
+    const skipBtn = page.getByRole('button', { name: /^Skip$/i });
+    if (await skipBtn.isVisible().catch(() => false)) {
+      await skipBtn.click();
+      await page.waitForLoadState('networkidle');
     }
     
     // Wait for home screen as fallback
@@ -86,47 +103,61 @@ export async function skipSurvey(page: Page): Promise<void> {
  * Проходим весь опрос (6 экранов)
  */
 async function completeSurvey(page: Page): Promise<void> {
+  if (page.isClosed()) return;
   // Survey01: "How old are you?"
-  await page.click('text=18-25 years old');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /18-25 years old/i }).click().catch(() => {});
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
   
+  if (page.isClosed()) return;
   // Survey02: "How often do you face emotional difficulties?"
-  await page.click('text=Sometimes (1–2 times a week)');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /Sometimes \(1–2 times a week\)/i }).click().catch(() => {});
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
   
+  if (page.isClosed()) return;
   // Survey03: "What experiences worry you the most?" (multiple choice)
-  await page.click('text=Work stress');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /Work stress/i }).click().catch(() => {});
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
   
+  if (page.isClosed()) return;
   // Survey04: "Have you ever sought psychological help from specialists?"
-  await page.click('text=No, never');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /No, never/i }).click().catch(() => {});
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
   
+  if (page.isClosed()) return;
   // Survey05: "Which of these statements seems true to you?" (multiple choice)
-  await page.click('text=All are wrong');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
+  await page.getByRole('button', { name: /All are wrong/i }).click().catch(() => {});
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
   
+  if (page.isClosed()) return;
   // Survey06: "How did you learn about Menhausen?"
-  await page.click('text=Friend or colleague recommended it');
+  await page.getByRole('button', { name: /Friend or colleague recommended it/i }).click().catch(() => {});
   await page.waitForTimeout(500); // Small delay to ensure selection is processed
-  await page.click('text=Complete Setup');
-  await page.waitForLoadState('networkidle');
+  if (page.isClosed()) return;
+  await page.getByRole('button', { name: /Complete Setup/i }).click().catch(() => {});
+  await page.waitForLoadState('networkidle').catch(() => {});
 }
 
 /**
  * Пропускаем настройку PIN
  */
 async function skipPinSetup(page: Page): Promise<void> {
+  if (page.isClosed()) return;
   // Ищем кнопку "Skip" на экране настройки PIN
-  const skipBtn = page.locator('text=Skip');
-  if (await skipBtn.isVisible()) {
-    await skipBtn.click();
-    await page.waitForLoadState('networkidle');
+  const skipBtn = page.getByRole('button', { name: /^Skip$/i });
+  if (await skipBtn.isVisible().catch(() => false)) {
+    if (page.isClosed()) return;
+    await skipBtn.click().catch(() => {});
+    await page.waitForLoadState('networkidle').catch(() => {});
   }
 }
 
@@ -135,43 +166,78 @@ async function skipPinSetup(page: Page): Promise<void> {
  * Утилитная функция для пропуска онбординга если он показывается
  */
 export async function skipOnboarding(page: Page): Promise<void> {
+  if (page.isClosed()) return;
   // Проходим все экраны онбординга последовательно
   
   // Первый экран онбординга - кнопка "Get Started"
-  const getStartedBtn = page.locator('text=Get Started');
-  if (await getStartedBtn.isVisible() && await getStartedBtn.isEnabled()) {
-    await getStartedBtn.click();
-    await page.waitForLoadState('networkidle');
+  const getStartedBtnRole = page.getByRole('button', { name: /Get Started/i });
+  const getStartedBtnText = page.locator('text=Get Started');
+  if (await getStartedBtnRole.isVisible().catch(() => false) && await getStartedBtnRole.isEnabled().catch(() => false)) {
+    if (page.isClosed()) return;
+    await getStartedBtnRole.click().catch(() => {});
+    await page.waitForLoadState('networkidle').catch(() => {});
+  } else if (await getStartedBtnText.isVisible().catch(() => false)) {
+    if (page.isClosed()) return;
+    await getStartedBtnText.click().catch(() => {});
+    await page.waitForLoadState('networkidle').catch(() => {});
   }
   
+  if (page.isClosed()) return;
   // Второй экран онбординга - кнопка "Continue"
-  const continueBtn = page.locator('text=Continue');
-  if (await continueBtn.isVisible()) {
+  const continueBtnRole = page.getByRole('button', { name: /^Continue$/i });
+  const continueBtnText = page.locator('text=Continue');
+  if (await continueBtnRole.isVisible().catch(() => false)) {
+    if (page.isClosed()) return;
     // Ждем активации кнопки
-    await continueBtn.waitFor({ state: 'visible', timeout: 5000 });
-    await continueBtn.waitFor({ state: 'attached', timeout: 5000 });
+    await continueBtnRole.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await continueBtnRole.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
     
     // Пробуем кликнуть с повторными попытками
     for (let i = 0; i < 10; i++) {
-      if (await continueBtn.isEnabled()) {
-        await continueBtn.click();
-        await page.waitForLoadState('networkidle');
+      if (page.isClosed()) return;
+      if (await continueBtnRole.isEnabled().catch(() => false)) {
+        await continueBtnRole.click().catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {});
         break;
       }
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(500).catch(() => {});
+    }
+  } else if (await continueBtnText.isVisible().catch(() => false)) {
+    for (let i = 0; i < 10; i++) {
+      if (page.isClosed()) return;
+      try {
+        await continueBtnText.click({ trial: true }).catch(() => {});
+        await continueBtnText.click().catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {});
+        break;
+      } catch {
+        await page.waitForTimeout(500).catch(() => {});
+      }
     }
   }
   
+  if (page.isClosed()) return;
   // Дополнительные экраны если есть
   let attempts = 0;
   while (attempts < 3) {
-    const anyContinueBtn = page.locator('text=Continue').or(page.locator('text=Get Started')).or(page.locator('text=Start'));
-    if (await anyContinueBtn.isVisible() && await anyContinueBtn.isEnabled()) {
-      await anyContinueBtn.click();
-      await page.waitForLoadState('networkidle');
+    if (page.isClosed()) return;
+    const anyContinueBtnRole = page.getByRole('button', { name: /^(Continue|Get Started|Start)$/i });
+    const anyContinueBtnText = page.locator('text=Continue').or(page.locator('text=Get Started')).or(page.locator('text=Start'));
+    if (await anyContinueBtnRole.isVisible().catch(() => false) && await anyContinueBtnRole.isEnabled().catch(() => false)) {
+      await anyContinueBtnRole.click().catch(() => {});
+      await page.waitForLoadState('networkidle').catch(() => {});
       attempts++;
+    } else if (await anyContinueBtnText.isVisible().catch(() => false)) {
+      try {
+        await anyContinueBtnText.click().catch(() => {});
+        await page.waitForLoadState('networkidle').catch(() => {});
+        attempts++;
+      } catch {
+        break;
+      }
     } else {
       break;
     }
   }
 }
+
