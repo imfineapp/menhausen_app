@@ -18,6 +18,7 @@ function getDefaultStats(): UserStats {
     cardsRepeated: {},
     topicsRepeated: [],
     articlesRead: 0,
+    readArticleIds: [],
     referralsInvited: 0,
     referralsPremium: 0,
     lastUpdated: new Date().toISOString()
@@ -79,6 +80,8 @@ function migrateStats(oldStats: any): UserStats {
   return {
     ...defaultStats,
     ...oldStats,
+    // гарантируем наличие массива уникальных прочтений
+    readArticleIds: Array.isArray(oldStats?.readArticleIds) ? oldStats.readArticleIds : [],
     version: STORAGE_VERSION
   };
 }
@@ -166,7 +169,7 @@ export function incrementCardsRepeated(cardId: string): UserStats {
 }
 
 /**
- * Добавить тему с повторенными карточками
+ * Добавление темы в повторённые темы
  */
 export function addTopicRepeated(topicId: string): UserStats {
   const stats = loadUserStats();
@@ -179,7 +182,23 @@ export function addTopicRepeated(topicId: string): UserStats {
 }
 
 /**
- * Увеличить счетчик прочитанных статей
+ * Идемпотентная отметка статьи как прочитанной (с учётом уникальности)
+ */
+export function markArticleRead(articleId: string): UserStats {
+  const stats = loadUserStats();
+  const readIds = Array.isArray(stats.readArticleIds) ? stats.readArticleIds : [];
+  if (readIds.includes(articleId)) {
+    return stats; // уже считано ранее, не инкрементируем
+  }
+  const nextReadIds = [...readIds, articleId];
+  return updateUserStats({
+    readArticleIds: nextReadIds,
+    articlesRead: nextReadIds.length
+  });
+}
+
+/**
+ * Увеличение количества прочитанных статей (устаревшее — оставлено для совместимости)
  */
 export function incrementArticlesRead(): UserStats {
   const stats = loadUserStats();

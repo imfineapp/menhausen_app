@@ -5,11 +5,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { BackButton } from './ui/back-button';
 import { useContent, useArticle } from './ContentContext';
-import { incrementArticlesRead } from '../services/userStatsService';
+import { markArticleRead } from '../services/userStatsService';
+import { ThemeCard } from './ThemeCard';
+import { ThemeCardManager } from '../utils/ThemeCardManager';
 
 interface ArticleScreenProps {
   articleId: string;
   onBack: () => void;
+  onGoToTheme?: (themeId: string) => void;
+  userHasPremium?: boolean;
 }
 
 /**
@@ -46,16 +50,18 @@ function formatArticleContent(content: string): string {
 /**
  * Main Article Screen Component
  */
-export function ArticleScreen({ articleId, onBack }: ArticleScreenProps) {
-  const { content, getLocalizedText } = useContent();
+export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium = false }: ArticleScreenProps) {
+  const { content, getLocalizedText, getTheme } = useContent();
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [logoOpacity, setLogoOpacity] = useState(1);
+  const didMarkRef = useRef(false);
   
-  // Mark article as read when component mounts
+  // Mark article as read when component mounts (idempotent per article)
   React.useEffect(() => {
-    if (article) {
-      incrementArticlesRead();
+    if (article && !didMarkRef.current) {
+      markArticleRead(article.id);
+      didMarkRef.current = true;
     }
   }, [article]);
   
@@ -150,23 +156,77 @@ export function ArticleScreen({ articleId, onBack }: ArticleScreenProps) {
             />
             
             {/* Related Themes */}
-            {article.relatedThemeIds && article.relatedThemeIds.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-[#212121]">
-                <p className="typography-body text-[#696969] mb-2">
-                  {content.ui.articles?.relatedThemes || 'Связанные темы:'}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {article.relatedThemeIds.map((themeId) => (
-                    <span 
-                      key={themeId}
-                      className="px-3 py-1 bg-[rgba(225,255,0,0.1)] rounded-lg text-[#e1ff00] text-sm"
-                    >
-                      {themeId}
-                    </span>
-                  ))}
+            {(() => {
+              if (!article.relatedThemeIds || article.relatedThemeIds.length === 0) {
+                return null;
+              }
+              
+              // Собираем все найденные темы
+              const themeCards = article.relatedThemeIds
+                .map((themeId) => {
+                  // Преобразуем ID темы: удаляем префикс "01-", "02-" и т.д.
+                  // Например: "01-stress" -> "stress", "07-burnout-recovery" -> "burnout-recovery"
+                  const normalizedThemeId = themeId.replace(/^\d+-/, '');
+                  const theme = getTheme(normalizedThemeId);
+                  if (!theme) {
+                    console.warn(`Theme not found for ID: ${themeId} (normalized: ${normalizedThemeId})`);
+                    return null;
+                  }
+                  
+                  // Вычисляем прогресс темы (как в WorriesList)
+                  const allCardIds: string[] = Array.isArray(theme.cards)
+                    ? theme.cards.map((c: any) => c.id)
+                    : Array.isArray(theme.cardIds)
+                      ? theme.cardIds
+                      : [];
+
+                  const attemptedCardsCount = allCardIds.filter((cardId: string) => {
+                    const progress = ThemeCardManager.getCardProgress(cardId);
+                    return progress && progress.completedAttempts.length > 0;
+                  }).length;
+
+                  const totalCards = allCardIds.length;
+                  const progress = totalCards > 0 ? Math.round((attemptedCardsCount / totalCards) * 100) : 0;
+                  
+                  const themeTitle = getLocalizedText(theme.title);
+                  const themeDescription = getLocalizedText(theme.description);
+                  
+                  return {
+                    key: themeId,
+                    normalizedThemeId,
+                    title: themeTitle,
+                    description: themeDescription,
+                    progress,
+                    isPremium: !!theme.isPremium
+                  };
+                })
+                .filter((card): card is NonNullable<typeof card> => card !== null);
+              
+              // Показываем блок только если есть хотя бы одна найденная тема
+              if (themeCards.length === 0) {
+                return null;
+              }
+              
+              return (
+                <div className="mt-8 pt-6 border-t border-[#212121]">
+                  <p className="typography-body text-[#696969] mb-6">
+                    {content.ui.articles?.relatedThemes || 'Связанные темы:'}
+                  </p>
+                  <div className="flex flex-col gap-8 sm:gap-10">
+                    {themeCards.map((card) => (
+                      <ThemeCard
+                        key={card.key}
+                        title={card.title}
+                        description={card.description}
+                        progress={card.progress}
+                        isPremium={card.isPremium}
+                        onClick={() => onGoToTheme?.(card.normalizedThemeId)}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
           </div>
         </div>

@@ -1951,6 +1951,8 @@ function AppContent() {
           <ArticleScreen
             articleId={currentArticle}
             onBack={handleBackToAllArticles}
+            onGoToTheme={handleGoToTheme}
+            userHasPremium={userHasPremium}
           />
         );
       

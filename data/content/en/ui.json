@@ -1,319 +1,320 @@
-{
-  "navigation": {
-    "back": "Back",
-    "next": "Next",
-    "skip": "Skip",
-    "complete": "Complete",
-    "continue": "Continue",
-    "send": "Send",
-    "start": "Start",
-    "unlock": "Unlock",
-    "previous": "Previous",
-    "morePages": "More pages",
-    "more": "More"
-  },
-  "common": {
-    "loading": "Loading...",
-    "error": "Something went wrong",
-    "tryAgain": "Try again",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "close": "Close"
-  },
-  "home": {
-    "greeting": "Good morning",
-    "checkInPrompt": "How are you feeling today?",
-    "quickHelpTitle": "Quick mental help",
-    "themesTitle": "Choose what bothers you",
-    "howAreYou": "How are you?",
-    "checkInDescription": "Check in with yourself — it's the first step to self-care! Do it everyday.",
-    "checkInButton": "Send",
-    "checkInInfo": {
-      "title": "Why daily check-in matters?",
-      "content": "Daily check-in is a simple yet powerful tool for improving your mental health. Here's why it's important:\n\n• Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\n• Early detection: Allows you to notice mood changes before they become serious problems\n\n• Care habit: Forms a beneficial habit of paying attention to your psychological state\n\n• Progress tracking: Helps track changes in your emotional state over time\n\n• Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being."
-    },
-    "whatWorriesYou": "What worries you?",
-    "heroTitle": "Hero #1275",
-    "level": "Level",
-    "progress": "Progress",
-    "use80PercentUsers": "Use 80% users",
-    "activity": {
-      "title": "Activity",
-      "streak": "4 days",
-      "description": "Only by doing exercises regularly will you achieve results.",
-      "streakLabel": {
-        "singular": "day",
-        "plural": "days"
-      },
-      "progressLabel": "Progress",
-      "weeklyCheckins": "Check-ins",
-      "points": "points",
-      "target": "target"
-    },
-    "emergencyHelp": {
-      "breathing": {
-        "title": "Emergency breathing patterns",
-        "description": "Calm your mind with guided breathing exercises for immediate relief."
-      },
-      "meditation": {
-        "title": "Quick meditation techniques",
-        "description": "Calm your mind with guided meditation exercises for immediate relief."
-      },
-      "grounding": {
-        "title": "Grounding techniques",
-        "description": "Ground yourself in the present moment with proven techniques."
-      }
-    }
-  },
-  "profile": {
-    "title": "Profile",
-    "aboutApp": "About app",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Use",
-    "deleteAccount": "Delete account",
-    "payments": "Subscription",
-    "heroTitle": "Hero #1275",
-    "level": "Level",
-    "premium": "Premium",
-    "free": "Free",
-    "follow": "Follow"
-  },
-  "about": {
-    "title": "About Menhausen",
-    "description": "Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\n• Daily mood tracking and emotional state monitoring\n• Personalized mental health exercises\n• Progress tracking with levels and achievements\n• Complete privacy — your data stays yours\n• Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with ❤️ for the Telegram community.",
-    "keyFeatures": "Key Features",
-    "features": {
-      "moodTracking": "Daily mood tracking and emotional check-ins",
-      "exercises": "Personalized mental health exercises and activities",
-      "progress": "Progress tracking with levels and achievements",
-      "privacy": "Secure and private - your data stays yours",
-      "telegram": "Built specifically for Telegram Mini Apps"
-    },
-    "developmentTeam": "Development Team",
-    "teamDescription": "Created with care by a dedicated team of developers and mental health advocates. Our mission is to make mental wellness accessible and engaging for everyone.",
-    "madeWithLove": "Made with ❤️ for the Telegram community",
-    "copyright": "© 2024 Menhausen Team. All rights reserved.",
-    "technicalInformation": "Technical Information",
-    "importantNote": "Important Note",
-    "disclaimer": "Menhausen is designed to support your mental wellness journey, but it is not a substitute for professional medical advice, diagnosis, or treatment. If you're experiencing serious mental health concerns, please consult with qualified healthcare professionals.",
-    "emergency": "For emergencies, please contact your local emergency services or mental health crisis hotline.",
-    "version": "Version:",
-    "platform": "Platform:",
-    "builtWith": "Built with:",
-    "lastUpdated": "Last updated:",
-    "betaVersion": "Beta Version 1.0.0"
-  },
-  "survey": {
-    "progress": "Step {current} of {total}",
-    "selectAtLeastOne": "Please select at least one option",
-    "optional": "Optional",
-    "required": "Required"
-  },
-  "onboarding": {
-    "screen01": {
-      "title": "You don't have to cope alone",
-      "subtitle": "Anonymous digital self-help tool for men. Effective exercises based on scientific methods. Right in Telegram, no registration required.",
-      "buttonText": "Start",
-      "privacyText": "Privacy Policy",
-      "termsText": "Terms of Use",
-      "agreementText": "By clicking the button you agree to the"
-    },
-    "screen02": {
-      "title": "What makes Menhausen special?",
-      "benefits": [
-        "No personal data, no traces",
-        "Data encryption",
-        "Always with you",
-        "Based on scientifically proven practices"
-      ],
-      "buttonText": "Continue",
-      "descriptions": [
-        "Works directly in Telegram. No accounts, no email required",
-        "AES-256, Web3 technology. Your data is protected at banking-grade level",
-        "In your pocket, in Telegram. Help available 24/7, when you need it",
-        "CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man."
-      ]
-    }
-  },
-  "pinSetup": {
-    "title": "PIN Setup",
-    "subtitle": "Create a 4-digit PIN to protect your data",
-    "createPin": "Create PIN",
-    "confirmPin": "Confirm PIN",
-    "pinMismatch": "PINs don't match",
-    "pinTooShort": "PIN must be 4 digits",
-    "skip": "Skip",
-    "back": "Back"
-  },
-  "checkin": {
-    "title": "How are you?",
-    "subtitle": "Check in with yourself — it's the first step to self-care! Do it everyday.",
-    "moodOptions": {
-      "down": "I'm feeling down...",
-      "anxious": "I'm anxious",
-      "neutral": "I'm neutral",
-      "energized": "I'm energized",
-      "happy": "I'm happy!"
-    },
-    "send": "Send",
-    "back": "Back"
-  },
-  "themes": {
-    "welcome": {
-      "title": "Welcome to Theme",
-      "subtitle": "Ready to start working on yourself?",
-      "start": "Start",
-      "unlock": "Unlock",
-      "freeWarning": {
-        "title": "Important Warning",
-        "text": "Cards in the free version have not yet been validated by a psychologist and are placed only as an example (prototype). All responsibility for consequences arising after completing this technique lies with the user. By clicking the button, you confirm that you understand all risks and take them upon yourself."
-      }
-    },
-    "home": {
-      "progress": "Progress",
-      "attempts": "Attempts",
-      "attemptsCounter": "attempts",
-      "level": "Level",
-      "nextLevel": "Next Level",
-      "allCardsAttempted": "All cards attempted!"
-    }
-  },
-  "cards": {
-    "attempts": "Attempts",
-    "noAttempts": "No attempts yet. Start your first attempt by opening the card!",
-    "startExercise": "Ready to start the exercise?",
-    "welcome": {
-      "title": "Card",
-      "subtitle": "Ready to start the exercise?"
-    },
-    "question": {
-      "placeholder": "Enter your answer here...",
-      "encryption": "Your answers are fully protected with AES-256 encryption"
-    },
-    "final": {
-      "why": "Why:"
-    },
-    "rating": {
-      "title": "Please rate the card",
-      "subtitle": "Your rating will help us to be more useful",
-      "placeholder": "Leave feedback (optional)...",
-      "submit": "Submit",
-      "back": "Back",
-      "thankYou": "Thank you!"
-    },
-    "themeHome": {
-      "card1": "Card #1",
-      "card2": "Card #2",
-      "card3": "Card #3",
-      "card4": "Card #4",
-      "card5": "Card #5",
-      "card6": "Card #6",
-      "card7": "Card #7",
-      "card8": "Card #8",
-      "card9": "Card #9",
-      "card10": "Card #10",
-      "level1": "Level 1",
-      "level2": "Level 2",
-      "level3": "Level 3",
-      "level4": "Level 4",
-      "level5": "Level 5",
-      "description": "Some text about card and more.",
-      "attemptsLabel": "Attempts"
-    }
-  },
-  "badges": {
-    "title": "Achievements",
-    "subtitle": "Your mental health progress",
-    "congratulations": "Congratulations!",
-    "unlockedBadge": "You unlocked a new achievement!",
-    "shareButton": "Share",
-    "shareMessage": "I got a new achievement in Menhausen! 🎉",
-    "shareDescription": "Join me in caring for mental health",
-    "appLink": "https://t.me/menhausen_bot/app",
-    "lockedBadge": "Locked",
-    "unlockCondition": "Unlock condition:",
-    "progress": "Progress",
-    "totalBadges": "Total achievements",
-    "unlockedCount": "Unlocked",
-    "inProgress": "In Progress",
-    "points": "points",
-    "motivatingText": "Your dedication helped you get a new achievement! Keep up the great work!",
-    "motivatingTextNoBadges": "Start your journey to mental well-being. Every day is a new opportunity for growth.",
-    "received": "Received",
-    "locked": "Locked",
-    "cancel": "Cancel",
-    "unlocked": "Unlocked",
-    "reward": {
-      "title": "Congratulations!",
-      "subtitle": "You earned an achievement!",
-      "continueButton": "Continue",
-      "nextAchievement": "Next Achievement",
-      "congratulations": "Great!",
-      "earnedAchievement": "Now you can earn rewards and points for your actions. You can view all your rewards in your profile."
-    },
-    "achievements": {
-      "first_checkin": {
-        "title": "First Step",
-        "description": "Complete your first check-in"
-      },
-      "week_streak": {
-        "title": "Week of Strength",
-        "description": "Check-ins for 7 days in a row"
-      },
-      "month_streak": {
-        "title": "Month of Discipline",
-        "description": "Check-ins for 30 days in a row"
-      },
-      "first_exercise": {
-        "title": "First Lesson",
-        "description": "Complete your first exercise"
-      },
-      "exercise_master": {
-        "title": "Practice Master",
-        "description": "Complete 50 exercises"
-      },
-      "mood_tracker": {
-        "title": "Mood Tracker",
-        "description": "Track your mood for 14 days"
-      },
-      "early_bird": {
-        "title": "Early Bird",
-        "description": "Check-ins at 6 AM for 5 days in a row"
-      },
-      "night_owl": {
-        "title": "Night Owl",
-        "description": "Check-ins at 11 PM for 5 days in a row"
-      }
-    }
-  },
-  "levels": {
-    "title": "Levels",
-    "yourLevel": "Your Level",
-    "toNextLevel": "To Next Level",
-    "pointsHistory": "Points History",
-    "actions": {
-      "dailyCheckin": "Daily Check-in",
-      "exerciseComplete": "Exercise Complete",
-      "achievementEarned": "Achievement Earned"
-    }
-  },
-  "articles": {
-    "title": "Articles",
-    "viewAll": "View All Articles",
-    "relatedThemes": "Related Themes:",
-    "noArticles": "Articles coming soon"
-  },
-  "points": {
-    "cardCompleted": "Awarded for card {{cardId}} (level {{level}})"
-  },
-  "donations": {
-    "title": "Support the Project",
-    "description": "If you like the app and want to support its development, you can make a donation:",
-    "currency_ton": "TON",
-    "currency_usdt_ton": "USDT (TON)",
-    "copy": "Copy",
-    "copied": "Copied"
-  }
+﻿{
+    "navigation":  {
+                       "back":  "Back",
+                       "next":  "Next",
+                       "skip":  "Skip",
+                       "complete":  "Complete",
+                       "continue":  "Continue",
+                       "send":  "Send",
+                       "start":  "Start",
+                       "unlock":  "Unlock",
+                       "previous":  "Previous",
+                       "morePages":  "More pages",
+                       "more":  "More"
+                   },
+    "common":  {
+                   "loading":  "Loading...",
+                   "error":  "Something went wrong",
+                   "tryAgain":  "Try again",
+                   "save":  "Save",
+                   "cancel":  "Cancel",
+                   "delete":  "Delete",
+                   "edit":  "Edit",
+                   "close":  "Close"
+               },
+    "home":  {
+                 "greeting":  "Good morning",
+                 "checkInPrompt":  "How are you feeling today?",
+                 "quickHelpTitle":  "Quick mental help",
+                 "themesTitle":  "Choose what bothers you",
+                 "howAreYou":  "How are you?",
+                 "checkInDescription":  "Check in with yourself вЂ” it\u0027s the first step to self-care! Do it everyday.",
+                 "checkInButton":  "Send",
+                 "checkInInfo":  {
+                                     "title":  "Why daily check-in matters?",
+                                     "content":  "Daily check-in is a simple yet powerful tool for improving your mental health. Here\u0027s why it\u0027s important:\n\nвЂў Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\nвЂў Early detection: Allows you to notice mood changes before they become serious problems\n\nвЂў Care habit: Forms a beneficial habit of paying attention to your psychological state\n\nвЂў Progress tracking: Helps track changes in your emotional state over time\n\nвЂў Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being."
+                                 },
+                 "whatWorriesYou":  "What worries you?",
+                 "heroTitle":  "Hero #1275",
+                 "level":  "Level",
+                 "progress":  "Progress",
+                 "use80PercentUsers":  "Use 80% users",
+                 "activity":  {
+                                  "title":  "Activity",
+                                  "streak":  "4 days",
+                                  "description":  "Only by doing exercises regularly will you achieve results.",
+                                  "streakLabel":  {
+                                                      "singular":  "day",
+                                                      "plural":  "days"
+                                                  },
+                                  "progressLabel":  "Progress",
+                                  "weeklyCheckins":  "Check-ins",
+                                  "points":  "points",
+                                  "target":  "target"
+                              },
+                 "emergencyHelp":  {
+                                       "breathing":  {
+                                                         "title":  "Emergency breathing patterns",
+                                                         "description":  "Calm your mind with guided breathing exercises for immediate relief."
+                                                     },
+                                       "meditation":  {
+                                                          "title":  "Quick meditation techniques",
+                                                          "description":  "Calm your mind with guided meditation exercises for immediate relief."
+                                                      },
+                                       "grounding":  {
+                                                         "title":  "Grounding techniques",
+                                                         "description":  "Ground yourself in the present moment with proven techniques."
+                                                     }
+                                   }
+             },
+    "profile":  {
+                    "title":  "Profile",
+                    "aboutApp":  "About app",
+                    "privacy":  "Privacy Policy",
+                    "terms":  "Terms of Use",
+                    "deleteAccount":  "Delete account",
+                    "payments":  "Subscription",
+                    "heroTitle":  "Hero #1275",
+                    "level":  "Level",
+                    "premium":  "Premium",
+                    "free":  "Free",
+                    "follow":  "Follow"
+                },
+    "about":  {
+                  "title":  "About Menhausen",
+                  "description":  "Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\nвЂў Daily mood tracking and emotional state monitoring\nвЂў Personalized mental health exercises\nвЂў Progress tracking with levels and achievements\nвЂў Complete privacy вЂ” your data stays yours\nвЂў Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with вќ¤пёЏ for the Telegram community.",
+                  "keyFeatures":  "Key Features",
+                  "features":  {
+                                   "moodTracking":  "Daily mood tracking and emotional check-ins",
+                                   "exercises":  "Personalized mental health exercises and activities",
+                                   "progress":  "Progress tracking with levels and achievements",
+                                   "privacy":  "Secure and private - your data stays yours",
+                                   "telegram":  "Built specifically for Telegram Mini Apps"
+                               },
+                  "developmentTeam":  "Development Team",
+                  "teamDescription":  "Created with care by a dedicated team of developers and mental health advocates. Our mission is to make mental wellness accessible and engaging for everyone.",
+                  "madeWithLove":  "Made with вќ¤пёЏ for the Telegram community",
+                  "copyright":  "В© 2024 Menhausen Team. All rights reserved.",
+                  "technicalInformation":  "Technical Information",
+                  "importantNote":  "Important Note",
+                  "disclaimer":  "Menhausen is designed to support your mental wellness journey, but it is not a substitute for professional medical advice, diagnosis, or treatment. If you\u0027re experiencing serious mental health concerns, please consult with qualified healthcare professionals.",
+                  "emergency":  "For emergencies, please contact your local emergency services or mental health crisis hotline.",
+                  "version":  "Version:",
+                  "platform":  "Platform:",
+                  "builtWith":  "Built with:",
+                  "lastUpdated":  "Last updated:",
+                  "betaVersion":  "Beta Version 1.0.0"
+              },
+    "survey":  {
+                   "progress":  "Step {current} of {total}",
+                   "selectAtLeastOne":  "Please select at least one option",
+                   "optional":  "Optional",
+                   "required":  "Required"
+               },
+    "onboarding":  {
+                       "screen01":  {
+                                        "title":  "You don\u0027t have to cope alone",
+                                        "subtitle":  "Anonymous digital self-help tool for men. Effective exercises based on scientific methods. Right in Telegram, no registration required.",
+                                        "buttonText":  "Start",
+                                        "privacyText":  "Privacy Policy",
+                                        "termsText":  "Terms of Use",
+                                        "agreementText":  "By clicking the button you agree to the"
+                                    },
+                       "screen02":  {
+                                        "title":  "What makes Menhausen special?",
+                                        "benefits":  [
+                                                         "No personal data, no traces",
+                                                         "Data encryption",
+                                                         "Always with you",
+                                                         "Based on scientifically proven practices"
+                                                     ],
+                                        "buttonText":  "Continue",
+                                        "descriptions":  [
+                                                             "Works directly in Telegram. No accounts, no email required",
+                                                             "AES-256, Web3 technology. Your data is protected at banking-grade level",
+                                                             "In your pocket, in Telegram. Help available 24/7, when you need it",
+                                                             "CBT, ACT, MBCT, positive psychology вЂ” scientifically proven methods. No fluff. Straight, honest, to the point. Man to man."
+                                                         ]
+                                    }
+                   },
+    "pinSetup":  {
+                     "title":  "PIN Setup",
+                     "subtitle":  "Create a 4-digit PIN to protect your data",
+                     "createPin":  "Create PIN",
+                     "confirmPin":  "Confirm PIN",
+                     "pinMismatch":  "PINs don\u0027t match",
+                     "pinTooShort":  "PIN must be 4 digits",
+                     "skip":  "Skip",
+                     "back":  "Back"
+                 },
+    "checkin":  {
+                    "title":  "How are you?",
+                    "subtitle":  "Check in with yourself вЂ” it\u0027s the first step to self-care! Do it everyday.",
+                    "moodOptions":  {
+                                        "down":  "I\u0027m feeling down...",
+                                        "anxious":  "I\u0027m anxious",
+                                        "neutral":  "I\u0027m neutral",
+                                        "energized":  "I\u0027m energized",
+                                        "happy":  "I\u0027m happy!"
+                                    },
+                    "send":  "Send",
+                    "back":  "Back"
+                },
+    "themes":  {
+                   "welcome":  {
+                                   "title":  "Welcome to Theme",
+                                   "subtitle":  "Ready to start working on yourself?",
+                                   "start":  "Start",
+                                   "unlock":  "Unlock",
+                                   "freeWarning":  {
+                                                       "title":  "Important Warning",
+                                                       "text":  "Cards in the free version have not yet been validated by a psychologist and are placed only as an example (prototype). All responsibility for consequences arising after completing this technique lies with the user. By clicking the button, you confirm that you understand all risks and take them upon yourself."
+                                                   }
+                               },
+                   "home":  {
+                                "progress":  "Progress",
+                                "attempts":  "Attempts",
+                                "attemptsCounter":  "attempts",
+                                "level":  "Level",
+                                "nextLevel":  "Next Level",
+                                "allCardsAttempted":  "All cards attempted!"
+                            }
+               },
+    "cards":  {
+                  "attempts":  "Attempts",
+                  "noAttempts":  "No attempts yet. Start your first attempt by opening the card!",
+                  "startExercise":  "Ready to start the exercise?",
+                  "welcome":  {
+                                  "title":  "Card",
+                                  "subtitle":  "Ready to start the exercise?"
+                              },
+                  "question":  {
+                                   "placeholder":  "Enter your answer here...",
+                                   "encryption":  "Your answers are fully protected with AES-256 encryption"
+                               },
+                  "final":  {
+                                "why":  "Why:"
+                            },
+                  "rating":  {
+                                 "title":  "Please rate the card",
+                                 "subtitle":  "Your rating will help us to be more useful",
+                                 "placeholder":  "Leave feedback (optional)...",
+                                 "submit":  "Submit",
+                                 "back":  "Back",
+                                 "thankYou":  "Thank you!"
+                             },
+                  "themeHome":  {
+                                    "card1":  "Card #1",
+                                    "card2":  "Card #2",
+                                    "card3":  "Card #3",
+                                    "card4":  "Card #4",
+                                    "card5":  "Card #5",
+                                    "card6":  "Card #6",
+                                    "card7":  "Card #7",
+                                    "card8":  "Card #8",
+                                    "card9":  "Card #9",
+                                    "card10":  "Card #10",
+                                    "level1":  "Level 1",
+                                    "level2":  "Level 2",
+                                    "level3":  "Level 3",
+                                    "level4":  "Level 4",
+                                    "level5":  "Level 5",
+                                    "description":  "Some text about card and more.",
+                                    "attemptsLabel":  "Attempts"
+                                }
+              },
+    "badges":  {
+                   "title":  "Achievements",
+                   "subtitle":  "Your mental health progress",
+                   "congratulations":  "Congratulations!",
+                   "unlockedBadge":  "You unlocked a new achievement!",
+                   "shareButton":  "Share",
+                   "shareMessage":  "I got a new achievement in Menhausen! рџЋ‰",
+                   "shareDescription":  "Join me in caring for mental health",
+                   "appLink":  "https://t.me/menhausen_bot/app",
+                   "lockedBadge":  "Locked",
+                   "unlockCondition":  "Unlock condition:",
+                   "progress":  "Progress",
+                   "totalBadges":  "Total achievements",
+                   "unlockedCount":  "Unlocked",
+                   "inProgress":  "In Progress",
+                   "points":  "points",
+                   "motivatingText":  "Your dedication helped you get a new achievement! Keep up the great work!",
+                   "motivatingTextNoBadges":  "Start your journey to mental well-being. Every day is a new opportunity for growth.",
+                   "received":  "Received",
+                   "locked":  "Locked",
+                   "cancel":  "Cancel",
+                   "unlocked":  "Unlocked",
+                   "reward":  {
+                                  "title":  "Congratulations!",
+                                  "subtitle":  "You earned an achievement!",
+                                  "continueButton":  "Continue",
+                                  "nextAchievement":  "Next Achievement",
+                                  "congratulations":  "Great!",
+                                  "earnedAchievement":  "Now you can earn rewards and points for your actions. You can view all your rewards in your profile."
+                              },
+                   "achievements":  {
+                                        "first_checkin":  {
+                                                              "title":  "First Step",
+                                                              "description":  "Complete your first check-in"
+                                                          },
+                                        "week_streak":  {
+                                                            "title":  "Week of Strength",
+                                                            "description":  "Check-ins for 7 days in a row"
+                                                        },
+                                        "month_streak":  {
+                                                             "title":  "Month of Discipline",
+                                                             "description":  "Check-ins for 30 days in a row"
+                                                         },
+                                        "first_exercise":  {
+                                                               "title":  "First Lesson",
+                                                               "description":  "Complete your first exercise"
+                                                           },
+                                        "exercise_master":  {
+                                                                "title":  "Practice Master",
+                                                                "description":  "Complete 50 exercises"
+                                                            },
+                                        "mood_tracker":  {
+                                                             "title":  "Mood Tracker",
+                                                             "description":  "Track your mood for 14 days"
+                                                         },
+                                        "early_bird":  {
+                                                           "title":  "Early Bird",
+                                                           "description":  "Check-ins at 6 AM for 5 days in a row"
+                                                       },
+                                        "night_owl":  {
+                                                          "title":  "Night Owl",
+                                                          "description":  "Check-ins at 11 PM for 5 days in a row"
+                                                      }
+                                    }
+               },
+    "levels":  {
+                   "title":  "Levels",
+                   "yourLevel":  "Your Level",
+                   "toNextLevel":  "To Next Level",
+                   "pointsHistory":  "Points History",
+                   "actions":  {
+                                   "dailyCheckin":  "Daily Check-in",
+                                   "exerciseComplete":  "Exercise Complete",
+                                   "achievementEarned":  "Achievement Earned"
+                               }
+               },
+    "articles":  {
+                     "title":  "Articles",
+                     "viewAll":  "View All Articles",
+                     "relatedThemes":  "Related Themes:",
+                     "noArticles":  "Articles coming soon",
+                     "lockedBadge":  "Opens at {points}"
+                 },
+    "points":  {
+                   "cardCompleted":  "Awarded for card {{cardId}} (level {{level}})"
+               },
+    "donations":  {
+                      "title":  "Support the Project",
+                      "description":  "If you like the app and want to support its development, you can make a donation:",
+                      "currency_ton":  "TON",
+                      "currency_usdt_ton":  "USDT (TON)",
+                      "copy":  "Copy",
+                      "copied":  "Copied"
+                  }
 }

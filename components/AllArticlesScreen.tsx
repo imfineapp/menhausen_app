@@ -5,7 +5,9 @@ import React from 'react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { BackButton } from './ui/back-button';
 import { useContent, useArticles } from './ContentContext';
-
+import { useAchievements } from '../contexts/AchievementsContext';
+import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
+	
 interface AllArticlesScreenProps {
   onBack: () => void;
   onArticleClick: (articleId: string) => void;
@@ -16,7 +18,10 @@ interface AllArticlesScreenProps {
  */
 function ArticleListItem({ 
   article, 
-  onClick 
+  onClick,
+  locked,
+  requiredPoints,
+  badgeText
 }: { 
   article: {
     id: string;
@@ -25,21 +30,34 @@ function ArticleListItem({
     order: number;
   }; 
   onClick: () => void;
+  locked: boolean;
+  requiredPoints: number;
+  badgeText: string;
 }) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left p-4 bg-[rgba(217,217,217,0.04)] rounded-xl border border-[#212121] hover:bg-[rgba(217,217,217,0.08)] transition-colors mb-4 min-h-fit"
+      disabled={locked}
+      className={`w-full text-left p-4 rounded-xl border transition-colors mb-4 min-h-fit ${locked ? 'bg-[rgba(217,217,217,0.04)] border-[#2A2A2A] cursor-not-allowed' : 'bg-[rgba(217,217,217,0.04)] hover:bg-[rgba(217,217,217,0.08)] border-[#212121]'}`}
     >
       <div className="flex items-start gap-4">
         {/* Article content */}
         <div className="flex-1 min-w-0">
-          <h3 className="typography-h2 text-[#e1ff00] mb-2">
-            {article.title}
-          </h3>
-          <p className="typography-body text-[#ffffff] line-clamp-3">
+          <div className="flex items-start gap-2">
+            <h3 className={`typography-h2 mb-2 ${locked ? 'text-[#9a9a9a]' : 'text-[#e1ff00]'}`}>
+              {article.title}
+            </h3>
+          </div>
+          <p className={`typography-body line-clamp-3 ${locked ? 'text-[#8a8a8a]' : 'text-[#ffffff]'}`}>
             {article.preview}
           </p>
+          {locked && (
+            <div className="mt-2">
+              <span className="bg-[#e1ff00] text-[#2d2b2b] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+                {badgeText.replace('{points}', String(requiredPoints))}
+              </span>
+            </div>
+          )}
         </div>
         
         {/* Arrow icon */}
@@ -57,8 +75,10 @@ function ArticleListItem({
  * Main All Articles Screen Component
  */
 export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenProps) {
-  const { content } = useContent();
+  const { content, getLocalizedText } = useContent();
   const articles = useArticles();
+  const { totalXP } = useAchievements();
+  const lockedBadgeText = content.ui?.articles?.lockedBadge || 'Откроется за {points}';
   
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
@@ -92,13 +112,21 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
               </div>
             ) : (
               <div className="space-y-4">
-                {articles.map((article) => (
-                  <ArticleListItem 
-                    key={article.id}
-                    article={article}
-                    onClick={() => onArticleClick(article.id)}
-                  />
-                ))}
+                {articles.map((article, idx) => {
+  const order = article.order ?? (idx + 1);
+  const required = getRequiredPointsForArticle(order);
+  const locked = isArticleLocked(order, totalXP);
+  return (
+    <ArticleListItem 
+      key={article.id}
+      article={article}
+      onClick={() => { if (!locked) onArticleClick(article.id); }}
+      locked={locked}
+      requiredPoints={required}
+      badgeText={getLocalizedText(lockedBadgeText)}
+    />
+  );
+})}
               </div>
             )}
 
@@ -109,4 +137,8 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
     </div>
   );
 }
+
+
+
+
 

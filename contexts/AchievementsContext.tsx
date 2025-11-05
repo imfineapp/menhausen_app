@@ -8,6 +8,7 @@ import { loadUserAchievements, updateAchievement, saveUserAchievements } from '.
 import { checkAchievementCondition } from '../services/achievementChecker';
 import { loadUserStats } from '../services/userStatsService';
 import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
+import { PointsManager } from '../utils/PointsManager';
 
 interface AchievementsContextType {
   achievements: Record<string, UserAchievement>;
@@ -61,6 +62,20 @@ export function AchievementsProvider({ children }: AchievementsProviderProps) {
           
           if (isNowUnlocked && !wasUnlocked) {
             newlyUnlockedRef.current.push(achievement.id);
+            
+            // Начисляем баллы за разблокировку достижения
+            // Используем correlationId для предотвращения повторного начисления
+            if (achievement.xp > 0) {
+              try {
+                const correlationId = `achievement_${achievement.id}`;
+                PointsManager.earn(achievement.xp, {
+                  correlationId,
+                  note: `Achievement unlocked: ${achievement.id}`
+                });
+              } catch (earnError) {
+                console.warn(`Failed to award points for achievement ${achievement.id}:`, earnError);
+              }
+            }
           }
           
           // Обновляем достижение в локальной копии

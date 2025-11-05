@@ -3,7 +3,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useContent, useArticles } from './ContentContext';
-
+import { useAchievements } from '../contexts/AchievementsContext';
+import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
+	
 interface ArticlesBlockProps {
   onArticleClick: (articleId: string) => void;
   onViewAll: () => void;
@@ -25,7 +27,10 @@ interface ArticlesSliderProps {
  */
 function ArticleCard({ 
   article, 
-  onClick
+  onClick,
+  locked,
+  requiredPoints,
+  badgeText
 }: { 
   article: {
     id: string;
@@ -34,30 +39,46 @@ function ArticleCard({
     order: number;
   }; 
   onClick: () => void;
+  locked: boolean;
+  requiredPoints: number;
+  badgeText: string;
 }) {
   return (
     <button
       onClick={onClick}
-      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] transition-all duration-300 flex-1"
+      disabled={locked}
+      className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-[rgba(217,217,217,0.04)]' : 'cursor-pointer hover:bg-[rgba(217,217,217,0.06)]'}`}
       data-name="Article card"
     >
       <div className="absolute inset-0" data-name="article_block_background">
-        <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block">
-          <div
-            aria-hidden="true"
-            className="absolute border border-[#2d2b2b] border-solid inset-0 pointer-events-none rounded-xl"
-          />
-        </div>
+        {locked ? (
+          <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+            <div aria-hidden="true" className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl" />
+          </div>
+        ) : (
+          <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block">
+            <div aria-hidden="true" className="absolute border border-[#2d2b2b] border-solid inset-0 pointer-events-none rounded-xl" />
+          </div>
+        )}
       </div>
       
       {/* Article content */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
-        <div className="typography-h2 text-[#2d2b2b] text-left w-full">
-          <h2 className="block line-clamp-2">{article.title}</h2>
+        <div className="flex items-start gap-2 w-full">
+          <div className={`typography-h2 text-left w-full ${locked ? 'text-[#9a9a9a]' : 'text-[#2d2b2b]'}`}>
+            <h2 className="block line-clamp-2">{article.title}</h2>
+          </div>
         </div>
-        <div className="typography-body text-[#2d2b2b] text-left w-full">
+        <div className={`typography-body text-left w-full ${locked ? 'text-[#8a8a8a]' : 'text-[#2d2b2b]'}`}>
           <p className="block line-clamp-2">{article.preview}</p>
         </div>
+        {locked && (
+          <div className="mt-2">
+            <span className="bg-[#e1ff00] text-[#2d2b2b] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+              {badgeText.replace('{points}', String(requiredPoints))}
+            </span>
+          </div>
+        )}
       </div>
     </button>
   );
@@ -98,6 +119,9 @@ function ViewAllCard({ onClick }: { onClick: () => void }) {
  * Articles Slider Component
  */
 function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderProps) {
+  const { content, getLocalizedText } = useContent();
+  const { totalXP } = useAchievements();
+  const lockedBadgeText = getLocalizedText(content.ui?.articles?.lockedBadge || 'Opens at {points}');
   const [_currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -221,18 +245,26 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         onTouchEnd={handleTouchEnd}
         data-name="Articles Slider"
       >
-        {articles.map((article, _index) => (
-          <div
-            key={article.id}
-            className="flex-shrink-0 snap-center py-2 flex"
-            style={{ width: '256px' }}
-          >
-            <ArticleCard
-              article={article}
-              onClick={() => onArticleClick(article.id)}
-            />
-          </div>
-        ))}
+        {articles.map((article, index) => {
+  const order = article.order ?? (index + 1);
+  const required = getRequiredPointsForArticle(order);
+  const locked = isArticleLocked(order, totalXP);
+  return (
+    <div
+      key={article.id}
+      className="flex-shrink-0 snap-center py-2 flex"
+      style={{ width: '256px' }}
+    >
+      <ArticleCard
+        article={article}
+        onClick={() => { if (!locked) onArticleClick(article.id); }}
+        locked={locked}
+        requiredPoints={required}
+        badgeText={lockedBadgeText}
+      />
+    </div>
+  );
+})}
         
         {/* View All Card */}
         <div
@@ -287,4 +319,8 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
     </div>
   );
 }
+
+
+
+
 
