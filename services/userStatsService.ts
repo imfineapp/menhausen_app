@@ -63,13 +63,32 @@ export function saveUserStats(stats: UserStats): void {
 }
 
 /**
- * Обновление статистики пользователя
+ * Обновление статистики пользователя.
+ * Поддерживает как частичный объект обновлений, так и функциональный апдейтер,
+ * который вычисляет новое состояние на основе актуального снимка хранилища.
  */
-export function updateUserStats(updates: Partial<UserStats>): UserStats {
-  const current = loadUserStats();
-  const updated = { ...current, ...updates };
-  saveUserStats(updated);
-  return updated;
+export function updateUserStats(
+  updatesOrUpdater: Partial<UserStats> | ((current: UserStats) => UserStats)
+): UserStats {
+  // Всегда пересчитываем на самом свежем состоянии перед сохранением,
+  // чтобы минимизировать потерю параллельных изменений.
+  const latest = loadUserStats();
+
+  const next = typeof updatesOrUpdater === 'function'
+    ? (updatesOrUpdater as (c: UserStats) => UserStats)(latest)
+    : { ...latest, ...updatesOrUpdater };
+
+  // На случай, если между расчетом и сохранением что-то изменилось,
+  // ещё раз синхронизируемся с последним срезом для непустых частичных обновлений.
+  if (typeof updatesOrUpdater !== 'function') {
+    const justBeforeSave = loadUserStats();
+    const merged = { ...justBeforeSave, ...updatesOrUpdater };
+    saveUserStats(merged);
+    return merged;
+  }
+
+  saveUserStats(next);
+  return next;
 }
 
 /**
@@ -90,40 +109,32 @@ function migrateStats(oldStats: any): UserStats {
  * Увеличить счетчик check-ins и обновить streak
  */
 export function incrementCheckin(): UserStats {
-  const stats = loadUserStats();
   const today = new Date().toISOString().split('T')[0];
-  const lastDate = stats.lastCheckinDate 
-    ? new Date(stats.lastCheckinDate).toISOString().split('T')[0]
-    : null;
-  
-  // Если уже был чек-ин сегодня, не обновляем
-  if (lastDate === today) {
-    return stats;
-  }
-  
-  let newStreak = stats.checkinStreak;
-  
-  if (!lastDate) {
-    // Первый чек-ин
-    newStreak = 1;
-  } else {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-    
-    if (lastDate === yesterdayStr) {
-      // Продолжение streak
-      newStreak = stats.checkinStreak + 1;
-    } else {
-      // Сброс streak
-      newStreak = 1;
+  return updateUserStats((current) => {
+    const lastDate = current.lastCheckinDate
+      ? new Date(current.lastCheckinDate).toISOString().split('T')[0]
+      : null;
+
+    if (lastDate === today) {
+      return current;
     }
-  }
-  
-  return updateUserStats({
-    checkins: stats.checkins + 1,
-    checkinStreak: newStreak,
-    lastCheckinDate: today
+
+    let newStreak = current.checkinStreak;
+    if (!lastDate) {
+      newStreak = 1;
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      newStreak = lastDate === yesterdayStr ? current.checkinStreak + 1 : 1;
+    }
+
+    return {
+      ...current,
+      checkins: current.checkins + 1,
+      checkinStreak: newStreak,
+      lastCheckinDate: today
+    };
   });
 }
 
@@ -131,13 +142,15 @@ export function incrementCheckin(): UserStats {
  * Увеличить счетчик открытых карточек в теме
  */
 export function incrementCardsOpened(topicId: string): UserStats {
-  const stats = loadUserStats();
-  const current = stats.cardsOpened[topicId] || 0;
-  return updateUserStats({
-    cardsOpened: {
-      ...stats.cardsOpened,
-      [topicId]: current + 1
-    }
+  return updateUserStats((current) => {
+    const topicCount = current.cardsOpened[topicId] || 0;
+    return {
+      ...current,
+      cardsOpened: {
+        ...current.cardsOpened,
+        [topicId]: topicCount + 1
+      }
+    };
   });
 }
 
@@ -145,12 +158,12 @@ export function incrementCardsOpened(topicId: string): UserStats {
  * Добавить завершенную тему
  */
 export function addTopicCompleted(topicId: string): UserStats {
-  const stats = loadUserStats();
-  if (stats.topicsCompleted.includes(topicId)) {
-    return stats;
-  }
-  return updateUserStats({
-    topicsCompleted: [...stats.topicsCompleted, topicId]
+  return updateUserStats((current) => {
+    if (current.topicsCompleted.includes(topicId)) return current;
+    return {
+      ...current,
+      topicsCompleted: [...current.topicsCompleted, topicId]
+    };
   });
 }
 
@@ -158,13 +171,15 @@ export function addTopicCompleted(topicId: string): UserStats {
  * Увеличить счетчик повторений карточки
  */
 export function incrementCardsRepeated(cardId: string): UserStats {
-  const stats = loadUserStats();
-  const current = stats.cardsRepeated[cardId] || 0;
-  return updateUserStats({
-    cardsRepeated: {
-      ...stats.cardsRepeated,
-      [cardId]: current + 1
-    }
+  return updateUserStats((current) => {
+    const repeats = current.cardsRepeated[cardId] || 0;
+    return {
+      ...current,
+      cardsRepeated: {
+        ...current.cardsRepeated,
+        [cardId]: repeats + 1
+      }
+    };
   });
 }
 
@@ -172,12 +187,12 @@ export function incrementCardsRepeated(cardId: string): UserStats {
  * Добавление темы в повторённые темы
  */
 export function addTopicRepeated(topicId: string): UserStats {
-  const stats = loadUserStats();
-  if (stats.topicsRepeated.includes(topicId)) {
-    return stats;
-  }
-  return updateUserStats({
-    topicsRepeated: [...stats.topicsRepeated, topicId]
+  return updateUserStats((current) => {
+    if (current.topicsRepeated.includes(topicId)) return current;
+    return {
+      ...current,
+      topicsRepeated: [...current.topicsRepeated, topicId]
+    };
   });
 }
 
@@ -185,15 +200,18 @@ export function addTopicRepeated(topicId: string): UserStats {
  * Идемпотентная отметка статьи как прочитанной (с учётом уникальности)
  */
 export function markArticleRead(articleId: string): UserStats {
-  const stats = loadUserStats();
-  const readIds = Array.isArray(stats.readArticleIds) ? stats.readArticleIds : [];
-  if (readIds.includes(articleId)) {
-    return stats; // уже считано ранее, не инкрементируем
-  }
-  const nextReadIds = [...readIds, articleId];
-  return updateUserStats({
-    readArticleIds: nextReadIds,
-    articlesRead: nextReadIds.length
+  return updateUserStats((current) => {
+    const readIds = Array.isArray(current.readArticleIds) ? current.readArticleIds : [];
+    if (readIds.includes(articleId)) {
+      return current;
+    }
+    const nextReadIds = [...new Set([...readIds, articleId])];
+    return {
+      ...current,
+      readArticleIds: nextReadIds,
+      // держим счетчик в соответствии с источником истины — массивом id
+      articlesRead: nextReadIds.length
+    };
   });
 }
 
@@ -201,30 +219,30 @@ export function markArticleRead(articleId: string): UserStats {
  * Увеличение количества прочитанных статей (устаревшее — оставлено для совместимости)
  */
 export function incrementArticlesRead(): UserStats {
-  const stats = loadUserStats();
-  return updateUserStats({
-    articlesRead: stats.articlesRead + 1
-  });
+  return updateUserStats((current) => ({
+    ...current,
+    articlesRead: current.articlesRead + 1
+  }));
 }
 
 /**
  * Увеличить счетчик приглашенных пользователей
  */
 export function incrementReferralsInvited(): UserStats {
-  const stats = loadUserStats();
-  return updateUserStats({
-    referralsInvited: stats.referralsInvited + 1
-  });
+  return updateUserStats((current) => ({
+    ...current,
+    referralsInvited: current.referralsInvited + 1
+  }));
 }
 
 /**
  * Увеличить счетчик покупок premium через рефералов
  */
 export function incrementReferralsPremium(): UserStats {
-  const stats = loadUserStats();
-  return updateUserStats({
-    referralsPremium: stats.referralsPremium + 1
-  });
+  return updateUserStats((current) => ({
+    ...current,
+    referralsPremium: current.referralsPremium + 1
+  }));
 }
 
 /**
