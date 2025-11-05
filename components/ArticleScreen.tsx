@@ -50,7 +50,7 @@ function formatArticleContent(content: string): string {
 /**
  * Main Article Screen Component
  */
-export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium = false }: ArticleScreenProps) {
+export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium: _userHasPremium = false }: ArticleScreenProps) {
   const { content, getLocalizedText, getTheme } = useContent();
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);

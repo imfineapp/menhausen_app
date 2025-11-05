@@ -3,6 +3,8 @@
  * Запуск: node scripts/generateBadges.js
  */
 
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('fs');
 const path = require('path');
 

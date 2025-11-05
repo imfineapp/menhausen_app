@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
 import { ActivityBlockNew } from './ActivityBlockNew';
