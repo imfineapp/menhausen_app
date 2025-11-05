@@ -3,6 +3,7 @@
  */
 
 import { UserStats, AchievementDefinition, ConditionResult } from '../types/achievements';
+import { getTotalArticlesCount } from '../utils/articlesList';
 
 /**
  * Тип функции-проверщика условия
@@ -95,9 +96,7 @@ const conditionCheckers: Record<string, ConditionChecker> = {
   articles_read: (stats, achievement) => {
     // Специальный случай: "Read all articles" (reading_master)
     if (achievement.conditionAllArticles || achievement.id === 'reading_master') {
-      // TODO: Получить общее количество статей из контента
-      // Пока используем большое число как placeholder
-      const totalArticles = 10; // Это нужно получить из контента или метаданных
+      const totalArticles = getTotalArticlesCount();
       const current = stats.articlesRead;
       return {
         unlocked: current >= totalArticles,

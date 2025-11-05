@@ -25,7 +25,7 @@ export interface UserStats {
   cardsRepeated: Record<string, number>; // cardId -> count
   topicsRepeated: string[]; // topicIds
   articlesRead: number;
-  readArticleIds: string[]; // список уникально прочитанных статей
+  readArticleIds?: string[]; // список уникально прочитанных статей (опционально для обратной совместимости)
   referralsInvited: number;
   referralsPremium: number;
   lastUpdated: string;

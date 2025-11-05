@@ -4,6 +4,7 @@
 
 import { AppContent, SupportedLanguage } from '../types/content';
 import { ThemeLoader } from './ThemeLoader';
+import { ARTICLES_IDS } from './articlesList';
 
 /**
  * Загружает контент для указанного языка
@@ -29,7 +30,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     // Загружаем статьи
     console.log(`loadContent: Loading articles for language: ${language}`);
-    const articlesList = ['stress-management', 'anxiety-coping', 'emotional-regulation', 'sleep-hygiene', 'mindfulness-basics'];
+    const articlesList = ARTICLES_IDS;
     const articlesModules = await Promise.all(
       articlesList.map(articleId => 
         import(`../data/content/${language}/articles/${articleId}.json`)

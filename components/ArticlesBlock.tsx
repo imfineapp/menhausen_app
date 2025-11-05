@@ -121,7 +121,8 @@ function ViewAllCard({ onClick }: { onClick: () => void }) {
 function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderProps) {
   const { content, getLocalizedText } = useContent();
   const { totalXP } = useAchievements();
-  const lockedBadgeText = getLocalizedText(content.ui?.articles?.lockedBadge || 'Opens at {points}');
+  // Тип контента может не содержать поля lockedBadge в типах — берём через any с запасной строкой
+  const lockedBadgeText = getLocalizedText(((content.ui as any)?.articles?.lockedBadge) || 'Opens at {points}');
   const [_currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);

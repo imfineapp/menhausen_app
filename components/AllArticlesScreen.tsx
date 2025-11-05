@@ -78,7 +78,8 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
   const { content, getLocalizedText } = useContent();
   const articles = useArticles();
   const { totalXP } = useAchievements();
-  const lockedBadgeText = content.ui?.articles?.lockedBadge || 'Откроется за {points}';
+  // Берём через any, т.к. тип ui.articles может не включать lockedBadge
+  const lockedBadgeText = ((content.ui as any)?.articles?.lockedBadge) || 'Откроется за {points}';
   
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
