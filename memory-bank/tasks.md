@@ -1,82 +1,128 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🎯 **Global i18n migration for user-visible strings** (branch: `user-point-manager`)
+🎯 **Fix Memory Leak Risk from Uncleaned Timeouts** (branch: `user-achievements-system`)                                                                            
 
-Mode: **VAN**  
+Mode: **PLAN**  
 Complexity Level: **Level 2 (Simple Enhancement)**  
-- Status: ✅ **COMPLETED** (Archived)
-- Archive: `memory-bank/archive/archive-i18n-migration-user-point-manager.md`
-- Reflection: `memory-bank/reflection/reflection-i18n-migration-user-point-manager.md`
+Status: **IN PROGRESS**  
 
 ### Goal
-Migrate all user-visible text to the centralized i18n/content system to ensure consistency and easy localization. Prioritize changes introduced or touched in this branch.
+Fix memory leak risks and race conditions from setTimeout calls in App.tsx that lack proper cleanup guards. Prevent calls to functions on unmounted components and ensure all timeouts are properly cleaned up, including nested timeouts.
 
 ### Scope
-- Extract hardcoded user-facing strings from components, screens, and utils into `ContentContext`/i18n structures.
-- Prioritize files changed in this branch (e.g., `App.tsx`, `components/ActivityBlockNew.tsx`, `components/HomeScreen.tsx`).
-- Preserve analytics/event names and internal identifiers (do not localize event keys).
-- Maintain existing design and spacing; no UI regressions.
+- Fix timeout cleanup in `handleCheckInSubmit` (line ~892)
+- Fix timeout cleanup in `handleCardExerciseComplete` (line ~1282)
+- Fix timeout cleanup in `handleThemeCardClick` (line ~1348)
+- Fix nested timeout cleanup in Telegram WebApp initialization (lines ~293, ~302)
+- Add mounted guards to timeout callbacks to prevent state updates on unmounted components
+- Ensure Promise-based setTimeout (line ~540) is handled appropriately
+
+### Problem Analysis
+
+**Current State:**
+- Timeout refs are defined: `checkInTimeoutRef`, `cardExerciseTimeoutRef`, `themeCardClickTimeoutRef`, `telegramTimeoutRefs`
+- Cleanup useEffect exists (lines 598-625) that clears timeouts on unmount
+- However, timeout callbacks can still execute after component unmounts, causing:
+  - Calls to `setEarnedAchievementIds` on unmounted component
+  - Calls to `navigateTo` on unmounted component
+  - Calls to `checkAndShowAchievements` on unmounted component
+  - Race conditions when multiple timeouts fire simultaneously
+
+**Specific Issues:**
+1. **handleCheckInSubmit** (line ~892): Timeout callback calls `setEarnedAchievementIds` and `navigateTo` without mounted check
+2. **handleCardExerciseComplete** (line ~1282): Timeout callback calls `checkAndShowAchievements` without mounted check
+3. **handleThemeCardClick** (line ~1348): Timeout callback calls `checkAndShowAchievements` without mounted check
+4. **Telegram WebApp nested timeout** (line ~302): Nested setTimeout for fullscreen might not be cleaned if parent is cleared
+5. **Promise-based setTimeout** (line ~540): No cleanup mechanism for Promise delay
 
 ### Checklist
-- [x] Audit this branch for hardcoded user-visible strings
-- [x] For each string, create/extend keys in `content.ui.*` (respect existing naming conventions)
-- [x] Replace usages with i18n lookups via `useContent()`
-- [x] Add safe fallbacks where necessary to avoid runtime errors
-- [x] Verify Russian and English display for affected screens
-- [x] Lint and type-check pass (`npm run lint:all`)
-- [x] BugBot: Add `storage` and `points:updated` listeners in `ActivityBlockNew` for points refresh (earnedPoints/nextTarget)
-- [x] BugBot: Align level calculation across UI (min level should be 1 everywhere: `HomeScreen`, `ProgressBlock`)
-- [x] Points source: Use `menhausen_points_balance` as the source of truth for total points display (avoid recomputing from transactions)
+- [ ] Add `isMountedRef` to track component mount state
+- [ ] Update `handleCheckInSubmit` timeout callback with mounted guard
+- [ ] Update `handleCardExerciseComplete` timeout callback with mounted guard
+- [ ] Update `handleThemeCardClick` timeout callback with mounted guard
+- [ ] Fix nested Telegram WebApp timeout cleanup
+- [ ] Review Promise-based setTimeout usage (line ~540) for cleanup needs
+- [ ] Ensure all timeout callbacks check mounted state before state updates
+- [ ] Test timeout cleanup on component unmount
+- [ ] Verify no race conditions with multiple simultaneous timeouts
+- [ ] Run lint and type check (`npm run lint:all`)
 
 ### Acceptance Criteria
-- All user-facing strings in changed files are sourced from i18n/content.
-- RU/EN switch renders correctly without missing keys.
-- No changes to analytics event/property names.
-- CI passes; no new eslint/type errors.
-- ActivityBlockNew updates points (earned/target) live on `storage` and `points:updated`.
-- Level value is consistent across `HomeScreen` and `ProgressBlock` (never shows 0; min 1).
-- Total points displayed come from `menhausen_points_balance` balance key, not from aggregated transactions.
+- All setTimeout callbacks check component mount state before executing
+- All timeouts are properly cleaned up on component unmount
+- Nested timeouts are properly handled and cleaned
+- No state updates occur on unmounted components
+- No race conditions from redundant achievement checks
+- No memory leaks from uncleaned timeouts
+- CI passes; no new eslint/type errors
 
 ### Implementation Plan (Level 2)
 
-- Overview: Centralize visible strings into `ContentContext` and replace hardcoded literals in this branch’s touched files.
-- Files to Modify:
-  - `components/HomeScreen.tsx` (user level label, any visible labels/messages)
-  - `components/ActivityBlockNew.tsx` (weekday labels, headings, streak text if visible)
-  - `App.tsx` (any toasts/messages if present)
-  - `components/LevelsScreen.tsx` (verify strings are from `content.ui.levels`)
-  - `components/ContentContext.tsx` (add/organize keys under `content.ui.*`)
-  - `components/ProgressBlock.tsx` (i18n for labels, consistent level logic, points source)
-  - `components/StatusBlocksRow.tsx` (i18n for titles)
-- Steps:
-  1) Audit the listed files for visible literals and list missing keys.
-  2) Add keys to `ContentContext` under appropriate namespaces (`ui.home`, `ui.activity`, `ui.levels`, etc.).
-  3) Replace literals with `useContent()` lookups; provide fallbacks where necessary.
-  4) Ensure weekday labels are generated via i18n content or locale logic consistently.
-  5) Verify both RU and EN outputs visually and via quick checks.
-  6) Run `npm run lint:all` and fix any issues.
-- Bug Fixes (from BugBot remarks):
-  - ActivityBlockNew: add live refresh for points using `storage` and `points:updated` listeners; ensure `earnedPoints` and `nextTarget` update.
-  - Level display: standardize min-level logic (use `Math.max(1, computedLevel)`); apply to `ProgressBlock` and `HomeScreen`.
-  - Points balance source: read total points from `menhausen_points_balance` (persisted balance) instead of recomputing from transactions; update `PointsManager` accessors or call-sites accordingly.
-- Potential Challenges:
-  - Avoid localizing analytics/event identifiers.
-  - Keep spacing and layout unchanged when replacing strings.
-  - Ensure no missing keys for either language.
-- Testing Strategy:
-  - Manual smoke test for the three affected screens.
-  - Toggle language to RU/EN and verify labels render.
-  - Lint check (`npm run lint:all`) and quick type check build.
-  - Unit tests around points display and level consistency.
+#### Overview
+Add mounted state tracking and guards to all timeout callbacks to prevent memory leaks and race conditions. Ensure proper cleanup of all timeouts, including nested ones.
+
+#### Files to Modify
+- `App.tsx` (primary file with all timeout issues)
+
+#### Implementation Steps
+
+1. **Add Mounted State Tracking**
+   - Add `isMountedRef` using `useRef<boolean>(true)`
+   - Set to `true` in useEffect on mount
+   - Set to `false` in cleanup function on unmount
+
+2. **Fix handleCheckInSubmit Timeout (line ~892)**
+   - Add mounted check before `setEarnedAchievementIds` and `navigateTo`
+   - Ensure timeout is cleared before setting new one (already done, verify)
+   - Add mounted guard in timeout callback
+
+3. **Fix handleCardExerciseComplete Timeout (line ~1282)**
+   - Add mounted check before `checkAndShowAchievements`
+   - Ensure timeout is cleared before setting new one (already done, verify)
+   - Add mounted guard in timeout callback
+
+4. **Fix handleThemeCardClick Timeout (line ~1348)**
+   - Add mounted check before `checkAndShowAchievements`
+   - Ensure timeout is cleared before setting new one (already done, verify)
+   - Add mounted guard in timeout callback
+
+5. **Fix Nested Telegram WebApp Timeout (lines ~293, ~302)**
+   - Ensure nested `fullscreen` timeout is stored in ref before parent timeout completes
+   - Add cleanup for nested timeout in the cleanup useEffect
+   - Consider using AbortController pattern for nested timeouts if needed
+
+6. **Review Promise-based setTimeout (line ~540)**
+   - Check if this needs cleanup (it's in `checkAndShowAchievements` function)
+   - If function can be called after unmount, add mounted check or cancellation
+
+7. **Update Cleanup useEffect (lines 598-625)**
+   - Verify all timeout refs are cleared
+   - Add `isMountedRef.current = false` in cleanup
+   - Ensure nested timeout cleanup is comprehensive
+
+#### Potential Challenges
+- **Nested timeout cleanup**: The nested setTimeout for Telegram fullscreen might need special handling to ensure it's cleaned even if parent is cleared
+- **Promise cancellation**: The Promise-based setTimeout might need AbortController pattern for proper cancellation
+- **Race conditions**: Multiple timeouts firing simultaneously might need debouncing or queue management
+- **Testing**: Verifying cleanup on unmount requires careful test setup
+
+#### Testing Strategy
+- Manual testing: Navigate quickly between screens to trigger unmounts during timeout execution
+- Verify no console errors from state updates on unmounted components
+- Check that achievement checks don't fire redundantly
+- Verify Telegram WebApp timeouts are cleaned properly
+- Run lint check (`npm run lint:all`) and type check
+- Consider adding unit tests for timeout cleanup if test infrastructure supports it
 
 ---
 
 ## Previous Task (Completed)
-**Task**: User Points and Rewards System  
-**Date Completed**: January 13, 2025  
-**Status**: ✅ **COMPLETED**  
-**Summary**: Implemented comprehensive points system with transactions, levels, and rewards
+**Task**: Global i18n migration for user-visible strings  
+**Date Completed**: 2025-10-31  
+**Status**: ✅ **COMPLETED** (Archived)
+**Archive**: `memory-bank/archive/archive-i18n-migration-user-point-manager.md`
+**Reflection**: `memory-bank/reflection/reflection-i18n-migration-user-point-manager.md`
 
 ---
 
@@ -90,17 +136,6 @@ Migrate all user-visible text to the centralized i18n/content system to ensure c
 5. **Theme Cards Logic Implementation** (2025-09-29) - Level 3
 6. **Premium Theme Paywall Navigation** (2025-09-29) - Level 2
 7. **Telegram User ID Display** (2025-09-29) - Level 2
-
----
-
-## 🎯 **Next Steps**
-
-**Ready for new task assignment!**
-
-To start a new task:
-1. Type `VAN` to enter VAN MODE
-2. Provide task description
-3. System will analyze complexity and create implementation plan
 
 ---
 
