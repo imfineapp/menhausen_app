@@ -486,6 +486,17 @@ function AppContent() {
   const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const themeCardClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
+  // Ref для отслеживания состояния монтирования компонента
+  const isMountedRef = useRef<boolean>(true);
+  
+  // Устанавливаем isMountedRef в true при монтировании
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
   // Логируем изменения currentScreen
   
   useEffect(() => {
@@ -539,8 +550,18 @@ function AppContent() {
       // Задержка для завершения записи в localStorage
       await new Promise(resolve => setTimeout(resolve, delay));
       
+      // Проверяем, что компонент все еще смонтирован перед обновлением состояния
+      if (!isMountedRef.current) {
+        return;
+      }
+      
       // Проверяем достижения
       const newlyUnlocked = await checkAndUnlockAchievements();
+      
+      // Проверяем еще раз после асинхронной операции
+      if (!isMountedRef.current) {
+        return;
+      }
       
       if (newlyUnlocked.length > 0) {
         setEarnedAchievementIds(newlyUnlocked);
@@ -891,7 +912,18 @@ function AppContent() {
     
     checkInTimeoutRef.current = setTimeout(async () => {
       try {
+        // Проверяем, что компонент все еще смонтирован
+        if (!isMountedRef.current) {
+          return;
+        }
+        
         const newlyUnlocked = await checkAndUnlockAchievements();
+        
+        // Проверяем еще раз после асинхронной операции
+        if (!isMountedRef.current) {
+          return;
+        }
+        
         if (newlyUnlocked.length > 0) {
           console.log('New achievements unlocked after check-in:', newlyUnlocked);
           setEarnedAchievementIds(newlyUnlocked);
@@ -901,7 +933,10 @@ function AppContent() {
         }
       } catch (error) {
         console.error('Error checking achievements after check-in:', error);
-        navigateTo('home');
+        // Проверяем mounted state перед навигацией в catch блоке
+        if (isMountedRef.current) {
+          navigateTo('home');
+        }
       } finally {
         checkInTimeoutRef.current = null;
       }
@@ -1280,7 +1315,10 @@ function AppContent() {
     }
     
     cardExerciseTimeoutRef.current = setTimeout(() => {
-      checkAndShowAchievements();
+      // Проверяем, что компонент все еще смонтирован перед вызовом
+      if (isMountedRef.current) {
+        checkAndShowAchievements();
+      }
       cardExerciseTimeoutRef.current = null;
     }, 300);
   };
@@ -1346,7 +1384,10 @@ function AppContent() {
       
       // Используем setTimeout, чтобы проверить достижения после того, как state обновится
       themeCardClickTimeoutRef.current = setTimeout(() => {
-        checkAndShowAchievements();
+        // Проверяем, что компонент все еще смонтирован перед вызовом
+        if (isMountedRef.current) {
+          checkAndShowAchievements();
+        }
         themeCardClickTimeoutRef.current = null;
       }, 300);
     }

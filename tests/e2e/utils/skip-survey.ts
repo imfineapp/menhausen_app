@@ -5,7 +5,6 @@ import { Page } from '@playwright/test';
  * Новые пользователи проходят: survey01 → survey02 → survey03 → survey04 → survey05 → pin → checkin → reward → home
  */
 export async function skipSurvey(page: Page): Promise<void> {
-  // Ensure onboarding is completed first
   try {
     await skipOnboarding(page);
   } catch (error) {
@@ -13,151 +12,118 @@ export async function skipSurvey(page: Page): Promise<void> {
     throw error;
   }
 
-  // Проверяем, показывается ли опрос (любой экран)
   if (page.isClosed()) return;
-  
-  const survey01Visible = await page.locator('text=How old are you?').isVisible().catch(() => false);
-  const survey06Visible = await page.locator('text=How did you learn about Menhausen?').isVisible().catch(() => false);
-  
-  if (survey01Visible) {
-    if (page.isClosed()) return;
-    // Проходим весь опрос (6 экранов)
+
+  await page.evaluate(() => {
+    (window as any).__PLAYWRIGHT__ = true;
+
+    const progress = {
+      onboardingCompleted: true,
+      surveyCompleted: true,
+      pinEnabled: false,
+      pinCompleted: true,
+      firstCheckinDone: false,
+      firstRewardShown: false
+    };
+
     try {
-      await completeSurvey(page);
-    } catch (error) {
-      if (page.isClosed()) return;
-      throw error;
-    }
-    
-    if (page.isClosed()) return;
-    // После опроса может идти настройка PIN или сразу check-in
-    await skipPinSetup(page);
-    
-    // Skip the first check-in - let the test handle it
-    // await completeFirstCheckin(page);
-    
-    // Skip the reward screen as well
-    // await skipRewardScreen(page);
-  } else if (survey06Visible) {
-    if (page.isClosed()) return;
-    // Пользователь уже на 6-м экране, завершаем его
-    try {
-      await page.getByRole('button', { name: /Friend or colleague recommended it/i }).click();
-      await page.waitForTimeout(500);
-      await page.getByRole('button', { name: /Complete Setup/i }).click();
-      await page.waitForLoadState('networkidle');
-    } catch (error) {
-      if (page.isClosed()) return;
-      throw error;
-    }
-    
-    if (page.isClosed()) return;
-    // После опроса может идти настройка PIN или сразу check-in
-    await skipPinSetup(page);
-  }
-  
-  // Wait for check-in screen to appear (since we're not completing the check-in)
-  try {
-    await page.waitForSelector('text=How are you?', { timeout: 5000 });
-  } catch {
-    // If check-in screen doesn't appear, check for other possible screens
-    // Check for PIN setup screen
-    const skipBtn = page.getByRole('button', { name: /^Skip$/i });
-    if (await skipBtn.isVisible().catch(() => false)) {
-      await skipBtn.click();
-      await page.waitForLoadState('networkidle');
-    }
-    
-    // Wait for home screen as fallback
-    const homeSelectors = [
-      '[data-testid="home-ready"]',
-      '[data-name="Theme card narrow"]',
-      '[data-name="User frame info block"]'
-    ];
-    const startedAt = Date.now();
-    const maxMs = 4000; // 4s ceiling
-    while (Date.now() - startedAt < maxMs) {
-      for (const sel of homeSelectors) {
-        const visible = await page.locator(sel).first().isVisible().catch(() => false);
-        if (visible) {
-          return;
+      localStorage.setItem('app-flow-progress', JSON.stringify(progress));
+      localStorage.setItem('survey-results', JSON.stringify({ completedAt: new Date().toISOString() }));
+      localStorage.removeItem('checkin-data');
+
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('daily_checkin_')) {
+          keysToRemove.push(key);
         }
       }
-      await page.waitForTimeout(200);
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+    } catch (error) {
+      console.warn('Failed to seed survey progress:', error);
     }
-    // Adaptive final assert: try home-ready first, then fallback to any home selector
-    try {
-      await page.waitForSelector('[data-testid="home-ready"]', { timeout: 3000 });
-    } catch {
-      // Fallback: wait for any home indicator with more time
-      try {
-        await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 10000 });
-      } catch {
-        // If still no home screen found, continue anyway
+  });
+
+  if (page.isClosed()) return;
+
+  await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+  if (page.isClosed()) return;
+
+  await skipRewardScreen(page);
+
+  const checkinVisible = await page.locator('text=How are you?').isVisible().catch(() => false);
+  if (checkinVisible) {
+    return;
+  }
+
+  await page.waitForSelector('[data-name="User frame info block"], [data-testid="home-ready"], [data-name="Theme card narrow"]', { timeout: 5000 }).catch(() => {});
+}
+
+/**
+ * Пропускаем screen награды (reward screen) если он показывается
+ * Reward screen может появиться после первого чекина или других действий
+ * Может появиться с задержкой из-за асинхронной проверки достижений (до 500ms)
+ */
+export async function skipRewardScreen(page: Page): Promise<void> {
+  if (page.isClosed()) return;
+  
+  // Reward screen может появиться с задержкой из-за async achievement checking
+  // Ждем до 1000ms для появления reward screen
+  const rewardIndicators = [
+    'text=Congratulations',
+    '[data-name="Reward Manager"]',
+    'text=You earned',
+    'text=New achievement',
+    'text=Achievement unlocked'
+  ];
+  
+  // Проверяем наличие reward screen с задержкой (до 1000ms)
+  const startTime = Date.now();
+  const maxWait = 1000;
+  let isRewardScreen = false;
+  
+  while (Date.now() - startTime < maxWait && !isRewardScreen) {
+    if (page.isClosed()) return;
+    
+    for (const indicator of rewardIndicators) {
+      if (await page.locator(indicator).isVisible().catch(() => false)) {
+        isRewardScreen = true;
+        break;
       }
     }
+    
+    if (!isRewardScreen) {
+      await page.waitForTimeout(100).catch(() => {});
+    }
   }
-}
-
-/**
- * Проходим весь опрос (6 экранов)
- */
-async function completeSurvey(page: Page): Promise<void> {
-  if (page.isClosed()) return;
-  // Survey01: "How old are you?"
-  await page.getByRole('button', { name: /18-25 years old/i }).click().catch(() => {});
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
   
-  if (page.isClosed()) return;
-  // Survey02: "How often do you face emotional difficulties?"
-  await page.getByRole('button', { name: /Sometimes \(1–2 times a week\)/i }).click().catch(() => {});
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
-  
-  if (page.isClosed()) return;
-  // Survey03: "What experiences worry you the most?" (multiple choice)
-  await page.getByRole('button', { name: /Work stress/i }).click().catch(() => {});
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
-  
-  if (page.isClosed()) return;
-  // Survey04: "Have you ever sought psychological help from specialists?"
-  await page.getByRole('button', { name: /No, never/i }).click().catch(() => {});
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
-  
-  if (page.isClosed()) return;
-  // Survey05: "Which of these statements seems true to you?" (multiple choice)
-  await page.getByRole('button', { name: /All are wrong/i }).click().catch(() => {});
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /^Continue$/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
-  
-  if (page.isClosed()) return;
-  // Survey06: "How did you learn about Menhausen?"
-  await page.getByRole('button', { name: /Friend or colleague recommended it/i }).click().catch(() => {});
-  await page.waitForTimeout(500); // Small delay to ensure selection is processed
-  if (page.isClosed()) return;
-  await page.getByRole('button', { name: /Complete Setup/i }).click().catch(() => {});
-  await page.waitForLoadState('networkidle').catch(() => {});
-}
-
-/**
- * Пропускаем настройку PIN
- */
-async function skipPinSetup(page: Page): Promise<void> {
-  if (page.isClosed()) return;
-  // Ищем кнопку "Skip" на экране настройки PIN
-  const skipBtn = page.getByRole('button', { name: /^Skip$/i });
-  if (await skipBtn.isVisible().catch(() => false)) {
+  if (isRewardScreen) {
     if (page.isClosed()) return;
-    await skipBtn.click().catch(() => {});
-    await page.waitForLoadState('networkidle').catch(() => {});
+    // Ищем кнопку Continue или Close на reward screen
+    const continueBtn = page.getByRole('button', { name: /^Continue$/i })
+      .or(page.getByRole('button', { name: /^Close$/i }))
+      .or(page.locator('text=Continue'))
+      .or(page.locator('text=Close'));
+    
+    // Ждем появления кнопки (до 2000ms)
+    const buttonStartTime = Date.now();
+    const buttonMaxWait = 2000;
+    let buttonVisible = false;
+    
+    while (Date.now() - buttonStartTime < buttonMaxWait && !buttonVisible) {
+      if (page.isClosed()) return;
+      buttonVisible = await continueBtn.first().isVisible().catch(() => false);
+      if (!buttonVisible) {
+        await page.waitForTimeout(100).catch(() => {});
+      }
+    }
+    
+    if (buttonVisible) {
+      if (page.isClosed()) return;
+      await continueBtn.first().click().catch(() => {});
+      // Ждем навигации на home screen
+      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 5000 }).catch(() => {});
+    }
   }
 }
 
@@ -167,77 +133,33 @@ async function skipPinSetup(page: Page): Promise<void> {
  */
 export async function skipOnboarding(page: Page): Promise<void> {
   if (page.isClosed()) return;
-  // Проходим все экраны онбординга последовательно
-  
-  // Первый экран онбординга - кнопка "Get Started"
-  const getStartedBtnRole = page.getByRole('button', { name: /Get Started/i });
-  const getStartedBtnText = page.locator('text=Get Started');
-  if (await getStartedBtnRole.isVisible().catch(() => false) && await getStartedBtnRole.isEnabled().catch(() => false)) {
-    if (page.isClosed()) return;
-    await getStartedBtnRole.click().catch(() => {});
-    await page.waitForLoadState('networkidle').catch(() => {});
-  } else if (await getStartedBtnText.isVisible().catch(() => false)) {
-    if (page.isClosed()) return;
-    await getStartedBtnText.click().catch(() => {});
-    await page.waitForLoadState('networkidle').catch(() => {});
-  }
-  
+
+  await page.evaluate(() => {
+    (window as any).__PLAYWRIGHT__ = true;
+    const progress = {
+      onboardingCompleted: true,
+      surveyCompleted: false,
+      pinEnabled: false,
+      pinCompleted: false,
+      firstCheckinDone: false,
+      firstRewardShown: false
+    };
+
+    try {
+      const existing = localStorage.getItem('app-flow-progress');
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        localStorage.setItem('app-flow-progress', JSON.stringify({ ...parsed, ...progress }));
+      } else {
+        localStorage.setItem('app-flow-progress', JSON.stringify(progress));
+      }
+    } catch (error) {
+      console.warn('Failed to seed onboarding progress:', error);
+    }
+  });
+
   if (page.isClosed()) return;
-  // Второй экран онбординга - кнопка "Continue"
-  const continueBtnRole = page.getByRole('button', { name: /^Continue$/i });
-  const continueBtnText = page.locator('text=Continue');
-  if (await continueBtnRole.isVisible().catch(() => false)) {
-    if (page.isClosed()) return;
-    // Ждем активации кнопки
-    await continueBtnRole.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    await continueBtnRole.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {});
-    
-    // Пробуем кликнуть с повторными попытками
-    for (let i = 0; i < 10; i++) {
-      if (page.isClosed()) return;
-      if (await continueBtnRole.isEnabled().catch(() => false)) {
-        await continueBtnRole.click().catch(() => {});
-        await page.waitForLoadState('networkidle').catch(() => {});
-        break;
-      }
-      await page.waitForTimeout(500).catch(() => {});
-    }
-  } else if (await continueBtnText.isVisible().catch(() => false)) {
-    for (let i = 0; i < 10; i++) {
-      if (page.isClosed()) return;
-      try {
-        await continueBtnText.click({ trial: true }).catch(() => {});
-        await continueBtnText.click().catch(() => {});
-        await page.waitForLoadState('networkidle').catch(() => {});
-        break;
-      } catch {
-        await page.waitForTimeout(500).catch(() => {});
-      }
-    }
-  }
-  
-  if (page.isClosed()) return;
-  // Дополнительные экраны если есть
-  let attempts = 0;
-  while (attempts < 3) {
-    if (page.isClosed()) return;
-    const anyContinueBtnRole = page.getByRole('button', { name: /^(Continue|Get Started|Start)$/i });
-    const anyContinueBtnText = page.locator('text=Continue').or(page.locator('text=Get Started')).or(page.locator('text=Start'));
-    if (await anyContinueBtnRole.isVisible().catch(() => false) && await anyContinueBtnRole.isEnabled().catch(() => false)) {
-      await anyContinueBtnRole.click().catch(() => {});
-      await page.waitForLoadState('networkidle').catch(() => {});
-      attempts++;
-    } else if (await anyContinueBtnText.isVisible().catch(() => false)) {
-      try {
-        await anyContinueBtnText.click().catch(() => {});
-        await page.waitForLoadState('networkidle').catch(() => {});
-        attempts++;
-      } catch {
-        break;
-      }
-    } else {
-      break;
-    }
-  }
+
+  await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
 }
 

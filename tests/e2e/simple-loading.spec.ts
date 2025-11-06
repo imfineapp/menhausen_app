@@ -1,24 +1,17 @@
 // Простой тест для проверки загрузки приложения
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+import { primeAppForHome, waitForPageLoad, waitForHomeScreen } from './utils/test-helpers';
+
+const primeAndOpenHome = async (page: Page): Promise<void> => {
+  await primeAppForHome(page);
+  await page.goto('/');
+  await waitForPageLoad(page);
+  await waitForHomeScreen(page);
+};
 
 test.describe('Simple App Loading', () => {
   test('должен загружать приложение', async ({ page }) => {
-    // Переходим на главную страницу приложения
-    await page.goto('/');
-    
-    // Ждем загрузки приложения
-    await page.waitForLoadState('networkidle');
-    
-    // Ждем, пока приложение полностью инициализируется
-    await page.waitForSelector('body', { state: 'visible' });
-    
-    // Проверяем, что приложение загрузилось - ищем любой текст на странице
-    await expect(page.locator('body')).toBeVisible();
-    
-    // Проверяем, что есть какой-то контент
-    const bodyText = await page.textContent('body');
-    // Проверяем, что страница не пустая
-    expect(bodyText).toBeTruthy();
-    expect(bodyText!.length).toBeGreaterThan(0);
+    await primeAndOpenHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
   });
 });
