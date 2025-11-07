@@ -1,5 +1,16 @@
 # Memory Bank: Progress
 
+## 2025-11-07 — Fix Memory Leak Risk & E2E Test Overhaul (Level 3)
+- **Status**: ✅ COMPLETED — archive stored at `memory-bank/archive/archive-fix-memory-leak-and-e2e-tests-20251107.md`
+- **Highlights**:
+  - Added mounted guards to all `App.tsx` timeout callbacks, eliminating race conditions and state updates on unmounted components.
+  - Introduced shared Playwright helpers (`seedCheckinHistory`, `primeAppForHome`, `skipRewardScreen`) for deterministic state priming across suites.
+  - Rewrote every failing Playwright spec to use the helpers, replacing brittle onboarding flows and consolidating reward-screen handling.
+  - Converted smart navigation into a pure logic test and ensured referral/achievement flows mirror production behavior.
+- **Verification**:
+  - `npx playwright test`
+  - `npm run lint:all`
+
 ## Implementation Status
 
 ### ✅ Completed Components

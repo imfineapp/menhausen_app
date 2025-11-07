@@ -3,19 +3,34 @@
 ## Current Task
 🎯 **Fix Memory Leak Risk from Uncleaned Timeouts + Update E2E Tests for Branch Changes** (branch: `user-achievements-system`)                                                                                                                                                      
 
-Mode: **PLAN**  
-Complexity Level: **Level 3 (Intermediate Feature)**  
-Status: **IN PROGRESS**
+Mode: **ARCHIVE COMPLETE**  
+Status: **TASK CLOSED – READY FOR VAN MODE**
 
-### Goal
-1. ✅ Fix memory leak risks and race conditions from setTimeout calls in App.tsx (COMPLETED)
-2. 🔄 Analyze all changes in the `user-achievements-system` branch
-3. 🔄 Update all failing e2e tests to reflect application changes from this branch
+## Status
+- [x] Initialization complete
+- [x] Planning complete
+- [x] Implementation complete
+- [x] Reflection complete
+- [x] Archiving
+
+## Archive
+- **Date**: 2025-11-07
+- **Archive Document**: `memory-bank/archive/archive-fix-memory-leak-and-e2e-tests-20251107.md`
+- **Status**: ✅ COMPLETED
+- **Verification**:
+  - `npx playwright test`
+  - `npm run lint:all`
+
+## Reflection Highlights
+- **What Went Well**: Shared Playwright helpers (`seedCheckinHistory`, `primeAppForHome`) let every suite skip brittle onboarding flows; reward handling now lives in one place; smart-navigation logic has a fast deterministic test.                        
+- **Challenges**: Legacy flows hid multiple failure modes (reward screen, referral stats, day-boundary resets); ensuring selectors stayed language-neutral required new regex guards.                                                                         
+- **Lessons Learned**: Prefer state priming over replaying long UI scripts; isolate business logic in lightweight checks when full E2E adds little value; keep helper APIs tight so updates cascade automatically.                                            
+- **Next Steps**: Use VAN MODE to start the next task.
 
 ### Part 1: Memory Leak Fix (COMPLETED)
 Fix memory leak risks and race conditions from setTimeout calls in App.tsx that lack proper cleanup guards. Prevent calls to functions on unmounted components and ensure all timeouts are properly cleaned up, including nested timeouts.
 
-### Part 2: E2E Tests Update (NEW)
+### Part 2: E2E Tests Update (COMPLETED)
 Analyze all changes introduced in the `user-achievements-system` branch and update each failing e2e test to properly reflect the new application behavior, including:
 - Achievement system integration
 - Referral system functionality  
@@ -33,7 +48,7 @@ Analyze all changes introduced in the `user-achievements-system` branch and upda
 - ✅ Add mounted guards to timeout callbacks to prevent state updates on unmounted components
 - ✅ Ensure Promise-based setTimeout (line ~540) is handled appropriately
 
-**Part 2: E2E Tests Update (NEW)**
+**Part 2: E2E Tests Update (COMPLETED)**
 - Analyze all changes in `user-achievements-system` branch vs `main`
 - Identify which changes affect each failing e2e test
 - Update 71 failing e2e tests to reflect new application behavior
@@ -75,7 +90,7 @@ Analyze all changes introduced in the `user-achievements-system` branch and upda
 - [x] Ensure all timeout callbacks check mounted state before state updates
 - [x] Run lint and type check (`npm run lint:all`)
 
-**Part 2: E2E Tests Update (IN PROGRESS)**
+**Part 2: E2E Tests Update (COMPLETED)**
 - [x] Analyze branch changes: list all modified files and their impact
 - [x] Create skipRewardScreen utility function to handle reward screen navigation
 - [x] Update skipSurvey to handle reward screen after first check-in
@@ -101,19 +116,13 @@ Analyze all changes introduced in the `user-achievements-system` branch and upda
 - [x] Update simple-loading.spec.ts to use navigation helpers
 - [x] Update basic-functionality.spec.ts to use seeded home state
 - [x] Update home-progress-display specs to seed progress data
-- [ ] Categorize remaining failing tests by type of change needed:
-  - [ ] Tests affected by achievement system (check-in & home progress flows)
-  - [ ] Tests affected by referral system (referral stats & share flow)
-  - [ ] Tests affected by articles feature
-  - [ ] Tests affected by timeout behavior changes (user stories, simple loading)
-  - [ ] Tests affected by navigation flow changes (i18n onboarding)
-  - [ ] Tests with infrastructure/timeout issues (pre-existing)
-- [ ] For each remaining failing test:
-  - [ ] Identify root cause (change-related vs infrastructure)
-  - [ ] Update test to account for new behavior
-  - [ ] Verify test passes after update
-- [ ] Run full e2e test suite and verify all tests pass
-- [ ] Document any tests that need infrastructure fixes (separate issue)
+- [x] Categorize remaining failing tests by type of change needed (all suites now pass after helper refactor)
+- [x] For each remaining failing test:
+  - [x] Identify root cause (change-related vs infrastructure)
+  - [x] Update test to account for new behavior
+  - [x] Verify test passes after update
+- [x] Run full e2e test suite and verify all tests pass (`npx playwright test`)
+- [x] Document any tests that need infrastructure fixes (none remaining)
 
 ### Acceptance Criteria
 
@@ -126,7 +135,7 @@ Analyze all changes introduced in the `user-achievements-system` branch and upda
 - ✅ No memory leaks from uncleaned timeouts
 - ✅ CI passes; no new eslint/type errors
 
-**Part 2: E2E Tests Update (NEW)**
+**Part 2: E2E Tests Update (COMPLETED)**
 - All 71 failing e2e tests are analyzed and categorized
 - All change-related test failures are fixed
 - All tests pass after updates
@@ -146,7 +155,7 @@ Analyze all changes introduced in the `user-achievements-system` branch and upda
 #### Part 1: Memory Leak Fix (COMPLETED)
 See implementation summary below.
 
-#### Part 2: E2E Tests Update (NEW)
+#### Part 2: E2E Tests Update (COMPLETED)
 
 **Step 1: Analyze Branch Changes**
 
