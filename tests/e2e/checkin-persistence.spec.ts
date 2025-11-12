@@ -8,7 +8,7 @@ import {
   seedCheckinHistory,
   waitForPageLoad,
   waitForHomeScreen,
-  isOnCheckinScreen,
+  waitForCheckinScreen,
   completeCheckin
 } from './utils/test-helpers';
 
@@ -46,7 +46,7 @@ test.describe('Check-in Data Persistence', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
-    expect(await isOnCheckinScreen(page)).toBeTruthy();
+    await waitForCheckinScreen(page);
     await completeCheckin(page);
     await waitForHomeScreen(page);
 

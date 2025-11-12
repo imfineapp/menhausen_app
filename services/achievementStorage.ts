@@ -67,7 +67,15 @@ export function updateAchievement(
       : (existing?.unlockedAt || null),
     progress: result.progress,
     xp: result.xp,
-    lastChecked: now
+    lastChecked: now,
+    // Сохраняем флаг shownOnThemeHome, если он был установлен ранее
+    shownOnThemeHome: existing?.shownOnThemeHome ?? false,
+    // Сохраняем флаг shownOnArticleBack, если он был установлен ранее
+    shownOnArticleBack: existing?.shownOnArticleBack ?? false,
+    // Сохраняем флаг shownOnHomeAfterCheckin, если он был установлен ранее
+    shownOnHomeAfterCheckin: existing?.shownOnHomeAfterCheckin ?? false,
+    // Сохраняем флаг shownOnProfile, если он был установлен ранее
+    shownOnProfile: existing?.shownOnProfile ?? false
   };
   
   const newAchievements = {

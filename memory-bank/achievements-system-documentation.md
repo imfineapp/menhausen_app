@@ -162,6 +162,10 @@ interface UserAchievement {
   progress: number;                    // Прогресс 0-100%
   xp: number;                          // Количество XP за это достижение
   lastChecked: string;                 // Дата последней проверки
+  shownOnThemeHome?: boolean;          // Флаг показа на theme-home (для карточек)
+  shownOnArticleBack?: boolean;        // Флаг показа при возврате из статьи
+  shownOnHomeAfterCheckin?: boolean;   // Флаг показа на home после чекина (для streak)
+  shownOnProfile?: boolean;            // Флаг показа на profile (для referral)
 }
 ```
 

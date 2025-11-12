@@ -12,6 +12,7 @@ import {
   isOnCheckinScreen,
   completeCheckin
 } from './utils/test-helpers';
+import { skipRewardScreen } from './utils/skip-survey';
 
 const todayISO = () => new Date().toISOString();
 const daysAgoISO = (days: number, hour = 9) => {
@@ -51,6 +52,13 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    
+    // Даем время для инициализации приложения и проверки статуса чекина
+    await page.waitForTimeout(1000).catch(() => {});
+    
+    // Проверяем и пропускаем reward screen, который может появиться
+    await skipRewardScreen(page);
+    
     await waitForHomeScreen(page);
 
     expect(await isOnCheckinScreen(page)).toBeFalsy();
@@ -75,10 +83,23 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.reload();
     await waitForPageLoad(page);
-    if (await isOnCheckinScreen(page)) {
+    // After reload, check-in should be completed, so we should go directly to home
+    // But we need to handle potential intermediate screens (check-in, reward)
+    
+    // Wait a bit for app to initialize after reload
+    await page.waitForTimeout(1000);
+    
+    // Check what screen we're on and handle accordingly
+    const isCheckinVisible = await isOnCheckinScreen(page).catch(() => false);
+    if (isCheckinVisible) {
+      // If check-in screen appears, complete it
       await completeCheckin(page);
+    } else {
+      // If not on check-in, might be on reward screen or already on home
+      await skipRewardScreen(page);
+      // Wait for home screen with longer timeout
+      await waitForHomeScreen(page, 15000);
     }
-    await waitForHomeScreen(page);
   });
 
   test('should handle multiple check-ins across days', async ({ page }) => {

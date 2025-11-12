@@ -66,27 +66,24 @@ export function saveUserStats(stats: UserStats): void {
  * Обновление статистики пользователя.
  * Поддерживает как частичный объект обновлений, так и функциональный апдейтер,
  * который вычисляет новое состояние на основе актуального снимка хранилища.
+ * 
+ * Использует единообразный подход для обоих типов обновлений:
+ * всегда загружает актуальное состояние непосредственно перед сохранением,
+ * чтобы избежать race conditions при параллельных вызовах.
  */
 export function updateUserStats(
   updatesOrUpdater: Partial<UserStats> | ((current: UserStats) => UserStats)
 ): UserStats {
-  // Всегда пересчитываем на самом свежем состоянии перед сохранением,
-  // чтобы минимизировать потерю параллельных изменений.
-  const latest = loadUserStats();
+  // Загружаем актуальное состояние непосредственно перед вычислением и сохранением
+  // Это минимизирует окно для race conditions
+  const current = loadUserStats();
 
+  // Вычисляем новое состояние на основе актуального снимка
   const next = typeof updatesOrUpdater === 'function'
-    ? (updatesOrUpdater as (c: UserStats) => UserStats)(latest)
-    : { ...latest, ...updatesOrUpdater };
+    ? (updatesOrUpdater as (c: UserStats) => UserStats)(current)
+    : { ...current, ...updatesOrUpdater };
 
-  // На случай, если между расчетом и сохранением что-то изменилось,
-  // ещё раз синхронизируемся с последним срезом для непустых частичных обновлений.
-  if (typeof updatesOrUpdater !== 'function') {
-    const justBeforeSave = loadUserStats();
-    const merged = { ...justBeforeSave, ...updatesOrUpdater };
-    saveUserStats(merged);
-    return merged;
-  }
-
+  // Сохраняем результат
   saveUserStats(next);
   return next;
 }

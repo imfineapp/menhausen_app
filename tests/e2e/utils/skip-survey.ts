@@ -68,18 +68,19 @@ export async function skipRewardScreen(page: Page): Promise<void> {
   if (page.isClosed()) return;
   
   // Reward screen может появиться с задержкой из-за async achievement checking
-  // Ждем до 1000ms для появления reward screen
+  // Увеличено до 2000ms для учета задержек при переходе на theme-home и других экранов
   const rewardIndicators = [
     'text=Congratulations',
     '[data-name="Reward Manager"]',
     'text=You earned',
     'text=New achievement',
-    'text=Achievement unlocked'
+    'text=Achievement unlocked',
+    '[data-name="Reward Page"]'
   ];
   
-  // Проверяем наличие reward screen с задержкой (до 1000ms)
+  // Проверяем наличие reward screen с задержкой (до 2000ms)
   const startTime = Date.now();
-  const maxWait = 1000;
+  const maxWait = 2000;
   let isRewardScreen = false;
   
   while (Date.now() - startTime < maxWait && !isRewardScreen) {
@@ -99,30 +100,103 @@ export async function skipRewardScreen(page: Page): Promise<void> {
   
   if (isRewardScreen) {
     if (page.isClosed()) return;
-    // Ищем кнопку Continue или Close на reward screen
-    const continueBtn = page.getByRole('button', { name: /^Continue$/i })
-      .or(page.getByRole('button', { name: /^Close$/i }))
-      .or(page.locator('text=Continue'))
-      .or(page.locator('text=Close'));
     
-    // Ждем появления кнопки (до 2000ms)
-    const buttonStartTime = Date.now();
-    const buttonMaxWait = 2000;
-    let buttonVisible = false;
+    // Обрабатываем все достижения - может быть несколько, нужно кликать Next несколько раз
+    const maxIterations = 10; // Максимум 10 достижений (защита от бесконечного цикла)
+    let iteration = 0;
     
-    while (Date.now() - buttonStartTime < buttonMaxWait && !buttonVisible) {
+    while (iteration < maxIterations) {
       if (page.isClosed()) return;
-      buttonVisible = await continueBtn.first().isVisible().catch(() => false);
-      if (!buttonVisible) {
-        await page.waitForTimeout(100).catch(() => {});
+      
+      // Проверяем, все еще ли мы на reward screen
+      let stillOnRewardScreen = false;
+      for (const indicator of rewardIndicators) {
+        if (await page.locator(indicator).isVisible().catch(() => false)) {
+          stillOnRewardScreen = true;
+          break;
+        }
+      }
+      
+      if (!stillOnRewardScreen) {
+        // Уже не на reward screen, выходим
+        break;
+      }
+      
+      // Ищем кнопку на reward screen
+      const buttonSelectors = [
+        // Поиск по data-name (самый надежный)
+        page.locator('button[data-name*="Bottom Fixed CTA Button"]'),
+        // Поиск по тексту кнопки
+        page.locator('button').filter({ hasText: /Continue|Next|Продолжить|Следующее/i }),
+        // Поиск по роли
+        page.getByRole('button', { name: /Continue|Next|Продолжить|Следующее/i }),
+        // Fallback - любая видимая кнопка внизу
+        page.locator('button:visible').last()
+      ];
+      
+      let buttonFound = false;
+      let buttonToClick = null;
+      
+      // Ждем появления кнопки (до 3000ms)
+      const buttonStartTime = Date.now();
+      const buttonMaxWait = 3000;
+      
+      while (Date.now() - buttonStartTime < buttonMaxWait && !buttonFound) {
+        if (page.isClosed()) return;
+        
+        for (const selector of buttonSelectors) {
+          try {
+            const count = await selector.count();
+            if (count > 0) {
+              const firstButton = selector.first();
+              const isVisible = await firstButton.isVisible().catch(() => false);
+              if (isVisible) {
+                buttonFound = true;
+                buttonToClick = firstButton;
+                break;
+              }
+            }
+          } catch {
+            // Игнорируем ошибки поиска
+          }
+        }
+        
+        if (!buttonFound) {
+          await page.waitForTimeout(100).catch(() => {});
+        }
+      }
+      
+      if (buttonFound && buttonToClick) {
+        if (page.isClosed()) return;
+        
+        // Кликаем на кнопку
+        await buttonToClick.click({ timeout: 5000 }).catch(() => {});
+        
+        // Небольшая задержка после клика для обработки навигации
+        await page.waitForTimeout(300).catch(() => {});
+        
+        // Проверяем, произошла ли навигация (проверяем наличие home screen)
+        const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+        if (isHome) {
+          // Успешно перешли на home screen
+          break;
+        }
+        
+        // Если не перешли на home, возможно показывается следующее достижение
+        // Продолжаем цикл
+        iteration++;
+        await page.waitForTimeout(200).catch(() => {});
+      } else {
+        // Кнопка не найдена, выходим
+        break;
       }
     }
     
-    if (buttonVisible) {
-      if (page.isClosed()) return;
-      await continueBtn.first().click().catch(() => {});
-      // Ждем навигации на home screen
-      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 5000 }).catch(() => {});
+    // Финальная проверка - ждем навигации на home screen (если еще не там)
+    const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+    if (!isHome) {
+      // Ждем навигации на home screen (до 10000ms)
+      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 10000 }).catch(() => {});
     }
   }
 }

@@ -47,20 +47,45 @@ export function AchievementsProvider({ children }: AchievementsProviderProps) {
       const userStats = loadUserStats();
       const achievementsDef = getAllAchievementsMetadata();
       
+      console.log('[AchievementsContext] Checking achievements, userStats:', {
+        cardsOpened: userStats.cardsOpened,
+        stress: userStats.cardsOpened['stress'] || 0
+      });
+      
       // Используем функциональное обновление для получения текущего состояния
       // и обновления всех достижений за один раз
       setState(currentState => {
+        // ВАЖНО: Загружаем актуальные данные из localStorage, чтобы получить
+        // актуальные флаги показа, которые могли быть установлены через markAchievementsAsShown
+        const storageState = loadUserAchievements();
+        
         const updatedAchievements = { ...currentState.achievements };
         
         // Проверяем все достижения и собираем изменения
         for (const achievement of achievementsDef) {
           const result = checkAchievementCondition(achievement, userStats);
           const existing = updatedAchievements[achievement.id];
+          // Получаем актуальные данные из storage для уже разблокированных достижений
+          const storageAchievement = storageState.achievements[achievement.id];
           
           const wasUnlocked = existing?.unlocked || false;
           const isNowUnlocked = result.unlocked;
           
+          // Логируем проверку для достижения "beginner"
+          if (achievement.id === 'beginner') {
+            console.log('[AchievementsContext] Checking "beginner" achievement:', {
+              conditionType: achievement.conditionType,
+              conditionValue: achievement.conditionValue,
+              category: achievement.category,
+              result: result,
+              wasUnlocked: wasUnlocked,
+              isNowUnlocked: isNowUnlocked,
+              userStatsCardsOpened: userStats.cardsOpened['stress'] || 0
+            });
+          }
+          
           if (isNowUnlocked && !wasUnlocked) {
+            console.log('[AchievementsContext] New achievement unlocked:', achievement.id);
             newlyUnlockedRef.current.push(achievement.id);
             
             // Начисляем баллы за разблокировку достижения
@@ -80,13 +105,78 @@ export function AchievementsProvider({ children }: AchievementsProviderProps) {
           
           // Обновляем достижение в локальной копии
           const now = new Date().toISOString();
+          
+          // Определяем, связано ли достижение с карточками
+          const conditionType = achievement.conditionType;
+          const conditionTypes = Array.isArray(conditionType) ? conditionType : [conditionType];
+          const isCardRelated = conditionTypes.some(type => 
+            type === 'cards_opened' || 
+            type === 'topic_completed' || 
+            type === 'cards_repeated' || 
+            type === 'topic_repeated'
+          );
+          
+          // Определяем, связано ли достижение со статьями
+          const isArticleRelated = conditionTypes.some(type => 
+            type === 'articles_read'
+          );
+          
+          // Определяем, связано ли достижение со streak
+          // Для комбинированных: если есть условия карточек, используем логику карточек
+          // Иначе если есть streak, используем логику streak
+          const isStreakRelated = !isCardRelated && conditionTypes.some(type => 
+            type === 'streak' || type === 'streak_repeat'
+          );
+          
+          // Определяем, связано ли достижение с referral
+          const isReferralRelated = conditionTypes.some(type => 
+            type === 'referral_invite' || type === 'referral_premium'
+          );
+          
+          // Если достижение связано с карточками и только что разблокировано,
+          // устанавливаем shownOnThemeHome = false, чтобы показать его на theme-home
+          // Если достижение уже было разблокировано, используем актуальное значение флага из storage
+          const shouldShowOnThemeHome = isCardRelated && isNowUnlocked && !wasUnlocked;
+          
+          // Если достижение связано со статьями и только что разблокировано,
+          // устанавливаем shownOnArticleBack = false, чтобы показать его при возврате из статьи
+          // Если достижение уже было разблокировано, используем актуальное значение флага из storage
+          const shouldShowOnArticleBack = isArticleRelated && isNowUnlocked && !wasUnlocked;
+          
+          // Если достижение связано со streak (без карточек) и только что разблокировано,
+          // устанавливаем shownOnHomeAfterCheckin = false, чтобы показать его на home после чекина
+          const shouldShowOnHomeAfterCheckin = isStreakRelated && isNowUnlocked && !wasUnlocked;
+          
+          // Если достижение связано с referral и только что разблокировано,
+          // устанавливаем shownOnProfile = false, чтобы показать его на profile
+          const shouldShowOnProfile = isReferralRelated && isNowUnlocked && !wasUnlocked;
+          
+          // Для уже разблокированных достижений используем флаги из storage (актуальные),
+          // для новых - устанавливаем false, чтобы показать их
+          const currentShownOnThemeHome = storageAchievement?.shownOnThemeHome ?? existing?.shownOnThemeHome ?? false;
+          const currentShownOnArticleBack = storageAchievement?.shownOnArticleBack ?? existing?.shownOnArticleBack ?? false;
+          const currentShownOnHomeAfterCheckin = storageAchievement?.shownOnHomeAfterCheckin ?? existing?.shownOnHomeAfterCheckin ?? false;
+          const currentShownOnProfile = storageAchievement?.shownOnProfile ?? existing?.shownOnProfile ?? false;
+          
           updatedAchievements[achievement.id] = {
             achievementId: achievement.id,
             unlocked: result.unlocked,
             unlockedAt: isNowUnlocked && !wasUnlocked ? now : (existing?.unlockedAt || null),
             progress: result.progress,
             xp: achievement.xp,
-            lastChecked: now
+            lastChecked: now,
+            // Если достижение связано с карточками и только что разблокировано, помечаем как не показанное
+            // Если уже было разблокировано, используем актуальное значение флага из storage
+            shownOnThemeHome: shouldShowOnThemeHome ? false : currentShownOnThemeHome,
+            // Если достижение связано со статьями и только что разблокировано, помечаем как не показанное
+            // Если уже было разблокировано, используем актуальное значение флага из storage
+            shownOnArticleBack: shouldShowOnArticleBack ? false : currentShownOnArticleBack,
+            // Если достижение связано со streak (без карточек) и только что разблокировано, помечаем как не показанное
+            // Если уже было разблокировано, используем актуальное значение флага из storage
+            shownOnHomeAfterCheckin: shouldShowOnHomeAfterCheckin ? false : currentShownOnHomeAfterCheckin,
+            // Если достижение связано с referral и только что разблокировано, помечаем как не показанное
+            // Если уже было разблокировано, используем актуальное значение флага из storage
+            shownOnProfile: shouldShowOnProfile ? false : currentShownOnProfile
           };
         }
         

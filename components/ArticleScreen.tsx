@@ -8,12 +8,18 @@ import { useContent, useArticle } from './ContentContext';
 import { markArticleRead } from '../services/userStatsService';
 import { ThemeCard } from './ThemeCard';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
+import { getAchievementsToShow, markAchievementsAsShown } from '../services/achievementDisplayService';
+import { AppScreen } from '../types/userState';
 
 interface ArticleScreenProps {
   articleId: string;
   onBack: () => void;
   onGoToTheme?: (themeId: string) => void;
   userHasPremium?: boolean;
+  checkAndShowAchievements?: (delay?: number, forceCheck?: boolean) => Promise<void>;
+  navigateTo?: (screen: AppScreen) => void;
+  earnedAchievementIds?: string[];
+  setEarnedAchievementIds?: (ids: string[] | ((prev: string[]) => string[])) => void;
 }
 
 /**
@@ -50,7 +56,16 @@ function formatArticleContent(content: string): string {
 /**
  * Main Article Screen Component
  */
-export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium: _userHasPremium = false }: ArticleScreenProps) {
+export function ArticleScreen({ 
+  articleId, 
+  onBack, 
+  onGoToTheme, 
+  userHasPremium: _userHasPremium = false,
+  checkAndShowAchievements,
+  navigateTo,
+  earnedAchievementIds = [],
+  setEarnedAchievementIds
+}: ArticleScreenProps) {
   const { content, getLocalizedText, getTheme } = useContent();
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -62,8 +77,43 @@ export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium: 
     if (article && !didMarkRef.current) {
       markArticleRead(article.id);
       didMarkRef.current = true;
+      
+      // Проверяем достижения после чтения статьи (с задержкой)
+      if (checkAndShowAchievements) {
+        setTimeout(() => {
+          checkAndShowAchievements(300, true);
+        }, 300);
+      }
     }
-  }, [article]);
+  }, [article, checkAndShowAchievements]);
+  
+  // Обработчик кнопки "назад" с проверкой достижений
+  const handleBack = () => {
+    // Проверяем, есть ли достижения, связанные со статьями, которые еще не были показаны
+    if (navigateTo && setEarnedAchievementIds) {
+      // Используем централизованный сервис для получения достижений для показа
+      const result = getAchievementsToShow({
+        screen: 'article-back',
+        earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+        excludeFromStorageCheck: earnedAchievementIds // Исключаем из проверки storage, если уже есть в earnedAchievementIds
+      });
+      
+      if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+        console.log('[ArticleScreen] Showing article-related achievements on back:', result.achievementsToShow);
+        
+        // ВАЖНО: Синхронно устанавливаем флаги ПЕРЕД навигацией
+        markAchievementsAsShown(result.achievementsToShow, 'article-back');
+        
+        // Устанавливаем достижения и переходим на reward screen
+        setEarnedAchievementIds(result.achievementsToShow);
+        navigateTo('reward');
+        return;
+      }
+    }
+    
+    // Если нет достижений для показа, выполняем обычный возврат
+    onBack();
+  };
   
   // Handle scroll to fade logo when content scrolls under it
   useEffect(() => {
@@ -100,7 +150,7 @@ export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium: 
   if (!article) {
     return (
       <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
-        <BackButton onBack={onBack} />
+        <BackButton onBack={handleBack} />
         <div style={{ opacity: logoOpacity, transition: 'opacity 0.2s ease-out' }}>
           <MiniStripeLogo />
         </div>
@@ -127,7 +177,7 @@ export function ArticleScreen({ articleId, onBack, onGoToTheme, userHasPremium: 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Telegram Back Button */}
-      <BackButton onBack={onBack} />
+      <BackButton onBack={handleBack} />
       
       {/* Logo with dynamic opacity */}
       <div style={{ opacity: logoOpacity, transition: 'opacity 0.2s ease-out' }}>

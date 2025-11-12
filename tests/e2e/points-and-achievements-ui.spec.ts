@@ -35,3 +35,7 @@ test.describe('Points & Achievements UI', () => {
     expect(dataNames.some(name => name.toLowerCase().includes('badge') || name.toLowerCase().includes('achievement'))).toBeTruthy();
   });
 });
+
+
+
+

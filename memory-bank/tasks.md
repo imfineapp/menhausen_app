@@ -1,10 +1,41 @@
 # Memory Bank: Tasks
 
 ## Current Task
-🎯 **Fix Memory Leak Risk from Uncleaned Timeouts + Update E2E Tests for Branch Changes** (branch: `user-achievements-system`)                                                                                                                                                      
+✅ **Реализация механики отложенного показа уведомлений для достижений (streak и referral)** (branch: `user-achievements-system`)
+
+Mode: **COMPLETED**  
+Status: **✅ COMPLETED - READY FOR ARCHIVE**
+
+**Дата завершения**: 2025-11-11
+
+### Краткое описание
+Реализована система отложенного показа уведомлений (reward screen) для всех типов достижений:
+- Достижения со статьями - показ при нажатии "назад" из статьи
+- Достижения со streak - показ на home после чекина
+- Достижения с referral - показ на profile
+
+### Измененные файлы
+- `types/achievements.ts` - добавлены флаги `shownOnHomeAfterCheckin`, `shownOnProfile`
+- `contexts/AchievementsContext.tsx` - логика определения типа достижения и установки флагов
+- `services/achievementStorage.ts` - сохранение новых флагов
+- `App.tsx` - фильтрация и логика отложенного показа, useEffect для home и profile
+- `components/ArticleScreen.tsx` - проверка достижений при возврате
+
+### Результаты проверок
+- ✅ Линтеры: ошибок не найдено
+- ✅ Проверка типов: все проверки пройдены
+- ✅ Юнит тесты: 312 passed | 1 skipped
+
+### Документация
+- `memory-bank/achievements-notification-mechanics.md` - полная документация механики
+
+---
+
+## Previous Task (Completed)
+**Task**: **Fix Memory Leak Risk from Uncleaned Timeouts + Update E2E Tests for Branch Changes** (branch: `user-achievements-system`)                                                                                                                                                      
 
 Mode: **ARCHIVE COMPLETE**  
-Status: **TASK CLOSED – READY FOR VAN MODE**
+Status: **TASK CLOSED ✅ READY FOR VAN MODE**
 
 ## Status
 - [x] Initialization complete

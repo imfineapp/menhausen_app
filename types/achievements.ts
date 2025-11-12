@@ -38,6 +38,10 @@ export interface UserAchievement {
   progress: number; // 0-100
   xp: number;
   lastChecked: string;
+  shownOnThemeHome?: boolean; // Флаг, указывающий, было ли достижение показано на theme-home
+  shownOnArticleBack?: boolean; // Флаг, указывающий, было ли достижение показано при возврате из статьи
+  shownOnHomeAfterCheckin?: boolean; // Флаг, указывающий, было ли достижение показано на home после чекина (для streak)
+  shownOnProfile?: boolean; // Флаг, указывающий, было ли достижение показано на profile (для referral)
 }
 
 export interface UserAchievementsState {
