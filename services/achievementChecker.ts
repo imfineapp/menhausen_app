@@ -178,13 +178,23 @@ const conditionCheckers: Record<string, ConditionChecker> = {
   
   streak_repeat: (stats, achievement) => {
     // Комбинация streak и повторений - берем минимум из обоих
-    const streakRequired = achievement.conditionValue || 0;
+    // Для комбинированных условий (например, cards_opened + streak_repeat):
+    // conditionValue может быть занят другим условием, поэтому используем conditionRepeatValue для обоих
+    let streakRequired = achievement.conditionValue || 0;
+    const repeatRequired = achievement.conditionRepeatValue || 0;
+    
+    // Если conditionRepeatValue задан, но conditionValue слишком мал или равен 0,
+    // это может быть комбинированное условие, где conditionValue занят другим условием
+    // В этом случае используем conditionRepeatValue для streak тоже
+    if (repeatRequired > 0 && streakRequired === 0) {
+      streakRequired = repeatRequired;
+    }
+    
     const streakProgress = streakRequired > 0 
       ? Math.min(100, (stats.checkinStreak / streakRequired) * 100)
       : 0;
     
     const repeatedCount = Object.values(stats.cardsRepeated).reduce((sum, count) => sum + count, 0);
-    const repeatRequired = achievement.conditionRepeatValue || 0;
     const repeatProgress = repeatRequired > 0
       ? Math.min(100, (repeatedCount / repeatRequired) * 100)
       : 0;
@@ -221,13 +231,36 @@ export function checkAchievementCondition(
     ? conditionType.split('+').map(s => s.trim())
     : conditionType;
   
-  const results = conditions.map(condition => {
+  const results = conditions.map((condition, index) => {
     const checker = conditionCheckers[condition];
     if (!checker) {
       console.warn(`Unknown condition type: ${condition}`);
       return { unlocked: false, progress: 0 };
     }
-    return checker(userStats, achievement);
+    
+    // Для комбинированных условий: первое условие использует conditionValue,
+    // второе и последующие используют conditionRepeatValue (если доступно)
+    // Для streak_repeat в комбинированных условиях: используем conditionRepeatValue для streak,
+    // если conditionValue занят другим условием (например, cards_opened)
+    let modifiedAchievement = achievement;
+    if (index > 0 && achievement.conditionRepeatValue !== undefined) {
+      if (condition === 'streak_repeat') {
+        // Для streak_repeat в комбинированных условиях используем conditionRepeatValue для обоих
+        // (streak и repeat), так как conditionValue занят другим условием
+        modifiedAchievement = {
+          ...achievement,
+          conditionValue: achievement.conditionRepeatValue
+        };
+      } else {
+        // Для других условий просто заменяем conditionValue на conditionRepeatValue
+        modifiedAchievement = {
+          ...achievement,
+          conditionValue: achievement.conditionRepeatValue
+        };
+      }
+    }
+    
+    return checker(userStats, modifiedAchievement);
   });
   
   // Для комбинированных условий: все должны быть выполнены

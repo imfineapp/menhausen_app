@@ -56,7 +56,8 @@
       "streak"
     ],
     "category": "Repetition & Streak",
-    "conditionValue": 5
+    "conditionValue": 5,
+    "conditionRepeatValue": 3
   },
   {
     "id": "keeper_of_wisdom",
@@ -67,7 +68,8 @@
       "streak"
     ],
     "category": "Repetition & Streak",
-    "conditionValue": 1
+    "conditionValue": 1,
+    "conditionRepeatValue": 5
   },
   {
     "id": "first_chapter_hero",
@@ -145,7 +147,8 @@
       "cards_repeated"
     ],
     "category": "Streak & Repetition",
-    "conditionValue": 14
+    "conditionValue": 14,
+    "conditionRepeatValue": 10
   },
   {
     "id": "inspirer",
@@ -164,7 +167,9 @@
       "streak_repeat"
     ],
     "category": "Premium Topics",
-    "conditionValue": 5
+    "conditionValue": 5,
+    "conditionRepeatValue": 7,
+    "conditionTopicsCount": 3
   },
   {
     "id": "enlightened_mind",
@@ -183,7 +188,8 @@
       "referral_premium"
     ],
     "category": "Referral",
-    "conditionValue": 5
+    "conditionValue": 5,
+    "conditionRepeatValue": 1
   },
   {
     "id": "sage",
@@ -202,7 +208,8 @@
       "topic_repeated"
     ],
     "category": "Premium Topics",
-    "conditionValue": 3
+    "conditionValue": 3,
+    "conditionRepeatValue": 2
   },
   {
     "id": "doubt_slayer",
@@ -213,7 +220,8 @@
       "streak"
     ],
     "category": "Repetition & Streak",
-    "conditionValue": 20
+    "conditionValue": 20,
+    "conditionRepeatValue": 10
   },
   {
     "id": "mind_protector",
@@ -232,7 +240,8 @@
       "topic_repeated"
     ],
     "category": "Premium Topics",
-    "conditionValue": 4
+    "conditionValue": 4,
+    "conditionRepeatValue": 3
   },
   {
     "id": "pathfinder",
@@ -243,7 +252,9 @@
       "streak_repeat"
     ],
     "category": "Premium Topics",
-    "conditionValue": 5
+    "conditionValue": 5,
+    "conditionRepeatValue": 14,
+    "conditionTopicsCount": 4
   },
   {
     "id": "chaos_conqueror",
@@ -262,7 +273,8 @@
       "streak"
     ],
     "category": "Repetition & Streak",
-    "conditionValue": 4
+    "conditionValue": 4,
+    "conditionRepeatValue": 21
   },
   {
     "id": "legendary_hero",
@@ -273,7 +285,8 @@
       "topic_repeated"
     ],
     "category": "Premium Topics",
-    "conditionValue": 6
+    "conditionValue": 6,
+    "conditionRepeatValue": 5
   },
   {
     "id": "reading_master",
@@ -291,6 +304,7 @@
       "streak"
     ],
     "category": "Mastery",
-    "conditionValue": 6
+    "conditionValue": 6,
+    "conditionRepeatValue": 30
   }
 ]

@@ -29,15 +29,89 @@ function parseCSVLine(line) {
   return columns;
 }
 
-function extractConditionValue(conditionType, description) {
-  const numberMatch = description.match(/(\d+)/);
-  if (numberMatch) {
-    return parseInt(numberMatch[1], 10);
+/**
+ * Извлекает все числа из описания и возвращает объект с распределенными значениями
+ * @param {string|string[]} conditionType - тип условия (может быть массивом для комбинированных)
+ * @param {string} description - описание достижения на английском
+ * @returns {Object} объект с conditionValue, conditionRepeatValue, conditionTopicsCount
+ */
+function extractConditionValues(conditionType, description) {
+  // Извлекаем все числа из описания
+  const numbers = [];
+  const numberRegex = /\d+/g;
+  let match;
+  while ((match = numberRegex.exec(description)) !== null) {
+    numbers.push(parseInt(match[0], 10));
   }
-  if (conditionType.includes('registration_checkin')) {
-    return 1;
+  
+  // Специальный случай для registration_checkin
+  if (typeof conditionType === 'string' && conditionType.includes('registration_checkin')) {
+    return { conditionValue: 1 };
   }
-  return undefined;
+  
+  // Если нет чисел, возвращаем undefined
+  if (numbers.length === 0) {
+    return {};
+  }
+  
+  // Если условие простое (не массив и не содержит +)
+  const isCombined = Array.isArray(conditionType) || 
+                     (typeof conditionType === 'string' && conditionType.includes('+'));
+  
+  if (!isCombined) {
+    // Простое условие - используем первое число
+    return { conditionValue: numbers[0] };
+  }
+  
+  // Комбинированное условие
+  const conditionTypes = Array.isArray(conditionType) 
+    ? conditionType 
+    : conditionType.split('+').map(c => c.trim());
+  
+  const result = {};
+  
+  // Определяем порядок условий
+  const firstType = conditionTypes[0];
+  const secondType = conditionTypes[1];
+  
+  // Специальный случай: cards_opened + streak_repeat (harmony_seeker, pathfinder)
+  // Формат: "5 cards in 3 topics + 7 repeat days"
+  // - первое число (5) - cards_opened (conditionValue)
+  // - второе число (3) - количество тем (conditionTopicsCount)
+  // - третье число (7) - repeat days для streak_repeat
+  // Для streak_repeat: "7 repeat days" означает 7 дней с повторениями
+  // streak_repeat использует conditionValue для streak и conditionRepeatValue для repeat
+  // Но так как это комбинированное условие, conditionValue уже занят cards_opened
+  // Поэтому для streak_repeat используем conditionRepeatValue для обоих (streak и repeat)
+  // Это будет обработано специально в checker'е
+  // ВАЖНО: проверяем это ПЕРЕД общим случаем streak_repeat
+  if ((firstType === 'cards_opened' && secondType === 'streak_repeat') ||
+      (firstType === 'cards_opened' && conditionTypes.some(t => t === 'streak_repeat'))) {
+    if (numbers.length >= 1) result.conditionValue = numbers[0]; // cards для cards_opened
+    if (numbers.length >= 2) result.conditionTopicsCount = numbers[1]; // topics
+    if (numbers.length >= 3) result.conditionRepeatValue = numbers[2]; // repeat days для streak_repeat
+    // Если только 2 числа, второе может быть repeat days (без topics)
+    if (numbers.length === 2) result.conditionRepeatValue = numbers[1];
+    return result;
+  }
+  
+  // Специальный случай: streak_repeat использует conditionValue для streak и conditionRepeatValue для repeat
+  // (только если это не cards_opened + streak_repeat, что уже обработано выше)
+  if (secondType === 'streak_repeat' || firstType === 'streak_repeat') {
+    // Для streak_repeat: первое число - streak (conditionValue), второе - repeat (conditionRepeatValue)
+    if (numbers.length >= 1) result.conditionValue = numbers[0];
+    if (numbers.length >= 2) result.conditionRepeatValue = numbers[1];
+    // Если есть третье число, это может быть количество тем
+    if (numbers.length >= 3) result.conditionTopicsCount = numbers[1]; // второе число - темы
+    return result;
+  }
+  
+  // Общий случай для комбинированных условий: первое число для первого условия, второе для второго
+  // Например: cards_repeated + streak, topic_repeated + streak, streak + cards_repeated
+  if (numbers.length >= 1) result.conditionValue = numbers[0];
+  if (numbers.length >= 2) result.conditionRepeatValue = numbers[1];
+  
+  return result;
 }
 
 function parseCSV(csvContent) {
@@ -57,10 +131,8 @@ function parseCSV(csvContent) {
       ? conditionType.split('+').map(c => c.trim())
       : conditionType.trim();
     
-    const conditionValue = extractConditionValue(
-      typeof conditionTypes === 'string' ? conditionTypes : conditionTypes[0],
-      descriptionEn
-    );
+    // Извлекаем все значения условий
+    const conditionValues = extractConditionValues(conditionTypes, descriptionEn);
     
     achievements.push({
       id: id.trim(),
@@ -72,7 +144,9 @@ function parseCSV(csvContent) {
       iconName: iconName.trim(),
       conditionType: conditionTypes,
       category: category.trim(),
-      conditionValue
+      conditionValue: conditionValues.conditionValue,
+      conditionRepeatValue: conditionValues.conditionRepeatValue,
+      conditionTopicsCount: conditionValues.conditionTopicsCount
     });
   }
   
@@ -188,14 +262,32 @@ try {
   console.log(`Generated ${enPath}`);
   
   // Генерация метаданных
-  const metadata = achievements.map(a => ({
-    id: a.id,
-    xp: a.xp,
-    iconName: a.iconName,
-    conditionType: a.conditionType,
-    category: a.category,
-    conditionValue: a.conditionValue
-  }));
+  const metadata = achievements.map(a => {
+    const meta = {
+      id: a.id,
+      xp: a.xp,
+      iconName: a.iconName,
+      conditionType: a.conditionType,
+      category: a.category
+    };
+    
+    // Добавляем conditionValue только если оно определено
+    if (a.conditionValue !== undefined) {
+      meta.conditionValue = a.conditionValue;
+    }
+    
+    // Добавляем conditionRepeatValue только если оно определено
+    if (a.conditionRepeatValue !== undefined) {
+      meta.conditionRepeatValue = a.conditionRepeatValue;
+    }
+    
+    // Добавляем conditionTopicsCount только если оно определено
+    if (a.conditionTopicsCount !== undefined) {
+      meta.conditionTopicsCount = a.conditionTopicsCount;
+    }
+    
+    return meta;
+  });
   
   const metadataPath = path.join(__dirname, '..', 'data', 'achievements-metadata.json');
   fs.writeFileSync(metadataPath, JSON.stringify(metadata, null, 2), 'utf8');
