@@ -78,38 +78,45 @@ function extractConditionValues(conditionType, description) {
   // Формат: "5 cards in 3 topics + 7 repeat days"
   // - первое число (5) - cards_opened (conditionValue)
   // - второе число (3) - количество тем (conditionTopicsCount)
-  // - третье число (7) - repeat days для streak_repeat
-  // Для streak_repeat: "7 repeat days" означает 7 дней с повторениями
-  // streak_repeat использует conditionValue для streak и conditionRepeatValue для repeat
-  // Но так как это комбинированное условие, conditionValue уже занят cards_opened
-  // Поэтому для streak_repeat используем conditionRepeatValue для обоих (streak и repeat)
-  // Это будет обработано специально в checker'е
-  // ВАЖНО: проверяем это ПЕРЕД общим случаем streak_repeat
+  // - третье число (7) - repeat days для streak_repeat (conditionRepeatValue)
+  // Если только 2 числа: "5 cards + 7 repeat days" (без topics)
+  // - первое число (5) - cards_opened (conditionValue)
+  // - второе число (7) - repeat days для streak_repeat (conditionRepeatValue)
   if ((firstType === 'cards_opened' && secondType === 'streak_repeat') ||
       (firstType === 'cards_opened' && conditionTypes.some(t => t === 'streak_repeat'))) {
     if (numbers.length >= 1) result.conditionValue = numbers[0]; // cards для cards_opened
-    if (numbers.length >= 2) result.conditionTopicsCount = numbers[1]; // topics
-    if (numbers.length >= 3) result.conditionRepeatValue = numbers[2]; // repeat days для streak_repeat
-    // Если только 2 числа, второе может быть repeat days (без topics)
-    if (numbers.length === 2) result.conditionRepeatValue = numbers[1];
+    if (numbers.length === 3) {
+      // Формат с topics: "5 cards in 3 topics + 7 repeat days"
+      result.conditionTopicsCount = numbers[1]; // topics
+      result.conditionRepeatValue = numbers[2]; // repeat days для streak_repeat
+    } else if (numbers.length === 2) {
+      // Формат без topics: "5 cards + 7 repeat days"
+      result.conditionRepeatValue = numbers[1]; // repeat days для streak_repeat
+    }
     return result;
   }
   
-  // Специальный случай: streak_repeat использует conditionValue для streak и conditionRepeatValue для repeat
-  // (только если это не cards_opened + streak_repeat, что уже обработано выше)
+  // Специальный случай: streak_repeat как первое или второе условие (но не с cards_opened)
+  // Для streak_repeat: первое число - streak (conditionValue), второе - repeat (conditionRepeatValue)
   if (secondType === 'streak_repeat' || firstType === 'streak_repeat') {
-    // Для streak_repeat: первое число - streak (conditionValue), второе - repeat (conditionRepeatValue)
     if (numbers.length >= 1) result.conditionValue = numbers[0];
     if (numbers.length >= 2) result.conditionRepeatValue = numbers[1];
     // Если есть третье число, это может быть количество тем
-    if (numbers.length >= 3) result.conditionTopicsCount = numbers[1]; // второе число - темы
+    if (numbers.length >= 3) result.conditionTopicsCount = numbers[2]; // третье число - темы
     return result;
   }
   
   // Общий случай для комбинированных условий: первое число для первого условия, второе для второго
-  // Например: cards_repeated + streak, topic_repeated + streak, streak + cards_repeated
+  // Примеры:
+  // - cards_repeated + streak: "Repeat 5 cards + 3 consecutive active days" -> conditionValue=5, conditionRepeatValue=3
+  // - topic_repeated + streak: "Repeat all cards in 1 topic + 5 active days" -> conditionValue=1, conditionRepeatValue=5
+  // - streak + cards_repeated: "14 active days + repeat 10 cards" -> conditionValue=14, conditionRepeatValue=10
+  // - topic_completed + topic_repeated: "Completed 2 topics + repeated all in one" -> conditionValue=2, conditionRepeatValue=1
+  // - referral_invite + referral_premium: "Invite 5 + 1 bought premium" -> conditionValue=5, conditionRepeatValue=1
   if (numbers.length >= 1) result.conditionValue = numbers[0];
   if (numbers.length >= 2) result.conditionRepeatValue = numbers[1];
+  // Если есть третье число, это может быть количество тем (например, для topic_repeated)
+  if (numbers.length >= 3) result.conditionTopicsCount = numbers[2];
   
   return result;
 }

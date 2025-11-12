@@ -8,6 +8,7 @@ import {
   seedCheckinHistory,
   waitForPageLoad,
   waitForHomeScreen,
+  waitForCheckinScreen,
   isOnCheckinScreen,
   completeCheckin
 } from './utils/test-helpers';
@@ -31,6 +32,22 @@ test.describe('Check-in Data Persistence', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    
+    // Проверяем, что чекин на сегодня действительно удален
+    const todayKey = await page.evaluate(() => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const day = String(today.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    });
+    const todayCheckin = await page.evaluate((key) => {
+      return localStorage.getItem(`daily_checkin_${key}`);
+    }, todayKey);
+    expect(todayCheckin).toBeNull();
+
+    // Ждем check-in screen с увеличенным таймаутом
+    await waitForCheckinScreen(page, 10000);
     expect(await isOnCheckinScreen(page)).toBeTruthy();
 
     await completeCheckin(page);

@@ -131,6 +131,17 @@ export async function seedCheckinHistory(
       localStorage.setItem('survey-results', JSON.stringify({ completedAt: new Date().toISOString() }));
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(progress.firstRewardShown));
 
+      // Удаляем чекин на сегодня, если firstCheckinDone: false
+      // Это важно для тестов, которые проверяют, что приложение показывает check-in screen
+      if (options.firstCheckinDone === false) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayKey = `${year}-${month}-${day}`;
+        localStorage.removeItem(`daily_checkin_${todayKey}`);
+      }
+
       const checkinHistory = history.map((seed, index) => {
         const timestamp = new Date(seed.iso).getTime();
         const dateKey = seed.iso.split('T')[0];

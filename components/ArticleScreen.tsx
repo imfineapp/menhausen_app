@@ -71,6 +71,7 @@ export function ArticleScreen({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [logoOpacity, setLogoOpacity] = useState(1);
   const didMarkRef = useRef(false);
+  const achievementCheckTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Mark article as read when component mounts (idempotent per article)
   React.useEffect(() => {
@@ -80,11 +81,19 @@ export function ArticleScreen({
       
       // Проверяем достижения после чтения статьи (с задержкой)
       if (checkAndShowAchievements) {
-        setTimeout(() => {
+        achievementCheckTimeoutRef.current = setTimeout(() => {
           checkAndShowAchievements(300, true);
         }, 300);
       }
     }
+    
+    // Cleanup: очищаем таймер при размонтировании или изменении зависимостей
+    return () => {
+      if (achievementCheckTimeoutRef.current) {
+        clearTimeout(achievementCheckTimeoutRef.current);
+        achievementCheckTimeoutRef.current = null;
+      }
+    };
   }, [article, checkAndShowAchievements]);
   
   // Обработчик кнопки "назад" с проверкой достижений
