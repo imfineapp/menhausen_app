@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBlock } from './StatusBlock';
 import { BadgeIcon, LevelIcon, MentalStatusIcon } from './UserProfileIcons';
 import { useContent } from './ContentContext';
+import { useAchievements } from '../contexts/AchievementsContext';
+import { PointsManager } from '../utils/PointsManager';
 
 interface StatusBlocksRowProps {
   onBadgesClick?: () => void;
@@ -21,6 +23,26 @@ export function StatusBlocksRow({
   const { getUI, getLocalizedBadges } = useContent();
   const ui = getUI();
   const badges = getLocalizedBadges();
+  const { unlockedCount } = useAchievements();
+  
+  const [totalEarned, setTotalEarned] = useState<number>(0);
+  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
+  const level = Math.max(1, computedLevel);
+
+  useEffect(() => {
+    const read = () => {
+      const t = PointsManager.getBalance();
+      setTotalEarned(t);
+    };
+    read();
+    const onUpdate = () => read();
+    window.addEventListener('storage', onUpdate);
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    return () => {
+      window.removeEventListener('storage', onUpdate);
+      window.removeEventListener('points:updated', onUpdate as EventListener);
+    };
+  }, []);
 
   return (
     <div className="flex flex-row gap-3 sm:gap-4 w-full" data-name="Status blocks row">
@@ -29,7 +51,7 @@ export function StatusBlocksRow({
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><BadgeIcon /></div>}
           title={badges.title}
-          value="12"
+          value={unlockedCount.toString()}
           subtitle=""
           onClick={onBadgesClick}
         />
@@ -40,7 +62,7 @@ export function StatusBlocksRow({
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><LevelIcon /></div>}
           title={ui.levels.yourLevel}
-          value="25"
+          value={level.toString()}
           subtitle=""
           onClick={onLevelClick}
         />

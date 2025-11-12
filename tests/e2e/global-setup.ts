@@ -8,7 +8,7 @@ async function globalSetup(_config: FullConfig) {
   
   // Ждем стабильности сети, но с ограничением времени
   try {
-    await page.waitForLoadState('networkidle', { timeout: 10000 });
+    await page.waitForLoadState('networkidle', { timeout: 5000 });
   } catch {
     // допустимо в dev среде, продолжим
   }

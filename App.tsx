@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -33,6 +33,8 @@ import { BadgesScreen } from './components/BadgesScreen'; // Импорт стр
 import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
 import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
+import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт страницы всех статей
+import { ArticleScreen } from './components/ArticleScreen'; // Импорт страницы статьи
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
 
@@ -48,6 +50,7 @@ import { GroundingAnchorScreen } from './components/mental-techniques/GroundingA
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
 import { LanguageProvider } from './components/LanguageContext';
+import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
 
@@ -56,7 +59,15 @@ import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
 import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward';
+// Achievements system imports
+import { useAchievements } from './contexts/AchievementsContext';
+import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated } from './services/userStatsService';
+import { getAchievementMetadata } from './utils/achievementsMetadata';
+import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
+import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService';
+import { getTelegramUserId } from './utils/telegramUserUtils';
+
+type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'all-articles' | 'article';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -281,7 +292,7 @@ function AppContent() {
           }
 
           // Expand to fullscreen mode (two-step process for direct-link compatibility)
-          setTimeout(() => {
+          telegramTimeoutRefs.current.expand = setTimeout(() => {
             try {
               // Step 1: expand() - transitions from compact to fullsize mode
               if (window.Telegram?.WebApp?.expand) {
@@ -290,7 +301,7 @@ function AppContent() {
 
               // Step 2: requestFullscreen() - transitions from fullsize to fullscreen mode
               // This is required for direct-link opens which default to fullsize mode
-              setTimeout(() => {
+              telegramTimeoutRefs.current.fullscreen = setTimeout(() => {
                 try {
                   if (window.Telegram?.WebApp?.requestFullscreen) {
                     window.Telegram.WebApp.requestFullscreen();
@@ -308,7 +319,30 @@ function AppContent() {
           console.warn('Error initializing Telegram WebApp:', error);
         }
       }
+      
+      // Cleanup function для очистки таймеров при размонтировании
+      return () => {
+        if (telegramTimeoutRefs.current.expand) {
+          clearTimeout(telegramTimeoutRefs.current.expand);
+        }
+        if (telegramTimeoutRefs.current.fullscreen) {
+          clearTimeout(telegramTimeoutRefs.current.fullscreen);
+        }
+        telegramTimeoutRefs.current = {};
+      };
     }, []);
+
+  // =====================================================================================
+  // REFERRAL CODE PROCESSING (должен вызываться при инициализации ДО проверки онбординга)
+  // =====================================================================================
+  useEffect(() => {
+    // Обработка реферального кода при первом открытии приложения
+    processReferralCode();
+    
+    // Обновление статистики реферера на основе списка рефералов
+    // Это работает только на устройстве реферера и обновляет его статистику
+    updateReferrerStatsFromList();
+  }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
@@ -380,10 +414,6 @@ function AppContent() {
   
   // Smart Navigation: Dynamic screen determination based on user state
   const getInitialScreen = (): AppScreen => {
-    if (isE2ETestEnvironment) {
-      return 'home';
-    }
-
     // Primary: flow-driven initial screen
     const p = loadProgress();
 
@@ -417,6 +447,7 @@ function AppContent() {
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
+  const [currentArticle, setCurrentArticle] = useState<string>('');
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
   const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
@@ -448,6 +479,27 @@ function AppContent() {
   // Получение системы контента
   const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage, getUI } = useContent();
   
+  // Получение системы достижений
+  const { checkAndUnlockAchievements } = useAchievements();
+  
+  // Refs для хранения ID таймеров для очистки
+  const telegramTimeoutRefs = useRef<{ expand?: ReturnType<typeof setTimeout>; fullscreen?: ReturnType<typeof setTimeout> }>({});
+  const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const themeCardClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const themeHomeProcessingRef = useRef<boolean>(false);
+  
+  // Ref для отслеживания состояния монтирования компонента
+  const isMountedRef = useRef<boolean>(true);
+  
+  // Устанавливаем isMountedRef в true при монтировании
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  
   // Логируем изменения currentScreen
   
   useEffect(() => {
@@ -461,6 +513,14 @@ function AppContent() {
   // На первой странице онбординга кнопка Back должна закрывать приложение
   const isHomePage = currentScreen === 'home';
   
+  // Список экранов, на которых не показываем RewardScreen автоматически
+  // Эти экраны требуют завершения действия пользователя перед показом уведомлений
+  const blockedScreensForReward: AppScreen[] = useMemo(() => [
+    'onboarding1', 'onboarding2', 'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'pin', 'checkin', 'reward', 'card-welcome', 'question-01', 'question-02', 'final-message', 'rate-card'
+    // Примечание: 'card-details' не заблокирован, чтобы можно было показывать уведомления во время просмотра карточки
+  ], []);
+  
   // Smart Navigation: Function to refresh user state when data changes
   const refreshUserState = () => {
     try {
@@ -472,10 +532,365 @@ function AppContent() {
   };
 
   // Функция для навигации с отслеживанием истории
-  const navigateTo = (screen: AppScreen) => {
+  const navigateTo = useCallback((screen: AppScreen) => {
     setNavigationHistory(prev => [...prev, screen]);
     setCurrentScreen(screen);
-  };
+  }, []);
+  
+  // Вспомогательная функция для проверки и показа новых достижений
+  const checkAndShowAchievements = useCallback(async (delay: number = 200, forceCheck: boolean = false) => {
+    // Не показываем, если уже есть достижения для показа (если не принудительная проверка)
+    // Принудительная проверка нужна для случаев, когда мы хотим проверить достижения,
+    // даже если уже есть сохраненные (например, при переходе на theme-home)
+    if (!forceCheck && earnedAchievementIds.length > 0) {
+      console.log('[Achievements] Skipping check - already have achievements to show:', earnedAchievementIds);
+      return;
+    }
+    
+    try {
+      console.log('[Achievements] Checking achievements, currentScreen:', currentScreen, 'delay:', delay, 'forceCheck:', forceCheck);
+      
+      // Задержка для завершения записи в localStorage
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+      // Проверяем, что компонент все еще смонтирован перед обновлением состояния
+      if (!isMountedRef.current) {
+        console.log('[Achievements] Component unmounted, skipping');
+        return;
+      }
+      
+      // ВАЖНО: Проверяем и присваиваем достижения ВСЕГДА, независимо от экрана
+      // Это гарантирует, что достижения будут присвоены даже на заблокированных экранах
+      
+      // Загружаем текущую статистику для отладки
+      const { loadUserStats } = await import('./services/userStatsService');
+      const currentStats = loadUserStats();
+      console.log('[Achievements] Current user stats before check:', {
+        cardsOpened: currentStats.cardsOpened,
+        stress: currentStats.cardsOpened['stress'] || 0
+      });
+      
+      const newlyUnlocked = await checkAndUnlockAchievements();
+      console.log('[Achievements] Newly unlocked achievements:', newlyUnlocked);
+      
+      // Проверяем еще раз после асинхронной операции
+      if (!isMountedRef.current) {
+        console.log('[Achievements] Component unmounted after async check, skipping');
+        return;
+      }
+      
+      if (newlyUnlocked.length > 0) {
+        // Сохраняем достижения всегда, даже если экран заблокирован
+        setEarnedAchievementIds(newlyUnlocked);
+        console.log('[Achievements] Saved achievements to earnedAchievementIds:', newlyUnlocked);
+        
+        // Проверяем, есть ли среди новых достижений те, что связаны с карточками
+        // Эти достижения должны показываться только на theme-home
+        const cardRelatedAchievements = newlyUnlocked.filter(achievementId => {
+          const metadata = getAchievementMetadata(achievementId);
+          if (!metadata) return false;
+          const conditionType = metadata.conditionType;
+          const conditionTypes = Array.isArray(conditionType) ? conditionType : [conditionType];
+          // Проверяем, связано ли достижение с карточками
+          return conditionTypes.some(type => 
+            type === 'cards_opened' || 
+            type === 'topic_completed' || 
+            type === 'cards_repeated' || 
+            type === 'topic_repeated'
+          );
+        });
+        
+        // Проверяем, есть ли среди новых достижений те, что связаны со статьями
+        // Эти достижения должны показываться при нажатии "назад" из статьи
+        const articleRelatedAchievements = newlyUnlocked.filter(achievementId => {
+          const metadata = getAchievementMetadata(achievementId);
+          if (!metadata) return false;
+          const conditionType = metadata.conditionType;
+          const conditionTypes = Array.isArray(conditionType) ? conditionType : [conditionType];
+          // Проверяем, связано ли достижение со статьями
+          return conditionTypes.some(type => 
+            type === 'articles_read'
+          );
+        });
+        
+        // Проверяем, есть ли среди новых достижений те, что связаны со streak
+        // Для комбинированных: если есть условия карточек, используем логику карточек
+        // Иначе если есть streak, используем логику streak
+        const streakRelatedAchievements = newlyUnlocked.filter(achievementId => {
+          const metadata = getAchievementMetadata(achievementId);
+          if (!metadata) return false;
+          const conditionType = metadata.conditionType;
+          const conditionTypes = Array.isArray(conditionType) ? conditionType : [conditionType];
+          // Проверяем, есть ли условия карточек
+          const hasCardConditions = conditionTypes.some(type => 
+            type === 'cards_opened' || 
+            type === 'topic_completed' || 
+            type === 'cards_repeated' || 
+            type === 'topic_repeated'
+          );
+          // Если есть условия карточек, не считаем это streak достижением (будет обработано как карточка)
+          if (hasCardConditions) return false;
+          // Проверяем, связано ли достижение со streak
+          return conditionTypes.some(type => 
+            type === 'streak' || type === 'streak_repeat'
+          );
+        });
+        
+        // Проверяем, есть ли среди новых достижений те, что связаны с referral
+        // Эти достижения должны показываться при открытии profile
+        const referralRelatedAchievements = newlyUnlocked.filter(achievementId => {
+          const metadata = getAchievementMetadata(achievementId);
+          if (!metadata) return false;
+          const conditionType = metadata.conditionType;
+          const conditionTypes = Array.isArray(conditionType) ? conditionType : [conditionType];
+          // Проверяем, связано ли достижение с referral
+          return conditionTypes.some(type => 
+            type === 'referral_invite' || type === 'referral_premium'
+          );
+        });
+        
+        console.log('[Achievements] Card-related achievements:', cardRelatedAchievements, 'currentScreen:', currentScreen);
+        console.log('[Achievements] Article-related achievements:', articleRelatedAchievements, 'currentScreen:', currentScreen);
+        console.log('[Achievements] Streak-related achievements:', streakRelatedAchievements, 'currentScreen:', currentScreen);
+        console.log('[Achievements] Referral-related achievements:', referralRelatedAchievements, 'currentScreen:', currentScreen);
+        
+        // Если есть достижения, связанные с карточками, и мы на card-details или theme-home,
+        // не показываем их сразу - они будут показаны на theme-home через useEffect
+        // Если есть достижения, связанные со статьями, и мы на article,
+        // не показываем их сразу - они будут показаны при нажатии "назад"
+        // Если есть достижения, связанные со streak, и мы на checkin,
+        // не показываем их сразу - они будут показаны на home после чекина
+        // Если есть достижения, связанные с referral, откладываем показ - они будут показаны на profile
+        const shouldShowImmediately = !(
+          (cardRelatedAchievements.length > 0 && (currentScreen === 'card-details' || currentScreen === 'theme-home')) ||
+          (articleRelatedAchievements.length > 0 && currentScreen === 'article') ||
+          (streakRelatedAchievements.length > 0 && currentScreen === 'checkin') ||
+          (referralRelatedAchievements.length > 0)
+        );
+        
+        console.log('[Achievements] shouldShowImmediately:', shouldShowImmediately, 'blockedScreensForReward includes currentScreen:', blockedScreensForReward.includes(currentScreen));
+        
+        // Показываем уведомление только если:
+        // 1. Экран не заблокирован
+        // 2. Это не достижения, связанные с карточками на экране card-details
+        // 3. Это не достижения, связанные со статьями на экране article
+        // 4. Это не достижения, связанные со streak на экране checkin
+        // 5. Это не достижения, связанные с referral (они обновляются асинхронно)
+        if (!blockedScreensForReward.includes(currentScreen) && shouldShowImmediately) {
+          console.log('[Achievements] Navigating to reward screen');
+          // Показываем reward screen сразу после получения достижения
+          navigateTo('reward');
+        } else {
+          if (cardRelatedAchievements.length > 0 && (currentScreen === 'card-details' || currentScreen === 'theme-home')) {
+            console.log('[Achievements] Not showing immediately - will show on theme-home');
+          } else if (articleRelatedAchievements.length > 0 && currentScreen === 'article') {
+            console.log('[Achievements] Not showing immediately - will show on article back');
+          } else if (streakRelatedAchievements.length > 0 && currentScreen === 'checkin') {
+            console.log('[Achievements] Not showing immediately - will show on home after checkin');
+          } else if (referralRelatedAchievements.length > 0) {
+            console.log('[Achievements] Not showing immediately - will show on profile');
+          }
+        }
+        // Если экран заблокирован или это достижения карточек на card-details,
+        // или достижения статей на article, или достижения streak на checkin,
+        // или достижения referral, достижения уже присвоены и сохранены в earnedAchievementIds
+        // Они будут показаны при переходе на theme-home, home, profile или при нажатии "назад" из статьи
+      } else {
+        console.log('[Achievements] No new achievements unlocked');
+      }
+    } catch (error) {
+      console.error('[Achievements] Error checking achievements:', error);
+    }
+  }, [currentScreen, earnedAchievementIds, checkAndUnlockAchievements, blockedScreensForReward, navigateTo, setEarnedAchievementIds]);
+  
+  // Автоматическая проверка достижений при изменении статистики (для изменений из других вкладок)
+  // В основном окне проверка происходит через вызовы checkAndShowAchievements после действий
+  // Примечание: storage event срабатывает только при изменении localStorage из другого окна/вкладки
+  useEffect(() => {
+    const handleStorageChange = async (e: StorageEvent) => {
+      // Отслеживаем изменения статистики пользователя (срабатывает только при изменении из другого окна/вкладки)
+      if (e.key === 'menhausen_user_stats') {
+        // Используем общую функцию проверки
+        checkAndShowAchievements(300);
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [checkAndShowAchievements]);
+  
+  // Проверка достижений при переходе на home screen, если есть новые достижения
+  // (резервная проверка на случай, если достижения были получены до перехода на home)
+  useEffect(() => {
+    if (currentScreen === 'home' && earnedAchievementIds.length > 0) {
+      // Если мы на home screen и есть достижения для показа, показываем их
+      navigateTo('reward');
+    }
+  }, [currentScreen, earnedAchievementIds.length, navigateTo]);
+  
+  // Проверка streak достижений при переходе на home (после чекина)
+  useEffect(() => {
+    if (currentScreen === 'home') {
+      console.log('[Achievements] home screen detected, checking for streak achievements');
+      
+      // Небольшая задержка, чтобы убедиться, что все state обновился
+      const timeoutId = setTimeout(() => {
+        // Используем централизованный сервис для получения достижений для показа
+        const result = getAchievementsToShow({
+          screen: 'home',
+          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+          excludeFromStorageCheck: earnedAchievementIds // Исключаем из проверки storage, если уже есть в earnedAchievementIds
+        });
+        
+        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+          console.log('[Achievements] Showing streak-related achievements on home:', result.achievementsToShow);
+          
+          // ВАЖНО: Синхронно устанавливаем флаги ПЕРЕД навигацией
+          markAchievementsAsShown(result.achievementsToShow, 'home');
+          
+          // Устанавливаем достижения и переходим на reward screen
+          setEarnedAchievementIds(result.achievementsToShow);
+          navigateTo('reward');
+        }
+      }, 200);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds]);
+  
+  // Проверка referral достижений при переходе на profile
+  useEffect(() => {
+    if (currentScreen === 'profile') {
+      console.log('[Achievements] profile screen detected, checking for referral achievements');
+      
+      // Небольшая задержка, чтобы убедиться, что все state обновился
+      const timeoutId = setTimeout(() => {
+        // Используем централизованный сервис для получения достижений для показа
+        const result = getAchievementsToShow({
+          screen: 'profile',
+          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+          excludeFromStorageCheck: earnedAchievementIds // Исключаем из проверки storage, если уже есть в earnedAchievementIds
+        });
+        
+        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+          console.log('[Achievements] Showing referral-related achievements on profile:', result.achievementsToShow);
+          
+          // ВАЖНО: Синхронно устанавливаем флаги ПЕРЕД навигацией
+          markAchievementsAsShown(result.achievementsToShow, 'profile');
+          
+          // Устанавливаем достижения и переходим на reward screen
+          setEarnedAchievementIds(result.achievementsToShow);
+          navigateTo('reward');
+        }
+      }, 200);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds]);
+  
+  // Проверка достижений при переходе на theme-home (в дополнение к проверке после завершения карточки)
+  useEffect(() => {
+    if (currentScreen === 'theme-home') {
+      // Предотвращаем повторное выполнение - устанавливаем флаг СРАЗУ, до setTimeout
+      if (themeHomeProcessingRef.current) {
+        console.log('[Achievements] theme-home processing already in progress, skipping');
+        return;
+      }
+      
+      console.log('[Achievements] theme-home screen detected, earnedAchievementIds:', earnedAchievementIds);
+      
+      // Проверяем, возвращаемся ли мы из reward screen
+      // Если предыдущий экран был 'reward', не проверяем storage, так как достижения уже были показаны
+      const previousScreen = navigationHistory.length >= 2 
+        ? navigationHistory[navigationHistory.length - 2] 
+        : null;
+      
+      // Если earnedAchievementIds пустой И мы вернулись из reward screen, не проверяем storage
+      // Это предотвращает повторный показ достижений при возврате из reward screen
+      if (earnedAchievementIds.length === 0 && previousScreen === 'reward') {
+        console.log('[Achievements] Returned from reward screen with empty earnedAchievementIds, skipping check');
+        return;
+      }
+      
+      // Если earnedAchievementIds пустой, но мы НЕ вернулись из reward screen,
+      // это может быть первый вход на theme-home с уже разблокированными достижениями
+      // В этом случае проверяем storage (но только если нет earnedAchievementIds)
+      
+      // Устанавливаем флаг ДО setTimeout, чтобы предотвратить повторное выполнение
+      themeHomeProcessingRef.current = true;
+      
+      // Небольшая задержка, чтобы убедиться, что все state обновился
+      const timeoutId = setTimeout(() => {
+        try {
+          // Используем централизованный сервис для получения достижений для показа
+          const result = getAchievementsToShow({
+            screen: 'theme-home',
+            earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+            excludeFromStorageCheck: earnedAchievementIds // Исключаем из проверки storage, если уже есть в earnedAchievementIds
+          });
+          
+          if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+            console.log('[Achievements] Showing card-related achievements on theme-home:', result.achievementsToShow);
+            
+            // ВАЖНО: Синхронно устанавливаем флаги ПЕРЕД навигацией
+            markAchievementsAsShown(result.achievementsToShow, 'theme-home');
+            
+            // Устанавливаем достижения ПЕРЕД навигацией, чтобы RewardManager получил правильные данные
+            setEarnedAchievementIds(result.achievementsToShow);
+            
+            // Небольшая задержка перед навигацией, чтобы state успел обновиться
+            setTimeout(() => {
+              navigateTo('reward');
+            }, 0);
+          } else {
+            // Если нет достижений для показа, сбрасываем флаг
+            themeHomeProcessingRef.current = false;
+          }
+        } catch (error) {
+          console.error('[Achievements] Error processing achievements on theme-home:', error);
+          themeHomeProcessingRef.current = false;
+        }
+      }, 200);
+      
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    } else {
+      // Сбрасываем флаг при переходе на другой экран
+      themeHomeProcessingRef.current = false;
+    }
+  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds, navigationHistory]);
+  
+  // Общий cleanup для всех таймеров при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      // Очищаем все таймеры Telegram WebApp
+      if (telegramTimeoutRefs.current.expand) {
+        clearTimeout(telegramTimeoutRefs.current.expand);
+      }
+      if (telegramTimeoutRefs.current.fullscreen) {
+        clearTimeout(telegramTimeoutRefs.current.fullscreen);
+      }
+      
+      // Очищаем таймер чекина
+      if (checkInTimeoutRef.current) {
+        clearTimeout(checkInTimeoutRef.current);
+      }
+      
+      // Очищаем таймер завершения карточки
+      if (cardExerciseTimeoutRef.current) {
+        clearTimeout(cardExerciseTimeoutRef.current);
+      }
+      
+      // Очищаем таймер клика по карточке темы
+      if (themeCardClickTimeoutRef.current) {
+        clearTimeout(themeCardClickTimeoutRef.current);
+      }
+    };
+  }, []);
   
   // Функция для закрытия приложения через Telegram WebApp
   const closeApp = () => {
@@ -717,8 +1132,10 @@ function AppContent() {
     navigateTo('checkin');
   };
 
-  const handleCheckInSubmit = (_mood: string) => {
-    // В реальном приложении здесь будет логика проверки достижений на бэкэнде
+  const handleCheckInSubmit = async (_mood: string) => {
+    // Обновляем статистику чек-ина
+    incrementCheckin();
+    
     // Smart Navigation: Refresh user state after check-in completion
     refreshUserState();
 
@@ -727,7 +1144,7 @@ function AppContent() {
 
     // Показываем достижение только если не показывали раньше
     if (!flow.firstRewardShown) {
-      setEarnedAchievementIds(['first_checkin']);
+      setEarnedAchievementIds(['newcomer']);
       setHasShownFirstAchievement(true);
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
       updateFlow(p => ({ ...p, firstRewardShown: true }));
@@ -735,9 +1152,44 @@ function AppContent() {
       return;
     }
 
-    // If reward already shown, go home directly
-    setEarnedAchievementIds([]);
-    navigateTo('home');
+    // Если уже показывали, проверяем новые достижения после чекина
+    // Используем checkAndShowAchievements для правильной фильтрации и отложенного показа
+    // Очищаем предыдущий таймер, если он существует
+    if (checkInTimeoutRef.current) {
+      clearTimeout(checkInTimeoutRef.current);
+    }
+    
+    checkInTimeoutRef.current = setTimeout(async () => {
+      try {
+        // Проверяем, что компонент все еще смонтирован
+        if (!isMountedRef.current) {
+          return;
+        }
+        
+        // Используем checkAndShowAchievements для правильной обработки всех типов достижений
+        // Это обеспечит отложенный показ streak достижений на home
+        await checkAndShowAchievements(300, true);
+        
+        // Проверяем еще раз после асинхронной операции
+        if (!isMountedRef.current) {
+          return;
+        }
+        
+        // Если есть достижения для показа, они уже обработаны в checkAndShowAchievements
+        // Если нет, переходим на home
+        if (earnedAchievementIds.length === 0) {
+          navigateTo('home');
+        }
+      } catch (error) {
+        console.error('Error checking achievements after check-in:', error);
+        // Проверяем mounted state перед навигацией в catch блоке
+        if (isMountedRef.current) {
+          navigateTo('home');
+        }
+      } finally {
+        checkInTimeoutRef.current = null;
+      }
+    }, 100);
   };
 
   // =====================================================================================
@@ -794,11 +1246,31 @@ function AppContent() {
     // Сохранение результатов
     const saveSuccess = saveSurveyResults(finalResults);
 
-    // Mark survey completed in flow
-    updateFlow(p => ({ ...p, surveyCompleted: true }));
+      // Mark survey completed in flow
+      updateFlow(p => ({ ...p, surveyCompleted: true }));
 
-    // Decide next step: skip PIN if disabled
-    const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+      // =====================================================================================
+      // REFERRAL REGISTRATION (регистрация реферала после завершения опроса)
+      // =====================================================================================
+      const referrerId = getReferrerId();
+      const currentUserId = getTelegramUserId();
+      
+      if (referrerId && currentUserId) {
+        // Пользователь пришел по реферальной ссылке
+        console.log('Registering referral:', { referrerId, currentUserId });
+        
+        // Добавить реферала в список реферера
+        addReferralToList(referrerId, currentUserId);
+        
+        // Отметить, что реферал зарегистрирован
+        markReferralAsRegistered();
+        
+        // Обновление статистики реферера произойдет при следующем открытии приложения реферером
+        // через функцию updateReferrerStatsFromList, которая должна вызываться при инициализации
+      }
+
+      // Decide next step: skip PIN if disabled
+      const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
 
     if (saveSuccess) {
       console.log('Survey completed successfully');
@@ -835,6 +1307,38 @@ function AppContent() {
   const handleGoToLevels = () => {
     console.log('Navigating to levels screen');
     navigateTo('levels');
+  };
+
+  /**
+   * Навигация к списку всех статей
+   */
+  const handleGoToAllArticles = () => {
+    console.log('Navigating to all articles screen');
+    navigateTo('all-articles');
+  };
+
+  /**
+   * Навигация к конкретной статье
+   */
+  const handleOpenArticle = (articleId: string) => {
+    console.log(`Opening article: ${articleId}`);
+    setCurrentArticle(articleId);
+    navigateTo('article');
+  };
+
+  /**
+   * Возврат из статьи к списку статей
+   */
+  const handleBackToAllArticles = () => {
+    navigateTo('all-articles');
+  };
+
+  /**
+   * Возврат из списка статей к главной странице
+   */
+  const handleBackToHomeFromArticles = () => {
+    setCurrentArticle('');
+    navigateTo('home');
   };
 
   /**
@@ -978,6 +1482,42 @@ function AppContent() {
         totalAttempts: completedAttempt.totalCompletedAttempts
       });
       
+      // Обновляем статистику для достижений
+      const themeId = (currentCard as any).themeId ?? getThemeIdFromCardId(currentCard.id);
+      
+      // Увеличиваем счетчик повторений карточки (если это повтор)
+      if (completedAttempt.totalCompletedAttempts > 1) {
+        incrementCardsRepeated(currentCard.id);
+      }
+      
+      // Проверяем, завершена ли вся тема
+      const theme = getTheme(themeId);
+      if (theme) {
+        const allCardIds = theme.cardIds || (theme.cards ? theme.cards.map((c: any) => c.id) : []);
+        const allCardsCompleted = allCardIds.every((cardId: string) => {
+          const attempts = ThemeCardManager.getCompletedAttempts(cardId);
+          return attempts && attempts.length > 0;
+        });
+        
+        if (allCardsCompleted) {
+          // Все карточки темы завершены
+          addTopicCompleted(themeId);
+          
+          // Проверяем, были ли все карточки повторены
+          const allCardsRepeated = allCardIds.every((cardId: string) => {
+            const attempts = ThemeCardManager.getCompletedAttempts(cardId);
+            return attempts && attempts.length > 1;
+          });
+          
+          if (allCardsRepeated) {
+            addTopicRepeated(themeId);
+          }
+        }
+      }
+      
+      // НЕ проверяем достижения здесь, так как мы еще на заблокированном экране rate-card
+      // Проверка будет выполнена после перехода на theme-home (см. ниже)
+      
       // Начисляем баллы за прохождение карточки по уровню сложности (синхронно)
       try {
         const lastAttempt = completedAttempt.completedAttempts[completedAttempt.completedAttempts.length - 1];
@@ -1016,6 +1556,23 @@ function AppContent() {
     // Кнопка Back на theme-home должна вести сразу к home, минуя theme-welcome
     setNavigationHistory(['home', 'theme-home']);
     setCurrentScreen('theme-home');
+    
+    // Проверяем достижения после завершения карточки (с задержкой, чтобы state обновился)
+    // Очищаем предыдущий таймер, если он существует
+    if (cardExerciseTimeoutRef.current) {
+      clearTimeout(cardExerciseTimeoutRef.current);
+    }
+    
+    cardExerciseTimeoutRef.current = setTimeout(() => {
+      // Проверяем, что компонент все еще смонтирован перед вызовом
+      if (isMountedRef.current) {
+        console.log('[Achievements] Checking achievements after card completion');
+        // Используем forceCheck=true, чтобы проверить достижения даже если уже есть сохраненные
+        // Это нужно, так как при завершении карточки может быть разблокировано новое достижение
+        checkAndShowAchievements(300, true);
+      }
+      cardExerciseTimeoutRef.current = null;
+    }, 300);
   };
 
   const handleStartCardExercise = () => {
@@ -1058,10 +1615,45 @@ function AppContent() {
    * Обработка клика по карточке - теперь использует систему контента
    */
   const handleThemeCardClick = async (cardId: string) => {
-    console.log(`Card clicked: ${cardId}`);
+    console.log(`[Card] Card clicked: ${cardId}`);
+    
+    // Обновляем статистику открытия карточки для достижений
+    const themeId = getThemeIdFromCardId(cardId);
+    if (themeId) {
+      console.log(`[Card] Incrementing cardsOpened for theme: ${themeId}`);
+      const updatedStats = incrementCardsOpened(themeId);
+      console.log(`[Card] Updated stats - cardsOpened[${themeId}]:`, updatedStats.cardsOpened[themeId]);
+      
+      // Проверяем текущую статистику для отладки
+      const { loadUserStats } = await import('./services/userStatsService');
+      const currentStats = loadUserStats();
+      console.log(`[Card] Current user stats after increment:`, {
+        cardsOpened: currentStats.cardsOpened,
+        stress: currentStats.cardsOpened['stress'] || 0
+      });
+    }
+    
     const cardData = await getCardData(cardId, currentLanguage);
     setCurrentCard(cardData);
     navigateTo('card-details');
+    
+    // Проверяем достижения после навигации (с задержкой, чтобы навигация завершилась)
+    if (themeId) {
+      // Очищаем предыдущий таймер, если он существует
+      if (themeCardClickTimeoutRef.current) {
+        clearTimeout(themeCardClickTimeoutRef.current);
+      }
+      
+      // Используем setTimeout, чтобы проверить достижения после того, как state обновится
+      themeCardClickTimeoutRef.current = setTimeout(() => {
+        // Проверяем, что компонент все еще смонтирован перед вызовом
+        if (isMountedRef.current) {
+          console.log(`[Card] Checking achievements after card click, themeId: ${themeId}`);
+          checkAndShowAchievements();
+        }
+        themeCardClickTimeoutRef.current = null;
+      }, 300);
+    }
   };
 
   /**
@@ -1415,6 +2007,8 @@ function AppContent() {
           <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
+            onArticleClick={handleOpenArticle}
+            onViewAllArticles={handleGoToAllArticles}
             userHasPremium={userHasPremium}
           />
         );
@@ -1620,11 +2214,35 @@ function AppContent() {
             earnedAchievementIds={earnedAchievementIds}
             onComplete={() => {
               setEarnedAchievementIds([]); // Очищаем достижения
-              navigateTo('home');
+              // Определяем, на какой экран вернуться, на основе истории навигации
+              // Поддерживаем возврат на theme-home, all-articles или home
+              const previousScreen = navigationHistory.length >= 2 
+                ? navigationHistory[navigationHistory.length - 2] 
+                : 'home';
+              let returnScreen: AppScreen = 'home';
+              if (previousScreen === 'theme-home') {
+                returnScreen = 'theme-home';
+              } else if (previousScreen === 'all-articles') {
+                returnScreen = 'all-articles';
+              }
+              console.log('[Reward] Returning to screen:', returnScreen, 'previousScreen:', previousScreen);
+              navigateTo(returnScreen);
             }}
             onBack={() => {
               setEarnedAchievementIds([]); // Очищаем достижения
-              navigateTo('home');
+              // Определяем, на какой экран вернуться, на основе истории навигации
+              // Поддерживаем возврат на theme-home, all-articles или home
+              const previousScreen = navigationHistory.length >= 2 
+                ? navigationHistory[navigationHistory.length - 2] 
+                : 'home';
+              let returnScreen: AppScreen = 'home';
+              if (previousScreen === 'theme-home') {
+                returnScreen = 'theme-home';
+              } else if (previousScreen === 'all-articles') {
+                returnScreen = 'all-articles';
+              }
+              console.log('[Reward] Back button - returning to screen:', returnScreen, 'previousScreen:', previousScreen);
+              navigateTo(returnScreen);
             }}
           />
         );
@@ -1641,6 +2259,28 @@ function AppContent() {
           <LevelsScreen 
             onBack={goBack}
             onGoToBadges={handleGoToBadges}
+          />
+        );
+      
+      case 'all-articles':
+        return (
+          <AllArticlesScreen
+            onBack={handleBackToHomeFromArticles}
+            onArticleClick={handleOpenArticle}
+          />
+        );
+      
+      case 'article':
+        return (
+          <ArticleScreen
+            articleId={currentArticle}
+            onBack={handleBackToAllArticles}
+            onGoToTheme={handleGoToTheme}
+            userHasPremium={userHasPremium}
+            checkAndShowAchievements={checkAndShowAchievements}
+            navigateTo={navigateTo}
+            earnedAchievementIds={earnedAchievementIds}
+            setEarnedAchievementIds={setEarnedAchievementIds}
           />
         );
       
@@ -1668,7 +2308,9 @@ export default function App() {
   return (
     <LanguageProvider>
       <ContentProvider>
-        <AppContent />
+        <AchievementsProvider>
+          <AppContent />
+        </AchievementsProvider>
       </ContentProvider>
     </LanguageProvider>
   );

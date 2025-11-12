@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useContent } from './ContentContext';
+import { useAchievements } from '../contexts/AchievementsContext';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
 import { BottomFixedButton } from './BottomFixedButton';
 import { BadgeCard } from './BadgeCard';
-import { Target, Flame, Calendar, BookOpen, Trophy, Smile, Sunrise, Moon } from 'lucide-react';
+import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
+import { getAchievementIcon } from '../utils/achievementIcons';
 
 interface Badge {
   id: string;
@@ -11,8 +13,9 @@ interface Badge {
   description: string;
   icon: React.ReactNode;
   unlocked: boolean;
-  unlockedAt?: string | null;
-  progress?: number;
+  unlockedAt: string | null;
+  progress: number;
+  xp: number;
 }
 
 interface RewardScreenProps {
@@ -125,6 +128,7 @@ export function RewardScreen({
               unlockedAt={achievements[displayedIndex]?.unlockedAt || currentAchievement.unlockedAt}
               isActive={true}
               progress={achievements[displayedIndex]?.progress || currentAchievement.progress}
+              xp={achievements[displayedIndex]?.xp || currentAchievement.xp}
             />
           </div>
         </div>
@@ -165,81 +169,37 @@ export function RewardScreen({
  */
 export function useAchievementData() {
   const { getLocalizedBadges } = useContent();
+  const { achievements: userAchievements } = useAchievements();
   
   const createAchievementData = useCallback((): Badge[] => {
     const badgesTexts = getLocalizedBadges();
+    const achievementsMetadata = getAllAchievementsMetadata();
     
-    return [
-      {
-        id: "first_checkin",
-        title: badgesTexts.achievements.first_checkin.title,
-        description: badgesTexts.achievements.first_checkin.description,
-        icon: <Target className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-15"
-      },
-      {
-        id: "week_streak",
-        title: badgesTexts.achievements.week_streak.title,
-        description: badgesTexts.achievements.week_streak.description,
-        icon: <Flame className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-22"
-      },
-      {
-        id: "month_streak",
-        title: badgesTexts.achievements.month_streak.title,
-        description: badgesTexts.achievements.month_streak.description,
-        icon: <Calendar className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 60
-      },
-      {
-        id: "first_exercise",
-        title: badgesTexts.achievements.first_exercise.title,
-        description: badgesTexts.achievements.first_exercise.description,
-        icon: <BookOpen className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-16"
-      },
-      {
-        id: "exercise_master",
-        title: badgesTexts.achievements.exercise_master.title,
-        description: badgesTexts.achievements.exercise_master.description,
-        icon: <Trophy className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 30
-      },
-      {
-        id: "mood_tracker",
-        title: badgesTexts.achievements.mood_tracker.title,
-        description: badgesTexts.achievements.mood_tracker.description,
-        icon: <Smile className="w-20 h-20 text-black" />,
-        unlocked: true,
-        unlockedAt: "2024-01-20"
-      },
-      {
-        id: "early_bird",
-        title: badgesTexts.achievements.early_bird.title,
-        description: badgesTexts.achievements.early_bird.description,
-        icon: <Sunrise className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 80
-      },
-      {
-        id: "night_owl",
-        title: badgesTexts.achievements.night_owl.title,
-        description: badgesTexts.achievements.night_owl.description,
-        icon: <Moon className="w-20 h-20" />,
-        unlocked: false,
-        unlockedAt: null,
-        progress: 20
-      }
-    ];
-  }, [getLocalizedBadges]);
+    return achievementsMetadata
+      .map(metadata => {
+        const achievementContent = badgesTexts.achievements[metadata.id];
+        const userAchievement = userAchievements[metadata.id];
+        
+        if (!achievementContent) {
+          console.warn(`Achievement content not found for: ${metadata.id}`);
+          return null;
+        }
+        
+        const icon = getAchievementIcon(metadata.iconName, { className: 'w-20 h-20' });
+        
+        return {
+          id: metadata.id,
+          title: achievementContent.title,
+          description: achievementContent.description,
+          icon,
+          unlocked: userAchievement?.unlocked || false,
+          unlockedAt: userAchievement?.unlockedAt ?? null,
+          progress: userAchievement?.progress || 0,
+          xp: metadata.xp
+        };
+      })
+      .filter((badge): badge is Badge => badge !== null && badge.id !== undefined);
+  }, [getLocalizedBadges, userAchievements]);
 
   return { createAchievementData };
 }

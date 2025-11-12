@@ -5,128 +5,199 @@ import { Page } from '@playwright/test';
  * Новые пользователи проходят: survey01 → survey02 → survey03 → survey04 → survey05 → pin → checkin → reward → home
  */
 export async function skipSurvey(page: Page): Promise<void> {
-  // Ensure onboarding is completed first
-  await skipOnboarding(page);
-
-  // Проверяем, показывается ли опрос (любой экран)
-  const survey01Visible = await page.locator('text=How old are you?').isVisible();
-  const survey06Visible = await page.locator('text=How did you learn about Menhausen?').isVisible();
-  
-  if (survey01Visible) {
-    // Проходим весь опрос (6 экранов)
-    await completeSurvey(page);
-    
-    // После опроса может идти настройка PIN или сразу check-in
-    await skipPinSetup(page);
-    
-    // Skip the first check-in - let the test handle it
-    // await completeFirstCheckin(page);
-    
-    // Skip the reward screen as well
-    // await skipRewardScreen(page);
-  } else if (survey06Visible) {
-    // Пользователь уже на 6-м экране, завершаем его
-    await page.click('text=Friend or colleague recommended it');
-    await page.waitForTimeout(500);
-    await page.click('text=Complete Setup');
-    await page.waitForLoadState('networkidle');
-    
-    // После опроса может идти настройка PIN или сразу check-in
-    await skipPinSetup(page);
-  }
-  
-  // Wait for check-in screen to appear (since we're not completing the check-in)
   try {
-    await page.waitForSelector('text=How are you?', { timeout: 5000 });
-  } catch {
-    // If check-in screen doesn't appear, check for other possible screens
-    // Check for PIN setup screen
-    const pinScreen = page.locator('text=Set up PIN').or(page.locator('text=Skip'));
-    if (await pinScreen.isVisible().catch(() => false)) {
-      // Skip PIN setup if it appears
-      const skipBtn = page.locator('text=Skip');
-      if (await skipBtn.isVisible().catch(() => false)) {
-        await skipBtn.click();
-        await page.waitForLoadState('networkidle');
-      }
-    }
-    
-    // Wait for home screen as fallback
-    const homeSelectors = [
-      '[data-testid="home-ready"]',
-      '[data-name="Theme card narrow"]',
-      '[data-name="User frame info block"]'
-    ];
-    const startedAt = Date.now();
-    const maxMs = 4000; // 4s ceiling
-    while (Date.now() - startedAt < maxMs) {
-      for (const sel of homeSelectors) {
-        const visible = await page.locator(sel).first().isVisible().catch(() => false);
-        if (visible) {
-          return;
+    await skipOnboarding(page);
+  } catch (error) {
+    if (page.isClosed()) return;
+    throw error;
+  }
+
+  if (page.isClosed()) return;
+
+  await page.evaluate(() => {
+    (window as any).__PLAYWRIGHT__ = true;
+
+    const progress = {
+      onboardingCompleted: true,
+      surveyCompleted: true,
+      pinEnabled: false,
+      pinCompleted: true,
+      firstCheckinDone: false,
+      firstRewardShown: false
+    };
+
+    try {
+      localStorage.setItem('app-flow-progress', JSON.stringify(progress));
+      localStorage.setItem('survey-results', JSON.stringify({ completedAt: new Date().toISOString() }));
+      localStorage.removeItem('checkin-data');
+
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('daily_checkin_')) {
+          keysToRemove.push(key);
         }
       }
-      await page.waitForTimeout(200);
+      keysToRemove.forEach(key => localStorage.removeItem(key));
+    } catch (error) {
+      console.warn('Failed to seed survey progress:', error);
     }
-    // Adaptive final assert: try home-ready first, then fallback to any home selector
-    try {
-      await page.waitForSelector('[data-testid="home-ready"]', { timeout: 3000 });
-    } catch {
-      // Fallback: wait for any home indicator with more time
-      try {
-        await page.waitForSelector('[data-testid="home-ready"], [data-name="Theme card narrow"], [data-name="User frame info block"]', { timeout: 10000 });
-      } catch {
-        // If still no home screen found, continue anyway
+  });
+
+  if (page.isClosed()) return;
+
+  await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+  if (page.isClosed()) return;
+
+  await skipRewardScreen(page);
+
+  const checkinVisible = await page.locator('text=How are you?').isVisible().catch(() => false);
+  if (checkinVisible) {
+    return;
+  }
+
+  await page.waitForSelector('[data-name="User frame info block"], [data-testid="home-ready"], [data-name="Theme card narrow"]', { timeout: 5000 }).catch(() => {});
+}
+
+/**
+ * Пропускаем screen награды (reward screen) если он показывается
+ * Reward screen может появиться после первого чекина или других действий
+ * Может появиться с задержкой из-за асинхронной проверки достижений (до 500ms)
+ */
+export async function skipRewardScreen(page: Page): Promise<void> {
+  if (page.isClosed()) return;
+  
+  // Reward screen может появиться с задержкой из-за async achievement checking
+  // Увеличено до 2000ms для учета задержек при переходе на theme-home и других экранов
+  const rewardIndicators = [
+    'text=Congratulations',
+    '[data-name="Reward Manager"]',
+    'text=You earned',
+    'text=New achievement',
+    'text=Achievement unlocked',
+    '[data-name="Reward Page"]'
+  ];
+  
+  // Проверяем наличие reward screen с задержкой (до 2000ms)
+  const startTime = Date.now();
+  const maxWait = 2000;
+  let isRewardScreen = false;
+  
+  while (Date.now() - startTime < maxWait && !isRewardScreen) {
+    if (page.isClosed()) return;
+    
+    for (const indicator of rewardIndicators) {
+      if (await page.locator(indicator).isVisible().catch(() => false)) {
+        isRewardScreen = true;
+        break;
       }
     }
+    
+    if (!isRewardScreen) {
+      await page.waitForTimeout(100).catch(() => {});
+    }
   }
-}
-
-/**
- * Проходим весь опрос (6 экранов)
- */
-async function completeSurvey(page: Page): Promise<void> {
-  // Survey01: "How old are you?"
-  await page.click('text=18-25 years old');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
   
-  // Survey02: "How often do you face emotional difficulties?"
-  await page.click('text=Sometimes (1–2 times a week)');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
-  
-  // Survey03: "What experiences worry you the most?" (multiple choice)
-  await page.click('text=Work stress');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
-  
-  // Survey04: "Have you ever sought psychological help from specialists?"
-  await page.click('text=No, never');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
-  
-  // Survey05: "Which of these statements seems true to you?" (multiple choice)
-  await page.click('text=All are wrong');
-  await page.click('text=Continue');
-  await page.waitForLoadState('networkidle');
-  
-  // Survey06: "How did you learn about Menhausen?"
-  await page.click('text=Friend or colleague recommended it');
-  await page.waitForTimeout(500); // Small delay to ensure selection is processed
-  await page.click('text=Complete Setup');
-  await page.waitForLoadState('networkidle');
-}
-
-/**
- * Пропускаем настройку PIN
- */
-async function skipPinSetup(page: Page): Promise<void> {
-  // Ищем кнопку "Skip" на экране настройки PIN
-  const skipBtn = page.locator('text=Skip');
-  if (await skipBtn.isVisible()) {
-    await skipBtn.click();
-    await page.waitForLoadState('networkidle');
+  if (isRewardScreen) {
+    if (page.isClosed()) return;
+    
+    // Обрабатываем все достижения - может быть несколько, нужно кликать Next несколько раз
+    const maxIterations = 10; // Максимум 10 достижений (защита от бесконечного цикла)
+    let iteration = 0;
+    
+    while (iteration < maxIterations) {
+      if (page.isClosed()) return;
+      
+      // Проверяем, все еще ли мы на reward screen
+      let stillOnRewardScreen = false;
+      for (const indicator of rewardIndicators) {
+        if (await page.locator(indicator).isVisible().catch(() => false)) {
+          stillOnRewardScreen = true;
+          break;
+        }
+      }
+      
+      if (!stillOnRewardScreen) {
+        // Уже не на reward screen, выходим
+        break;
+      }
+      
+      // Ищем кнопку на reward screen
+      const buttonSelectors = [
+        // Поиск по data-name (самый надежный)
+        page.locator('button[data-name*="Bottom Fixed CTA Button"]'),
+        // Поиск по тексту кнопки
+        page.locator('button').filter({ hasText: /Continue|Next|Продолжить|Следующее/i }),
+        // Поиск по роли
+        page.getByRole('button', { name: /Continue|Next|Продолжить|Следующее/i }),
+        // Fallback - любая видимая кнопка внизу
+        page.locator('button:visible').last()
+      ];
+      
+      let buttonFound = false;
+      let buttonToClick = null;
+      
+      // Ждем появления кнопки (до 3000ms)
+      const buttonStartTime = Date.now();
+      const buttonMaxWait = 3000;
+      
+      while (Date.now() - buttonStartTime < buttonMaxWait && !buttonFound) {
+        if (page.isClosed()) return;
+        
+        for (const selector of buttonSelectors) {
+          try {
+            const count = await selector.count();
+            if (count > 0) {
+              const firstButton = selector.first();
+              const isVisible = await firstButton.isVisible().catch(() => false);
+              if (isVisible) {
+                buttonFound = true;
+                buttonToClick = firstButton;
+                break;
+              }
+            }
+          } catch {
+            // Игнорируем ошибки поиска
+          }
+        }
+        
+        if (!buttonFound) {
+          await page.waitForTimeout(100).catch(() => {});
+        }
+      }
+      
+      if (buttonFound && buttonToClick) {
+        if (page.isClosed()) return;
+        
+        // Кликаем на кнопку
+        await buttonToClick.click({ timeout: 5000 }).catch(() => {});
+        
+        // Небольшая задержка после клика для обработки навигации
+        await page.waitForTimeout(300).catch(() => {});
+        
+        // Проверяем, произошла ли навигация (проверяем наличие home screen)
+        const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+        if (isHome) {
+          // Успешно перешли на home screen
+          break;
+        }
+        
+        // Если не перешли на home, возможно показывается следующее достижение
+        // Продолжаем цикл
+        iteration++;
+        await page.waitForTimeout(200).catch(() => {});
+      } else {
+        // Кнопка не найдена, выходим
+        break;
+      }
+    }
+    
+    // Финальная проверка - ждем навигации на home screen (если еще не там)
+    const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+    if (!isHome) {
+      // Ждем навигации на home screen (до 10000ms)
+      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 10000 }).catch(() => {});
+    }
   }
 }
 
@@ -135,43 +206,34 @@ async function skipPinSetup(page: Page): Promise<void> {
  * Утилитная функция для пропуска онбординга если он показывается
  */
 export async function skipOnboarding(page: Page): Promise<void> {
-  // Проходим все экраны онбординга последовательно
-  
-  // Первый экран онбординга - кнопка "Get Started"
-  const getStartedBtn = page.locator('text=Get Started');
-  if (await getStartedBtn.isVisible() && await getStartedBtn.isEnabled()) {
-    await getStartedBtn.click();
-    await page.waitForLoadState('networkidle');
-  }
-  
-  // Второй экран онбординга - кнопка "Continue"
-  const continueBtn = page.locator('text=Continue');
-  if (await continueBtn.isVisible()) {
-    // Ждем активации кнопки
-    await continueBtn.waitFor({ state: 'visible', timeout: 5000 });
-    await continueBtn.waitFor({ state: 'attached', timeout: 5000 });
-    
-    // Пробуем кликнуть с повторными попытками
-    for (let i = 0; i < 10; i++) {
-      if (await continueBtn.isEnabled()) {
-        await continueBtn.click();
-        await page.waitForLoadState('networkidle');
-        break;
+  if (page.isClosed()) return;
+
+  await page.evaluate(() => {
+    (window as any).__PLAYWRIGHT__ = true;
+    const progress = {
+      onboardingCompleted: true,
+      surveyCompleted: false,
+      pinEnabled: false,
+      pinCompleted: false,
+      firstCheckinDone: false,
+      firstRewardShown: false
+    };
+
+    try {
+      const existing = localStorage.getItem('app-flow-progress');
+      if (existing) {
+        const parsed = JSON.parse(existing);
+        localStorage.setItem('app-flow-progress', JSON.stringify({ ...parsed, ...progress }));
+      } else {
+        localStorage.setItem('app-flow-progress', JSON.stringify(progress));
       }
-      await page.waitForTimeout(500);
+    } catch (error) {
+      console.warn('Failed to seed onboarding progress:', error);
     }
-  }
-  
-  // Дополнительные экраны если есть
-  let attempts = 0;
-  while (attempts < 3) {
-    const anyContinueBtn = page.locator('text=Continue').or(page.locator('text=Get Started')).or(page.locator('text=Start'));
-    if (await anyContinueBtn.isVisible() && await anyContinueBtn.isEnabled()) {
-      await anyContinueBtn.click();
-      await page.waitForLoadState('networkidle');
-      attempts++;
-    } else {
-      break;
-    }
-  }
+  });
+
+  if (page.isClosed()) return;
+
+  await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
 }
+

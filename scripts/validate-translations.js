@@ -5,6 +5,7 @@
  * Проверяет, что все ключи переводов существуют в обоих языках
  */
 
+/* eslint-env node */
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";

@@ -373,6 +373,12 @@ export interface UITexts {
       achievementEarned: LocalizedContent;
     };
   };
+  articles?: {
+    title: LocalizedContent;
+    viewAll: LocalizedContent;
+    relatedThemes: LocalizedContent;
+    noArticles: LocalizedContent;
+  };
 }
 
 /**
@@ -472,6 +478,25 @@ export interface AboutContent {
 }
 
 /**
+ * Данные статьи
+ */
+export interface ArticleData {
+  id: string;
+  title: LocalizedContent;
+  preview: LocalizedContent;
+  content: LocalizedContent;
+  relatedThemeIds: string[];
+  order?: number;
+}
+
+/**
+ * Коллекция статей
+ */
+export interface ArticlesCollection {
+  [articleId: string]: ArticleData;
+}
+
+/**
  * Полная структура контента приложения
  */
 export interface AppContent {
@@ -488,6 +513,7 @@ export interface AppContent {
   activityData?: ActivityData;
   payments: PaymentsContent;
   donations: DonationsContent;
+  articles: ArticlesCollection;
 }
 
 /**
@@ -515,6 +541,8 @@ export interface ContentContextType {
   getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
   getBadges: () => BadgesContent;
+  getArticle: (articleId: string) => ArticleData | undefined;
+  getAllArticles: () => ArticleData[];
   getLocalizedBadges: () => {
     title: string;
     subtitle: string;
@@ -537,40 +565,10 @@ export interface ContentContextType {
     locked: string;
     cancel: string;
     unlocked: string;
-    achievements: {
-      first_checkin: {
-        title: string;
-        description: string;
-      };
-      week_streak: {
-        title: string;
-        description: string;
-      };
-      month_streak: {
-        title: string;
-        description: string;
-      };
-      first_exercise: {
-        title: string;
-        description: string;
-      };
-      exercise_master: {
-        title: string;
-        description: string;
-      };
-      mood_tracker: {
-        title: string;
-        description: string;
-      };
-      early_bird: {
-        title: string;
-        description: string;
-      };
-      night_owl: {
-        title: string;
-        description: string;
-      };
-    };
+    achievements: Record<string, {
+      title: string;
+      description: string;
+    }>;
     reward: {
       title: string;
       subtitle: string;
@@ -624,40 +622,10 @@ export interface BadgesContent {
     congratulations: LocalizedContent;
     earnedAchievement: LocalizedContent;
   };
-  achievements: {
-    first_checkin: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    week_streak: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    month_streak: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    first_exercise: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    exercise_master: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    mood_tracker: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    early_bird: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-    night_owl: {
-      title: LocalizedContent;
-      description: LocalizedContent;
-    };
-  };
+  achievements: Record<string, {
+    title: LocalizedContent;
+    description: LocalizedContent;
+  }>;
 }
 
 /**

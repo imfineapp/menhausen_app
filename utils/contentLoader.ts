@@ -4,6 +4,7 @@
 
 import { AppContent, SupportedLanguage } from '../types/content';
 import { ThemeLoader } from './ThemeLoader';
+import { ARTICLES_IDS } from './articlesList';
 
 /**
  * Загружает контент для указанного языка
@@ -16,15 +17,35 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
     console.log(`loadContent: Starting parallel imports for language: ${language}`);
-    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments] = await Promise.all([
+    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges] = await Promise.all([
       import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques.json`).then(m => { console.log(`loadContent: mental-techniques.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques-menu.json`).then(m => { console.log(`loadContent: mental-techniques-menu.json loaded`); return m; }),
       import(`../data/content/${language}/survey.json`).then(m => { console.log(`loadContent: survey.json loaded`); return m; }),
       import(`../data/content/${language}/onboarding.json`).then(m => { console.log(`loadContent: onboarding.json loaded`); return m; }),
       import(`../data/content/${language}/emergency-cards.json`).then(m => { console.log(`loadContent: emergency-cards.json loaded`); return m; }),
-      import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; })
+      import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; }),
+      import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; })
     ]);
+    
+    // Загружаем статьи
+    console.log(`loadContent: Loading articles for language: ${language}`);
+    const articlesList = ARTICLES_IDS;
+    const articlesModules = await Promise.all(
+      articlesList.map(articleId => 
+        import(`../data/content/${language}/articles/${articleId}.json`)
+          .then(m => { console.log(`loadContent: ${articleId}.json loaded`); return m; })
+          .catch(err => { console.warn(`loadContent: Failed to load article ${articleId}:`, err); return null; })
+      )
+    );
+    
+    const articlesRecord: Record<string, any> = {};
+    articlesModules.forEach((module, index) => {
+      if (module && module.default) {
+        articlesRecord[articlesList[index]] = module.default;
+      }
+    });
+    console.log(`loadContent: Loaded ${Object.keys(articlesRecord).length} articles`);
     
     // Загружаем темы через ThemeLoader
     console.log(`loadContent: Loading themes through ThemeLoader for language: ${language}`);
@@ -46,7 +67,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       survey: survey.default,
       onboarding: onboarding.default,
       emergencyCards: emergencyCards.default,
-      badges: ui.default.badges,
+      badges: badges.default,
       about: ui.default.about,
       payments: payments.default,
       donations: ui.default.donations || {
@@ -56,7 +77,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
         currency_usdt_ton: 'USDT (TON)',
         copy: 'Copy',
         copied: 'Copied'
-      }
+      },
+      articles: articlesRecord
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);

@@ -1,0 +1,310 @@
+[
+  {
+    "id": "newcomer",
+    "xp": 50,
+    "iconName": "user-plus",
+    "conditionType": "registration_checkin",
+    "category": "Onboarding",
+    "conditionValue": 1
+  },
+  {
+    "id": "beginner",
+    "xp": 120,
+    "iconName": "sprout",
+    "conditionType": "cards_opened",
+    "category": "Free Topic",
+    "conditionValue": 3
+  },
+  {
+    "id": "seeker",
+    "xp": 200,
+    "iconName": "search",
+    "conditionType": "cards_opened",
+    "category": "Free Topic",
+    "conditionValue": 5
+  },
+  {
+    "id": "apprentice",
+    "xp": 300,
+    "iconName": "school",
+    "conditionType": "cards_opened",
+    "category": "Free Topic",
+    "conditionValue": 8
+  },
+  {
+    "id": "topic_closer",
+    "xp": 400,
+    "iconName": "check-circle",
+    "conditionType": "topic_completed",
+    "category": "Free Topic",
+    "conditionValue": 10
+  },
+  {
+    "id": "basic_reader",
+    "xp": 450,
+    "iconName": "book-open",
+    "conditionType": "articles_read",
+    "category": "Articles",
+    "conditionValue": 3
+  },
+  {
+    "id": "hero_secrets",
+    "xp": 500,
+    "iconName": "key",
+    "conditionType": [
+      "cards_repeated",
+      "streak"
+    ],
+    "category": "Repetition & Streak",
+    "conditionValue": 5,
+    "conditionRepeatValue": 3
+  },
+  {
+    "id": "keeper_of_wisdom",
+    "xp": 650,
+    "iconName": "archive",
+    "conditionType": [
+      "topic_repeated",
+      "streak"
+    ],
+    "category": "Repetition & Streak",
+    "conditionValue": 1,
+    "conditionRepeatValue": 5
+  },
+  {
+    "id": "first_chapter_hero",
+    "xp": 800,
+    "iconName": "award",
+    "conditionType": "streak",
+    "category": "Streak",
+    "conditionValue": 10
+  },
+  {
+    "id": "recruiter",
+    "xp": 500,
+    "iconName": "user-plus",
+    "conditionType": "referral_invite",
+    "category": "Referral",
+    "conditionValue": 1
+  },
+  {
+    "id": "explorer",
+    "xp": 1000,
+    "iconName": "compass",
+    "conditionType": "cards_opened",
+    "category": "Premium Topics",
+    "conditionValue": 8
+  },
+  {
+    "id": "path_chooser",
+    "xp": 1200,
+    "iconName": "map-pin",
+    "conditionType": "topic_completed",
+    "category": "Premium Topics",
+    "conditionValue": 1
+  },
+  {
+    "id": "knowledge_lover",
+    "xp": 1300,
+    "iconName": "book-heart",
+    "conditionType": "articles_read",
+    "category": "Articles",
+    "conditionValue": 5
+  },
+  {
+    "id": "spreader",
+    "xp": 1500,
+    "iconName": "share-2",
+    "conditionType": "referral_invite",
+    "category": "Referral",
+    "conditionValue": 3
+  },
+  {
+    "id": "traveler",
+    "xp": 1400,
+    "iconName": "globe",
+    "conditionType": "cards_opened",
+    "category": "Premium Topics",
+    "conditionValue": 5
+  },
+  {
+    "id": "fear_conqueror",
+    "xp": 1600,
+    "iconName": "shield-check",
+    "conditionType": [
+      "topic_completed",
+      "topic_repeated"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 2
+  },
+  {
+    "id": "persistence_master",
+    "xp": 1800,
+    "iconName": "repeat",
+    "conditionType": [
+      "streak",
+      "cards_repeated"
+    ],
+    "category": "Streak & Repetition",
+    "conditionValue": 14,
+    "conditionRepeatValue": 10
+  },
+  {
+    "id": "inspirer",
+    "xp": 2000,
+    "iconName": "sparkles",
+    "conditionType": "topic_repeated",
+    "category": "Premium Topics",
+    "conditionValue": 2
+  },
+  {
+    "id": "harmony_seeker",
+    "xp": 2200,
+    "iconName": "scale",
+    "conditionType": [
+      "cards_opened",
+      "streak_repeat"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 5,
+    "conditionRepeatValue": 7,
+    "conditionTopicsCount": 3
+  },
+  {
+    "id": "enlightened_mind",
+    "xp": 2400,
+    "iconName": "lightbulb",
+    "conditionType": "articles_read",
+    "category": "Articles",
+    "conditionValue": 10
+  },
+  {
+    "id": "ambassador",
+    "xp": 3000,
+    "iconName": "users",
+    "conditionType": [
+      "referral_invite",
+      "referral_premium"
+    ],
+    "category": "Referral",
+    "conditionValue": 5,
+    "conditionRepeatValue": 1
+  },
+  {
+    "id": "sage",
+    "xp": 2500,
+    "iconName": "brain",
+    "conditionType": "streak",
+    "category": "Streak",
+    "conditionValue": 21
+  },
+  {
+    "id": "depth_explorer",
+    "xp": 2800,
+    "iconName": "anchor",
+    "conditionType": [
+      "topic_completed",
+      "topic_repeated"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 3,
+    "conditionRepeatValue": 2
+  },
+  {
+    "id": "doubt_slayer",
+    "xp": 3100,
+    "iconName": "sword",
+    "conditionType": [
+      "cards_repeated",
+      "streak"
+    ],
+    "category": "Repetition & Streak",
+    "conditionValue": 20,
+    "conditionRepeatValue": 10
+  },
+  {
+    "id": "mind_protector",
+    "xp": 3500,
+    "iconName": "shield",
+    "conditionType": "streak",
+    "category": "Streak",
+    "conditionValue": 30
+  },
+  {
+    "id": "mentor",
+    "xp": 3900,
+    "iconName": "user-check",
+    "conditionType": [
+      "topic_completed",
+      "topic_repeated"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 4,
+    "conditionRepeatValue": 3
+  },
+  {
+    "id": "pathfinder",
+    "xp": 4300,
+    "iconName": "map",
+    "conditionType": [
+      "cards_opened",
+      "streak_repeat"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 5,
+    "conditionRepeatValue": 14,
+    "conditionTopicsCount": 4
+  },
+  {
+    "id": "chaos_conqueror",
+    "xp": 4800,
+    "iconName": "zap-off",
+    "conditionType": "topic_completed",
+    "category": "Premium Topics",
+    "conditionValue": 5
+  },
+  {
+    "id": "balance_keeper",
+    "xp": 5300,
+    "iconName": "scale",
+    "conditionType": [
+      "topic_repeated",
+      "streak"
+    ],
+    "category": "Repetition & Streak",
+    "conditionValue": 4,
+    "conditionRepeatValue": 21
+  },
+  {
+    "id": "legendary_hero",
+    "xp": 6000,
+    "iconName": "trophy",
+    "conditionType": [
+      "topic_completed",
+      "topic_repeated"
+    ],
+    "category": "Premium Topics",
+    "conditionValue": 6,
+    "conditionRepeatValue": 5
+  },
+  {
+    "id": "reading_master",
+    "xp": 6500,
+    "iconName": "library",
+    "conditionType": "articles_read",
+    "category": "Articles"
+  },
+  {
+    "id": "menhausen_master",
+    "xp": 7000,
+    "iconName": "crown",
+    "conditionType": [
+      "topic_repeated",
+      "streak"
+    ],
+    "category": "Mastery",
+    "conditionValue": 6,
+    "conditionRepeatValue": 30
+  }
+]

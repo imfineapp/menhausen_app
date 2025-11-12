@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
 // Моки больше не используются - все тесты используют реальный контент
@@ -417,6 +417,22 @@ export function ContentProvider({ children }: ContentProviderProps) {
   }, [content]);
 
   /**
+   * Получение статьи по ID
+   */
+  const getArticle = useCallback((articleId: string): ArticleData | undefined => {
+    return content?.articles?.[articleId];
+  }, [content]);
+
+  /**
+   * Получение всех статей, отсортированных по order
+   */
+  const getAllArticles = useCallback((): ArticleData[] => {
+    if (!content?.articles) return [];
+    const articles = Object.values(content.articles);
+    return articles.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [content]);
+
+  /**
    * Получение всех ментальных техник
    */
   const getMentalTechniques = useCallback((): MentalTechniqueData[] => {
@@ -460,40 +476,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
           congratulations: 'Great!',
           earnedAchievement: 'You earned an achievement'
         },
-        achievements: {
-          first_checkin: {
-            title: 'First Step',
-            description: 'Complete your first check-in'
-          },
-          week_streak: {
-            title: 'Week of Strength',
-            description: 'Check-ins for 7 days in a row'
-          },
-          month_streak: {
-            title: 'Month of Discipline',
-            description: 'Check-ins for 30 days in a row'
-          },
-          first_exercise: {
-            title: 'First Lesson',
-            description: 'Complete your first exercise'
-          },
-          exercise_master: {
-            title: 'Practice Master',
-            description: 'Complete 50 exercises'
-          },
-          mood_tracker: {
-            title: 'Mood Tracker',
-            description: 'Track your mood for 14 days'
-          },
-          early_bird: {
-            title: 'Early Bird',
-            description: 'Check-ins at 6 AM for 5 days in a row'
-          },
-          night_owl: {
-            title: 'Night Owl',
-            description: 'Check-ins at 11 PM for 5 days in a row'
-          }
-        }
+        achievements: {}
       };
     }
     return content.badges;
@@ -535,40 +518,16 @@ export function ContentProvider({ children }: ContentProviderProps) {
         congratulations: getLocalizedText(badgesContent.reward.congratulations),
         earnedAchievement: getLocalizedText(badgesContent.reward.earnedAchievement)
       },
-      achievements: {
-        first_checkin: {
-          title: getLocalizedText(badgesContent.achievements.first_checkin.title),
-          description: getLocalizedText(badgesContent.achievements.first_checkin.description)
-        },
-        week_streak: {
-          title: getLocalizedText(badgesContent.achievements.week_streak.title),
-          description: getLocalizedText(badgesContent.achievements.week_streak.description)
-        },
-        month_streak: {
-          title: getLocalizedText(badgesContent.achievements.month_streak.title),
-          description: getLocalizedText(badgesContent.achievements.month_streak.description)
-        },
-        first_exercise: {
-          title: getLocalizedText(badgesContent.achievements.first_exercise.title),
-          description: getLocalizedText(badgesContent.achievements.first_exercise.description)
-        },
-        exercise_master: {
-          title: getLocalizedText(badgesContent.achievements.exercise_master.title),
-          description: getLocalizedText(badgesContent.achievements.exercise_master.description)
-        },
-        mood_tracker: {
-          title: getLocalizedText(badgesContent.achievements.mood_tracker.title),
-          description: getLocalizedText(badgesContent.achievements.mood_tracker.description)
-        },
-        early_bird: {
-          title: getLocalizedText(badgesContent.achievements.early_bird.title),
-          description: getLocalizedText(badgesContent.achievements.early_bird.description)
-        },
-        night_owl: {
-          title: getLocalizedText(badgesContent.achievements.night_owl.title),
-          description: getLocalizedText(badgesContent.achievements.night_owl.description)
+      achievements: Object.keys(badgesContent.achievements).reduce((acc, key) => {
+        const achievement = badgesContent.achievements[key];
+        if (achievement) {
+          acc[key] = {
+            title: getLocalizedText(achievement.title),
+            description: getLocalizedText(achievement.description)
+          };
         }
-      }
+        return acc;
+      }, {} as Record<string, { title: string; description: string }>)
     };
   }, [getBadges, getLocalizedText]);
 
@@ -590,6 +549,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getUI,
     getAllThemes,
     getBadges,
+    getArticle,
+    getAllArticles,
     getLocalizedBadges
   };
 
@@ -877,5 +838,45 @@ export function useMentalTechniquesMenu() {
         }
       }
     }
+  };
+}
+
+/**
+ * Хук для получения всех статей
+ */
+export function useArticles() {
+  const { getAllArticles, getLocalizedText } = useContent();
+  
+  const articles = getAllArticles();
+  
+  return articles.map(article => ({
+    id: article.id,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content),
+    relatedThemeIds: article.relatedThemeIds,
+    order: article.order || 0
+  }));
+}
+
+/**
+ * Хук для получения конкретной статьи
+ */
+export function useArticle(articleId: string) {
+  const { getArticle, getLocalizedText } = useContent();
+  
+  const article = getArticle(articleId);
+  
+  if (!article) {
+    return null;
+  }
+  
+  return {
+    id: article.id,
+    title: getLocalizedText(article.title),
+    preview: getLocalizedText(article.preview),
+    content: getLocalizedText(article.content),
+    relatedThemeIds: article.relatedThemeIds,
+    order: article.order || 0
   };
 }

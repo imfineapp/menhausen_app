@@ -1,392 +1,108 @@
 /**
- * Simplified E2E tests for day boundary testing
- * Tests basic app functionality without complex time mocking
+ * Simplified E2E tests for day boundary scenarios
+ * Seeds check-in history directly in localStorage for deterministic checks
  */
 
-import { test, expect } from '@playwright/test';
-import { skipSurvey, skipOnboarding } from './utils/skip-survey';
+import { test, expect, type Page } from '@playwright/test';
+import { waitForPageLoad, waitForHomeScreen, isOnCheckinScreen, completeCheckin, seedCheckinHistory, type CheckinHistorySeed } from './utils/test-helpers';
+import { skipRewardScreen } from './utils/skip-survey';
+
+const createSeed = (offsetDays: number, hour = 9): CheckinHistorySeed => {
+  const date = new Date();
+  date.setHours(hour, 0, 0, 0);
+  date.setMilliseconds(0);
+  date.setDate(date.getDate() - offsetDays);
+  return { iso: date.toISOString() };
+};
+
+const loadHome = async (page: Page): Promise<void> => {
+  await page.goto('/');
+  await waitForPageLoad(page);
+  
+  // Обрабатываем check-in screen в цикле, так как он может появиться с задержкой
+  const maxAttempts = 10;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    // Проверяем, не на home screen ли мы уже
+    const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+    if (isHome) {
+      break;
+    }
+    
+    // Проверяем check-in screen
+    if (await isOnCheckinScreen(page)) {
+      await completeCheckin(page);
+      // Даем время для обработки после чекина
+      await page.waitForTimeout(300);
+    }
+    
+    // Пропускаем reward screen
+    await skipRewardScreen(page);
+    
+    // Небольшая задержка перед следующей проверкой
+    await page.waitForTimeout(200);
+  }
+  
+  // Финальная проверка home screen
+  await waitForHomeScreen(page);
+  // Дополнительная проверка: пропускаем reward screen еще раз на случай, если он появился после waitForHomeScreen
+  await skipRewardScreen(page);
+  // Даем время для завершения всех анимаций и переходов
+  await page.waitForTimeout(500);
+};
 
 test.describe('Day Boundary Testing', () => {
-  test.beforeEach(async ({ page }) => {
-    // Clear localStorage to ensure clean state
-    await page.addInitScript(() => {
-      localStorage.clear();
-    });
-  });
-
   test('should handle 6 AM reset logic correctly', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(1, 5)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should handle midnight transitions correctly', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(1, 23)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should handle timezone changes gracefully', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(0, 2)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should handle edge cases around 6 AM', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(0, 5), createSeed(1, 7)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should maintain data consistency across day boundaries', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(0, 9), createSeed(1, 9)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should handle leap year transitions', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    const now = new Date();
+    const leapYear = now.getFullYear() % 4 === 0 ? now.getFullYear() : now.getFullYear() - (now.getFullYear() % 4);
+    const feb28 = new Date(Date.UTC(leapYear, 1, 28, 9, 0, 0));
+    const feb29 = new Date(Date.UTC(leapYear, 1, 29, 9, 0, 0));
+    await seedCheckinHistory(page, [{ iso: feb28.toISOString() }, { iso: feb29.toISOString() }]);
+    await loadHome(page);
+    // Используем более надежный селектор - User frame info block, который точно виден на home screen
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 10000 });
   });
 
   test('should handle year transitions', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    const yearEnd = new Date(Date.UTC(new Date().getFullYear(), 11, 31, 9, 0, 0));
+    const yearStart = new Date(Date.UTC(new Date().getFullYear() + 1, 0, 1, 9, 0, 0));
+    await seedCheckinHistory(page, [{ iso: yearEnd.toISOString() }, { iso: yearStart.toISOString() }]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 
   test('should handle device time changes', async ({ page }) => {
-    // Simplified test - just check that the app loads correctly
-    await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    await skipOnboarding(page);
-    await skipSurvey(page);
-
-    // Complete check-in (use default "I'm neutral" selection)
-    await page.click('text=Send');
-    
-    // Handle reward screen if it appears
-    try {
-      await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-      await page.click('text=Continue');
-    } catch {
-      // No reward screen, continue
-    }
-
-    // Wait for navigation to complete and check what screen we're on
-    await page.waitForTimeout(2000); // Give time for navigation
-
-    // Check if we're on home screen or check-in screen
-    const isOnHomeScreen = await page.locator('[data-name="User frame info block"]').isVisible();
-    const isOnCheckinScreen = await page.locator('text=How are you?').isVisible();
-
-    if (isOnHomeScreen) {
-      // Should be on home screen
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else if (isOnCheckinScreen) {
-      // If we're on check-in screen, complete it again
-      await page.click('text=Send');
-      
-      // Handle reward screen if it appears
-      try {
-        await page.waitForSelector('text=Congratulations!', { timeout: 3000 });
-        await page.click('text=Continue');
-      } catch {
-        // No reward screen, continue
-      }
-      
-      // Should be on home screen now
-      await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
-    } else {
-      // If we're not on either screen, just continue with the test
-    }
+    await seedCheckinHistory(page, [createSeed(3, 9), createSeed(1, 9)]);
+    await loadHome(page);
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible();
   });
 });

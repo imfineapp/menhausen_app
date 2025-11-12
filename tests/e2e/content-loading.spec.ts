@@ -1,42 +1,31 @@
 import { test, expect } from '@playwright/test';
-import { skipSurvey } from './utils/skip-survey';
+import { seedCheckinHistory, waitForPageLoad, waitForHomeScreen } from './utils/test-helpers';
+
+const todaySeed = () => ({ iso: new Date().toISOString() });
 
 test.describe('Content Loading Tests', () => {
   test('should load content and display theme cards', async ({ page }) => {
+    await seedCheckinHistory(page, [todaySeed()]);
+
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
-    // Пропускаем опрос если он показывается
-    await skipSurvey(page);
-    
-    // Просто проверяем, что приложение загрузилось
-    // Не ждем конкретных элементов, так как навигация может быть сложной
-    await page.waitForTimeout(3000); // Даем время на загрузку
-    
-    // Проверяем, что страница загружена
-    expect(page.url()).toBe('http://localhost:5173/');
-    
-    // Проверяем, что есть какой-то контент на странице
-    const body = await page.locator('body');
-    await expect(body).toBeVisible();
+    await waitForPageLoad(page);
+    await waitForHomeScreen(page);
+
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should load content in Russian', async ({ page }) => {
-    // Сначала загружаем приложение на английском языке
+    await seedCheckinHistory(page, [todaySeed()]);
+    await page.addInitScript(() => {
+      localStorage.setItem('menhausen-language', JSON.stringify('ru'));
+    });
+
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
-    
-    // Пропускаем опрос если он показывается
-    await skipSurvey(page);
-    
-    // Просто проверяем, что приложение загрузилось
-    await page.waitForTimeout(3000); // Даем время на загрузку
-    
-    // Проверяем, что страница загружена
-    expect(page.url()).toBe('http://localhost:5173/');
-    
-    // Проверяем, что есть какой-то контент на странице
-    const body = await page.locator('body');
-    await expect(body).toBeVisible();
+    await waitForPageLoad(page);
+    await waitForHomeScreen(page);
+
+    const bodyText = await page.textContent('body');
+    expect(bodyText).toBeTruthy();
   });
 });
