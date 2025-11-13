@@ -39,6 +39,7 @@
                  "level":  "Уровень",
                  "progress":  "Прогресс",
                 "use80PercentUsers":  "Используют 80% пользователей",
+                 "themeMatchPercentage":  "Подходит тебе на {percentage}%",
                  "activity":  {
                                   "title":  "Активность",
                                   "streak":  "4 дня",

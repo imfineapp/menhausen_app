@@ -1,10 +1,11 @@
 // ThemeCard Component
 // Reusable theme card with progress and premium status
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { UserAccountStatus } from './UserProfileComponents';
 import { useContent } from './ContentContext';
+import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 
 interface ThemeCardProps {
   title: string;
@@ -12,6 +13,7 @@ interface ThemeCardProps {
   progress?: number;
   isPremium?: boolean;
   onClick?: () => void;
+  themeId?: string;
 }
 
 /**
@@ -22,9 +24,23 @@ export function ThemeCard({
   description,
   progress = 0,
   isPremium = false,
-  onClick
+  onClick,
+  themeId
 }: ThemeCardProps) {
   const { content } = useContent();
+  
+  // Получаем процент соответствия из результатов теста
+  const matchPercentage = useMemo(() => {
+    if (!themeId) return null;
+    return getThemeMatchPercentage(themeId);
+  }, [themeId]);
+  
+  // Формируем текст с процентом, если он доступен
+  const matchText = useMemo(() => {
+    if (matchPercentage === null) return null;
+    const template = content.ui.home.themeMatchPercentage || 'Подходит тебе на {percentage}%';
+    return template.replace('{percentage}', String(Math.round(matchPercentage)));
+  }, [matchPercentage, content.ui.home.themeMatchPercentage]);
   
   return (
     <button
@@ -64,11 +80,13 @@ export function ThemeCard({
         </div>
       </div>
       
-      {/* Информация о пользователях и статус премиум - размещаем над прогресс-баром */}
+      {/* Информация о соответствии темы и статус премиум - размещаем над прогресс-баром */}
       <div className="absolute bottom-[30px] sm:bottom-[32px] md:bottom-[34px] left-[16px] sm:left-[18px] md:left-[20px] right-[16px] sm:right-[18px] md:right-[20px] box-border content-stretch flex flex-row items-center justify-between p-0 z-10">
-        <div className="typography-button text-[#696969] text-left">
-          <p className="block">{content.ui.home.use80PercentUsers}</p>
-        </div>
+        {matchText && (
+          <div className="typography-button text-[#696969] text-left">
+            <p className="block">{matchText}</p>
+          </div>
+        )}
         <UserAccountStatus isPremium={isPremium} />
       </div>
     </button>

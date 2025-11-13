@@ -280,6 +280,7 @@ export function ArticleScreen({
                         progress={card.progress}
                         isPremium={card.isPremium}
                         onClick={() => onGoToTheme?.(card.normalizedThemeId)}
+                        themeId={card.normalizedThemeId}
                       />
                     ))}
                   </div>

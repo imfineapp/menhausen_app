@@ -188,6 +188,7 @@ export interface UITexts {
     level: LocalizedContent;
     progress: LocalizedContent;
     use80PercentUsers: LocalizedContent;
+    themeMatchPercentage: LocalizedContent;
     activity: {
       title: LocalizedContent;
       streak: LocalizedContent;

@@ -333,6 +333,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
           progress={worry.progress}
           isPremium={worry.isPremium}
           onClick={() => handleThemeClick(worry.themeId, worry.isAvailable)}
+          themeId={worry.themeId}
         />
       ))}
     </div>
