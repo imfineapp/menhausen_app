@@ -17,6 +17,7 @@ import { CheckInScreen } from './components/CheckInScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { UserProfileScreen } from './components/UserProfileScreen';
 import { AboutAppScreen } from './components/AboutAppScreen';
+import { AppSettingsScreen } from './components/AppSettingsScreen';
 import { PrivacyPolicyScreen } from './components/PrivacyPolicyScreen';
 import { TermsOfUseScreen } from './components/TermsOfUseScreen';
 import { DeleteAccountScreen } from './components/DeleteAccountScreen';
@@ -1861,7 +1862,15 @@ function AppContent() {
     navigateTo('about');
   };
 
+  const handleShowAppSettings = () => {
+    navigateTo('app-settings');
+  };
+
   const handleBackToProfile = () => {
+    navigateTo('profile');
+  };
+
+  const handleBackToProfileFromSettings = () => {
     navigateTo('profile');
   };
 
@@ -2487,21 +2496,28 @@ function AppContent() {
         return (
           <UserProfileScreen 
             onBack={handleBackToHome} 
-            onShowAboutApp={handleShowAboutApp} 
-            onShowPinSettings={handleShowPinSettings}
-            onShowPrivacy={handleShowPrivacyFromProfile}
-            onShowTerms={handleShowTermsFromProfile}
-            onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
             onShowDonations={handleShowDonations}
             onShowUnderConstruction={handleShowUnderConstruction}
             onGoToBadges={handleGoToBadges}
             onGoToLevels={handleGoToLevels}
+            onShowSettings={handleShowAppSettings}
             userHasPremium={userHasPremium}
           />
         );
       case 'about':
         return <AboutAppScreen onBack={handleBackToProfile} />;
+      case 'app-settings':
+        return (
+          <AppSettingsScreen 
+            onBack={handleBackToProfileFromSettings}
+            onShowAboutApp={handleShowAboutApp}
+            onShowPinSettings={handleShowPinSettings}
+            onShowPrivacy={handleShowPrivacyFromProfile}
+            onShowTerms={handleShowTermsFromProfile}
+            onShowDeleteAccount={handleShowDeleteAccount}
+          />
+        );
       case 'pin-settings':
         return (
           <PinSetupScreen 
