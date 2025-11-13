@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { skipOnboarding, skipSurvey, skipRewardScreen } from './skip-survey';
+import { skipOnboarding, skipSurvey, skipRewardScreen, skipPsychologicalTest } from './skip-survey';
 
 const CHECKIN_HEADING_SELECTOR = 'text=/^(How are you\\?|Как дела\\?)/i';
 
@@ -12,6 +12,9 @@ export async function navigateToHome(page: Page): Promise<void> {
   await page.waitForLoadState('domcontentloaded'); // Быстрее чем networkidle
   await skipOnboarding(page);
   await skipSurvey(page);
+  
+  // Пропускаем психологический тест, если он показывается
+  await skipPsychologicalTest(page);
   
   // Handle reward screen if it appears (after first check-in or achievement unlock)
   await skipRewardScreen(page);
@@ -29,6 +32,7 @@ export async function primeAppForHome(page: Page): Promise<void> {
     const progress = {
       onboardingCompleted: true,
       surveyCompleted: true,
+      psychologicalTestCompleted: true,
       pinEnabled: false,
       pinCompleted: true,
       firstCheckinDone: true,
@@ -52,6 +56,48 @@ export async function primeAppForHome(page: Page): Promise<void> {
     try {
       localStorage.setItem('app-flow-progress', JSON.stringify(progress));
       localStorage.setItem('survey-results', JSON.stringify({ completedAt: now.toISOString() }));
+      
+      // Сохраняем результаты психологического теста
+      const testResults = {
+        lastCompletedAt: now.toISOString(),
+        scores: {
+          stress: 10,
+          anxiety: 10,
+          relationships: 10,
+          selfEsteem: 10,
+          anger: 10,
+          depression: 10
+        },
+        percentages: {
+          stress: 50,
+          anxiety: 50,
+          relationships: 50,
+          selfEsteem: 50,
+          anger: 50,
+          depression: 50
+        },
+        history: [{
+          date: now.toISOString(),
+          scores: {
+            stress: 10,
+            anxiety: 10,
+            relationships: 10,
+            selfEsteem: 10,
+            anger: 10,
+            depression: 10
+          },
+          percentages: {
+            stress: 50,
+            anxiety: 50,
+            relationships: 50,
+            selfEsteem: 50,
+            anger: 50,
+            depression: 50
+          }
+        }]
+      };
+      localStorage.setItem('psychological-test-results', JSON.stringify(testResults));
+      
       localStorage.setItem('checkin-data', JSON.stringify([{ date: dayKey, mood: 'neutral', timestamp: now.toISOString() }]));
       localStorage.setItem(`daily_checkin_${dayKey}`, JSON.stringify(checkinEntry));
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
@@ -67,6 +113,7 @@ export async function primeAppForCheckin(page: Page): Promise<void> {
     const progress = {
       onboardingCompleted: true,
       surveyCompleted: true,
+      psychologicalTestCompleted: true,
       pinEnabled: false,
       pinCompleted: true,
       firstCheckinDone: false,
@@ -78,6 +125,48 @@ export async function primeAppForCheckin(page: Page): Promise<void> {
     try {
       localStorage.setItem('app-flow-progress', JSON.stringify(progress));
       localStorage.setItem('survey-results', JSON.stringify({ completedAt: now.toISOString() }));
+      
+      // Сохраняем результаты психологического теста
+      const testResults = {
+        lastCompletedAt: now.toISOString(),
+        scores: {
+          stress: 10,
+          anxiety: 10,
+          relationships: 10,
+          selfEsteem: 10,
+          anger: 10,
+          depression: 10
+        },
+        percentages: {
+          stress: 50,
+          anxiety: 50,
+          relationships: 50,
+          selfEsteem: 50,
+          anger: 50,
+          depression: 50
+        },
+        history: [{
+          date: now.toISOString(),
+          scores: {
+            stress: 10,
+            anxiety: 10,
+            relationships: 10,
+            selfEsteem: 10,
+            anger: 10,
+            depression: 10
+          },
+          percentages: {
+            stress: 50,
+            anxiety: 50,
+            relationships: 50,
+            selfEsteem: 50,
+            anger: 50,
+            depression: 50
+          }
+        }]
+      };
+      localStorage.setItem('psychological-test-results', JSON.stringify(testResults));
+      
       localStorage.removeItem('has-shown-first-achievement');
       localStorage.removeItem('checkin-data');
 
@@ -120,15 +209,60 @@ export async function seedCheckinHistory(
     const progress = {
       onboardingCompleted: true,
       surveyCompleted: options.surveyCompleted ?? true,
+      psychologicalTestCompleted: true,
       pinEnabled: false,
       pinCompleted: true,
       firstCheckinDone: options.firstCheckinDone ?? history.length > 0,
       firstRewardShown: options.firstRewardShown ?? history.length > 0
     };
 
+    const now = new Date();
+
     try {
       localStorage.setItem('app-flow-progress', JSON.stringify(progress));
-      localStorage.setItem('survey-results', JSON.stringify({ completedAt: new Date().toISOString() }));
+      localStorage.setItem('survey-results', JSON.stringify({ completedAt: now.toISOString() }));
+      
+      // Сохраняем результаты психологического теста
+      const testResults = {
+        lastCompletedAt: now.toISOString(),
+        scores: {
+          stress: 10,
+          anxiety: 10,
+          relationships: 10,
+          selfEsteem: 10,
+          anger: 10,
+          depression: 10
+        },
+        percentages: {
+          stress: 50,
+          anxiety: 50,
+          relationships: 50,
+          selfEsteem: 50,
+          anger: 50,
+          depression: 50
+        },
+        history: [{
+          date: now.toISOString(),
+          scores: {
+            stress: 10,
+            anxiety: 10,
+            relationships: 10,
+            selfEsteem: 10,
+            anger: 10,
+            depression: 10
+          },
+          percentages: {
+            stress: 50,
+            anxiety: 50,
+            relationships: 50,
+            selfEsteem: 50,
+            anger: 50,
+            depression: 50
+          }
+        }]
+      };
+      localStorage.setItem('psychological-test-results', JSON.stringify(testResults));
+      
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(progress.firstRewardShown));
 
       // Удаляем чекин на сегодня, если firstCheckinDone: false
@@ -197,6 +331,9 @@ export async function waitForHomeScreen(page: Page, timeout = 5000): Promise<voi
     if (isHome) {
       return;
     }
+    
+    // Пропускаем психологический тест, если он показывается
+    await skipPsychologicalTest(page);
     
     // Проверяем reward screen и обрабатываем его
     await skipRewardScreen(page);
