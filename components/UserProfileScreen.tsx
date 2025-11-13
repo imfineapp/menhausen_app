@@ -1,23 +1,14 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
-import { useState } from 'react';
-import { useLanguage, useTranslation } from './LanguageContext';
+import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
-import { LanguageModal } from './LanguageModal';
-import { Switch } from './ui/switch';
 
 // Импортируем выделенные компоненты
 import { 
   UnlockIcon, 
   DonationIcon, 
   ActivityIcon, 
-  ShareIcon, 
-  LanguageIcon, 
-  ReminderIcon, 
-  SecurityIcon, 
-  InfoIcon, 
-  PrivacyIcon, 
-  TermsIcon, 
-  DeleteIcon
+  ShareIcon,
+  SettingsIcon
 } from './UserProfileIcons';
 import { UserInfoSection, SettingsItem } from './UserProfileComponents';
 import { FeedbackSection } from './ProfileFeedbackSection';
@@ -30,16 +21,12 @@ import { ProgressBlock } from './ProgressBlock';
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
   onBack: () => void; // Функция для возврата к главной странице
-  onShowAboutApp: () => void; // Функция для открытия страницы "О приложении"
-  onShowPinSettings: () => void; // Функция для перехода к настройкам PIN кода
-  onShowPrivacy: () => void; // Функция для открытия Privacy Policy
-  onShowTerms: () => void; // Функция для открытия Terms of Use
-  onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
   onShowDonations: () => void; // Функция для перехода к странице донатов
   onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
   onGoToBadges: () => void; // Функция для перехода к странице достижений
   onGoToLevels: () => void; // Функция для перехода к странице уровней
+  onShowSettings: () => void; // Функция для перехода к странице настроек приложения
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -49,23 +36,15 @@ interface UserProfileScreenProps {
  */
 export function UserProfileScreen({ 
   onBack: _onBack, 
-  onShowAboutApp, 
-  onShowPinSettings, 
-  onShowPrivacy, 
-  onShowTerms, 
-  onShowDeleteAccount, 
   onShowPayments, 
   onShowDonations,
   onShowUnderConstruction, 
   onGoToBadges,
   onGoToLevels,
+  onShowSettings,
   userHasPremium 
 }: UserProfileScreenProps) {
-  // Состояние для настроек
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  
-  // Хуки для управления языком и шарингом
-  const { language, openLanguageModal } = useLanguage();
+  // Хуки для шаринга
   const { t } = useTranslation();
   const { getUI } = useContent();
   const { handleShare } = useAppShare();
@@ -90,41 +69,6 @@ export function UserProfileScreen({
   const handleActivity = () => {
     console.log('Opening activity - redirecting to Under Construction');
     onShowUnderConstruction('Your activity');
-  };
-
-  const handleLanguage = () => {
-    console.log('Opening language selection');
-    openLanguageModal();
-  };
-
-  const handleSecurityPin = () => {
-    console.log('Opening security PIN settings');
-    onShowPinSettings();
-  };
-
-  const handleAboutApp = () => {
-    console.log('Opening about app');
-    onShowAboutApp();
-  };
-
-  const handlePrivacyPolicy = () => {
-    console.log('Opening privacy policy from profile');
-    onShowPrivacy();
-  };
-
-  const handleTermsOfUse = () => {
-    console.log('Opening terms of use from profile');
-    onShowTerms();
-  };
-
-  const handleDeleteAccount = () => {
-    console.log('Navigating to delete account page');
-    onShowDeleteAccount();
-  };
-
-  const handleNotificationToggle = (enabled: boolean) => {
-    setNotificationsEnabled(enabled);
-    console.log('Notifications', enabled ? 'enabled' : 'disabled');
   };
 
   const handleStatusBlockBadges = () => {
@@ -163,8 +107,19 @@ export function UserProfileScreen({
           {/* Основной контент */}
           <div className="flex flex-col gap-8 sm:gap-10 w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
             
-            {/* Информация о пользователе */}
-            <UserInfoSection userHasPremium={userHasPremium} />
+            {/* Информация о пользователе с иконкой настроек */}
+            <div className="relative w-full">
+              <UserInfoSection userHasPremium={userHasPremium} />
+              {/* Иконка настроек в правой части на уровне верхней границы UserAvatar */}
+              <button
+                onClick={onShowSettings}
+                className="absolute top-0 right-0 flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer hover:opacity-80 transition-opacity"
+                data-name="Settings icon button"
+                aria-label="Settings"
+              >
+                <SettingsIcon />
+              </button>
+            </div>
             
             {/* Ряд статусных блоков */}
             <div className="w-full mt-6 sm:mt-8">
@@ -215,65 +170,8 @@ export function UserProfileScreen({
             
             {/* Секция обратной связи */}
             <FeedbackSection />
-            
-            {/* Секция "Settings" */}
-            <div className="flex flex-col gap-4 sm:gap-5 w-full">
-              <h2 className="typography-h2 text-[#e1ff00] text-left">{t('settings')}</h2>
-              <div className="flex flex-col w-full">
-                <SettingsItem
-                  icon={<LanguageIcon />}
-                  title={t('language')}
-                  rightElement={
-                    <div className="typography-body text-[#ffffff] text-right">
-                      <p className="block">{language === 'en' ? t('english') : t('russian')}</p>
-                    </div>
-                  }
-                  onClick={handleLanguage}
-                />
-                <SettingsItem
-                  icon={<ReminderIcon />}
-                  title={t('daily_reminder')}
-                  rightElement={
-                    <Switch 
-                      checked={notificationsEnabled} 
-                      onCheckedChange={handleNotificationToggle}
-                      data-testid="notifications-switch"
-                    />
-                  }
-                />
-                <SettingsItem
-                  icon={<SecurityIcon />}
-                  title={t('security_pin')}
-                  onClick={handleSecurityPin}
-                />
-                <SettingsItem
-                  icon={<InfoIcon />}
-                  title={t('about_app')}
-                  onClick={handleAboutApp}
-                />
-                <SettingsItem
-                  icon={<PrivacyIcon />}
-                  title={t('privacy_policy')}
-                  onClick={handlePrivacyPolicy}
-                />
-                <SettingsItem
-                  icon={<TermsIcon />}
-                  title={t('terms_of_use')}
-                  onClick={handleTermsOfUse}
-                />
-                <SettingsItem
-                  icon={<DeleteIcon />}
-                  title={t('delete_account')}
-                  onClick={handleDeleteAccount}
-                  isHighlighted={true}
-                />
-              </div>
-            </div>
           </div>
         </div>
-      
-        {/* Модальное окно выбора языка */}
-        <LanguageModal />
       </div>
     </div>
   );

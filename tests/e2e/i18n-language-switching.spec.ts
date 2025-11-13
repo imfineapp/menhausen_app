@@ -36,6 +36,11 @@ test.describe('i18n Language Switching', () => {
     // Ждем появления страницы профиля
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
 
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    // Ждем появления страницы настроек
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
+
     await page.click('text=Language');
     await expect(page.locator('[data-name="Language Modal Content"]')).toBeVisible();
     await page.click('text=Русский');
@@ -59,6 +64,9 @@ test.describe('i18n Language Switching', () => {
   test('должен сохранять выбранный язык после перезагрузки', async ({ page }) => {
     await page.click('[data-name="User frame info block"]');
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
     await page.click('text=Language');
     await page.click('text=Русский');
     await page.click('[data-name="Confirm button"]');
@@ -67,6 +75,10 @@ test.describe('i18n Language Switching', () => {
     await ensureHome(page);
     
     await page.click('[data-name="User frame info block"]');
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
     await expect(page.getByText('Русский')).toBeVisible();
   });
 
@@ -78,6 +90,10 @@ test.describe('i18n Language Switching', () => {
     
     // Проверяем, что мы на странице профиля
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
     
     await page.click('text=Language');
     await page.click('text=Русский');
@@ -99,6 +115,9 @@ test.describe('i18n Language Switching', () => {
   test('должен переводить ментальные техники', async ({ page }) => {
     await page.click('[data-name="User frame info block"]');
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
     await page.click('text=Language');
     await page.click('text=Русский');
     await page.click('[data-name="Confirm button"]');
@@ -115,6 +134,9 @@ test.describe('i18n Language Switching', () => {
     
     await page.click('[data-name="User frame info block"]');
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    // Кликаем на иконку настроек
+    await page.click('[data-name="Settings icon button"]');
+    await expect(page.locator('[data-name="App Settings Page"]')).toBeVisible({ timeout: 5000 });
     await page.click('text=Language');
     await page.click('text=Русский');
     await page.click('[data-name="Confirm button"]');

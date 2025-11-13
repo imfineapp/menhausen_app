@@ -8,11 +8,16 @@ import { SurveyScreen03 } from './components/SurveyScreen03';
 import { SurveyScreen04 } from './components/SurveyScreen04';
 import { SurveyScreen05 } from './components/SurveyScreen05';
 import { SurveyScreen06 } from './components/SurveyScreen06';
+import { PsychologicalTestPreambulaScreen } from './components/PsychologicalTestPreambulaScreen';
+import { PsychologicalTestInstructionScreen } from './components/PsychologicalTestInstructionScreen';
+import { PsychologicalTestQuestionScreen } from './components/PsychologicalTestQuestionScreen';
+import { PsychologicalTestResultsScreen } from './components/PsychologicalTestResultsScreen';
 import { PinSetupScreen } from './components/PinSetupScreen';
 import { CheckInScreen } from './components/CheckInScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { UserProfileScreen } from './components/UserProfileScreen';
 import { AboutAppScreen } from './components/AboutAppScreen';
+import { AppSettingsScreen } from './components/AppSettingsScreen';
 import { PrivacyPolicyScreen } from './components/PrivacyPolicyScreen';
 import { TermsOfUseScreen } from './components/TermsOfUseScreen';
 import { DeleteAccountScreen } from './components/DeleteAccountScreen';
@@ -53,6 +58,9 @@ import { LanguageProvider } from './components/LanguageContext';
 import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
+import { LikertScaleAnswer, PsychologicalTestPercentages } from './types/psychologicalTest';
+import { calculateTestResults } from './utils/psychologicalTestCalculator';
+import { saveTestResults, hasTestBeenCompleted, loadTestResults, clearTestResults } from './utils/psychologicalTestStorage';
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
@@ -66,8 +74,7 @@ import { getAchievementMetadata } from './utils/achievementsMetadata';
 import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService';
 import { getTelegramUserId } from './utils/telegramUserUtils';
-
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'all-articles' | 'article';
+import { AppScreen } from './types/userState';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -368,6 +375,7 @@ function AppContent() {
   type AppFlowProgress = {
     onboardingCompleted: boolean;
     surveyCompleted: boolean;
+    psychologicalTestCompleted: boolean;
     pinEnabled: boolean;       // feature flag, disabled for now
     pinCompleted: boolean;
     firstCheckinDone: boolean;
@@ -379,6 +387,7 @@ function AppContent() {
   const defaultProgress: AppFlowProgress = {
     onboardingCompleted: false,
     surveyCompleted: false,
+    psychologicalTestCompleted: false,
     pinEnabled: false, // skip PIN in the main flow for now
     pinCompleted: false,
     firstCheckinDone: false,
@@ -423,6 +432,12 @@ function AppContent() {
 
     if (!p.surveyCompleted) {
       return 'survey01';
+    }
+
+    // Проверяем, был ли пройден психологический тест
+    // Если тест не пройден, но опрос завершен, показываем тест
+    if (!p.psychologicalTestCompleted && !hasTestBeenCompleted()) {
+      return 'psychological-test-preambula';
     }
 
     // Daily check-in logic: Check if check-in is needed today
@@ -476,6 +491,11 @@ function AppContent() {
     screen05: []
   });
 
+  // =====================================================================================
+  // СОСТОЯНИЕ ДЛЯ ПСИХОЛОГИЧЕСКОГО ТЕСТА
+  // =====================================================================================
+  const [psychologicalTestAnswers, setPsychologicalTestAnswers] = useState<LikertScaleAnswer[]>([]);
+
   // Получение системы контента
   const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage, getUI } = useContent();
   
@@ -516,7 +536,20 @@ function AppContent() {
   // Список экранов, на которых не показываем RewardScreen автоматически
   // Эти экраны требуют завершения действия пользователя перед показом уведомлений
   const blockedScreensForReward: AppScreen[] = useMemo(() => [
-    'onboarding1', 'onboarding2', 'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'onboarding1', 'onboarding2', 
+    'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'psychological-test-preambula', 'psychological-test-instruction',
+    'psychological-test-question-01', 'psychological-test-question-02', 'psychological-test-question-03',
+    'psychological-test-question-04', 'psychological-test-question-05', 'psychological-test-question-06',
+    'psychological-test-question-07', 'psychological-test-question-08', 'psychological-test-question-09',
+    'psychological-test-question-10', 'psychological-test-question-11', 'psychological-test-question-12',
+    'psychological-test-question-13', 'psychological-test-question-14', 'psychological-test-question-15',
+    'psychological-test-question-16', 'psychological-test-question-17', 'psychological-test-question-18',
+    'psychological-test-question-19', 'psychological-test-question-20', 'psychological-test-question-21',
+    'psychological-test-question-22', 'psychological-test-question-23', 'psychological-test-question-24',
+    'psychological-test-question-25', 'psychological-test-question-26', 'psychological-test-question-27',
+    'psychological-test-question-28', 'psychological-test-question-29', 'psychological-test-question-30',
+    'psychological-test-results',
     'pin', 'checkin', 'reward', 'card-welcome', 'question-01', 'question-02', 'final-message', 'rate-card'
     // Примечание: 'card-details' не заблокирован, чтобы можно было показывать уведомления во время просмотра карточки
   ], []);
@@ -1269,8 +1302,8 @@ function AppContent() {
         // через функцию updateReferrerStatsFromList, которая должна вызываться при инициализации
       }
 
-      // Decide next step: skip PIN if disabled
-      const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+      // После опроса переходим к психологическому тесту
+      const nextScreen: AppScreen = 'psychological-test-preambula';
 
     if (saveSuccess) {
       console.log('Survey completed successfully');
@@ -1291,6 +1324,50 @@ function AppContent() {
   const handleBackToSurvey03 = () => navigateTo('survey03');
   const handleBackToSurvey04 = () => navigateTo('survey04');
   const handleBackToSurvey05 = () => navigateTo('survey05');
+
+  // =====================================================================================
+  // ОБРАБОТЧИКИ ДЛЯ ПСИХОЛОГИЧЕСКОГО ТЕСТА
+  // =====================================================================================
+  
+  const handlePsychologicalTestPreambulaNext = () => {
+    navigateTo('psychological-test-instruction');
+  };
+
+  const handlePsychologicalTestInstructionNext = () => {
+    navigateTo('psychological-test-question-01');
+  };
+
+  const handlePsychologicalTestQuestionNext = (questionNumber: number, answer: LikertScaleAnswer) => {
+    // Сохраняем ответ
+    const newAnswers = [...psychologicalTestAnswers];
+    newAnswers[questionNumber - 1] = answer; // questionNumber 1-based, array 0-based
+    setPsychologicalTestAnswers(newAnswers);
+
+    // Если это последний вопрос (30), переходим к результатам
+    if (questionNumber === 30) {
+      // Рассчитываем результаты
+      const { scores, percentages } = calculateTestResults(newAnswers);
+      
+      // Сохраняем результаты
+      saveTestResults(scores, percentages);
+      
+      // Обновляем flow
+      updateFlow(p => ({ ...p, psychologicalTestCompleted: true }));
+      
+      // Переходим к экрану результатов
+      navigateTo('psychological-test-results');
+    } else {
+      // Переходим к следующему вопросу
+      const nextQuestionNumber = questionNumber + 1;
+      const nextScreen = `psychological-test-question-${String(nextQuestionNumber).padStart(2, '0')}` as AppScreen;
+      navigateTo(nextScreen);
+    }
+  };
+
+  const handlePsychologicalTestResultsNext = () => {
+    // После результатов теста переходим к чекину
+    navigateTo('checkin');
+  };
 
   const _handleGoToCheckIn = () => {
     navigateTo('checkin');
@@ -1785,7 +1862,15 @@ function AppContent() {
     navigateTo('about');
   };
 
+  const handleShowAppSettings = () => {
+    navigateTo('app-settings');
+  };
+
   const handleBackToProfile = () => {
+    navigateTo('profile');
+  };
+
+  const handleBackToProfileFromSettings = () => {
     navigateTo('profile');
   };
 
@@ -1861,6 +1946,9 @@ function AppContent() {
       screen05: []
     });
     localStorage.removeItem('survey-results');
+    // Очищаем данные психологического теста
+    setPsychologicalTestAnswers([]);
+    clearTestResults();
     // Сбрасываем историю навигации
     setNavigationHistory(['onboarding1']);
     setCurrentScreen('onboarding1');
@@ -1992,6 +2080,295 @@ function AppContent() {
           />
         );
 
+      // Экраны психологического теста
+      case 'psychological-test-preambula':
+        return (
+          <PsychologicalTestPreambulaScreen 
+            onNext={handlePsychologicalTestPreambulaNext}
+          />
+        );
+      
+      case 'psychological-test-instruction':
+        return (
+          <PsychologicalTestInstructionScreen 
+            onNext={handlePsychologicalTestInstructionNext}
+          />
+        );
+      
+      case 'psychological-test-question-01':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={1}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(1, answer)}
+            initialAnswer={psychologicalTestAnswers[0] || null}
+          />
+        );
+      case 'psychological-test-question-02':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={2}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(2, answer)}
+            initialAnswer={psychologicalTestAnswers[1] || null}
+          />
+        );
+      case 'psychological-test-question-03':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={3}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(3, answer)}
+            initialAnswer={psychologicalTestAnswers[2] || null}
+          />
+        );
+      case 'psychological-test-question-04':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={4}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(4, answer)}
+            initialAnswer={psychologicalTestAnswers[3] || null}
+          />
+        );
+      case 'psychological-test-question-05':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={5}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(5, answer)}
+            initialAnswer={psychologicalTestAnswers[4] || null}
+          />
+        );
+      case 'psychological-test-question-06':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={6}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(6, answer)}
+            initialAnswer={psychologicalTestAnswers[5] || null}
+          />
+        );
+      case 'psychological-test-question-07':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={7}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(7, answer)}
+            initialAnswer={psychologicalTestAnswers[6] || null}
+          />
+        );
+      case 'psychological-test-question-08':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={8}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(8, answer)}
+            initialAnswer={psychologicalTestAnswers[7] || null}
+          />
+        );
+      case 'psychological-test-question-09':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={9}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(9, answer)}
+            initialAnswer={psychologicalTestAnswers[8] || null}
+          />
+        );
+      case 'psychological-test-question-10':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={10}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(10, answer)}
+            initialAnswer={psychologicalTestAnswers[9] || null}
+          />
+        );
+      case 'psychological-test-question-11':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={11}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(11, answer)}
+            initialAnswer={psychologicalTestAnswers[10] || null}
+          />
+        );
+      case 'psychological-test-question-12':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={12}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(12, answer)}
+            initialAnswer={psychologicalTestAnswers[11] || null}
+          />
+        );
+      case 'psychological-test-question-13':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={13}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(13, answer)}
+            initialAnswer={psychologicalTestAnswers[12] || null}
+          />
+        );
+      case 'psychological-test-question-14':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={14}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(14, answer)}
+            initialAnswer={psychologicalTestAnswers[13] || null}
+          />
+        );
+      case 'psychological-test-question-15':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={15}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(15, answer)}
+            initialAnswer={psychologicalTestAnswers[14] || null}
+          />
+        );
+      case 'psychological-test-question-16':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={16}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(16, answer)}
+            initialAnswer={psychologicalTestAnswers[15] || null}
+          />
+        );
+      case 'psychological-test-question-17':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={17}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(17, answer)}
+            initialAnswer={psychologicalTestAnswers[16] || null}
+          />
+        );
+      case 'psychological-test-question-18':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={18}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(18, answer)}
+            initialAnswer={psychologicalTestAnswers[17] || null}
+          />
+        );
+      case 'psychological-test-question-19':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={19}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(19, answer)}
+            initialAnswer={psychologicalTestAnswers[18] || null}
+          />
+        );
+      case 'psychological-test-question-20':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={20}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(20, answer)}
+            initialAnswer={psychologicalTestAnswers[19] || null}
+          />
+        );
+      case 'psychological-test-question-21':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={21}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(21, answer)}
+            initialAnswer={psychologicalTestAnswers[20] || null}
+          />
+        );
+      case 'psychological-test-question-22':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={22}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(22, answer)}
+            initialAnswer={psychologicalTestAnswers[21] || null}
+          />
+        );
+      case 'psychological-test-question-23':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={23}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(23, answer)}
+            initialAnswer={psychologicalTestAnswers[22] || null}
+          />
+        );
+      case 'psychological-test-question-24':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={24}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(24, answer)}
+            initialAnswer={psychologicalTestAnswers[23] || null}
+          />
+        );
+      case 'psychological-test-question-25':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={25}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(25, answer)}
+            initialAnswer={psychologicalTestAnswers[24] || null}
+          />
+        );
+      case 'psychological-test-question-26':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={26}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(26, answer)}
+            initialAnswer={psychologicalTestAnswers[25] || null}
+          />
+        );
+      case 'psychological-test-question-27':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={27}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(27, answer)}
+            initialAnswer={psychologicalTestAnswers[26] || null}
+          />
+        );
+      case 'psychological-test-question-28':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={28}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(28, answer)}
+            initialAnswer={psychologicalTestAnswers[27] || null}
+          />
+        );
+      case 'psychological-test-question-29':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={29}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(29, answer)}
+            initialAnswer={psychologicalTestAnswers[28] || null}
+          />
+        );
+      case 'psychological-test-question-30':
+        return (
+          <PsychologicalTestQuestionScreen 
+            questionNumber={30}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(30, answer)}
+            initialAnswer={psychologicalTestAnswers[29] || null}
+          />
+        );
+      
+      case 'psychological-test-results': {
+        // Рассчитываем результаты для отображения
+        // Используем сохраненные результаты из localStorage, если они есть
+        const savedResults = loadTestResults();
+        
+        // Безопасное вычисление процентов: проверяем, что есть 30 ответов
+        let percentages: PsychologicalTestPercentages;
+        if (savedResults?.percentages) {
+          percentages = savedResults.percentages;
+        } else if (psychologicalTestAnswers.length === 30) {
+          // Все ответы на месте, можем безопасно рассчитать
+          percentages = calculateTestResults(psychologicalTestAnswers).percentages;
+        } else {
+          // Неполные данные - используем нулевые значения по умолчанию
+          console.warn(`Psychological test results: incomplete answers (${psychologicalTestAnswers.length}/30). Using default zero percentages.`);
+          percentages = {
+            stress: 0,
+            anxiety: 0,
+            relationships: 0,
+            selfEsteem: 0,
+            anger: 0,
+            depression: 0
+          };
+        }
+        
+        return (
+          <PsychologicalTestResultsScreen 
+            percentages={percentages}
+            onNext={handlePsychologicalTestResultsNext}
+          />
+        );
+      }
+
       case 'pin':
         return (
           <PinSetupScreen 
@@ -2119,21 +2496,28 @@ function AppContent() {
         return (
           <UserProfileScreen 
             onBack={handleBackToHome} 
-            onShowAboutApp={handleShowAboutApp} 
-            onShowPinSettings={handleShowPinSettings}
-            onShowPrivacy={handleShowPrivacyFromProfile}
-            onShowTerms={handleShowTermsFromProfile}
-            onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
             onShowDonations={handleShowDonations}
             onShowUnderConstruction={handleShowUnderConstruction}
             onGoToBadges={handleGoToBadges}
             onGoToLevels={handleGoToLevels}
+            onShowSettings={handleShowAppSettings}
             userHasPremium={userHasPremium}
           />
         );
       case 'about':
         return <AboutAppScreen onBack={handleBackToProfile} />;
+      case 'app-settings':
+        return (
+          <AppSettingsScreen 
+            onBack={handleBackToProfileFromSettings}
+            onShowAboutApp={handleShowAboutApp}
+            onShowPinSettings={handleShowPinSettings}
+            onShowPrivacy={handleShowPrivacyFromProfile}
+            onShowTerms={handleShowTermsFromProfile}
+            onShowDeleteAccount={handleShowDeleteAccount}
+          />
+        );
       case 'pin-settings':
         return (
           <PinSetupScreen 

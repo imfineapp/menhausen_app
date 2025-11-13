@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
 // Моки больше не используются - все тесты используют реальный контент
@@ -222,6 +222,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         level: 'Level',
         progress: 'Progress',
         use80PercentUsers: 'Use 80% users',
+        themeMatchPercentage: 'Matches you {percentage}%',
         activity: {
           title: 'Activity',
           streak: '4 days',
@@ -433,6 +434,13 @@ export function ContentProvider({ children }: ContentProviderProps) {
   }, [content]);
 
   /**
+   * Получение контента психологического теста
+   */
+  const getPsychologicalTest = useCallback((): PsychologicalTestContent | undefined => {
+    return content?.psychologicalTest;
+  }, [content]);
+
+  /**
    * Получение всех ментальных техник
    */
   const getMentalTechniques = useCallback((): MentalTechniqueData[] => {
@@ -551,6 +559,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getBadges,
     getArticle,
     getAllArticles,
+    getPsychologicalTest,
     getLocalizedBadges
   };
 
