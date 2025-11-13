@@ -222,6 +222,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         level: 'Level',
         progress: 'Progress',
         use80PercentUsers: 'Use 80% users',
+        themeMatchPercentage: 'Matches you {percentage}%',
         activity: {
           title: 'Activity',
           streak: '4 days',
