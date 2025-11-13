@@ -73,8 +73,7 @@ import { getAchievementMetadata } from './utils/achievementsMetadata';
 import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService';
 import { getTelegramUserId } from './utils/telegramUserUtils';
-
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'all-articles' | 'article';
+import { AppScreen } from './types/userState';
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -536,7 +535,20 @@ function AppContent() {
   // Список экранов, на которых не показываем RewardScreen автоматически
   // Эти экраны требуют завершения действия пользователя перед показом уведомлений
   const blockedScreensForReward: AppScreen[] = useMemo(() => [
-    'onboarding1', 'onboarding2', 'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'onboarding1', 'onboarding2', 
+    'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'psychological-test-preambula', 'psychological-test-instruction',
+    'psychological-test-question-01', 'psychological-test-question-02', 'psychological-test-question-03',
+    'psychological-test-question-04', 'psychological-test-question-05', 'psychological-test-question-06',
+    'psychological-test-question-07', 'psychological-test-question-08', 'psychological-test-question-09',
+    'psychological-test-question-10', 'psychological-test-question-11', 'psychological-test-question-12',
+    'psychological-test-question-13', 'psychological-test-question-14', 'psychological-test-question-15',
+    'psychological-test-question-16', 'psychological-test-question-17', 'psychological-test-question-18',
+    'psychological-test-question-19', 'psychological-test-question-20', 'psychological-test-question-21',
+    'psychological-test-question-22', 'psychological-test-question-23', 'psychological-test-question-24',
+    'psychological-test-question-25', 'psychological-test-question-26', 'psychological-test-question-27',
+    'psychological-test-question-28', 'psychological-test-question-29', 'psychological-test-question-30',
+    'psychological-test-results',
     'pin', 'checkin', 'reward', 'card-welcome', 'question-01', 'question-02', 'final-message', 'rate-card'
     // Примечание: 'card-details' не заблокирован, чтобы можно было показывать уведомления во время просмотра карточки
   ], []);
