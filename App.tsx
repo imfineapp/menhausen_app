@@ -57,9 +57,9 @@ import { LanguageProvider } from './components/LanguageContext';
 import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
-import { LikertScaleAnswer } from './types/psychologicalTest';
+import { LikertScaleAnswer, PsychologicalTestPercentages } from './types/psychologicalTest';
 import { calculateTestResults } from './utils/psychologicalTestCalculator';
-import { saveTestResults, hasTestBeenCompleted, loadTestResults } from './utils/psychologicalTestStorage';
+import { saveTestResults, hasTestBeenCompleted, loadTestResults, clearTestResults } from './utils/psychologicalTestStorage';
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
@@ -1937,6 +1937,9 @@ function AppContent() {
       screen05: []
     });
     localStorage.removeItem('survey-results');
+    // Очищаем данные психологического теста
+    setPsychologicalTestAnswers([]);
+    clearTestResults();
     // Сбрасываем историю навигации
     setNavigationHistory(['onboarding1']);
     setCurrentScreen('onboarding1');
@@ -2328,7 +2331,27 @@ function AppContent() {
         // Рассчитываем результаты для отображения
         // Используем сохраненные результаты из localStorage, если они есть
         const savedResults = loadTestResults();
-        const percentages = savedResults?.percentages || calculateTestResults(psychologicalTestAnswers).percentages;
+        
+        // Безопасное вычисление процентов: проверяем, что есть 30 ответов
+        let percentages: PsychologicalTestPercentages;
+        if (savedResults?.percentages) {
+          percentages = savedResults.percentages;
+        } else if (psychologicalTestAnswers.length === 30) {
+          // Все ответы на месте, можем безопасно рассчитать
+          percentages = calculateTestResults(psychologicalTestAnswers).percentages;
+        } else {
+          // Неполные данные - используем нулевые значения по умолчанию
+          console.warn(`Psychological test results: incomplete answers (${psychologicalTestAnswers.length}/30). Using default zero percentages.`);
+          percentages = {
+            stress: 0,
+            anxiety: 0,
+            relationships: 0,
+            selfEsteem: 0,
+            anger: 0,
+            depression: 0
+          };
+        }
+        
         return (
           <PsychologicalTestResultsScreen 
             percentages={percentages}
