@@ -60,7 +60,7 @@ export function ArticleScreen({
   articleId, 
   onBack, 
   onGoToTheme, 
-  userHasPremium: _userHasPremium = false,
+  userHasPremium = false,
   checkAndShowAchievements,
   navigateTo,
   earnedAchievementIds = [],
@@ -279,6 +279,7 @@ export function ArticleScreen({
                         description={card.description}
                         progress={card.progress}
                         isPremium={card.isPremium}
+                        userHasPremium={userHasPremium}
                         onClick={() => onGoToTheme?.(card.normalizedThemeId)}
                         themeId={card.normalizedThemeId}
                       />

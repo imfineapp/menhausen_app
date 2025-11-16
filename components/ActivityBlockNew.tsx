@@ -7,6 +7,7 @@ import { DailyCheckinManager } from '../utils/DailyCheckinManager';
 import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';  
 import { PointsManager } from '../utils/PointsManager';
 import { useEffect, useMemo, useState, useRef } from 'react';
+import { getActivityDataForPeriod, ActivityType } from '../utils/ActivityDataManager';
 
 interface ActivityBlockNewProps {
   activityData?: ActivityData;
@@ -21,28 +22,10 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const _currentStreak = DailyCheckinManager.getCheckinStreak();
   const [earnedPoints, setEarnedPoints] = useState<number>(0);
   const [nextTarget, setNextTarget] = useState<number>(1000);
-  const [weeklyCheckins, setWeeklyCheckins] = useState<Record<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun', boolean>>({                                            
-    mon: false,
-    tue: false,
-    wed: false,
-    thu: false,
-    fri: false,
-    sat: false,
-    sun: false
-  });
+  const [weeklyActivityData, setWeeklyActivityData] = useState<Array<{ date: string; activityType: ActivityType; dateKey: string }>>([]);
 
   // Используем ref для отслеживания предыдущих значений и предотвращения бесконечных циклов
   const prevPointsRef = useRef<{ earned: number; target: number }>({ earned: 0, target: 1000 });
-  const prevWeeklyRef = useRef<Record<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun', boolean> | null>(null);
-
-  // Вспомогательная функция для сравнения объектов weeklyCheckins
-  const areWeeklyCheckinsEqual = (
-    a: Record<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun', boolean>,
-    b: Record<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun', boolean>
-  ): boolean => {
-    const keys: Array<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun'> = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-    return keys.every(key => a[key] === b[key]);
-  };
 
   useEffect(() => {
     const readPoints = () => {
@@ -76,24 +59,44 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   useEffect(() => {
     const readWeekly = () => {
       try {
-        const weekly = DailyCheckinManager.getWeeklyCheckinsStatus();
+        // Вычисляем понедельник текущей недели
+        const today = new Date();
+        today.setHours(23, 59, 59, 999);
+        const dayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
         
-        // Обновляем состояние только если значения действительно изменились
-        if (!prevWeeklyRef.current || !areWeeklyCheckinsEqual(prevWeeklyRef.current, weekly)) {
-          setWeeklyCheckins(weekly);
-          prevWeeklyRef.current = weekly;
-        }
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - daysToMonday);
+        monday.setHours(0, 0, 0, 0);
+        
+        const sunday = new Date(monday);
+        sunday.setDate(monday.getDate() + 6);
+        sunday.setHours(23, 59, 59, 999);
+        
+        // Получаем данные активности за текущую неделю
+        const activityData = getActivityDataForPeriod(monday, sunday);
+        
+        // Преобразуем в формат с dateKey для удобства
+        const weeklyData = activityData.map(item => ({
+          date: item.date,
+          activityType: item.activityType,
+          dateKey: item.date
+        }));
+        
+        setWeeklyActivityData(weeklyData);
       } catch (error) {
-        console.warn('ActivityBlockNew: failed to load weekly check-ins', error);                                                                               
+        console.warn('ActivityBlockNew: failed to load weekly activity data', error);                                                                               
       }
     };
     readWeekly();
     const onUpdate = () => readWeekly();
     window.addEventListener('storage', onUpdate);
-    window.addEventListener('points:updated', onUpdate as EventListener);       
+    window.addEventListener('points:updated', onUpdate as EventListener);
+    window.addEventListener('card:completed', onUpdate as EventListener);
     return () => {
       window.removeEventListener('storage', onUpdate);
       window.removeEventListener('points:updated', onUpdate as EventListener);
+      window.removeEventListener('card:completed', onUpdate as EventListener);
     };
   }, []);
   
@@ -102,11 +105,75 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
     streakDays: totalCheckins > 0 ? totalCheckins : 0,
     currentPoints: earnedPoints,
     targetPoints: nextTarget,
-    weeklyCheckins: weeklyCheckins
+    weeklyCheckins: {
+      mon: false,
+      tue: false,
+      wed: false,
+      thu: false,
+      fri: false,
+      sat: false,
+      sun: false
+    }
   };
 
   const data = activityData || defaultData;
-  const progressPercentage = (data.currentPoints / data.targetPoints) * 100;    
+  const progressPercentage = (data.currentPoints / data.targetPoints) * 100;
+  
+  // Создаем карту активности по датам для быстрого доступа
+  const activityMap = useMemo(() => {
+    const map = new Map<string, ActivityType>();
+    weeklyActivityData.forEach(item => {
+      map.set(item.dateKey, item.activityType);
+    });
+    return map;
+  }, [weeklyActivityData]);
+  
+  // Получаем цвет для типа активности (как в ActivityHeatmapBlock)
+  const getColor = (activityType: ActivityType): string => {
+    switch (activityType) {
+      case ActivityType.CHECKIN_AND_EXERCISE:
+        return '#e1ff00'; // Яркий желтый
+      case ActivityType.CHECKIN_ONLY:
+        return '#b8b800'; // Приглушенный желтый
+      case ActivityType.NONE:
+      default:
+        return 'rgba(128, 128, 128, 0.1)'; // Серый с прозрачностью 10%
+    }
+  };
+  
+  // Получаем эффект свечения для типа активности
+  const getGlowStyle = (activityType: ActivityType): string => {
+    if (activityType === ActivityType.NONE) {
+      return 'none';
+    }
+    const glowColor = activityType === ActivityType.CHECKIN_AND_EXERCISE 
+      ? 'rgba(225, 255, 0, 0.5)' // Яркий желтый
+      : 'rgba(184, 184, 0, 0.4)'; // Приглушенный желтый
+    return `0 0 10px 0 ${glowColor}`;
+  };
+  
+  // Получаем тип активности для дня недели
+  const getActivityTypeForDay = useMemo(() => {
+    // Вычисляем понедельник текущей недели (та же логика, что и в daysOfWeek)
+    const today = new Date();
+    const dow = today.getDay(); // 0=Sun..6=Sat
+    const monday = new Date(today);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(today.getDate() - ((dow === 0 ? 7 : dow) - 1));
+    
+    return (dayKey: string): ActivityType => {
+      const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayKey);
+      if (dayIndex === -1) return ActivityType.NONE;
+      
+      const targetDate = new Date(monday);
+      targetDate.setDate(monday.getDate() + dayIndex);
+      targetDate.setHours(0, 0, 0, 0);
+      
+      const dateKey = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
+      
+      return activityMap.get(dateKey) ?? ActivityType.NONE;
+    };
+  }, [activityMap]);    
 
   // Функция для получения правильной формы слова "день"
   const getDayLabel = (count: number) => {
@@ -186,7 +253,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
               <span className="text-2xl sm:text-3xl font-bold text-white">      
                 {data.currentPoints.toLocaleString()}
               </span>
-              <span className="text-lg text-[#696969]">
+              <span className="text-2xl sm:text-3xl font-bold text-white">
                 / {data.targetPoints.toLocaleString()}
               </span>
             </div>
@@ -207,34 +274,22 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
           {/* Еженедельные чекины */}
           <div className="bg-black/50 rounded-lg w-full">
             <div className="flex justify-between items-center w-full p-3">      
-              {daysOfWeek.map((day) => (
-                <div key={day.key} className="flex flex-col items-center space-y-1">                                                                            
-                  <div
-                    className={`w-4 h-4 rounded-full flex items-center justify-center transition-all duration-200 ${                                            
-                      data.weeklyCheckins[day.key]
-                        ? 'bg-[#e1ff00] checkin-glow' 
-                        : 'bg-black'
-                    }`}
-                  >
-                    {data.weeklyCheckins[day.key] && (
-                      <svg
-                        className="w-2 h-2 text-[#696969]"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7" 
-                        />
-                      </svg>
-                    )}
+              {daysOfWeek.map((day) => {
+                const activityType = getActivityTypeForDay(day.key);
+                return (
+                  <div key={day.key} className="flex flex-col items-center space-y-1">                                                                            
+                    <div
+                      className="w-4 h-4 rounded-sm flex items-center justify-center transition-all duration-200"
+                      style={{
+                        backgroundColor: getColor(activityType),
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: activityType !== ActivityType.NONE ? getGlowStyle(activityType) : 'none'
+                      }}
+                    />
+                    <span className="text-xs text-white">{day.label}</span>       
                   </div>
-                  <span className="text-xs text-white">{day.label}</span>       
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

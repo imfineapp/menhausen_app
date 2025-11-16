@@ -7,6 +7,7 @@ import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { PsychologicalTestPercentages } from '../types/psychologicalTest';
+import { AlertTriangle } from 'lucide-react';
 
 interface PsychologicalTestResultsScreenProps {
   percentages: PsychologicalTestPercentages;
@@ -21,7 +22,7 @@ export function PsychologicalTestResultsScreen({
   percentages, 
   onNext 
 }: PsychologicalTestResultsScreenProps) {
-  const { content } = useContent();
+  const { content, getLocalizedText } = useContent();
   const testContent = content.psychologicalTest;
 
   if (!testContent) {
@@ -58,12 +59,27 @@ export function PsychologicalTestResultsScreen({
             {/* Заголовок */}
             <div className="text-center mb-8">
               <h1 className="typography-h1 text-white mb-4">
-                {testContent.results.title}
+                {getLocalizedText(testContent.results.title)}
               </h1>
               <p className="typography-body text-[#d4d4d4]">
-                {testContent.results.subtitle}
+                {getLocalizedText(testContent.results.subtitle)}
               </p>
             </div>
+
+            {/* Предупреждение о депрессии */}
+            {percentages.depression < 30 && testContent.results.depressionWarning && (
+              <div className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                  <h3 className="typography-body font-semibold text-yellow-400">
+                    {getLocalizedText(testContent.results.depressionWarning.title)}
+                  </h3>
+                </div>
+                <p className="typography-caption text-yellow-200 text-sm leading-relaxed">
+                  {getLocalizedText(testContent.results.depressionWarning.text)}
+                </p>
+              </div>
+            )}
 
             {/* Результаты по темам */}
             <div className="space-y-4">
@@ -74,7 +90,7 @@ export function PsychologicalTestResultsScreen({
                 >
                   <div className="flex justify-between items-center">
                     <span className="typography-body text-[#d4d4d4]">
-                      {result.label}
+                      {getLocalizedText(result.label)}
                     </span>
                     <span className="typography-h2 text-[#e1ff00]">
                       {result.percentage}%
@@ -94,7 +110,7 @@ export function PsychologicalTestResultsScreen({
         dataName="Next button"
         ariaLabel="Next"
       >
-        {testContent.results.buttonText}
+        {getLocalizedText(testContent.results.buttonText)}
       </BottomFixedButton>
     </div>
   );

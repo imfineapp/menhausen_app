@@ -30,7 +30,8 @@ function ArticleCard({
   onClick,
   locked,
   requiredPoints,
-  badgeText
+  badgeText,
+  checkIfSwiped
 }: { 
   article: {
     id: string;
@@ -42,11 +43,38 @@ function ArticleCard({
   locked: boolean;
   requiredPoints: number;
   badgeText: string;
+  checkIfSwiped?: () => boolean;
 }) {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Если был свайп, не вызываем onClick
+    if (checkIfSwiped && checkIfSwiped()) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    onClick();
+  };
+  
+  const handleTouchStart = (_e: React.TouchEvent) => {
+    // Не блокируем событие, чтобы слайдер мог обработать свайп
+    // Событие будет обработано слайдером
+  };
+  
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={(e) => {
+        // Для touch событий также проверяем свайп
+        if (checkIfSwiped && checkIfSwiped()) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        handleClick(e);
+      }}
       disabled={locked}
+      style={{ touchAction: 'pan-x' }}
       className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-[rgba(217,217,217,0.04)]' : 'cursor-pointer hover:bg-[rgba(217,217,217,0.06)]'}`}
       data-name="Article card"
     >
@@ -87,12 +115,38 @@ function ArticleCard({
 /**
  * View All Articles Card Component
  */
-function ViewAllCard({ onClick }: { onClick: () => void }) {
+function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfSwiped?: () => boolean }) {
   const { content } = useContent();
+  
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Если был свайп, не вызываем onClick
+    if (checkIfSwiped && checkIfSwiped()) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    onClick();
+  };
+  
+  const handleTouchStart = (_e: React.TouchEvent) => {
+    // Не блокируем событие, чтобы слайдер мог обработать свайп
+    // Событие будет обработано слайдером
+  };
   
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={(e) => {
+        // Для touch событий также проверяем свайп
+        if (checkIfSwiped && checkIfSwiped()) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        handleClick(e);
+      }}
+      style={{ touchAction: 'pan-x' }}
       className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] transition-all duration-300 flex-1"
       data-name="View all articles card"
     >
@@ -128,6 +182,10 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  // Отслеживание, был ли свайп (движение пальца), чтобы предотвратить onClick при свайпе
+  const wasSwipedRef = useRef(false);
+  const touchStartXRef = useRef(0);
+  const SWIPE_THRESHOLD = 10; // Порог в пикселях для определения свайпа
 
   // Общее количество карточек (статьи + ViewAll)
   const _totalCards = articles.length + 1;
@@ -169,6 +227,8 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!sliderRef.current) return;
     setIsDragging(true);
+    wasSwipedRef.current = false;
+    touchStartXRef.current = e.touches[0].pageX;
     setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
     setScrollLeft(sliderRef.current.scrollLeft);
     sliderRef.current.style.scrollSnapType = 'none';
@@ -176,9 +236,16 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
+    e.preventDefault();
     const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
     const walk = (x - startX) * 1.5;
     sliderRef.current.scrollLeft = scrollLeft - walk;
+    
+    // Проверяем, было ли движение (свайп)
+    const deltaX = Math.abs(e.touches[0].pageX - touchStartXRef.current);
+    if (deltaX > SWIPE_THRESHOLD) {
+      wasSwipedRef.current = true;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -195,6 +262,23 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       left: targetScroll,
       behavior: 'smooth'
     });
+    
+    // Сбрасываем флаг свайпа через небольшую задержку, чтобы кнопки успели проверить его
+    setTimeout(() => {
+      wasSwipedRef.current = false;
+    }, 100);
+  };
+
+  const handleTouchCancel = () => {
+    if (!sliderRef.current) return;
+    setIsDragging(false);
+    wasSwipedRef.current = false;
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+  };
+  
+  // Функция для проверки, был ли свайп (используется в кнопках)
+  const checkIfSwiped = (): boolean => {
+    return wasSwipedRef.current;
   };
 
   // Обновление текущего индекса при скролле
@@ -235,8 +319,8 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       {/* Слайдер */}
       <div
         ref={sliderRef}
-        className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 py-2 items-stretch"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 items-stretch"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -244,6 +328,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
         data-name="Articles Slider"
       >
         {articles.map((article, index) => {
@@ -253,8 +338,12 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   return (
     <div
       key={article.id}
-      className="flex-shrink-0 snap-center py-2 flex"
-      style={{ width: '256px' }}
+      className="flex-shrink-0 snap-center flex"
+      style={{ width: '256px', touchAction: 'pan-x' }}
+      onTouchStart={(_e) => {
+        // Позволяем событиям всплывать к слайдеру для обработки свайпа
+        // Событие будет обработано слайдером через handleTouchStart
+      }}
     >
       <ArticleCard
         article={article}
@@ -262,6 +351,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         locked={locked}
         requiredPoints={required}
         badgeText={lockedBadgeText}
+        checkIfSwiped={checkIfSwiped}
       />
     </div>
   );
@@ -269,10 +359,14 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         
         {/* View All Card */}
         <div
-          className="flex-shrink-0 snap-center py-2 flex"
-          style={{ width: '256px' }}
+          className="flex-shrink-0 snap-center flex"
+          style={{ width: '256px', touchAction: 'pan-x' }}
+          onTouchStart={(_e) => {
+            // Позволяем событиям всплывать к слайдеру для обработки свайпа
+            // Событие будет обработано слайдером через handleTouchStart
+          }}
         >
-          <ViewAllCard onClick={onViewAll} />
+          <ViewAllCard onClick={onViewAll} checkIfSwiped={checkIfSwiped} />
         </div>
       </div>
 

@@ -368,23 +368,32 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     if (!scrollContainer) return;
-
+    
     const handleScroll = () => {
       const scrollTop = scrollContainer.scrollTop;
+      // Логотип находится примерно на высоте 60px + padding top 100px = 160px от начала контента
+      // Когда прокрутка достигает начала логотипа, начинаем делать его прозрачным
+      const fadeStart = 0; // Начинаем затемнять сразу при прокрутке
+      const fadeEnd = 80; // Полностью прозрачный при прокрутке на 80px
       
-      if (scrollTop <= 1) {
+      if (scrollTop <= fadeStart) {
         setLogoOpacity(1);
-      } else if (scrollTop >= 50) {
+      } else if (scrollTop >= fadeEnd) {
         setLogoOpacity(0);
       } else {
-        // Плавное затухание от 1px до 50px
-        const opacity = 1 - (scrollTop - 1) / (50 - 1);
-        setLogoOpacity(Math.max(0, opacity));
+        // Плавное изменение прозрачности
+        const opacity = 1 - (scrollTop - fadeStart) / (fadeEnd - fadeStart);
+        setLogoOpacity(Math.max(0, Math.min(1, opacity)));
       }
     };
-
+    
     scrollContainer.addEventListener('scroll', handleScroll);
-    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    // Вызываем сразу на случай, если уже есть прокрутка
+    handleScroll();
+    
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Получаем ID всех карточек из загруженной темы (если тема загружена)
@@ -555,7 +564,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       {/* <Light /> */}
       
       {/* Логотип */}
-      <div style={{ opacity: logoOpacity }}>
+      <div style={{ opacity: logoOpacity, transition: 'opacity 0.2s ease-out' }}>
         <MiniStripeLogo />
       </div>
       

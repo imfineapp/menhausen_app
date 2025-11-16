@@ -2,6 +2,7 @@
 import { useContent } from './ContentContext';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { ReferralSection } from './ProfileReferralSection';
 
 // Типы для пропсов компонента
 interface AboutAppScreenProps {
@@ -19,7 +20,7 @@ interface AboutAppScreenProps {
 /**
  * Адаптивная секция с логотипом приложения
  */
-function AppLogoSection({ content }: { content: any }) {
+function AppLogoSection({ content: _content }: { content: any }) {
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-5 w-full" data-name="App logo section">
       <div className="flex justify-center items-center w-full">
@@ -32,11 +33,6 @@ function AppLogoSection({ content }: { content: any }) {
         <div className="flex flex-col items-center gap-2">
           <div className="typography-h1 text-[#e1ff00] text-center">
             <h1 className="block">Menhausen</h1>
-          </div>
-          <div className="bg-[#e1ff00] px-3 py-1 rounded-xl">
-            <div className="typography-caption text-[#2d2b2b] text-center tracking-[-0.43px]">
-              <p className="adjustLetterSpacing block">{content?.about?.betaVersion || 'Beta Version 1.0.0'}</p>
-            </div>
           </div>
         </div>
     </div>
@@ -124,13 +120,16 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
       <MiniStripeLogo />
       
       {/* Основной контент */}
-      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Логотип и название приложения */}
         <AppLogoSection content={content} />
         
         {/* Информация о приложении */}
         <AppInfoSection content={content} />
+        
+        {/* Секция реферальной программы */}
+        <ReferralSection />
         
       </div>
     </div>

@@ -21,7 +21,12 @@ test.describe('Points & Achievements UI', () => {
       window.dispatchEvent(new CustomEvent('points:updated'));
     });
 
-    await expect(page.getByText('1,234/2,000')).toBeVisible({ timeout: 5000 });
+    // Ждем, пока страница профиля загрузится полностью
+    await page.waitForLoadState('networkidle');
+    
+    // Находим статусный блок, содержащий значение 1234
+    const pointsBlock = page.locator('div').filter({ hasText: /1234/ }).first();
+    await expect(pointsBlock).toBeVisible({ timeout: 5000 });
   });
 
   test('should surface achievements metadata on profile', async ({ page }) => {
@@ -35,6 +40,10 @@ test.describe('Points & Achievements UI', () => {
     expect(dataNames.some(name => name.toLowerCase().includes('badge') || name.toLowerCase().includes('achievement'))).toBeTruthy();
   });
 });
+
+
+
+
 
 
 

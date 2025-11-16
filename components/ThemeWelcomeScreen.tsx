@@ -4,7 +4,6 @@ import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useContent } from './ContentContext';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
-import { AlertTriangle } from 'lucide-react';
 
 // Типы для пропсов компонента
 interface ThemeWelcomeScreenProps {
@@ -81,9 +80,6 @@ export function ThemeWelcomeScreen({
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;
   
-  // Определяем, показывать ли предупреждение для Free тарифа
-  const shouldShowFreeWarning = !userHasPremium;
-  
   // Если первая карточка уже завершена, не показываем приветственную страницу
   if (!shouldShowWelcome) {
     // Перенаправляем на главную страницу темы
@@ -120,21 +116,6 @@ export function ThemeWelcomeScreen({
                 {isThemeLocked ? 'Unlock this theme to get started' : welcomeMessage}
               </p>
             </div>
-
-            {/* Предупреждение для Free тарифа */}
-            {shouldShowFreeWarning && (
-              <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                  <h3 className="typography-body font-semibold text-yellow-400">
-                    {content.ui.themes.welcome.freeWarning.title}
-                  </h3>
-                </div>
-                <p className="typography-caption text-yellow-200 text-sm leading-relaxed">
-                  {content.ui.themes.welcome.freeWarning.text}
-                </p>
-              </div>
-            )}
 
           </div>
         </div>

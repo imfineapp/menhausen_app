@@ -281,6 +281,32 @@ export function useTranslation() {
       'square_breathing_description': {
         'en': 'Square breathing technique to help you relax and focus. Follow the visual guide to breathe in a square pattern.',
         'ru': 'Техника квадратного дыхания для расслабления и концентрации. Следуйте визуальному руководству для дыхания по квадратному паттерну.'
+      },
+      // Mental Score
+      'mental_score': {
+        'en': 'Mental score',
+        'ru': 'Mental score'
+      },
+      // Status blocks
+      'exercises_completed': {
+        'en': 'Exercises completed',
+        'ru': 'Упражнений пройдено'
+      },
+      'status': {
+        'en': 'Status',
+        'ru': 'Статус'
+      },
+      'page': {
+        'en': 'Page',
+        'ru': 'Страница'
+      },
+      'of': {
+        'en': 'of',
+        'ru': 'из'
+      },
+      'no_points_history': {
+        'en': 'No points history yet',
+        'ru': 'История баллов пока пуста'
       }
     };
 

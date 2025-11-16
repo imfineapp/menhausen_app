@@ -142,6 +142,12 @@ export class ThemeCardManager {
       };
 
       this.saveCardProgress(cardId, updatedProgress);
+      
+      // Dispatch custom event to notify about card completion
+      window.dispatchEvent(new CustomEvent('card:completed', { 
+        detail: { cardId, totalAttempts: updatedProgress.totalCompletedAttempts } 
+      }));
+      
       return updatedProgress;
     } catch (error) {
       console.error(`Error adding completed attempt for card ${cardId}:`, error);
@@ -288,6 +294,39 @@ export class ThemeCardManager {
     } catch (error) {
       console.error('Error clearing theme progress:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Get total number of completed attempts across all cards
+   * @returns Total number of completed attempts
+   */
+  static getTotalCompletedAttempts(): number {
+    try {
+      let totalCount = 0;
+      
+      // Iterate through localStorage to count all completed attempts
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(this.STORAGE_KEY_PREFIX)) {
+          const data = localStorage.getItem(key);
+          if (data) {
+            try {
+              const progress = JSON.parse(data) as CardProgress;
+              if (progress && typeof progress.totalCompletedAttempts === 'number') {
+                totalCount += progress.totalCompletedAttempts;
+              }
+            } catch (parseError) {
+              console.warn('Error parsing card progress data:', parseError);
+            }
+          }
+        }
+      }
+      
+      return totalCount;
+    } catch (error) {
+      console.error('Error counting total completed attempts:', error);
+      return 0;
     }
   }
 

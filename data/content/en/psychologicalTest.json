@@ -194,7 +194,11 @@
   "results": {
     "title": "Your emotional map",
     "subtitle": "Results show which topics are most relevant for you right now:",
-    "buttonText": "Continue"
+    "buttonText": "Continue",
+    "depressionWarning": {
+      "title": "Important Warning",
+      "text": "With a low score in the \"Depression\" topic, this application may not provide the necessary assistance. We strongly recommend seeking qualified psychological or psychotherapeutic help for professional support. By continuing to use the application, the user assumes full responsibility for any possible negative consequences. The developers and creators of the application are not responsible for the results of using the application in this situation."
+    }
   },
   "likertScale": {
     "0": "Not at all",

@@ -2,17 +2,14 @@
 import { useState } from 'react';
 import { useLanguage, useTranslation } from './LanguageContext';
 import { LanguageModal } from './LanguageModal';
-import { Switch } from './ui/switch';
-
 // Импортируем иконки
 import { 
   LanguageIcon, 
-  ReminderIcon, 
-  SecurityIcon, 
   InfoIcon, 
   PrivacyIcon, 
   TermsIcon, 
-  DeleteIcon
+  DeleteIcon,
+  DonationIcon
 } from './UserProfileIcons';
 import { SettingsItem } from './UserProfileComponents';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
@@ -25,6 +22,7 @@ interface AppSettingsScreenProps {
   onShowPrivacy: () => void; // Функция для открытия Privacy Policy
   onShowTerms: () => void; // Функция для открытия Terms of Use
   onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
+  onShowDonations: () => void; // Функция для перехода к странице донатов
 }
 
 /**
@@ -37,10 +35,11 @@ export function AppSettingsScreen({
   onShowPinSettings, 
   onShowPrivacy, 
   onShowTerms, 
-  onShowDeleteAccount
+  onShowDeleteAccount,
+  onShowDonations
 }: AppSettingsScreenProps) {
   // Состояние для настроек
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [_notificationsEnabled, setNotificationsEnabled] = useState(false);
   
   // Хуки для управления языком
   const { language, openLanguageModal } = useLanguage();
@@ -54,7 +53,7 @@ export function AppSettingsScreen({
     openLanguageModal();
   };
 
-  const handleSecurityPin = () => {
+  const _handleSecurityPin = () => {
     console.log('Opening security PIN settings');
     onShowPinSettings();
   };
@@ -79,7 +78,12 @@ export function AppSettingsScreen({
     onShowDeleteAccount();
   };
 
-  const handleNotificationToggle = (enabled: boolean) => {
+  const handleDonation = () => {
+    console.log('Opening donation - navigating to Donations');
+    onShowDonations();
+  };
+
+  const _handleNotificationToggle = (enabled: boolean) => {
     setNotificationsEnabled(enabled);
     console.log('Notifications', enabled ? 'enabled' : 'disabled');
   };
@@ -119,7 +123,8 @@ export function AppSettingsScreen({
                   }
                   onClick={handleLanguage}
                 />
-                <SettingsItem
+                {/* Скрыто: настройки уведомлений */}
+                {/* <SettingsItem
                   icon={<ReminderIcon />}
                   title={t('daily_reminder')}
                   rightElement={
@@ -129,16 +134,22 @@ export function AppSettingsScreen({
                       data-testid="notifications-switch"
                     />
                   }
-                />
-                <SettingsItem
+                /> */}
+                {/* Скрыто: настройки PIN */}
+                {/* <SettingsItem
                   icon={<SecurityIcon />}
                   title={t('security_pin')}
                   onClick={handleSecurityPin}
-                />
+                /> */}
                 <SettingsItem
                   icon={<InfoIcon />}
                   title={t('about_app')}
                   onClick={handleAboutApp}
+                />
+                <SettingsItem
+                  icon={<DonationIcon />}
+                  title={t('make_donation')}
+                  onClick={handleDonation}
                 />
                 <SettingsItem
                   icon={<PrivacyIcon />}

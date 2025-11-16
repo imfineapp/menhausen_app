@@ -19,6 +19,7 @@ function getDefaultStats(): UserStats {
     topicsRepeated: [],
     articlesRead: 0,
     readArticleIds: [],
+    openedCardIds: [],
     referralsInvited: 0,
     referralsPremium: 0,
     lastUpdated: new Date().toISOString()
@@ -98,6 +99,8 @@ function migrateStats(oldStats: any): UserStats {
     ...oldStats,
     // гарантируем наличие массива уникальных прочтений
     readArticleIds: Array.isArray(oldStats?.readArticleIds) ? oldStats.readArticleIds : [],
+    // гарантируем наличие массива уникально открытых карточек
+    openedCardIds: Array.isArray(oldStats?.openedCardIds) ? oldStats.openedCardIds : [],
     version: STORAGE_VERSION
   };
 }
@@ -208,6 +211,24 @@ export function markArticleRead(articleId: string): UserStats {
       readArticleIds: nextReadIds,
       // держим счетчик в соответствии с источником истины — массивом id
       articlesRead: nextReadIds.length
+    };
+  });
+}
+
+/**
+ * Идемпотентная отметка карточки как открытой (с учётом уникальности)
+ * Карточка считается открытой после ответа на второй вопрос (когда показывается финальное сообщение)
+ */
+export function markCardAsOpened(cardId: string): UserStats {
+  return updateUserStats((current) => {
+    const openedIds = Array.isArray(current.openedCardIds) ? current.openedCardIds : [];
+    if (openedIds.includes(cardId)) {
+      return current;
+    }
+    const nextOpenedIds = [...new Set([...openedIds, cardId])];
+    return {
+      ...current,
+      openedCardIds: nextOpenedIds
     };
   });
 }

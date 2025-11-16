@@ -258,7 +258,14 @@ export function ContentProvider({ children }: ContentProviderProps) {
         premium: 'Premium',
         free: 'Free',
         openProfile: 'Open user profile',
-        status: 'Status'
+        status: 'Status',
+        yourActivity: 'Your activity',
+        heatmap: {
+          checkinAndExercise: 'Check-in + {count} exercise',
+          checkinAndExercisePlural: 'Check-in + {count} exercises',
+          checkinOnly: 'Check-in only',
+          noActivity: 'No activity'
+        }
       },
       survey: {
         progress: 'Step {current} of {total}',
@@ -343,7 +350,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
           subtitle: 'How was it?',
           placeholder: 'Share your thoughts',
           submit: 'Submit',
-          thankYou: 'Thank you!'
+          thankYou: 'Thank you!',
+          skipRating: "I don't want to answer"
         },
         themeHome: {
           card1: 'Card #1',
@@ -381,6 +389,19 @@ export function ContentProvider({ children }: ContentProviderProps) {
           achievementEarned: 'Achievement Earned'
         }
       },
+      deleteAccount: {
+        title: 'Danger zone',
+        description: 'In this section you can delete all information about yourself and your account from the application',
+        warning: 'By clicking the button I understand that all data about me will be deleted without the possibility of return',
+        button: 'Delete',
+        buttonDeleting: 'Deleting...',
+        confirmTitle: 'Are you sure?',
+        confirmMessage: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.',
+        successTitle: 'Account deleted',
+        successMessage: 'Your account has been successfully deleted. You will be redirected to the welcome screen.',
+        errorTitle: 'Error',
+        errorMessage: 'An error occurred while deleting your account. Please try again.'
+      },
         about: {
           title: 'About Menhausen',
           description: 'Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\n• Daily mood tracking and emotional state monitoring\n• Personalized mental health exercises\n• Progress tracking with levels and achievements\n• Complete privacy — your data stays yours\n• Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with ❤️ for the Telegram community.',
@@ -403,8 +424,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         version: 'Version:',
         platform: 'Platform:',
         builtWith: 'Built with:',
-        lastUpdated: 'Last updated:',
-        betaVersion: 'Beta Version 1.0.0'
+        lastUpdated: 'Last updated:'
       }
     };
   }, [content]);

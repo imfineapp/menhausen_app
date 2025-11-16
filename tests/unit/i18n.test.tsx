@@ -17,7 +17,7 @@ const mockOnShowPrivacy = vi.fn();
 const mockOnShowTerms = vi.fn();
 const mockOnShowDeleteAccount = vi.fn();
 const mockOnShowPayments = vi.fn();
-const mockOnShowUnderConstruction = vi.fn();
+    const _mockOnShowUnderConstruction = vi.fn();
 
 // Обертка для тестов с провайдерами
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -238,10 +238,7 @@ describe('i18n System Tests', () => {
               <UserProfileScreen
                 onBack={mockOnBack}
                 onShowPayments={mockOnShowPayments}
-                onShowDonations={mockOnShowUnderConstruction}
-                onShowUnderConstruction={mockOnShowUnderConstruction}
                 onGoToBadges={vi.fn()}
-                onGoToLevels={vi.fn()}
                 onShowSettings={mockOnShowSettings}
                 userHasPremium={false}
               />
@@ -272,6 +269,7 @@ describe('i18n System Tests', () => {
               onShowPrivacy={mockOnShowPrivacy}
               onShowTerms={mockOnShowTerms}
               onShowDeleteAccount={mockOnShowDeleteAccount}
+              onShowDonations={vi.fn()}
             />
           </ContentProvider>
         </TestWrapper>

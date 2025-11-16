@@ -226,6 +226,15 @@ export interface UITexts {
     follow?: LocalizedContent;
     openProfile?: LocalizedContent;
     status?: LocalizedContent;
+    points?: LocalizedContent;
+    mentalLevel?: LocalizedContent;
+    yourActivity?: LocalizedContent;
+    heatmap?: {
+      checkinAndExercise: LocalizedContent;
+      checkinAndExercisePlural: LocalizedContent;
+      checkinOnly: LocalizedContent;
+      noActivity: LocalizedContent;
+    };
   };
   about: {
     title: LocalizedContent;
@@ -250,7 +259,6 @@ export interface UITexts {
     platform: LocalizedContent;
     builtWith: LocalizedContent;
     lastUpdated: LocalizedContent;
-    betaVersion: LocalizedContent;
   };
   survey: {
     progress: LocalizedContent; // "Step {current} of {total}"
@@ -337,6 +345,7 @@ export interface UITexts {
       placeholder: LocalizedContent;
       submit: LocalizedContent;
       thankYou: LocalizedContent;
+      skipRating: LocalizedContent;
     };
     themeHome: {
       card1: LocalizedContent;
@@ -379,6 +388,19 @@ export interface UITexts {
     viewAll: LocalizedContent;
     relatedThemes: LocalizedContent;
     noArticles: LocalizedContent;
+  };
+  deleteAccount?: {
+    title: LocalizedContent;
+    description: LocalizedContent;
+    warning: LocalizedContent;
+    button: LocalizedContent;
+    buttonDeleting: LocalizedContent;
+    confirmTitle: LocalizedContent;
+    confirmMessage: LocalizedContent;
+    successTitle: LocalizedContent;
+    successMessage: LocalizedContent;
+    errorTitle: LocalizedContent;
+    errorMessage: LocalizedContent;
   };
 }
 
@@ -475,7 +497,6 @@ export interface AboutContent {
   platform: LocalizedContent;
   builtWith: LocalizedContent;
   lastUpdated: LocalizedContent;
-  betaVersion: LocalizedContent;
 }
 
 /**
@@ -521,6 +542,10 @@ export interface PsychologicalTestContent {
     title: LocalizedContent;
     subtitle: LocalizedContent;
     buttonText: LocalizedContent;
+    depressionWarning?: {
+      title: LocalizedContent;
+      text: LocalizedContent;
+    };
   };
   likertScale: {
     '0': LocalizedContent;

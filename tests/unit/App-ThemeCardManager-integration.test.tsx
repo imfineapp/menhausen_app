@@ -140,4 +140,32 @@ describe('App-ThemeCardManager Integration', () => {
     expect(completedAttempt.completedAttempts[0].answers).toEqual({});
     expect(completedAttempt.completedAttempts[0].rating).toBe(2);
   });
+
+  it('should save completed attempt with rating 0 when rating is skipped', () => {
+    const cardId = 'STRESS-03';
+    const userAnswers = {
+      question1: 'Answer 1',
+      question2: 'Answer 2'
+    };
+    const rating = 0; // Rating skipped
+
+    // Simulate the handleCompleteRating function logic when rating is skipped
+    const completedAttempt = ThemeCardManager.addCompletedAttempt(
+      cardId,
+      userAnswers,
+      rating
+    );
+
+    // Verify the attempt was saved with rating 0
+    expect(completedAttempt).toBeDefined();
+    expect(completedAttempt.cardId).toBe(cardId);
+    expect(completedAttempt.isCompleted).toBe(true);
+    expect(completedAttempt.totalCompletedAttempts).toBe(1);
+    expect(completedAttempt.completedAttempts).toHaveLength(1);
+
+    const savedAttempt = completedAttempt.completedAttempts[0];
+    expect(savedAttempt.answers).toEqual(userAnswers);
+    expect(savedAttempt.rating).toBe(0);
+    expect(savedAttempt.ratingComment).toBeUndefined();
+  });
 });
