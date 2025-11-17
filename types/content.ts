@@ -386,6 +386,7 @@ export interface UITexts {
   articles?: {
     title: LocalizedContent;
     viewAll: LocalizedContent;
+    description: LocalizedContent;
     relatedThemes: LocalizedContent;
     noArticles: LocalizedContent;
   };

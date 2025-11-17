@@ -31,7 +31,7 @@ function AppLogoSection({ content: _content }: { content: any }) {
         </div>
       </div>
         <div className="flex flex-col items-center gap-2">
-          <div className="typography-h1 text-[#e1ff00] text-center">
+          <div className="typography-h1 text-brand-primary text-center">
             <h1 className="block">Menhausen</h1>
           </div>
         </div>
@@ -44,16 +44,16 @@ function AppLogoSection({ content: _content }: { content: any }) {
  */
 function AppInfoSection({ content }: { content: any }) {
   return (
-    <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="App info section">
+    <div className="bg-bg-card rounded-xl p-4 sm:p-5 relative w-full" data-name="App info section">
       <div
         aria-hidden="true"
-        className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+        className="absolute border border-border-primary border-solid inset-0 pointer-events-none rounded-xl"
       />
       <div className="flex flex-col gap-4">
-        <div className="typography-h2 text-[#e1ff00] text-left">
+        <div className="typography-h2 text-brand-primary text-left">
           <h2 className="block">{content?.about?.title || 'О приложении'}</h2>
         </div>
-        <div className="typography-body text-[#cfcfcf] text-left whitespace-pre-line">
+        <div className="typography-body text-secondary text-left whitespace-pre-line">
           <p className="block">
             {content?.about?.description || `Menhausen — это ваш персональный помощник для ментального здоровья, созданный специально для Telegram.
 
@@ -92,13 +92,13 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   // Если контент не загружен, показываем загрузку
   if (!content || !content.about || !content.about.title) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#111111]">
+      <div className="flex items-center justify-center min-h-screen bg-bg-primary">
         <div className="text-center">
-          <div className="text-lg text-[#e1ff00]">Загрузка контента...</div>
-          <div className="text-sm text-[#cfcfcf] mt-2">Язык: {currentLanguage}</div>
-          <div className="text-xs text-[#696969] mt-1">Контент: {content ? 'загружен' : 'не загружен'}</div>
-          <div className="text-xs text-[#696969] mt-1">About: {content?.about ? 'есть' : 'нет'}</div>
-          <div className="text-xs text-[#696969] mt-1">UI: {content?.ui ? 'есть' : 'нет'}</div>
+          <div className="text-lg text-brand-primary">Загрузка контента...</div>
+          <div className="text-sm text-secondary mt-2">Язык: {currentLanguage}</div>
+          <div className="text-xs text-tertiary mt-1">Контент: {content ? 'загружен' : 'не загружен'}</div>
+          <div className="text-xs text-tertiary mt-1">About: {content?.about ? 'есть' : 'нет'}</div>
+          <div className="text-xs text-tertiary mt-1">UI: {content?.ui ? 'есть' : 'нет'}</div>
         </div>
       </div>
     );
@@ -106,7 +106,7 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom overflow-x-hidden" 
+      className="bg-bg-primary relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom overflow-x-hidden" 
       data-name="About App Page"
       style={{
         msOverflowStyle: 'none',

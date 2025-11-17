@@ -95,7 +95,7 @@ export function ThemeWelcomeScreen({
   const welcomeMessage = themeData?.welcomeMessage || getLocalizedText(content.ui.themes.welcome.subtitle);
   
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-bg-primary flex flex-col">
       {/* Световые эффекты */}
       <Light />
       
@@ -109,7 +109,7 @@ export function ThemeWelcomeScreen({
             
             {/* Заголовок */}
             <div className="text-center">
-              <h1 className="typography-h1 text-[#e1ff00] mb-6">
+              <h1 className="typography-h1 text-brand-primary mb-6">
                 {themeData ? themeData.title : themeTitle}
               </h1>
               <p className="typography-body text-white">

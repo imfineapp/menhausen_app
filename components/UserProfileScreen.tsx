@@ -128,7 +128,7 @@ export function UserProfileScreen({
 
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
+      className="bg-bg-primary relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="User Profile Page"
       style={{
         msOverflowStyle: 'none',
@@ -210,7 +210,7 @@ export function UserProfileScreen({
                   <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
                     <div
                       aria-hidden="true"
-                      className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+                      className="absolute border border-border-primary border-solid inset-0 pointer-events-none rounded-xl"
                     />
                   </div>
                 </div>
@@ -226,7 +226,7 @@ export function UserProfileScreen({
                             <span className="text-gray-400 text-sm w-20">{formatDate(tx.timestamp)}</span>
                             <span className="text-white text-sm">{getLocalizedAction(tx)}</span>
                           </div>
-                          <span className="text-[#e1ff00] text-sm font-semibold">{tx.type === 'earn' ? '+' : '-'}{tx.amount}</span>
+                          <span className="text-brand-primary text-sm font-semibold">{tx.type === 'earn' ? '+' : '-'}{tx.amount}</span>
                         </div>
                       ))
                     ) : (

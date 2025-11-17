@@ -314,6 +314,7 @@
     "articles":  {
                      "title":  "Статьи",
                      "viewAll":  "Все статьи",
+                     "description":  "Полезные статьи для улучшения психического здоровья",
                      "relatedThemes":  "Связанные темы:",
                      "noArticles":  "Статьи скоро появятся",
                      "lockedBadge":  "Откроется за {points}"

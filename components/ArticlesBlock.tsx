@@ -75,34 +75,34 @@ function ArticleCard({
       }}
       disabled={locked}
       style={{ touchAction: 'pan-x' }}
-      className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-[rgba(217,217,217,0.04)]' : 'cursor-pointer hover:bg-[rgba(217,217,217,0.06)]'}`}
+      className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-bg-card' : 'cursor-pointer hover:bg-bg-card-hover'}`}
       data-name="Article card"
     >
       <div className="absolute inset-0" data-name="article_block_background">
         {locked ? (
-          <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
-            <div aria-hidden="true" className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="article-card-background-locked" data-name="Block">
+            <div aria-hidden="true" className="article-card-border article-card-border-locked" />
           </div>
         ) : (
-          <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block">
-            <div aria-hidden="true" className="absolute border border-[#2d2b2b] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="article-card-background-unlocked" data-name="Block">
+            <div aria-hidden="true" className="article-card-border article-card-border-unlocked" />
           </div>
         )}
       </div>
       
       {/* Article content */}
-      <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
+      <div className="article-card-content box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
         <div className="flex items-start gap-2 w-full">
-          <div className={`typography-h2 text-left w-full ${locked ? 'text-[#9a9a9a]' : 'text-[#2d2b2b]'}`}>
+          <div className={locked ? 'article-card-title-locked text-left w-full' : 'article-card-title-unlocked text-left w-full'}>
             <h2 className="block line-clamp-2">{article.title}</h2>
           </div>
         </div>
-        <div className={`typography-body text-left w-full ${locked ? 'text-[#8a8a8a]' : 'text-[#2d2b2b]'}`}>
+        <div className={locked ? 'article-card-text-locked text-left w-full' : 'article-card-text-unlocked text-left w-full'}>
           <p className="block line-clamp-2">{article.preview}</p>
         </div>
         {locked && (
           <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+            <span className="article-card-badge">
               {badgeText.replace('{points}', String(requiredPoints))}
             </span>
           </div>
@@ -147,21 +147,21 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
         handleClick(e);
       }}
       style={{ touchAction: 'pan-x' }}
-      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] transition-all duration-300 flex-1"
+      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-bg-card-hover transition-all duration-300 flex-1"
       data-name="View all articles card"
     >
       <div className="absolute inset-0" data-name="view_all_background">
-        <div className="absolute bg-[#2d2b2b] inset-0 rounded-xl" data-name="Block">
+        <div className="absolute bg-[var(--color-text-dark)] inset-0 rounded-xl" data-name="Block">
           <div
             aria-hidden="true"
-            className="absolute border border-[#e1ff00] border-solid inset-0 pointer-events-none rounded-xl"
+            className="absolute border border-brand-primary border-solid inset-0 pointer-events-none rounded-xl"
           />
         </div>
       </div>
       
       {/* Content */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-0 shrink-0 w-full">
-        <div className="typography-h2 text-[#e1ff00] text-center w-full">
+        <div className="typography-h2 text-brand-primary text-center w-full">
           <h2 className="block">{content.ui.articles?.viewAll || 'Все статьи'}</h2>
         </div>
       </div>
@@ -392,7 +392,7 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
         className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
         data-name="Articles container"
       >
-        <div className="typography-body text-[#696969] text-center w-full py-8">
+        <div className="typography-body text-tertiary text-center w-full py-8">
           <p className="block">{content.ui.articles?.noArticles || 'Статьи скоро появятся'}</p>
         </div>
       </div>

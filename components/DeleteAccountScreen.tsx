@@ -34,14 +34,14 @@ function DeleteButton({ onDelete, isLoading, buttonText, deletingText }: {
     <button
       onClick={onDelete}
       disabled={isLoading}
-      className={`bg-[#e1ff00] h-[46px] relative rounded-xl shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[#d1ef00] ${
+      className={`bg-brand-primary h-[46px] relative rounded-xl shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-brand-primary-hover ${
         isLoading ? 'opacity-70 cursor-not-allowed' : ''
       }`}
       data-name="Delete Button"
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="typography-button text-[#2d2b2b] text-center">
+          <div className="typography-button text-dark text-center">
             <p className="block">
               {isLoading ? deletingText : buttonText}
             </p>
@@ -73,7 +73,7 @@ function ButtonBlock({
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-1/2 -translate-x-1/2 p-0 bottom-4 sm:bottom-6 md:bottom-8 w-[351px]"
       data-name="button block"
     >
-      <div className="typography-caption text-[#e1ff00] text-center w-full">
+      <div className="typography-caption text-brand-primary text-center w-full">
         <p className="block">
           {warningText}
         </p>
@@ -135,10 +135,10 @@ function MainContent({ title, description }: { title: string; description: strin
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[470px] w-[351px]"
       data-name="main_content"
     >
-      <div className="typography-h1 text-[#e1ff00] w-full">
+      <div className="typography-h1 text-brand-primary w-full">
         <h1 className="block">{title}</h1>
       </div>
-      <div className="typography-body text-[#ffffff] w-full">
+      <div className="typography-body text-primary w-full">
         <p className="block">
           {description}
         </p>
@@ -207,7 +207,7 @@ export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: Delete
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Delete Account Screen">
+    <div className="bg-bg-primary relative size-full" data-name="Delete Account Screen">
       <Light />
       
       {/* Логотип */}

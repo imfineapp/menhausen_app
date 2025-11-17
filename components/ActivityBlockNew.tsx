@@ -132,12 +132,12 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const getColor = (activityType: ActivityType): string => {
     switch (activityType) {
       case ActivityType.CHECKIN_AND_EXERCISE:
-        return '#e1ff00'; // Яркий желтый
+        return 'var(--color-activity-active)'; // Яркий желтый
       case ActivityType.CHECKIN_ONLY:
-        return '#b8b800'; // Приглушенный желтый
+        return 'var(--color-activity-partial)'; // Приглушенный желтый
       case ActivityType.NONE:
       default:
-        return 'rgba(128, 128, 128, 0.1)'; // Серый с прозрачностью 10%
+        return 'var(--color-activity-none)'; // Серый с прозрачностью 10%
     }
   };
   
@@ -147,8 +147,8 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
       return 'none';
     }
     const glowColor = activityType === ActivityType.CHECKIN_AND_EXERCISE 
-      ? 'rgba(225, 255, 0, 0.5)' // Яркий желтый
-      : 'rgba(184, 184, 0, 0.4)'; // Приглушенный желтый
+      ? 'var(--color-activity-active-glow)' // Яркий желтый
+      : 'var(--color-activity-partial-glow)'; // Приглушенный желтый
     return `0 0 10px 0 ${glowColor}`;
   };
   

@@ -38,22 +38,36 @@ function ArticleListItem({
     <button
       onClick={onClick}
       disabled={locked}
-      className={`w-full text-left p-4 rounded-xl border transition-colors mb-4 min-h-fit ${locked ? 'bg-[rgba(217,217,217,0.04)] border-[#2A2A2A] cursor-not-allowed' : 'bg-[rgba(217,217,217,0.04)] hover:bg-[rgba(217,217,217,0.08)] border-[#212121]'}`}
+      className={`relative w-full text-left p-4 rounded-xl border transition-colors mb-4 min-h-fit overflow-hidden ${locked ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-bg-card-hover'}`}
     >
-      <div className="flex items-start gap-4">
+      {/* Background */}
+      <div className="absolute inset-0">
+        {locked ? (
+          <div className="article-card-background-locked">
+            <div aria-hidden="true" className="article-card-border article-card-border-locked" />
+          </div>
+        ) : (
+          <div className="article-card-background-unlocked">
+            <div aria-hidden="true" className="article-card-border article-card-border-unlocked" />
+          </div>
+        )}
+      </div>
+      
+      {/* Content */}
+      <div className="article-card-content flex items-start gap-4">
         {/* Article content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start gap-2">
-            <h3 className={`typography-h2 mb-2 ${locked ? 'text-[#9a9a9a]' : 'text-[#e1ff00]'}`}>
+            <h3 className={locked ? 'article-card-title-locked' : 'article-card-title-unlocked'}>
               {article.title}
             </h3>
           </div>
-          <p className={`typography-body line-clamp-3 ${locked ? 'text-[#8a8a8a]' : 'text-[#ffffff]'}`}>
+          <p className={locked ? 'article-card-text-locked' : 'article-card-text-unlocked'}>
             {article.preview}
           </p>
           {locked && (
             <div className="mt-2">
-              <span className="bg-[#e1ff00] text-[#2d2b2b] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+              <span className="article-card-badge">
                 {badgeText.replace('{points}', String(requiredPoints))}
               </span>
             </div>
@@ -62,7 +76,7 @@ function ArticleListItem({
         
         {/* Arrow icon */}
         <div className="flex-shrink-0 flex items-center">
-          <svg className="w-5 h-5 text-[#696969]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className={`w-5 h-5 ${locked ? 'text-tertiary' : 'text-dark'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </div>
@@ -117,7 +131,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
   }, []);
   
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-bg-primary flex flex-col">
       {/* Telegram Back Button */}
       <BackButton onBack={onBack} />
       
@@ -133,18 +147,18 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
             
             {/* Header */}
             <div className="mb-8">
-              <h1 className="typography-h1 text-[#e1ff00] mb-4">
+              <h1 className="typography-h1 text-brand-primary mb-4">
                 {content.ui.articles?.viewAll || 'Все статьи'}
               </h1>
-              <p className="typography-body text-[#696969]">
-                Полезные статьи для улучшения психического здоровья
+              <p className="typography-body text-tertiary">
+                {content.ui.articles?.description || 'Полезные статьи для улучшения психического здоровья'}
               </p>
             </div>
             
             {/* Articles List */}
             {articles.length === 0 ? (
               <div className="text-center py-12">
-                <div className="typography-body text-[#696969]">
+                <div className="typography-body text-tertiary">
                   {content.ui.articles?.noArticles || 'Статьи скоро появятся'}
                 </div>
               </div>

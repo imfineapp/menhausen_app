@@ -84,7 +84,7 @@ function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCar
         className="w-full"
         showBackground={true}
       />
-      <div className="absolute inset-[12.5%_4.56%_20.83%_4.56%] text-[#696969] text-right">
+      <div className="absolute inset-[12.5%_4.56%_20.83%_4.56%] text-tertiary text-right">
         <p className="typography-caption block">{getLocalizedText(content.ui.themes.home.progress)}</p>
       </div>
     </div>
@@ -184,19 +184,19 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
   };
 
   const getTitleStyles = () => {
-    if (isLocked) return "text-[#696969]";
-    if (isInProgress) return "text-[#fbbf24]"; // Amber color for in-progress
-    return "text-[#e1ff00]";
+    if (isLocked) return "text-tertiary";
+    if (isInProgress) return "text-status-amber"; // Amber color for in-progress
+    return "text-brand-primary";
   };
 
   const getDescriptionStyles = () => {
-    if (isLocked) return "text-[#696969]";
-    return "text-[#ffffff]";
+    if (isLocked) return "text-tertiary";
+    return "text-primary";
   };
 
   const getLevelStyles = () => {
-    if (isLocked) return "text-[#696969]";
-    return "text-[#696969]";
+    if (isLocked) return "text-tertiary";
+    return "text-tertiary";
   };
   
   return (
@@ -239,12 +239,12 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
             {!isLocked && (
               <div className="box-border content-stretch flex flex-row gap-2.5 items-center justify-end p-0 relative shrink-0 w-[85px]">
                 <div className={`typography-h2 text-nowrap text-right ${
-                  isInProgress ? 'text-[#fbbf24]' : 'text-[#e1ff00]'
+                  isInProgress ? 'text-status-amber' : 'text-brand-primary'
                 }`}>
                   <h2 className="block whitespace-pre">{card.attempts}</h2>
                 </div>
                 <div className={`transition-colors duration-300 ${
-                  isInProgress ? 'text-[#fbbf24]' : 'text-[#e1ff00]'
+                  isInProgress ? 'text-status-amber' : 'text-brand-primary'
                 }`}>
                   <AttemptsIcon />
                 </div>
@@ -269,7 +269,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
                   }}
                 />
               </div>
-              <p className="typography-caption text-[#696969] mt-1">
+              <p className="typography-caption text-tertiary mt-1">
                 {card.attempts} {card.attempts === 1 ? 'attempt' : 'attempts'}
               </p>
             </div>
@@ -429,7 +429,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   // Состояния загрузки и ошибок
   if (loading) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+      <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
         <div className="text-white text-center">
           <div className="text-lg animate-pulse">Загрузка темы...</div>
           <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
@@ -441,7 +441,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   
   if (error) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+      <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
         <div className="text-white text-center">
           <div className="text-lg text-red-400">{error}</div>
           <button 
@@ -457,7 +457,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   
   if (!theme) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+      <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
         <div className="text-white text-center">
           <div className="text-lg">Тема не найдена</div>
         </div>
@@ -468,7 +468,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   // Проверяем ошибки загрузки данных
   if (!content) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
+      <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
         <div className="text-white text-center">
           <div className="text-lg text-red-400">Error loading content</div>
           <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
@@ -553,7 +553,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
   };
 
   return (
-    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+    <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-bg-primary flex flex-col">
       {/* Компонент празднования - отключен */}
       {/* <CompletionCelebration 
         isVisible={showCelebration} 
@@ -575,7 +575,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
             
             {/* Заголовок */}
             <div className="text-center mb-6">
-              <h1 className="typography-h1 text-[#e1ff00] mb-4">
+              <h1 className="typography-h1 text-brand-primary mb-4">
                 {theme.title}
               </h1>
             </div>

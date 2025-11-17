@@ -1,0 +1,3177 @@
+{
+  "summary": {
+    "total": 455,
+    "byType": {
+      "jsxText": 30,
+      "jsxExpression": 0,
+      "attributeString": 7,
+      "ternary": 0,
+      "propString": 418
+    }
+  },
+  "results": {
+    "jsxText": [
+      {
+        "file": "components\\AboutAppScreen.tsx",
+        "line": 35,
+        "text": "Menhausen",
+        "context": "<h1 className=\"block\">Menhausen</h1>"
+      },
+      {
+        "file": "components\\AboutAppScreen.tsx",
+        "line": 97,
+        "text": "Загрузка контента...",
+        "context": "<div className=\"text-lg text-brand-primary\">Загрузка контента...</div>"
+      },
+      {
+        "file": "components\\ArticleScreen.tsx",
+        "line": 50,
+        "text": "' + formatted + '",
+        "context": "formatted = '<p class=\"mb-4\">' + formatted + '</p>';"
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 284,
+        "text": "Загрузка...",
+        "context": "<p>Загрузка...</p>"
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 197,
+        "text": "Выберите настроение",
+        "context": "<div className=\"typography-body text-white\">Выберите настроение</div>"
+      },
+      {
+        "file": "components\\FinalCardMessageScreen.tsx",
+        "line": 55,
+        "text": "&nbsp;",
+        "context": "<p className=\"block mb-0 typography-body\">&nbsp;</p>"
+      },
+      {
+        "file": "components\\ProgressIndicators.tsx",
+        "line": 58,
+        "text": "Your Progress",
+        "context": "<h2 className=\"text-lg font-semibold text-white mb-4\">Your Progress</h2>"
+      },
+      {
+        "file": "components\\PsychologicalTestInstructionScreen.tsx",
+        "line": 41,
+        "text": "Error loading test content",
+        "context": "<p className=\"text-white\">Error loading test content</p>"
+      },
+      {
+        "file": "components\\PsychologicalTestPreambulaScreen.tsx",
+        "line": 41,
+        "text": "Error loading test content",
+        "context": "<p className=\"text-white\">Error loading test content</p>"
+      },
+      {
+        "file": "components\\PsychologicalTestQuestionScreen.tsx",
+        "line": 40,
+        "text": "Error loading test content",
+        "context": "<p className=\"text-white\">Error loading test content</p>"
+      },
+      {
+        "file": "components\\PsychologicalTestQuestionScreen.tsx",
+        "line": 51,
+        "text": "Question not found",
+        "context": "<p className=\"text-white\">Question not found</p>"
+      },
+      {
+        "file": "components\\PsychologicalTestResultsScreen.tsx",
+        "line": 31,
+        "text": "Error loading test content",
+        "context": "<p className=\"text-white\">Error loading test content</p>"
+      },
+      {
+        "file": "components\\QuickActions.tsx",
+        "line": 42,
+        "text": "Quick Actions",
+        "context": "<h2 className=\"text-lg font-semibold text-white mb-4\">Quick Actions</h2>"
+      },
+      {
+        "file": "components\\RecommendationCards.tsx",
+        "line": 74,
+        "text": "Recommended for You",
+        "context": "<h2 className=\"text-lg font-semibold text-white mb-4\">Recommended for You</h2>"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 162,
+        "text": "How are you feeling today?",
+        "context": "<h1 className=\"block\">How are you feeling today?</h1>"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 165,
+        "text": "Select the option that best describes your current mood",
+        "context": "<p className=\"block\">Select the option that best describes your current mood</p>"
+      },
+      {
+        "file": "components\\SurveyScreenTemplate.tsx",
+        "line": 162,
+        "text": "Error loading survey screen",
+        "context": "<p className=\"text-white\">Error loading survey screen</p>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 113,
+        "text": "Card Completed!",
+        "context": "<h2 className=\"text-2xl font-bold mb-2\">Card Completed!</h2>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 114,
+        "text": "Great job! You're making progress!",
+        "context": "<p className=\"text-lg\">Great job! You're making progress!</p>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 434,
+        "text": "Загрузка темы...",
+        "context": "<div className=\"text-lg animate-pulse\">Загрузка темы...</div>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 436,
+        "text": "Загружаем карточки...",
+        "context": "<div className=\"text-xs mt-1 text-gray-500\">Загружаем карточки...</div>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 462,
+        "text": "Тема не найдена",
+        "context": "<div className=\"text-lg\">Тема не найдена</div>"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 473,
+        "text": "Error loading content",
+        "context": "<div className=\"text-lg text-red-400\">Error loading content</div>"
+      },
+      {
+        "file": "components\\ThemeListScreen.tsx",
+        "line": 42,
+        "text": "Загрузка тем...",
+        "context": "<div className=\"text-white text-xl\">Загрузка тем...</div>"
+      },
+      {
+        "file": "components\\ui\\carousel.tsx",
+        "line": 199,
+        "text": "Previous slide",
+        "context": "<span className=\"sr-only\">Previous slide</span>"
+      },
+      {
+        "file": "components\\ui\\carousel.tsx",
+        "line": 229,
+        "text": "Next slide",
+        "context": "<span className=\"sr-only\">Next slide</span>"
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 68,
+        "text": "Close",
+        "context": "<span className=\"sr-only\">Close</span>"
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 199,
+        "text": "Sidebar",
+        "context": "<SheetTitle>Sidebar</SheetTitle>"
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 200,
+        "text": "Displays the mobile sidebar.",
+        "context": "<SheetDescription>Displays the mobile sidebar.</SheetDescription>"
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 277,
+        "text": "Toggle Sidebar",
+        "context": "<span className=\"sr-only\">Toggle Sidebar</span>"
+      }
+    ],
+    "jsxExpression": [],
+    "attributeString": [
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 51,
+        "attribute": "aria-label",
+        "text": "Go back",
+        "context": "aria-label=\"Go back\""
+      },
+      {
+        "file": "components\\ThemeCard.tsx",
+        "line": 53,
+        "attribute": "title",
+        "text": "Стресс",
+        "context": "*   title=\"Стресс\""
+      },
+      {
+        "file": "components\\ui\\InfoModal.tsx",
+        "line": 33,
+        "attribute": "aria-label",
+        "text": "Закрыть модальное окно",
+        "context": "aria-label=\"Закрыть модальное окно\""
+      },
+      {
+        "file": "components\\ui\\pagination.tsx",
+        "line": 77,
+        "attribute": "aria-label",
+        "text": "Go to previous page",
+        "context": "aria-label=\"Go to previous page\""
+      },
+      {
+        "file": "components\\ui\\pagination.tsx",
+        "line": 96,
+        "attribute": "aria-label",
+        "text": "Go to next page",
+        "context": "aria-label=\"Go to next page\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 289,
+        "attribute": "aria-label",
+        "text": "Toggle Sidebar",
+        "context": "aria-label=\"Toggle Sidebar\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 292,
+        "attribute": "title",
+        "text": "Toggle Sidebar",
+        "context": "title=\"Toggle Sidebar\""
+      }
+    ],
+    "ternary": [],
+    "propString": [
+      {
+        "file": "components\\AboutAppScreen.tsx",
+        "line": 25,
+        "prop": "name",
+        "text": "App logo section",
+        "context": "<div className=\"flex flex-col items-center gap-4 sm:gap-5 w-full\" data-name=\"App logo section\">"
+      },
+      {
+        "file": "components\\AboutAppScreen.tsx",
+        "line": 47,
+        "prop": "name",
+        "text": "App info section",
+        "context": "<div className=\"bg-bg-card rounded-xl p-4 sm:p-5 relative w-full\" data-name=\"App info section\">"
+      },
+      {
+        "file": "components\\AboutAppScreen.tsx",
+        "line": 110,
+        "prop": "name",
+        "text": "About App Page",
+        "context": "data-name=\"About App Page\""
+      },
+      {
+        "file": "components\\AchievementsBlock.tsx",
+        "line": 128,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\ActivityBlockNew.tsx",
+        "line": 216,
+        "prop": "name",
+        "text": "activity_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"activity_block_background\">"
+      },
+      {
+        "file": "components\\ActivityBlockNew.tsx",
+        "line": 217,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\ActivityHeatmapBlock.tsx",
+        "line": 182,
+        "prop": "name",
+        "text": "Activity heatmap block",
+        "context": "data-name=\"Activity heatmap block\""
+      },
+      {
+        "file": "components\\ActivityHeatmapBlock.tsx",
+        "line": 185,
+        "prop": "name",
+        "text": "activity_heatmap_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"activity_heatmap_block_background\">"
+      },
+      {
+        "file": "components\\ActivityHeatmapBlock.tsx",
+        "line": 186,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\AppSettingsScreen.tsx",
+        "line": 94,
+        "prop": "name",
+        "text": "App Settings Page",
+        "context": "data-name=\"App Settings Page\""
+      },
+      {
+        "file": "components\\AppSettingsScreen.tsx",
+        "line": 134,
+        "prop": "testid",
+        "text": "notifications-switch",
+        "context": "data-testid=\"notifications-switch\""
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 79,
+        "prop": "name",
+        "text": "Article card",
+        "context": "data-name=\"Article card\""
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 81,
+        "prop": "name",
+        "text": "article_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"article_block_background\">"
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 83,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"article-card-background-locked\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 87,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"article-card-background-unlocked\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 151,
+        "prop": "name",
+        "text": "View all articles card",
+        "context": "data-name=\"View all articles card\""
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 153,
+        "prop": "name",
+        "text": "view_all_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"view_all_background\">"
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 154,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[var(--color-text-dark)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 332,
+        "prop": "name",
+        "text": "Articles Slider",
+        "context": "data-name=\"Articles Slider\""
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 393,
+        "prop": "name",
+        "text": "Articles container",
+        "context": "data-name=\"Articles container\""
+      },
+      {
+        "file": "components\\ArticlesBlock.tsx",
+        "line": 405,
+        "prop": "name",
+        "text": "Articles container",
+        "context": "data-name=\"Articles container\""
+      },
+      {
+        "file": "components\\ArticleScreen.tsx",
+        "line": 42,
+        "prop": "class",
+        "text": "list-disc list-inside mb-4 space-y-2",
+        "context": "formatted = formatted.replace(/(<li.*<\\/li>\\n?)+/g, '<ul class=\"list-disc list-inside mb-4 space-y-2\">$&</ul>');"
+      },
+      {
+        "file": "components\\BadgeCard.tsx",
+        "line": 86,
+        "prop": "name",
+        "text": "Badge Card",
+        "context": "data-name=\"Badge Card\""
+      },
+      {
+        "file": "components\\BadgesScreen.tsx",
+        "line": 183,
+        "prop": "name",
+        "text": "Badges Page",
+        "context": "data-name=\"Badges Page\""
+      },
+      {
+        "file": "components\\BadgesSlider.tsx",
+        "line": 184,
+        "prop": "name",
+        "text": "Badges Slider",
+        "context": "data-name=\"Badges Slider\""
+      },
+      {
+        "file": "components\\CardDetailsScreen.tsx",
+        "line": 31,
+        "prop": "name",
+        "text": "Card Info",
+        "context": "data-name=\"Card Info\""
+      },
+      {
+        "file": "components\\CardDetailsScreen.tsx",
+        "line": 41,
+        "prop": "name",
+        "text": "Separation Line",
+        "context": "<div className=\"bg-[#ffffff] relative shrink-0 w-full\" data-name=\"Separation Line\">"
+      },
+      {
+        "file": "components\\CardDetailsScreen.tsx",
+        "line": 79,
+        "prop": "name",
+        "text": "Background",
+        "context": "<div className=\"absolute inset-0 rounded-xl bg-[rgba(217,217,217,0.04)]\" data-name=\"Background\">"
+      },
+      {
+        "file": "components\\CardDetailsScreen.tsx",
+        "line": 183,
+        "prop": "name",
+        "text": "Card Details Page",
+        "context": "data-name=\"Card Details Page\""
+      },
+      {
+        "file": "components\\CardWelcomeScreen.tsx",
+        "line": 43,
+        "prop": "name",
+        "text": "Card Description",
+        "context": "data-name=\"Card Description\""
+      },
+      {
+        "file": "components\\CardWelcomeScreen.tsx",
+        "line": 81,
+        "prop": "name",
+        "text": "Card Welcome Page",
+        "context": "data-name=\"Card Welcome Page\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 44,
+        "prop": "name",
+        "text": "Separation Line",
+        "context": "<div className=\"bg-[#ffffff] relative shrink-0 w-full\" data-name=\"Separation Line\">"
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 68,
+        "prop": "name",
+        "text": "Card Info",
+        "context": "data-name=\"Card Info\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 89,
+        "prop": "name",
+        "text": "Input answer block",
+        "context": "data-name=\"Input answer block\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 274,
+        "prop": "name",
+        "text": "Checkin Details Page",
+        "context": "data-name=\"Checkin Details Page\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 300,
+        "prop": "name",
+        "text": "Checkin Details Page",
+        "context": "data-name=\"Checkin Details Page\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 331,
+        "prop": "name",
+        "text": "Checkin Details Page",
+        "context": "data-name=\"Checkin Details Page\""
+      },
+      {
+        "file": "components\\CheckinDetailsScreen.tsx",
+        "line": 353,
+        "prop": "name",
+        "text": "Checkin Details Page",
+        "context": "data-name=\"Checkin Details Page\""
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 24,
+        "prop": "name",
+        "text": "Light",
+        "context": "data-name=\"Light\""
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 44,
+        "prop": "result",
+        "text": "BackgroundImageFix",
+        "context": "<feFlood floodOpacity=\"0\" result=\"BackgroundImageFix\" />"
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 45,
+        "prop": "in",
+        "text": "SourceGraphic",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 45,
+        "prop": "in2",
+        "text": "BackgroundImageFix",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 46,
+        "prop": "result",
+        "text": "effect1_foregroundBlur_1_395",
+        "context": "<feGaussianBlur result=\"effect1_foregroundBlur_1_395\" stdDeviation=\"127.5\" />"
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 62,
+        "prop": "ariaLabel",
+        "text": "Submit check-in",
+        "context": "ariaLabel=\"Submit check-in\""
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 75,
+        "prop": "name",
+        "text": "Hero_block_question",
+        "context": "data-name=\"Hero_block_question\""
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 223,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\CheckInScreen.tsx",
+        "line": 245,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\DeleteAccountScreen.tsx",
+        "line": 40,
+        "prop": "name",
+        "text": "Delete Button",
+        "context": "data-name=\"Delete Button\""
+      },
+      {
+        "file": "components\\DeleteAccountScreen.tsx",
+        "line": 74,
+        "prop": "name",
+        "text": "button block",
+        "context": "data-name=\"button block\""
+      },
+      {
+        "file": "components\\DeleteAccountScreen.tsx",
+        "line": 93,
+        "prop": "name",
+        "text": "warning_icon",
+        "context": "data-name=\"warning_icon\""
+      },
+      {
+        "file": "components\\DeleteAccountScreen.tsx",
+        "line": 136,
+        "prop": "name",
+        "text": "main_content",
+        "context": "data-name=\"main_content\""
+      },
+      {
+        "file": "components\\DeleteAccountScreen.tsx",
+        "line": 210,
+        "prop": "name",
+        "text": "Delete Account Screen",
+        "context": "<div className=\"bg-bg-primary relative size-full\" data-name=\"Delete Account Screen\">"
+      },
+      {
+        "file": "components\\DonationsScreen.tsx",
+        "line": 42,
+        "prop": "name",
+        "text": "Donations Page",
+        "context": "<div className=\"bg-[#111111] relative size-full min-h-screen overflow-x-hidden\" data-name=\"Donations Page\">"
+      },
+      {
+        "file": "components\\FinalCardMessageScreen.tsx",
+        "line": 40,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\FinalCardMessageScreen.tsx",
+        "line": 110,
+        "prop": "name",
+        "text": "Final card message",
+        "context": "data-name=\"Final card message\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 52,
+        "prop": "name",
+        "text": "User avatar",
+        "context": "<div className=\"relative shrink-0 size-[52px] sm:size-[58px] md:size-[62px]\" data-name=\"User avatar\">"
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 79,
+        "prop": "name",
+        "text": "User info",
+        "context": "data-name=\"User info\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 100,
+        "prop": "name",
+        "text": "User_account_status",
+        "context": "data-name=\"User_account_status\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 139,
+        "prop": "name",
+        "text": "User level and paid status",
+        "context": "data-name=\"User level and paid status\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 156,
+        "prop": "name",
+        "text": "User info block",
+        "context": "data-name=\"User info block\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 172,
+        "prop": "name",
+        "text": "user_frame_info_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"user_frame_info_block_background\">"
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 173,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 185,
+        "prop": "name",
+        "text": "User frame info block",
+        "context": "data-name=\"User frame info block\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 207,
+        "prop": "name",
+        "text": "Info icon",
+        "context": "data-name=\"Info icon\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 210,
+        "prop": "preserveAspectRatio",
+        "text": "xMidYMid meet",
+        "context": "<svg className=\"block size-full\" fill=\"none\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 24 24\">"
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 251,
+        "prop": "name",
+        "text": "Info_group",
+        "context": "data-name=\"Info_group\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 271,
+        "prop": "name",
+        "text": "Start Mining",
+        "context": "data-name=\"Start Mining\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 358,
+        "prop": "name",
+        "text": "Worries list",
+        "context": "data-name=\"Worries list\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 384,
+        "prop": "name",
+        "text": "Worries container",
+        "context": "data-name=\"Worries container\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 406,
+        "prop": "name",
+        "text": "Main_page_contenct_block",
+        "context": "data-name=\"Main_page_contenct_block\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 447,
+        "prop": "name",
+        "text": "004_Home (Main page)",
+        "context": "data-name=\"004_Home (Main page)\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 448,
+        "prop": "testid",
+        "text": "home-ready",
+        "context": "data-testid=\"home-ready\""
+      },
+      {
+        "file": "components\\HomeScreen.tsx",
+        "line": 480,
+        "prop": "name",
+        "text": "Social_follow_container",
+        "context": "{/* <div className=\"w-full mb-[48px] sm:mb-[54px] md:mb-[60px]\" data-name=\"Social_follow_container\">"
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 68,
+        "prop": "name",
+        "text": "Action buttons",
+        "context": "<div className=\"flex gap-3 w-full\" data-name=\"Action buttons\">"
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 73,
+        "prop": "name",
+        "text": "Cancel button",
+        "context": "data-name=\"Cancel button\""
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 84,
+        "prop": "name",
+        "text": "Confirm button",
+        "context": "data-name=\"Confirm button\""
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 138,
+        "prop": "name",
+        "text": "Language Modal Backdrop",
+        "context": "data-name=\"Language Modal Backdrop\""
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 143,
+        "prop": "name",
+        "text": "Language Modal Content",
+        "context": "data-name=\"Language Modal Content\""
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 147,
+        "prop": "name",
+        "text": "Modal header",
+        "context": "<div className=\"flex flex-col gap-2 mb-6 sm:mb-8\" data-name=\"Modal header\">"
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 157,
+        "prop": "name",
+        "text": "Language options",
+        "context": "<div className=\"flex flex-col gap-3 mb-6 sm:mb-8\" data-name=\"Language options\">"
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 163,
+        "prop": "nativeLabel",
+        "text": "English",
+        "context": "nativeLabel=\"English\""
+      },
+      {
+        "file": "components\\LanguageModal.tsx",
+        "line": 171,
+        "prop": "nativeLabel",
+        "text": "Русский",
+        "context": "nativeLabel=\"Русский\""
+      },
+      {
+        "file": "components\\Light.tsx",
+        "line": 5,
+        "prop": "name",
+        "text": "Light",
+        "context": "data-name=\"Light\""
+      },
+      {
+        "file": "components\\Light.tsx",
+        "line": 25,
+        "prop": "result",
+        "text": "BackgroundImageFix",
+        "context": "<feFlood floodOpacity=\"0\" result=\"BackgroundImageFix\" />"
+      },
+      {
+        "file": "components\\Light.tsx",
+        "line": 26,
+        "prop": "in",
+        "text": "SourceGraphic",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\Light.tsx",
+        "line": 26,
+        "prop": "in2",
+        "text": "BackgroundImageFix",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\Light.tsx",
+        "line": 27,
+        "prop": "result",
+        "text": "effect1_foregroundBlur_1_395",
+        "context": "<feGaussianBlur result=\"effect1_foregroundBlur_1_395\" stdDeviation=\"127.5\" />"
+      },
+      {
+        "file": "components\\MentalLevelBlock.tsx",
+        "line": 70,
+        "prop": "name",
+        "text": "Mental level block",
+        "context": "data-name=\"Mental level block\""
+      },
+      {
+        "file": "components\\MentalLevelBlock.tsx",
+        "line": 73,
+        "prop": "name",
+        "text": "mental_level_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"mental_level_block_background\">"
+      },
+      {
+        "file": "components\\MentalLevelBlock.tsx",
+        "line": 74,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\OnboardingScreen01.tsx",
+        "line": 28,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "<BottomFixedButton onClick={onClick} dataName=\"Next button\" ariaLabel=\"Next\">"
+      },
+      {
+        "file": "components\\OnboardingScreen01.tsx",
+        "line": 28,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "<BottomFixedButton onClick={onClick} dataName=\"Next button\" ariaLabel=\"Next\">"
+      },
+      {
+        "file": "components\\OnboardingScreen01.tsx",
+        "line": 86,
+        "prop": "name",
+        "text": "main_content",
+        "context": "data-name=\"main_content\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 27,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "<BottomFixedButton onClick={onClick} dataName=\"Next button\" ariaLabel=\"Get Started\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 27,
+        "prop": "ariaLabel",
+        "text": "Get Started",
+        "context": "<BottomFixedButton onClick={onClick} dataName=\"Next button\" ariaLabel=\"Get Started\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 39,
+        "prop": "name",
+        "text": "Icon",
+        "context": "<div className=\"relative shrink-0 size-12\" data-name=\"Icon\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 76,
+        "prop": "name",
+        "text": "Text block",
+        "context": "data-name=\"Text block\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 98,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 114,
+        "prop": "name",
+        "text": "Icon",
+        "context": "<div className=\"relative shrink-0 size-12\" data-name=\"Icon\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 151,
+        "prop": "name",
+        "text": "Text block",
+        "context": "data-name=\"Text block\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 173,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 189,
+        "prop": "name",
+        "text": "Icon",
+        "context": "<div className=\"relative shrink-0 size-12\" data-name=\"Icon\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 226,
+        "prop": "name",
+        "text": "Text block",
+        "context": "data-name=\"Text block\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 248,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 264,
+        "prop": "name",
+        "text": "Icon",
+        "context": "<div className=\"relative shrink-0 size-12\" data-name=\"Icon\">"
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 349,
+        "prop": "name",
+        "text": "Text block",
+        "context": "data-name=\"Text block\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 373,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\OnboardingScreen02.tsx",
+        "line": 391,
+        "prop": "name",
+        "text": "Content block",
+        "context": "data-name=\"Content block\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 30,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 48,
+        "prop": "name",
+        "text": "Plan Info",
+        "context": "data-name=\"Plan Info\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 65,
+        "prop": "name",
+        "text": "Container",
+        "context": "<div className=\"h-[95px] relative shrink-0 w-full\" data-name=\"Container\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 82,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 100,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 147,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 161,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 175,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[#e1ff00] inset-0 rounded-xl\" data-name=\"Block\" />"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 185,
+        "prop": "name",
+        "text": "Plan Icon",
+        "context": "<div className=\"relative shrink-0 size-6\" data-name=\"Plan Icon\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 209,
+        "prop": "name",
+        "text": "Plan Price Container",
+        "context": "data-name=\"Plan Price Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 214,
+        "prop": "name",
+        "text": "Plan Icon",
+        "context": "<div className=\"relative shrink-0 size-6\" data-name=\"Plan Icon\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 239,
+        "prop": "name",
+        "text": "Plan Cost",
+        "context": "data-name=\"Plan Cost\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 256,
+        "prop": "name",
+        "text": "Plan Details",
+        "context": "data-name=\"Plan Details\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 274,
+        "prop": "name",
+        "text": "Radio_button",
+        "context": "<div className=\"relative shrink-0 size-3.5\" data-name=\"Radio_button\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 325,
+        "prop": "name",
+        "text": "Plan Option",
+        "context": "data-name=\"Plan Option\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 355,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 362,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 393,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 398,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className={`absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl ${isSelected ? 'border border-[#e1ff00]' : ''}`} data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 429,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 434,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className={`absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl ${isSelected ? 'border border-[#e1ff00]' : ''}`} data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 469,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 511,
+        "prop": "name",
+        "text": "Container",
+        "context": "data-name=\"Container\""
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 553,
+        "prop": "target",
+        "text": "_blank",
+        "context": "<a className=\"underline\" href={content.payments.legal.termsHref || '/terms'} target=\"_blank\" rel=\"noreferrer\">{content.payments.legal.termsText}</a>"
+      },
+      {
+        "file": "components\\PaymentsScreen.tsx",
+        "line": 555,
+        "prop": "target",
+        "text": "_blank",
+        "context": "<a className=\"underline\" href={content.payments.legal.privacyHref || '/privacy'} target=\"_blank\" rel=\"noreferrer\">{content.payments.legal.privacyText}</a>"
+      },
+      {
+        "file": "components\\PinSetupScreen.tsx",
+        "line": 37,
+        "prop": "name",
+        "text": "Skip Button",
+        "context": "data-name=\"Skip Button\""
+      },
+      {
+        "file": "components\\PinSetupScreen.tsx",
+        "line": 77,
+        "prop": "name",
+        "text": "Pin_buttons",
+        "context": "data-name=\"Pin_buttons\""
+      },
+      {
+        "file": "components\\PinSetupScreen.tsx",
+        "line": 106,
+        "prop": "name",
+        "text": "Pin block",
+        "context": "<div className=\"relative size-[62px]\" data-name=\"Pin block\">"
+      },
+      {
+        "file": "components\\PinSetupScreen.tsx",
+        "line": 140,
+        "prop": "name",
+        "text": "Pin_block",
+        "context": "<div className=\"flex flex-row gap-[21px] items-center justify-center w-full\" data-name=\"Pin_block\">"
+      },
+      {
+        "file": "components\\PinSetupScreen.tsx",
+        "line": 165,
+        "prop": "name",
+        "text": "Pin setup",
+        "context": "<div className=\"flex flex-col items-center gap-4 w-full max-w-[351px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0\" data-name=\"Pin setup\">"
+      },
+      {
+        "file": "components\\PremiumUnlockBlock.tsx",
+        "line": 24,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[#e1ff00] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PrivacyPolicyScreen.tsx",
+        "line": 32,
+        "prop": "name",
+        "text": "main_content",
+        "context": "data-name=\"main_content\""
+      },
+      {
+        "file": "components\\PrivacyPolicyScreen.tsx",
+        "line": 132,
+        "prop": "name",
+        "text": "Symbol_big",
+        "context": "<div className=\"relative size-full\" data-name=\"Symbol_big\">"
+      },
+      {
+        "file": "components\\PrivacyPolicyScreen.tsx",
+        "line": 147,
+        "prop": "name",
+        "text": "Menhausen",
+        "context": "<div className=\"absolute inset-[2.21%_1.17%_7.2%_15.49%]\" data-name=\"Menhausen\">"
+      },
+      {
+        "file": "components\\PrivacyPolicyScreen.tsx",
+        "line": 172,
+        "prop": "name",
+        "text": "002_privacy policy",
+        "context": "<div className=\"bg-[#111111] relative size-full overflow-hidden\" data-name=\"002_privacy policy\">"
+      },
+      {
+        "file": "components\\ProfileFeedbackSection.tsx",
+        "line": 19,
+        "prop": "name",
+        "text": "Feedback button",
+        "context": "data-name=\"Feedback button\""
+      },
+      {
+        "file": "components\\ProfileFeedbackSection.tsx",
+        "line": 101,
+        "prop": "name",
+        "text": "Feedback section",
+        "context": "<div className=\"relative w-full\" data-name=\"Feedback section\">"
+      },
+      {
+        "file": "components\\ProfileFeedbackSection.tsx",
+        "line": 102,
+        "prop": "name",
+        "text": "Feedback container",
+        "context": "<div className=\"bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative\" data-name=\"Feedback container\">"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 11,
+        "prop": "name",
+        "text": "Light",
+        "context": "data-name=\"Light\""
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 31,
+        "prop": "result",
+        "text": "BackgroundImageFix",
+        "context": "<feFlood floodOpacity=\"0\" result=\"BackgroundImageFix\" />"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 32,
+        "prop": "in",
+        "text": "SourceGraphic",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 32,
+        "prop": "in2",
+        "text": "BackgroundImageFix",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 33,
+        "prop": "result",
+        "text": "effect1_foregroundBlur_1_395",
+        "context": "<feGaussianBlur result=\"effect1_foregroundBlur_1_395\" stdDeviation=\"127.5\" />"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 50,
+        "prop": "name",
+        "text": "Back Button",
+        "context": "data-name=\"Back Button\""
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 74,
+        "prop": "name",
+        "text": "Symbol_big",
+        "context": "<div className=\"h-[10px] sm:h-[12px] md:h-[13px] relative w-[6px] sm:w-[7px] md:w-2\" data-name=\"Symbol_big\">"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 89,
+        "prop": "name",
+        "text": "Menhausen beta",
+        "context": "<div className=\"absolute inset-[2.21%_6.75%_7.2%_10.77%]\" data-name=\"Menhausen beta\">"
+      },
+      {
+        "file": "components\\ProfileLayoutComponents.tsx",
+        "line": 116,
+        "prop": "name",
+        "text": "Mini_stripe_logo",
+        "context": "<div className=\"absolute h-[10px] sm:h-[12px] md:h-[13px] left-1/2 transform -translate-x-1/2 top-[60px] w-[80px] sm:w-[100px] md:w-32\" data-name=\"Mini_stripe_logo\">"
+      },
+      {
+        "file": "components\\ProfileReferralSection.tsx",
+        "line": 21,
+        "prop": "name",
+        "text": "Referral share button",
+        "context": "data-name=\"Referral share button\""
+      },
+      {
+        "file": "components\\ProfileReferralSection.tsx",
+        "line": 55,
+        "prop": "startapp",
+        "text": ") ? referralLink :",
+        "context": "const shareUrl = referralLink.includes('startapp=') ? referralLink : 'https://t.me/menhausen_app_bot/app';"
+      },
+      {
+        "file": "components\\ProfileReferralSection.tsx",
+        "line": 121,
+        "prop": "name",
+        "text": "Referral section",
+        "context": "<div className=\"relative w-full\" data-name=\"Referral section\">"
+      },
+      {
+        "file": "components\\ProfileReferralSection.tsx",
+        "line": 122,
+        "prop": "name",
+        "text": "Referral container",
+        "context": "<div className=\"bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative\" data-name=\"Referral container\">"
+      },
+      {
+        "file": "components\\ProgressBlock.tsx",
+        "line": 43,
+        "prop": "name",
+        "text": "progress_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"progress_block_background\">"
+      },
+      {
+        "file": "components\\ProgressBlock.tsx",
+        "line": 44,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\PsychologicalTestInstructionScreen.tsx",
+        "line": 72,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "dataName=\"Next button\""
+      },
+      {
+        "file": "components\\PsychologicalTestInstructionScreen.tsx",
+        "line": 73,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "ariaLabel=\"Next\""
+      },
+      {
+        "file": "components\\PsychologicalTestPreambulaScreen.tsx",
+        "line": 72,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "dataName=\"Next button\""
+      },
+      {
+        "file": "components\\PsychologicalTestPreambulaScreen.tsx",
+        "line": 73,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "ariaLabel=\"Next\""
+      },
+      {
+        "file": "components\\PsychologicalTestQuestionScreen.tsx",
+        "line": 118,
+        "prop": "name",
+        "text": "Test answer option",
+        "context": "data-name=\"Test answer option\""
+      },
+      {
+        "file": "components\\PsychologicalTestQuestionScreen.tsx",
+        "line": 147,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "dataName=\"Next button\""
+      },
+      {
+        "file": "components\\PsychologicalTestQuestionScreen.tsx",
+        "line": 148,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "ariaLabel=\"Next\""
+      },
+      {
+        "file": "components\\PsychologicalTestResultsScreen.tsx",
+        "line": 110,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "dataName=\"Next button\""
+      },
+      {
+        "file": "components\\PsychologicalTestResultsScreen.tsx",
+        "line": 111,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "ariaLabel=\"Next\""
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 30,
+        "prop": "name",
+        "text": "Lock Shield Filled",
+        "context": "<div className=\"relative shrink-0 size-7\" data-name=\"Lock Shield Filled\">"
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 49,
+        "prop": "name",
+        "text": "Encrypt_info_block",
+        "context": "data-name=\"Encrypt_info_block\""
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 85,
+        "prop": "name",
+        "text": "Input answer block",
+        "context": "data-name=\"Input answer block\""
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 114,
+        "prop": "name",
+        "text": "Answer block",
+        "context": "data-name=\"Answer block\""
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 137,
+        "prop": "name",
+        "text": "Content block",
+        "context": "data-name=\"Content block\""
+      },
+      {
+        "file": "components\\QuestionScreen01.tsx",
+        "line": 192,
+        "prop": "name",
+        "text": "Question Answer 01",
+        "context": "data-name=\"Question Answer 01\""
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 31,
+        "prop": "name",
+        "text": "Lock Shield Filled",
+        "context": "<div className=\"relative shrink-0 size-7\" data-name=\"Lock Shield Filled\">"
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 50,
+        "prop": "name",
+        "text": "Encrypt_info_block",
+        "context": "data-name=\"Encrypt_info_block\""
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 86,
+        "prop": "name",
+        "text": "Input answer block",
+        "context": "data-name=\"Input answer block\""
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 115,
+        "prop": "name",
+        "text": "Answer block",
+        "context": "data-name=\"Answer block\""
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 138,
+        "prop": "name",
+        "text": "Content block",
+        "context": "data-name=\"Content block\""
+      },
+      {
+        "file": "components\\QuestionScreen02.tsx",
+        "line": 193,
+        "prop": "name",
+        "text": "Question Answer 02",
+        "context": "data-name=\"Question Answer 02\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 42,
+        "prop": "name",
+        "text": "Rating text container",
+        "context": "data-name=\"Rating text container\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 59,
+        "prop": "name",
+        "text": "Lock Shield Filled",
+        "context": "<div className=\"relative shrink-0 size-7\" data-name=\"Lock Shield Filled\">"
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 66,
+        "prop": "transform",
+        "text": "scale(1.077) translate(-1, -1)",
+        "context": "transform=\"scale(1.077) translate(-1, -1)\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 83,
+        "prop": "name",
+        "text": "Encrypt_info_block",
+        "context": "data-name=\"Encrypt_info_block\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 119,
+        "prop": "name",
+        "text": "Input text message block",
+        "context": "data-name=\"Input text message block\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 148,
+        "prop": "name",
+        "text": "Text message block",
+        "context": "data-name=\"Text message block\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 178,
+        "prop": "name",
+        "text": "Mark",
+        "context": "data-name=\"Mark\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 203,
+        "prop": "name",
+        "text": "Rating options",
+        "context": "<div className=\"h-[46px] relative shrink-0 w-full\" data-name=\"Rating options\">"
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 226,
+        "prop": "name",
+        "text": "Skip Rating Button",
+        "context": "data-name=\"Skip Rating Button\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 255,
+        "prop": "name",
+        "text": "Rating card container",
+        "context": "data-name=\"Rating card container\""
+      },
+      {
+        "file": "components\\RateCardScreen.tsx",
+        "line": 338,
+        "prop": "name",
+        "text": "Rate card page",
+        "context": "data-name=\"Rate card page\""
+      },
+      {
+        "file": "components\\RewardScreen.tsx",
+        "line": 79,
+        "prop": "name",
+        "text": "Reward Page",
+        "context": "data-name=\"Reward Page\""
+      },
+      {
+        "file": "components\\StatusBlock.tsx",
+        "line": 25,
+        "prop": "name",
+        "text": "Status block",
+        "context": "data-name=\"Status block\""
+      },
+      {
+        "file": "components\\StatusBlock.tsx",
+        "line": 28,
+        "prop": "name",
+        "text": "status_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"status_block_background\">"
+      },
+      {
+        "file": "components\\StatusBlock.tsx",
+        "line": 29,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      },
+      {
+        "file": "components\\StatusBlocksRow.tsx",
+        "line": 65,
+        "prop": "name",
+        "text": "Status blocks row",
+        "context": "<div className=\"flex flex-row gap-3 sm:gap-4 w-full items-stretch\" data-name=\"Status blocks row\">"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 41,
+        "prop": "name",
+        "text": "Radio_button",
+        "context": "<div className=\"relative shrink-0 size-3.5\" data-name=\"Radio_button\">"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 80,
+        "prop": "name",
+        "text": "Background",
+        "context": "data-name=\"Background\""
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 134,
+        "prop": "name",
+        "text": "Separation Line",
+        "context": "<div className=\"h-0 w-full relative\" data-name=\"Separation Line\">"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 138,
+        "prop": "transform",
+        "text": "translate(0 1)",
+        "context": "<rect fill=\"white\" height=\"3.06854e-05\" transform=\"translate(0 1)\" width=\"351\" />"
+      },
+      {
+        "file": "components\\SurveyScreen.tsx",
+        "line": 192,
+        "prop": "name",
+        "text": "Progress Bar",
+        "context": "<div className=\"h-0 w-full relative\" data-name=\"Progress Bar\">"
+      },
+      {
+        "file": "components\\SurveyScreenTemplate.tsx",
+        "line": 197,
+        "prop": "name",
+        "text": "Survey option",
+        "context": "data-name=\"Survey option\""
+      },
+      {
+        "file": "components\\SurveyScreenTemplate.tsx",
+        "line": 307,
+        "prop": "dataName",
+        "text": "Next button",
+        "context": "dataName=\"Next button\""
+      },
+      {
+        "file": "components\\SurveyScreenTemplate.tsx",
+        "line": 308,
+        "prop": "ariaLabel",
+        "text": "Next",
+        "context": "ariaLabel=\"Next\""
+      },
+      {
+        "file": "components\\TermsOfUseScreen.tsx",
+        "line": 32,
+        "prop": "name",
+        "text": "main_content",
+        "context": "data-name=\"main_content\""
+      },
+      {
+        "file": "components\\TermsOfUseScreen.tsx",
+        "line": 132,
+        "prop": "name",
+        "text": "Symbol_big",
+        "context": "<div className=\"relative size-full\" data-name=\"Symbol_big\">"
+      },
+      {
+        "file": "components\\TermsOfUseScreen.tsx",
+        "line": 147,
+        "prop": "name",
+        "text": "Menhausen",
+        "context": "<div className=\"absolute inset-[2.21%_1.17%_7.2%_15.49%]\" data-name=\"Menhausen\">"
+      },
+      {
+        "file": "components\\TermsOfUseScreen.tsx",
+        "line": 172,
+        "prop": "name",
+        "text": "002_terms of use",
+        "context": "<div className=\"bg-[#111111] relative size-full overflow-hidden\" data-name=\"002_terms of use\">"
+      },
+      {
+        "file": "components\\ThemeCard.tsx",
+        "line": 54,
+        "prop": "description",
+        "text": "Управление стрессом",
+        "context": "*   description=\"Управление стрессом\""
+      },
+      {
+        "file": "components\\ThemeCard.tsx",
+        "line": 157,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[var(--theme-card-bg)] inset-0 rounded-xl\" data-name=\"Block\" />"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 37,
+        "prop": "name",
+        "text": "Light",
+        "context": "data-name=\"Light\""
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 57,
+        "prop": "result",
+        "text": "BackgroundImageFix",
+        "context": "<feFlood floodOpacity=\"0\" result=\"BackgroundImageFix\" />"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 58,
+        "prop": "in",
+        "text": "SourceGraphic",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 58,
+        "prop": "in2",
+        "text": "BackgroundImageFix",
+        "context": "<feBlend in=\"SourceGraphic\" in2=\"BackgroundImageFix\" mode=\"normal\" result=\"shape\" />"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 59,
+        "prop": "result",
+        "text": "effect1_foregroundBlur_13_381",
+        "context": "<feGaussianBlur result=\"effect1_foregroundBlur_13_381\" stdDeviation=\"127.5\" />"
+      },
+      {
+        "file": "components\\ThemeHomeScreen.tsx",
+        "line": 125,
+        "prop": "name",
+        "text": "Checkin icon",
+        "context": "<div className=\"relative shrink-0 size-6\" data-name=\"Checkin icon\">"
+      },
+      {
+        "file": "components\\ui\\accordion.tsx",
+        "line": 36,
+        "prop": "slot",
+        "text": "accordion-trigger",
+        "context": "data-slot=\"accordion-trigger\""
+      },
+      {
+        "file": "components\\ui\\accordion.tsx",
+        "line": 57,
+        "prop": "slot",
+        "text": "accordion-content",
+        "context": "data-slot=\"accordion-content\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 12,
+        "prop": "slot",
+        "text": "alert-dialog",
+        "context": "return <AlertDialogPrimitive.Root data-slot=\"alert-dialog\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 19,
+        "prop": "slot",
+        "text": "alert-dialog-trigger",
+        "context": "<AlertDialogPrimitive.Trigger data-slot=\"alert-dialog-trigger\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 27,
+        "prop": "slot",
+        "text": "alert-dialog-portal",
+        "context": "<AlertDialogPrimitive.Portal data-slot=\"alert-dialog-portal\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 37,
+        "prop": "slot",
+        "text": "alert-dialog-overlay",
+        "context": "data-slot=\"alert-dialog-overlay\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 55,
+        "prop": "slot",
+        "text": "alert-dialog-content",
+        "context": "data-slot=\"alert-dialog-content\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 72,
+        "prop": "slot",
+        "text": "alert-dialog-header",
+        "context": "data-slot=\"alert-dialog-header\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 85,
+        "prop": "slot",
+        "text": "alert-dialog-footer",
+        "context": "data-slot=\"alert-dialog-footer\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 101,
+        "prop": "slot",
+        "text": "alert-dialog-title",
+        "context": "data-slot=\"alert-dialog-title\""
+      },
+      {
+        "file": "components\\ui\\alert-dialog.tsx",
+        "line": 114,
+        "prop": "slot",
+        "text": "alert-dialog-description",
+        "context": "data-slot=\"alert-dialog-description\""
+      },
+      {
+        "file": "components\\ui\\alert.tsx",
+        "line": 40,
+        "prop": "slot",
+        "text": "alert-title",
+        "context": "data-slot=\"alert-title\""
+      },
+      {
+        "file": "components\\ui\\alert.tsx",
+        "line": 56,
+        "prop": "slot",
+        "text": "alert-description",
+        "context": "data-slot=\"alert-description\""
+      },
+      {
+        "file": "components\\ui\\aspect-ratio.tsx",
+        "line": 8,
+        "prop": "slot",
+        "text": "aspect-ratio",
+        "context": "return <AspectRatioPrimitive.Root data-slot=\"aspect-ratio\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\avatar.tsx",
+        "line": 30,
+        "prop": "slot",
+        "text": "avatar-image",
+        "context": "data-slot=\"avatar-image\""
+      },
+      {
+        "file": "components\\ui\\avatar.tsx",
+        "line": 43,
+        "prop": "slot",
+        "text": "avatar-fallback",
+        "context": "data-slot=\"avatar-fallback\""
+      },
+      {
+        "file": "components\\ui\\breadcrumb.tsx",
+        "line": 15,
+        "prop": "slot",
+        "text": "breadcrumb-list",
+        "context": "data-slot=\"breadcrumb-list\""
+      },
+      {
+        "file": "components\\ui\\breadcrumb.tsx",
+        "line": 46,
+        "prop": "slot",
+        "text": "breadcrumb-link",
+        "context": "data-slot=\"breadcrumb-link\""
+      },
+      {
+        "file": "components\\ui\\breadcrumb.tsx",
+        "line": 56,
+        "prop": "slot",
+        "text": "breadcrumb-page",
+        "context": "data-slot=\"breadcrumb-page\""
+      },
+      {
+        "file": "components\\ui\\breadcrumb.tsx",
+        "line": 73,
+        "prop": "slot",
+        "text": "breadcrumb-separator",
+        "context": "data-slot=\"breadcrumb-separator\""
+      },
+      {
+        "file": "components\\ui\\breadcrumb.tsx",
+        "line": 92,
+        "prop": "slot",
+        "text": "breadcrumb-ellipsis",
+        "context": "data-slot=\"breadcrumb-ellipsis\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 21,
+        "prop": "slot",
+        "text": "card-header",
+        "context": "data-slot=\"card-header\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 34,
+        "prop": "slot",
+        "text": "card-title",
+        "context": "data-slot=\"card-title\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 44,
+        "prop": "slot",
+        "text": "card-description",
+        "context": "data-slot=\"card-description\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 54,
+        "prop": "slot",
+        "text": "card-action",
+        "context": "data-slot=\"card-action\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 67,
+        "prop": "slot",
+        "text": "card-content",
+        "context": "data-slot=\"card-content\""
+      },
+      {
+        "file": "components\\ui\\card.tsx",
+        "line": 77,
+        "prop": "slot",
+        "text": "card-footer",
+        "context": "data-slot=\"card-footer\""
+      },
+      {
+        "file": "components\\ui\\carousel.tsx",
+        "line": 142,
+        "prop": "slot",
+        "text": "carousel-content",
+        "context": "data-slot=\"carousel-content\""
+      },
+      {
+        "file": "components\\ui\\carousel.tsx",
+        "line": 184,
+        "prop": "slot",
+        "text": "carousel-previous",
+        "context": "data-slot=\"carousel-previous\""
+      },
+      {
+        "file": "components\\ui\\carousel.tsx",
+        "line": 214,
+        "prop": "slot",
+        "text": "carousel-next",
+        "context": "data-slot=\"carousel-next\""
+      },
+      {
+        "file": "components\\ui\\checkbox.tsx",
+        "line": 23,
+        "prop": "slot",
+        "text": "checkbox-indicator",
+        "context": "data-slot=\"checkbox-indicator\""
+      },
+      {
+        "file": "components\\ui\\collapsible.tsx",
+        "line": 16,
+        "prop": "slot",
+        "text": "collapsible-trigger",
+        "context": "data-slot=\"collapsible-trigger\""
+      },
+      {
+        "file": "components\\ui\\collapsible.tsx",
+        "line": 27,
+        "prop": "slot",
+        "text": "collapsible-content",
+        "context": "data-slot=\"collapsible-content\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 62,
+        "prop": "slot",
+        "text": "command-input-wrapper",
+        "context": "data-slot=\"command-input-wrapper\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 67,
+        "prop": "slot",
+        "text": "command-input",
+        "context": "data-slot=\"command-input\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 84,
+        "prop": "slot",
+        "text": "command-list",
+        "context": "data-slot=\"command-list\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 112,
+        "prop": "slot",
+        "text": "command-group",
+        "context": "data-slot=\"command-group\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 128,
+        "prop": "slot",
+        "text": "command-separator",
+        "context": "data-slot=\"command-separator\""
+      },
+      {
+        "file": "components\\ui\\command.tsx",
+        "line": 157,
+        "prop": "slot",
+        "text": "command-shortcut",
+        "context": "data-slot=\"command-shortcut\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 18,
+        "prop": "slot",
+        "text": "dialog-trigger",
+        "context": "return <DialogPrimitive.Trigger data-slot=\"dialog-trigger\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 24,
+        "prop": "slot",
+        "text": "dialog-portal",
+        "context": "return <DialogPrimitive.Portal data-slot=\"dialog-portal\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 30,
+        "prop": "slot",
+        "text": "dialog-close",
+        "context": "return <DialogPrimitive.Close data-slot=\"dialog-close\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 39,
+        "prop": "slot",
+        "text": "dialog-overlay",
+        "context": "data-slot=\"dialog-overlay\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 55,
+        "prop": "slot",
+        "text": "dialog-portal",
+        "context": "<DialogPortal data-slot=\"dialog-portal\">"
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 58,
+        "prop": "slot",
+        "text": "dialog-content",
+        "context": "data-slot=\"dialog-content\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 78,
+        "prop": "slot",
+        "text": "dialog-header",
+        "context": "data-slot=\"dialog-header\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 88,
+        "prop": "slot",
+        "text": "dialog-footer",
+        "context": "data-slot=\"dialog-footer\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 104,
+        "prop": "slot",
+        "text": "dialog-title",
+        "context": "data-slot=\"dialog-title\""
+      },
+      {
+        "file": "components\\ui\\dialog.tsx",
+        "line": 117,
+        "prop": "slot",
+        "text": "dialog-description",
+        "context": "data-slot=\"dialog-description\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 17,
+        "prop": "slot",
+        "text": "drawer-trigger",
+        "context": "return <DrawerPrimitive.Trigger data-slot=\"drawer-trigger\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 23,
+        "prop": "slot",
+        "text": "drawer-portal",
+        "context": "return <DrawerPrimitive.Portal data-slot=\"drawer-portal\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 29,
+        "prop": "slot",
+        "text": "drawer-close",
+        "context": "return <DrawerPrimitive.Close data-slot=\"drawer-close\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 38,
+        "prop": "slot",
+        "text": "drawer-overlay",
+        "context": "data-slot=\"drawer-overlay\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 54,
+        "prop": "slot",
+        "text": "drawer-portal",
+        "context": "<DrawerPortal data-slot=\"drawer-portal\">"
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 57,
+        "prop": "slot",
+        "text": "drawer-content",
+        "context": "data-slot=\"drawer-content\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 78,
+        "prop": "slot",
+        "text": "drawer-header",
+        "context": "data-slot=\"drawer-header\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 88,
+        "prop": "slot",
+        "text": "drawer-footer",
+        "context": "data-slot=\"drawer-footer\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 101,
+        "prop": "slot",
+        "text": "drawer-title",
+        "context": "data-slot=\"drawer-title\""
+      },
+      {
+        "file": "components\\ui\\drawer.tsx",
+        "line": 114,
+        "prop": "slot",
+        "text": "drawer-description",
+        "context": "data-slot=\"drawer-description\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 12,
+        "prop": "slot",
+        "text": "dropdown-menu",
+        "context": "return <DropdownMenuPrimitive.Root data-slot=\"dropdown-menu\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 19,
+        "prop": "slot",
+        "text": "dropdown-menu-portal",
+        "context": "<DropdownMenuPrimitive.Portal data-slot=\"dropdown-menu-portal\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 28,
+        "prop": "slot",
+        "text": "dropdown-menu-trigger",
+        "context": "data-slot=\"dropdown-menu-trigger\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 42,
+        "prop": "slot",
+        "text": "dropdown-menu-content",
+        "context": "data-slot=\"dropdown-menu-content\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 58,
+        "prop": "slot",
+        "text": "dropdown-menu-group",
+        "context": "<DropdownMenuPrimitive.Group data-slot=\"dropdown-menu-group\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 116,
+        "prop": "slot",
+        "text": "dropdown-menu-radio-group",
+        "context": "data-slot=\"dropdown-menu-radio-group\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 155,
+        "prop": "slot",
+        "text": "dropdown-menu-label",
+        "context": "data-slot=\"dropdown-menu-label\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 172,
+        "prop": "slot",
+        "text": "dropdown-menu-separator",
+        "context": "data-slot=\"dropdown-menu-separator\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 185,
+        "prop": "slot",
+        "text": "dropdown-menu-shortcut",
+        "context": "data-slot=\"dropdown-menu-shortcut\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 198,
+        "prop": "slot",
+        "text": "dropdown-menu-sub",
+        "context": "return <DropdownMenuPrimitive.Sub data-slot=\"dropdown-menu-sub\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 211,
+        "prop": "slot",
+        "text": "dropdown-menu-sub-trigger",
+        "context": "data-slot=\"dropdown-menu-sub-trigger\""
+      },
+      {
+        "file": "components\\ui\\dropdown-menu.tsx",
+        "line": 231,
+        "prop": "slot",
+        "text": "dropdown-menu-sub-content",
+        "context": "data-slot=\"dropdown-menu-sub-content\""
+      },
+      {
+        "file": "components\\ui\\hover-card.tsx",
+        "line": 11,
+        "prop": "slot",
+        "text": "hover-card",
+        "context": "return <HoverCardPrimitive.Root data-slot=\"hover-card\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\hover-card.tsx",
+        "line": 18,
+        "prop": "slot",
+        "text": "hover-card-trigger",
+        "context": "<HoverCardPrimitive.Trigger data-slot=\"hover-card-trigger\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\hover-card.tsx",
+        "line": 29,
+        "prop": "slot",
+        "text": "hover-card-portal",
+        "context": "<HoverCardPrimitive.Portal data-slot=\"hover-card-portal\">"
+      },
+      {
+        "file": "components\\ui\\hover-card.tsx",
+        "line": 31,
+        "prop": "slot",
+        "text": "hover-card-content",
+        "context": "data-slot=\"hover-card-content\""
+      },
+      {
+        "file": "components\\ui\\input-otp.tsx",
+        "line": 18,
+        "prop": "slot",
+        "text": "input-otp",
+        "context": "data-slot=\"input-otp\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 28,
+        "prop": "slot",
+        "text": "menubar-menu",
+        "context": "return <MenubarPrimitive.Menu data-slot=\"menubar-menu\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 34,
+        "prop": "slot",
+        "text": "menubar-group",
+        "context": "return <MenubarPrimitive.Group data-slot=\"menubar-group\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 40,
+        "prop": "slot",
+        "text": "menubar-portal",
+        "context": "return <MenubarPrimitive.Portal data-slot=\"menubar-portal\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 47,
+        "prop": "slot",
+        "text": "menubar-radio-group",
+        "context": "<MenubarPrimitive.RadioGroup data-slot=\"menubar-radio-group\" {...props} />"
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 57,
+        "prop": "slot",
+        "text": "menubar-trigger",
+        "context": "data-slot=\"menubar-trigger\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 77,
+        "prop": "slot",
+        "text": "menubar-content",
+        "context": "data-slot=\"menubar-content\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 173,
+        "prop": "slot",
+        "text": "menubar-label",
+        "context": "data-slot=\"menubar-label\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 190,
+        "prop": "slot",
+        "text": "menubar-separator",
+        "context": "data-slot=\"menubar-separator\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 203,
+        "prop": "slot",
+        "text": "menubar-shortcut",
+        "context": "data-slot=\"menubar-shortcut\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 216,
+        "prop": "slot",
+        "text": "menubar-sub",
+        "context": "return <MenubarPrimitive.Sub data-slot=\"menubar-sub\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 229,
+        "prop": "slot",
+        "text": "menubar-sub-trigger",
+        "context": "data-slot=\"menubar-sub-trigger\""
+      },
+      {
+        "file": "components\\ui\\menubar.tsx",
+        "line": 249,
+        "prop": "slot",
+        "text": "menubar-sub-content",
+        "context": "data-slot=\"menubar-sub-content\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 18,
+        "prop": "slot",
+        "text": "navigation-menu",
+        "context": "data-slot=\"navigation-menu\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 38,
+        "prop": "slot",
+        "text": "navigation-menu-list",
+        "context": "data-slot=\"navigation-menu-list\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 72,
+        "prop": "slot",
+        "text": "navigation-menu-trigger",
+        "context": "data-slot=\"navigation-menu-trigger\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 91,
+        "prop": "slot",
+        "text": "navigation-menu-content",
+        "context": "data-slot=\"navigation-menu-content\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 113,
+        "prop": "slot",
+        "text": "navigation-menu-viewport",
+        "context": "data-slot=\"navigation-menu-viewport\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 130,
+        "prop": "slot",
+        "text": "navigation-menu-link",
+        "context": "data-slot=\"navigation-menu-link\""
+      },
+      {
+        "file": "components\\ui\\navigation-menu.tsx",
+        "line": 146,
+        "prop": "slot",
+        "text": "navigation-menu-indicator",
+        "context": "data-slot=\"navigation-menu-indicator\""
+      },
+      {
+        "file": "components\\ui\\pagination.tsx",
+        "line": 30,
+        "prop": "slot",
+        "text": "pagination-content",
+        "context": "data-slot=\"pagination-content\""
+      },
+      {
+        "file": "components\\ui\\pagination.tsx",
+        "line": 55,
+        "prop": "slot",
+        "text": "pagination-link",
+        "context": "data-slot=\"pagination-link\""
+      },
+      {
+        "file": "components\\ui\\pagination.tsx",
+        "line": 116,
+        "prop": "slot",
+        "text": "pagination-ellipsis",
+        "context": "data-slot=\"pagination-ellipsis\""
+      },
+      {
+        "file": "components\\ui\\popover.tsx",
+        "line": 17,
+        "prop": "slot",
+        "text": "popover-trigger",
+        "context": "return <PopoverPrimitive.Trigger data-slot=\"popover-trigger\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\popover.tsx",
+        "line": 29,
+        "prop": "slot",
+        "text": "popover-content",
+        "context": "data-slot=\"popover-content\""
+      },
+      {
+        "file": "components\\ui\\popover.tsx",
+        "line": 45,
+        "prop": "slot",
+        "text": "popover-anchor",
+        "context": "return <PopoverPrimitive.Anchor data-slot=\"popover-anchor\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\progress.tsx",
+        "line": 23,
+        "prop": "slot",
+        "text": "progress-indicator",
+        "context": "data-slot=\"progress-indicator\""
+      },
+      {
+        "file": "components\\ui\\radio-group.tsx",
+        "line": 15,
+        "prop": "slot",
+        "text": "radio-group",
+        "context": "data-slot=\"radio-group\""
+      },
+      {
+        "file": "components\\ui\\resizable.tsx",
+        "line": 15,
+        "prop": "slot",
+        "text": "resizable-panel-group",
+        "context": "data-slot=\"resizable-panel-group\""
+      },
+      {
+        "file": "components\\ui\\resizable.tsx",
+        "line": 28,
+        "prop": "slot",
+        "text": "resizable-panel",
+        "context": "return <ResizablePrimitive.Panel data-slot=\"resizable-panel\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\resizable.tsx",
+        "line": 40,
+        "prop": "slot",
+        "text": "resizable-handle",
+        "context": "data-slot=\"resizable-handle\""
+      },
+      {
+        "file": "components\\ui\\scroll-area.tsx",
+        "line": 15,
+        "prop": "slot",
+        "text": "scroll-area",
+        "context": "data-slot=\"scroll-area\""
+      },
+      {
+        "file": "components\\ui\\scroll-area.tsx",
+        "line": 20,
+        "prop": "slot",
+        "text": "scroll-area-viewport",
+        "context": "data-slot=\"scroll-area-viewport\""
+      },
+      {
+        "file": "components\\ui\\scroll-area.tsx",
+        "line": 38,
+        "prop": "slot",
+        "text": "scroll-area-scrollbar",
+        "context": "data-slot=\"scroll-area-scrollbar\""
+      },
+      {
+        "file": "components\\ui\\scroll-area.tsx",
+        "line": 51,
+        "prop": "slot",
+        "text": "scroll-area-thumb",
+        "context": "data-slot=\"scroll-area-thumb\""
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 22,
+        "prop": "slot",
+        "text": "select-group",
+        "context": "return <SelectPrimitive.Group data-slot=\"select-group\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 28,
+        "prop": "slot",
+        "text": "select-value",
+        "context": "return <SelectPrimitive.Value data-slot=\"select-value\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 41,
+        "prop": "slot",
+        "text": "select-trigger",
+        "context": "data-slot=\"select-trigger\""
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 66,
+        "prop": "slot",
+        "text": "select-content",
+        "context": "data-slot=\"select-content\""
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 98,
+        "prop": "slot",
+        "text": "select-label",
+        "context": "data-slot=\"select-label\""
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 135,
+        "prop": "slot",
+        "text": "select-separator",
+        "context": "data-slot=\"select-separator\""
+      },
+      {
+        "file": "components\\ui\\select.tsx",
+        "line": 166,
+        "prop": "slot",
+        "text": "select-scroll-down-button",
+        "context": "data-slot=\"select-scroll-down-button\""
+      },
+      {
+        "file": "components\\ui\\separator.tsx",
+        "line": 16,
+        "prop": "slot",
+        "text": "separator-root",
+        "context": "data-slot=\"separator-root\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 17,
+        "prop": "slot",
+        "text": "sheet-trigger",
+        "context": "return <SheetPrimitive.Trigger data-slot=\"sheet-trigger\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 23,
+        "prop": "slot",
+        "text": "sheet-close",
+        "context": "return <SheetPrimitive.Close data-slot=\"sheet-close\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 29,
+        "prop": "slot",
+        "text": "sheet-portal",
+        "context": "return <SheetPrimitive.Portal data-slot=\"sheet-portal\" {...props} />;"
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 38,
+        "prop": "slot",
+        "text": "sheet-overlay",
+        "context": "data-slot=\"sheet-overlay\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 62,
+        "prop": "slot",
+        "text": "sheet-content",
+        "context": "data-slot=\"sheet-content\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 90,
+        "prop": "slot",
+        "text": "sheet-header",
+        "context": "data-slot=\"sheet-header\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 100,
+        "prop": "slot",
+        "text": "sheet-footer",
+        "context": "data-slot=\"sheet-footer\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 113,
+        "prop": "slot",
+        "text": "sheet-title",
+        "context": "data-slot=\"sheet-title\""
+      },
+      {
+        "file": "components\\ui\\sheet.tsx",
+        "line": 126,
+        "prop": "slot",
+        "text": "sheet-description",
+        "context": "data-slot=\"sheet-description\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 133,
+        "prop": "slot",
+        "text": "sidebar-wrapper",
+        "context": "data-slot=\"sidebar-wrapper\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 219,
+        "prop": "slot",
+        "text": "sidebar-gap",
+        "context": "data-slot=\"sidebar-gap\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 230,
+        "prop": "slot",
+        "text": "sidebar-container",
+        "context": "data-slot=\"sidebar-container\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 246,
+        "prop": "slot",
+        "text": "sidebar-inner",
+        "context": "data-slot=\"sidebar-inner\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 266,
+        "prop": "slot",
+        "text": "sidebar-trigger",
+        "context": "data-slot=\"sidebar-trigger\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 288,
+        "prop": "slot",
+        "text": "sidebar-rail",
+        "context": "data-slot=\"sidebar-rail\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 310,
+        "prop": "slot",
+        "text": "sidebar-inset",
+        "context": "data-slot=\"sidebar-inset\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 327,
+        "prop": "slot",
+        "text": "sidebar-input",
+        "context": "data-slot=\"sidebar-input\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 338,
+        "prop": "slot",
+        "text": "sidebar-header",
+        "context": "data-slot=\"sidebar-header\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 349,
+        "prop": "slot",
+        "text": "sidebar-footer",
+        "context": "data-slot=\"sidebar-footer\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 363,
+        "prop": "slot",
+        "text": "sidebar-separator",
+        "context": "data-slot=\"sidebar-separator\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 374,
+        "prop": "slot",
+        "text": "sidebar-content",
+        "context": "data-slot=\"sidebar-content\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 388,
+        "prop": "slot",
+        "text": "sidebar-group",
+        "context": "data-slot=\"sidebar-group\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 457,
+        "prop": "slot",
+        "text": "sidebar-menu",
+        "context": "data-slot=\"sidebar-menu\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 516,
+        "prop": "slot",
+        "text": "sidebar-menu-button",
+        "context": "data-slot=\"sidebar-menu-button\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 517,
+        "prop": "sidebar",
+        "text": "menu-button",
+        "context": "data-sidebar=\"menu-button\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 561,
+        "prop": "slot",
+        "text": "sidebar-menu-action",
+        "context": "data-slot=\"sidebar-menu-action\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 562,
+        "prop": "sidebar",
+        "text": "menu-action",
+        "context": "data-sidebar=\"menu-action\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 586,
+        "prop": "slot",
+        "text": "sidebar-menu-badge",
+        "context": "data-slot=\"sidebar-menu-badge\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 587,
+        "prop": "sidebar",
+        "text": "menu-badge",
+        "context": "data-sidebar=\"menu-badge\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 616,
+        "prop": "slot",
+        "text": "sidebar-menu-skeleton",
+        "context": "data-slot=\"sidebar-menu-skeleton\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 617,
+        "prop": "sidebar",
+        "text": "menu-skeleton",
+        "context": "data-sidebar=\"menu-skeleton\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 624,
+        "prop": "sidebar",
+        "text": "menu-skeleton-icon",
+        "context": "data-sidebar=\"menu-skeleton-icon\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 629,
+        "prop": "sidebar",
+        "text": "menu-skeleton-text",
+        "context": "data-sidebar=\"menu-skeleton-text\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 643,
+        "prop": "slot",
+        "text": "sidebar-menu-sub",
+        "context": "data-slot=\"sidebar-menu-sub\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 644,
+        "prop": "sidebar",
+        "text": "menu-sub",
+        "context": "data-sidebar=\"menu-sub\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 684,
+        "prop": "slot",
+        "text": "sidebar-menu-sub-button",
+        "context": "data-slot=\"sidebar-menu-sub-button\""
+      },
+      {
+        "file": "components\\ui\\sidebar.tsx",
+        "line": 685,
+        "prop": "sidebar",
+        "text": "menu-sub-button",
+        "context": "data-sidebar=\"menu-sub-button\""
+      },
+      {
+        "file": "components\\ui\\slider.tsx",
+        "line": 40,
+        "prop": "slot",
+        "text": "slider-track",
+        "context": "data-slot=\"slider-track\""
+      },
+      {
+        "file": "components\\ui\\slider.tsx",
+        "line": 46,
+        "prop": "slot",
+        "text": "slider-range",
+        "context": "data-slot=\"slider-range\""
+      },
+      {
+        "file": "components\\ui\\slider.tsx",
+        "line": 54,
+        "prop": "slot",
+        "text": "slider-thumb",
+        "context": "data-slot=\"slider-thumb\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 10,
+        "prop": "slot",
+        "text": "table-container",
+        "context": "data-slot=\"table-container\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 25,
+        "prop": "slot",
+        "text": "table-header",
+        "context": "data-slot=\"table-header\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 35,
+        "prop": "slot",
+        "text": "table-body",
+        "context": "data-slot=\"table-body\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 45,
+        "prop": "slot",
+        "text": "table-footer",
+        "context": "data-slot=\"table-footer\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 58,
+        "prop": "slot",
+        "text": "table-row",
+        "context": "data-slot=\"table-row\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 71,
+        "prop": "slot",
+        "text": "table-head",
+        "context": "data-slot=\"table-head\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 84,
+        "prop": "slot",
+        "text": "table-cell",
+        "context": "data-slot=\"table-cell\""
+      },
+      {
+        "file": "components\\ui\\table.tsx",
+        "line": 100,
+        "prop": "slot",
+        "text": "table-caption",
+        "context": "data-slot=\"table-caption\""
+      },
+      {
+        "file": "components\\ui\\tabs.tsx",
+        "line": 27,
+        "prop": "slot",
+        "text": "tabs-list",
+        "context": "data-slot=\"tabs-list\""
+      },
+      {
+        "file": "components\\ui\\tabs.tsx",
+        "line": 43,
+        "prop": "slot",
+        "text": "tabs-trigger",
+        "context": "data-slot=\"tabs-trigger\""
+      },
+      {
+        "file": "components\\ui\\tabs.tsx",
+        "line": 59,
+        "prop": "slot",
+        "text": "tabs-content",
+        "context": "data-slot=\"tabs-content\""
+      },
+      {
+        "file": "components\\ui\\toggle-group.tsx",
+        "line": 27,
+        "prop": "slot",
+        "text": "toggle-group",
+        "context": "data-slot=\"toggle-group\""
+      },
+      {
+        "file": "components\\UnderConstructionScreen.tsx",
+        "line": 47,
+        "prop": "name",
+        "text": "Icon",
+        "context": "<div className=\"relative shrink-0 size-16\" data-name=\"Icon\">"
+      },
+      {
+        "file": "components\\UnderConstructionScreen.tsx",
+        "line": 101,
+        "prop": "name",
+        "text": "Hero_block_question",
+        "context": "data-name=\"Hero_block_question\""
+      },
+      {
+        "file": "components\\UnderConstructionScreen.tsx",
+        "line": 125,
+        "prop": "name",
+        "text": "Icon container",
+        "context": "data-name=\"Icon container\""
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 12,
+        "prop": "name",
+        "text": "User avatar",
+        "context": "<div className=\"relative shrink-0 size-[100px] sm:size-[110px] md:size-[120px]\" data-name=\"User avatar\">"
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 33,
+        "prop": "name",
+        "text": "User account status",
+        "context": "data-name=\"User account status\""
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 58,
+        "prop": "name",
+        "text": "User info block",
+        "context": "<div className=\"flex flex-col gap-2.5 items-center justify-start w-full\" data-name=\"User info block\">"
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 74,
+        "prop": "name",
+        "text": "User info section",
+        "context": "<div className=\"flex flex-col gap-4 sm:gap-5 items-center justify-start w-full\" data-name=\"User info section\">"
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 86,
+        "prop": "name",
+        "text": "Separation Line",
+        "context": "<div className=\"h-0 w-full relative\" data-name=\"Separation Line\">"
+      },
+      {
+        "file": "components\\UserProfileComponents.tsx",
+        "line": 90,
+        "prop": "transform",
+        "text": "translate(0 1)",
+        "context": "<rect fill=\"white\" height=\"3.06854e-05\" transform=\"translate(0 1)\" width=\"351\" />"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 9,
+        "prop": "name",
+        "text": "Badge icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Badge icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 71,
+        "prop": "name",
+        "text": "Level icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Level icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 89,
+        "prop": "name",
+        "text": "Mental status icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Mental status icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 105,
+        "prop": "name",
+        "text": "Unlock icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Unlock icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 121,
+        "prop": "name",
+        "text": "Donation icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Donation icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 140,
+        "prop": "name",
+        "text": "Activity icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Activity icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 159,
+        "prop": "name",
+        "text": "Share icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Share icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 178,
+        "prop": "name",
+        "text": "Language icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Language icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 211,
+        "prop": "name",
+        "text": "Security icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Security icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 227,
+        "prop": "name",
+        "text": "Info icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Info icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 244,
+        "prop": "name",
+        "text": "Privacy icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Privacy icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 263,
+        "prop": "name",
+        "text": "Terms icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Terms icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 281,
+        "prop": "name",
+        "text": "Delete icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Delete icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 300,
+        "prop": "name",
+        "text": "Arrow icon",
+        "context": "<div className={`relative shrink-0 size-5 sm:size-6 ${direction === 'left' ? '' : 'rotate-180'}`} data-name=\"Arrow icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 322,
+        "prop": "name",
+        "text": "Feedback icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Feedback icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 352,
+        "prop": "name",
+        "text": "Settings icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Settings icon\">"
+      },
+      {
+        "file": "components\\UserProfileIcons.tsx",
+        "line": 380,
+        "prop": "name",
+        "text": "Exercise icon",
+        "context": "<div className=\"relative shrink-0 size-5 sm:size-6\" data-name=\"Exercise icon\">"
+      },
+      {
+        "file": "components\\UserProfileScreen.tsx",
+        "line": 132,
+        "prop": "name",
+        "text": "User Profile Page",
+        "context": "data-name=\"User Profile Page\""
+      },
+      {
+        "file": "components\\UserProfileScreen.tsx",
+        "line": 157,
+        "prop": "name",
+        "text": "Settings icon button",
+        "context": "data-name=\"Settings icon button\""
+      },
+      {
+        "file": "components\\UserProfileScreen.tsx",
+        "line": 209,
+        "prop": "name",
+        "text": "points_history_block_background",
+        "context": "<div className=\"absolute inset-0\" data-name=\"points_history_block_background\">"
+      },
+      {
+        "file": "components\\UserProfileScreen.tsx",
+        "line": 210,
+        "prop": "name",
+        "text": "Block",
+        "context": "<div className=\"absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl\" data-name=\"Block\">"
+      }
+    ]
+  }
+}

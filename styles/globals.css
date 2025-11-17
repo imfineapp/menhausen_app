@@ -214,6 +214,42 @@
   --theme-card-height-xs: 140px;
   --theme-card-height-sm: 147px;
   --theme-card-height-md: 154px;
+  
+  /* Brand Colors - Design Tokens */
+  --color-brand-primary: #e1ff00;
+  --color-brand-primary-hover: #d1ef00;
+  --color-brand-primary-muted: #b8b800;
+  
+  /* Background Colors - Design Tokens */
+  --color-bg-primary: #111111;
+  --color-bg-card: rgba(217, 217, 217, 0.04);
+  --color-bg-card-hover: rgba(217, 217, 217, 0.06);
+  --color-bg-card-active: rgba(217, 217, 217, 0.08);
+  
+  /* Text Colors - Design Tokens */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cfcfcf;
+  --color-text-tertiary: #696969;
+  --color-text-disabled: #9a9a9a;
+  --color-text-disabled-light: #8a8a8a;
+  --color-text-dark: #2d2b2b;
+  
+  /* Border Colors - Design Tokens */
+  --color-border-primary: #212121;
+  --color-border-secondary: #505050;
+  --color-border-accent: #e1ff00;
+  
+  /* Status Colors - Design Tokens */
+  --color-status-amber: #fbbf24;
+  --color-status-green: #22c55e;
+  --color-status-gray: rgba(128, 128, 128, 0.1);
+  
+  /* Activity Colors - Design Tokens */
+  --color-activity-active: #e1ff00;
+  --color-activity-active-glow: rgba(225, 255, 0, 0.5);
+  --color-activity-partial: #b8b800;
+  --color-activity-partial-glow: rgba(184, 184, 0, 0.4);
+  --color-activity-none: rgba(128, 128, 128, 0.1);
 }
 
 .dark {
@@ -259,6 +295,42 @@
   --theme-card-text: #ffffff;
   --theme-card-text-secondary: #696969;
   --theme-card-hover: rgba(217, 217, 217, 0.08);
+  
+  /* Brand Colors - Design Tokens (dark theme) */
+  --color-brand-primary: #e1ff00;
+  --color-brand-primary-hover: #d1ef00;
+  --color-brand-primary-muted: #b8b800;
+  
+  /* Background Colors - Design Tokens (dark theme) */
+  --color-bg-primary: oklch(0.145 0 0);
+  --color-bg-card: rgba(217, 217, 217, 0.04);
+  --color-bg-card-hover: rgba(217, 217, 217, 0.06);
+  --color-bg-card-active: rgba(217, 217, 217, 0.08);
+  
+  /* Text Colors - Design Tokens (dark theme) */
+  --color-text-primary: oklch(0.985 0 0);
+  --color-text-secondary: #cfcfcf;
+  --color-text-tertiary: #696969;
+  --color-text-disabled: #9a9a9a;
+  --color-text-disabled-light: #8a8a8a;
+  --color-text-dark: oklch(0.205 0 0);
+  
+  /* Border Colors - Design Tokens (dark theme) */
+  --color-border-primary: #212121;
+  --color-border-secondary: #505050;
+  --color-border-accent: #e1ff00;
+  
+  /* Status Colors - Design Tokens (dark theme) */
+  --color-status-amber: #fbbf24;
+  --color-status-green: #22c55e;
+  --color-status-gray: rgba(128, 128, 128, 0.1);
+  
+  /* Activity Colors - Design Tokens (dark theme) */
+  --color-activity-active: #e1ff00;
+  --color-activity-active-glow: rgba(225, 255, 0, 0.5);
+  --color-activity-partial: #b8b800;
+  --color-activity-partial-glow: rgba(184, 184, 0, 0.4);
+  --color-activity-none: rgba(128, 128, 128, 0.1);
 }
 
 
@@ -828,4 +900,113 @@ body, #root {
 
 .checkin-glow {
   box-shadow: 0 0 6px rgba(225, 255, 0, 0.4);
+}
+
+/* ========================================================================================
+   ARTICLE CARD STYLES - Единые стили для карточек статей
+   ======================================================================================== */
+
+/* Базовый класс карточки статьи */
+.article-card {
+  @apply relative w-full text-left p-4 rounded-xl border transition-colors mb-4 min-h-fit overflow-hidden;
+}
+
+/* Фон карточки - закрытая */
+.article-card-background-locked {
+  @apply absolute inset-0 rounded-xl;
+
+  background-color: var(--color-bg-card);
+}
+
+/* Фон карточки - открытая */
+.article-card-background-unlocked {
+  @apply absolute inset-0 rounded-xl;
+
+  background-color: var(--color-brand-primary);
+}
+
+/* Граница карточки */
+.article-card-border {
+  @apply absolute border border-solid inset-0 pointer-events-none rounded-xl;
+}
+
+/* Граница карточки - закрытая */
+.article-card-border-locked {
+  border-color: var(--color-border-primary);
+}
+
+/* Граница карточки - открытая */
+.article-card-border-unlocked {
+  border-color: var(--color-text-dark);
+}
+
+/* Контент карточки */
+.article-card-content {
+  @apply relative z-10;
+}
+
+/* Заголовок карточки - закрытая */
+.article-card-title-locked {
+  @apply mb-2;
+
+  font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  font-size: clamp(20px, 4vw, 28px) !important;
+  line-height: 0.96 !important;
+  font-weight: 400 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+  color: var(--color-text-disabled);
+}
+
+/* Заголовок карточки - открытая */
+.article-card-title-unlocked {
+  @apply mb-2;
+
+  font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
+  font-size: clamp(20px, 4vw, 28px) !important;
+  line-height: 0.96 !important;
+  font-weight: 400 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+  color: var(--color-text-dark);
+}
+
+/* Текст карточки - закрытая */
+.article-card-text-locked {
+  @apply line-clamp-3;
+
+  font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(14px, 2.5vw, 18px);
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+  color: var(--color-text-disabled-light);
+}
+
+/* Текст карточки - открытая */
+.article-card-text-unlocked {
+  @apply line-clamp-3;
+
+  font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: clamp(14px, 2.5vw, 18px);
+  line-height: 1.5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizelegibility;
+  color: var(--color-text-dark);
+}
+
+/* Бейдж с порогом открытия */
+.article-card-badge {
+  @apply rounded-[999px] px-2 py-[2px] font-medium;
+
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-dark);
+  font-size: clamp(12px, 2vw, 14px);
+  line-height: 1.4;
 }
