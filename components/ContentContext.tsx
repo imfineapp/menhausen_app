@@ -30,6 +30,17 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const [content, setContent] = useState<AppContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Ref для отслеживания монтирования компонента
+  const isMountedRef = React.useRef(true);
+
+  // Устанавливаем isMountedRef в false при размонтировании
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   /**
    * Загрузка контента для текущего языка
@@ -37,18 +48,26 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const loadContentForLanguage = useCallback(async (language: SupportedLanguage) => {
     try {
       console.log(`ContentContext: loadContentForLanguage called with language: ${language}`);
-      setIsLoading(true);
-      setError(null);
+      if (isMountedRef.current) {
+        setIsLoading(true);
+        setError(null);
+      }
       const loadedContent = await loadContentWithCache(language);
-      setContent(loadedContent);
-      console.log(`ContentContext: Content loaded successfully for language: ${language}`);
-      console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
+      if (isMountedRef.current) {
+        setContent(loadedContent);
+        console.log(`ContentContext: Content loaded successfully for language: ${language}`);
+        console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
+      }
     } catch (err) {
       const errorMessage = `Failed to load content for language: ${language}`;
       console.error('ContentContext:', errorMessage, err);
-      setError(errorMessage);
+      if (isMountedRef.current) {
+        setError(errorMessage);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
