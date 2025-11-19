@@ -285,7 +285,7 @@ export function useTranslation() {
       // Mental Score
       'mental_score': {
         'en': 'Mental score',
-        'ru': 'Mental score'
+        'ru': 'Ментальный счетчик'
       },
       // Status blocks
       'exercises_completed': {

@@ -42,11 +42,20 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     const articlesRecord: Record<string, any> = {};
     articlesModules.forEach((module, index) => {
-      if (module && module.default) {
-        articlesRecord[articlesList[index]] = module.default;
+      if (module) {
+        // Vite может экспортировать JSON как default или как сам объект
+        const articleData = module.default || module;
+        if (articleData && typeof articleData === 'object') {
+          articlesRecord[articlesList[index]] = articleData;
+        } else {
+          console.warn(`loadContent: Article ${articlesList[index]} has invalid format:`, module);
+        }
+      } else {
+        console.warn(`loadContent: Article ${articlesList[index]} failed to load`);
       }
     });
     console.log(`loadContent: Loaded ${Object.keys(articlesRecord).length} articles`);
+    console.log(`loadContent: Articles IDs:`, Object.keys(articlesRecord));
     
     // Загружаем темы через ThemeLoader
     console.log(`loadContent: Loading themes through ThemeLoader for language: ${language}`);

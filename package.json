@@ -21,9 +21,8 @@
     "test:e2e:headed": "NODE_NO_WARNINGS=1 playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "test:all": "npm run test:run && npm run test:e2e",
-    "playwright:install": "playwright install",
-    "i18n:find": "node scripts/find-hardcoded-texts.cjs",
-    "i18n:find:all": "node scripts/find-hardcoded-texts.cjs ."
+    "playwright:install": "playwright install"
+
   },
   "dependencies": {
     "@floating-ui/react": "^0.26.0",
