@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import type { MutableRefObject } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
@@ -77,6 +78,14 @@ import { getTelegramUserId } from './utils/telegramUserUtils';
 import { AppScreen } from './types/userState';
 import { criticalDataManager } from './utils/dataManager';
 import { resetUserStats } from './services/userStatsService';
+
+const clearTimeoutFromRef = (ref: MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+  const timeoutId = ref.current;
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    ref.current = null;
+  }
+};
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -505,7 +514,7 @@ function AppContent() {
   // Получение системы достижений
   const { checkAndUnlockAchievements } = useAchievements();
   
-  // Refs для хранения ID таймеров для очистки
+// Refs для хранения ID таймеров для очистки
   const telegramTimeoutRefs = useRef<{ expand?: ReturnType<typeof setTimeout>; fullscreen?: ReturnType<typeof setTimeout> }>({});
   const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -922,34 +931,26 @@ function AppContent() {
   
   // Общий cleanup для всех таймеров при размонтировании компонента
   useEffect(() => {
+    const telegramTimeouts = telegramTimeoutRefs.current;
     return () => {
       // Очищаем все таймеры Telegram WebApp
-      const expandTimeout = telegramTimeoutRefs.current.expand;
-      if (expandTimeout) {
-        clearTimeout(expandTimeout);
+      if (telegramTimeouts.expand) {
+        clearTimeout(telegramTimeouts.expand);
+        telegramTimeouts.expand = undefined;
       }
-      const fullscreenTimeout = telegramTimeoutRefs.current.fullscreen;
-      if (fullscreenTimeout) {
-        clearTimeout(fullscreenTimeout);
+      if (telegramTimeouts.fullscreen) {
+        clearTimeout(telegramTimeouts.fullscreen);
+        telegramTimeouts.fullscreen = undefined;
       }
       
       // Очищаем таймер чекина
-      const checkInTimeout = checkInTimeoutRef.current;
-      if (checkInTimeout) {
-        clearTimeout(checkInTimeout);
-      }
+      clearTimeoutFromRef(checkInTimeoutRef);
       
       // Очищаем таймер завершения карточки
-      const cardExerciseTimeout = cardExerciseTimeoutRef.current;
-      if (cardExerciseTimeout) {
-        clearTimeout(cardExerciseTimeout);
-      }
+      clearTimeoutFromRef(cardExerciseTimeoutRef);
       
       // Очищаем таймер клика по карточке темы
-      const themeCardClickTimeout = themeCardClickTimeoutRef.current;
-      if (themeCardClickTimeout) {
-        clearTimeout(themeCardClickTimeout);
-      }
+      clearTimeoutFromRef(themeCardClickTimeoutRef);
     };
   }, []);
   
