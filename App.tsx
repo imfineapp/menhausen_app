@@ -445,9 +445,9 @@ function AppContent() {
       return 'survey01';
     }
 
-    // Проверяем, был ли пройден психологический тест
-    // Если тест не пройден, но опрос завершен, показываем тест
-    if (!p.psychologicalTestCompleted && !hasTestBeenCompleted()) {
+  // Проверяем, был ли пройден психологический тест
+  // Используем localStorage как единственный источник истины, чтобы избежать рассинхрона
+  if (!hasTestBeenCompleted()) {
       return 'psychological-test-preambula';
     }
 
