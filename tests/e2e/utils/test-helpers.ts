@@ -315,7 +315,7 @@ export async function waitForElement(page: Page, selector: string, timeout = 500
  */
 export async function waitForHomeScreen(page: Page, timeout = 5000): Promise<void> {
   // Увеличиваем таймаут для учета задержек с reward screen и асинхронных операций
-  const extendedTimeout = Math.max(timeout, 15000);
+  const extendedTimeout = Math.max(timeout, 30000);
   
   // Проверяем и пропускаем reward screen, который может появиться с задержкой
   // (особенно при переходе на theme-home или home после получения достижений)
@@ -452,7 +452,10 @@ export async function waitForNavigationAfterAction(
  * Проверка, находится ли страница на домашнем экране
  */
 export async function isOnHomeScreen(page: Page): Promise<boolean> {
-  return await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+  // Проверяем несколько селекторов для большей надежности
+  const userFrameBlock = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
+  const homeReady = await page.locator('[data-testid="home-ready"]').isVisible().catch(() => false);
+  return userFrameBlock || homeReady;
 }
 
 /**

@@ -9,14 +9,3 @@ export function isArticleLocked(orderOrIndex: number, userPoints: number): boole
   const required = getRequiredPointsForArticle(orderOrIndex);
   return required > (userPoints || 0);
 }
-
-
-
-
-
-
-
-
-
-
-

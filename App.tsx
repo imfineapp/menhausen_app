@@ -922,33 +922,31 @@ function AppContent() {
   
   // Общий cleanup для всех таймеров при размонтировании компонента
   useEffect(() => {
-    // Копируем значения ref в переменные для cleanup функции
-    const expandTimeout = telegramTimeoutRefs.current.expand;
-    const fullscreenTimeout = telegramTimeoutRefs.current.fullscreen;
-    const checkInTimeout = checkInTimeoutRef.current;
-    const cardExerciseTimeout = cardExerciseTimeoutRef.current;
-    const themeCardClickTimeout = themeCardClickTimeoutRef.current;
-    
     return () => {
       // Очищаем все таймеры Telegram WebApp
+      const expandTimeout = telegramTimeoutRefs.current.expand;
       if (expandTimeout) {
         clearTimeout(expandTimeout);
       }
+      const fullscreenTimeout = telegramTimeoutRefs.current.fullscreen;
       if (fullscreenTimeout) {
         clearTimeout(fullscreenTimeout);
       }
       
       // Очищаем таймер чекина
+      const checkInTimeout = checkInTimeoutRef.current;
       if (checkInTimeout) {
         clearTimeout(checkInTimeout);
       }
       
       // Очищаем таймер завершения карточки
+      const cardExerciseTimeout = cardExerciseTimeoutRef.current;
       if (cardExerciseTimeout) {
         clearTimeout(cardExerciseTimeout);
       }
       
       // Очищаем таймер клика по карточке темы
+      const themeCardClickTimeout = themeCardClickTimeoutRef.current;
       if (themeCardClickTimeout) {
         clearTimeout(themeCardClickTimeout);
       }

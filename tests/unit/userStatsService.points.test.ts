@@ -66,16 +66,3 @@ describe('userStatsService points & persistence', () => {
     expect(r2.referralsPremium).toBe(1);
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-

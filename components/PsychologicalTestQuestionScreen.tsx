@@ -3,7 +3,6 @@
 // ========================================================================================
 
 import { useState, useEffect } from 'react';
-import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
@@ -54,7 +53,6 @@ export function PsychologicalTestQuestionScreen({
   }
 
   const progress = (questionNumber / 30) * 100;
-  const canContinue = selectedAnswer !== null;
 
   // Варианты ответа по шкале Лайкерта (0-4)
   const answerOptions: Array<{ value: LikertScaleAnswer; label: string }> = [
@@ -64,12 +62,6 @@ export function PsychologicalTestQuestionScreen({
     { value: 3, label: testContent.likertScale['3'] },
     { value: 4, label: testContent.likertScale['4'] }
   ];
-
-  const handleContinue = () => {
-    if (selectedAnswer !== null) {
-      onNext(selectedAnswer);
-    }
-  };
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
@@ -109,7 +101,12 @@ export function PsychologicalTestQuestionScreen({
                 return (
                   <button
                     key={option.value}
-                    onClick={() => setSelectedAnswer(option.value)}
+                    onClick={() => {
+                      setSelectedAnswer(option.value);
+                      setTimeout(() => {
+                        onNext(option.value);
+                      }, 250);
+                    }}
                     className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left min-h-[44px] min-w-[44px] ${
                       isSelected 
                         ? 'border-[#e1ff00] bg-[#e1ff00]/10 text-white' 
@@ -138,17 +135,6 @@ export function PsychologicalTestQuestionScreen({
           </div>
         </div>
       </div>
-
-      {/* Bottom Fixed Button */}
-      <BottomFixedButton
-        onClick={handleContinue}
-        disabled={!canContinue}
-        className={!canContinue ? 'opacity-50 cursor-not-allowed' : ''}
-        dataName="Next button"
-        ariaLabel="Next"
-      >
-        {content.ui.navigation.next}
-      </BottomFixedButton>
     </div>
   );
 }

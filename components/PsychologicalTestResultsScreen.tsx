@@ -66,21 +66,6 @@ export function PsychologicalTestResultsScreen({
               </p>
             </div>
 
-            {/* Предупреждение о депрессии */}
-            {percentages.depression < 30 && testContent.results.depressionWarning && (
-              <div className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
-                  <h3 className="typography-body font-semibold text-yellow-400">
-                    {getLocalizedText(testContent.results.depressionWarning.title)}
-                  </h3>
-                </div>
-                <p className="typography-caption text-yellow-200 text-sm leading-relaxed">
-                  {getLocalizedText(testContent.results.depressionWarning.text)}
-                </p>
-              </div>
-            )}
-
             {/* Результаты по темам */}
             <div className="space-y-4">
               {results.map((result) => (
@@ -99,6 +84,21 @@ export function PsychologicalTestResultsScreen({
                 </div>
               ))}
             </div>
+
+            {/* Предупреждение о депрессии */}
+            {percentages.depression > 70 && testContent.results.depressionWarning && (
+              <div className="mt-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0" />
+                  <h3 className="typography-body font-semibold text-yellow-400">
+                    {getLocalizedText(testContent.results.depressionWarning.title)}
+                  </h3>
+                </div>
+                <p className="typography-caption text-yellow-200 text-sm leading-relaxed">
+                  {getLocalizedText(testContent.results.depressionWarning.text)}
+                </p>
+              </div>
+            )}
 
           </div>
         </div>

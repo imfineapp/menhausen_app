@@ -61,7 +61,7 @@ export function MentalLevelBlock() {
   }, [checkins]);
 
   // Получаем заголовок
-  const title = ui.profile?.mentalLevel || 'Твой ментальный уровень';
+  const title = ui.profile?.mentalLevel || 'Твои чекины';
 
   return (
     <div 

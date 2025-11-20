@@ -672,7 +672,7 @@ body, #root {
   .typography-h1 * {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
     font-size: clamp(24px, 5vw, 32px) !important;
-    line-height: 0.8 !important;
+    line-height: 0.96 !important;
     font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

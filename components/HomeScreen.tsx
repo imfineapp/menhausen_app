@@ -337,11 +337,20 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
       // Если обе темы Stress, оставляем их в исходном порядке (Stress уже первая)
       if (aIsStress && bIsStress) return 0;
       
-      // 2. Остальные темы сортируем по проценту соответствия (по убыванию)
-      const matchDiff = b.matchPercentage - a.matchPercentage;
-      if (matchDiff !== 0) return matchDiff;
+      // 2. Остальные темы сортируем по наличию процента соответствия
+      const aHasMatch = a.matchPercentage >= 0;
+      const bHasMatch = b.matchPercentage >= 0;
+      if (aHasMatch !== bHasMatch) {
+        return aHasMatch ? -1 : 1;
+      }
       
-      // 3. Если проценты совпадают или оба null, сортируем по доступности (премиум или нет)
+      // 3. Если оба имеют процент соответствия, сортируем по нему (по убыванию)
+      if (aHasMatch && bHasMatch) {
+        const matchDiff = b.matchPercentage - a.matchPercentage;
+        if (matchDiff !== 0) return matchDiff;
+      }
+      
+      // 4. Если проценты совпадают или оба отсутствуют, сортируем по доступности (премиум или нет)
       return Number(b.isAvailable) - Number(a.isAvailable);
     });
 

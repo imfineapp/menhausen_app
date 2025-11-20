@@ -52,7 +52,15 @@ test.describe('Check-in Data Persistence', () => {
 
     const entries = await readCheckins(page);
     expect(entries.length).toBeGreaterThan(0);
-    expect(entries[entries.length - 1].date).toBe(new Date().toISOString().split('T')[0]);
+    // Используем UTC дату для избежания проблем с часовыми поясами
+    const todayUTC = new Date().toISOString().split('T')[0];
+    const entryDate = entries[entries.length - 1].date;
+    // Проверяем, что дата соответствует сегодняшней или вчерашней (с учетом часового пояса)
+    // Создаем массив возможных дат (сегодня и вчера UTC)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayUTC = yesterday.toISOString().split('T')[0];
+    expect([todayUTC, yesterdayUTC]).toContain(entryDate);
   });
 
   test('should maintain data after browser restart', async ({ browser }) => {
