@@ -229,19 +229,13 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
     setIsDragging(true);
     wasSwipedRef.current = false;
     touchStartXRef.current = e.touches[0].pageX;
-    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
     sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
-    e.preventDefault();
-    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
     
-    // Проверяем, было ли движение (свайп)
+    // Проверяем, было ли движение (свайп) для предотвращения onClick на карточках
     const deltaX = Math.abs(e.touches[0].pageX - touchStartXRef.current);
     if (deltaX > SWIPE_THRESHOLD) {
       wasSwipedRef.current = true;
@@ -320,7 +314,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       <div
         ref={sliderRef}
         className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 items-stretch"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x' }}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pinch-zoom' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}

@@ -475,6 +475,7 @@ function AppContent() {
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
   const [currentArticle, setCurrentArticle] = useState<string>('');
+  const [articleReturnScreen, setArticleReturnScreen] = useState<AppScreen>('home');
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
   const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
@@ -1425,6 +1426,8 @@ function AppContent() {
    */
   const handleOpenArticle = (articleId: string) => {
     console.log(`Opening article: ${articleId}`);
+    const originScreen: AppScreen = currentScreen === 'all-articles' ? 'all-articles' : 'home';
+    setArticleReturnScreen(originScreen);
     setCurrentArticle(articleId);
     navigateTo('article');
   };
@@ -1432,8 +1435,13 @@ function AppContent() {
   /**
    * Возврат из статьи к списку статей
    */
-  const handleBackToAllArticles = () => {
-    navigateTo('all-articles');
+  const handleBackFromArticle = () => {
+    setCurrentArticle('');
+    if (articleReturnScreen === 'all-articles') {
+      navigateTo('all-articles');
+    } else {
+      navigateTo('home');
+    }
   };
 
   /**
@@ -2753,7 +2761,7 @@ function AppContent() {
         return wrapScreen(
           <ArticleScreen
             articleId={currentArticle}
-            onBack={handleBackToAllArticles}
+            onBack={handleBackFromArticle}
             onGoToTheme={handleGoToTheme}
             userHasPremium={userHasPremium}
             checkAndShowAchievements={checkAndShowAchievements}

@@ -72,17 +72,13 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!sliderRef.current) return;
     setIsDragging(true);
-    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
     // Отключаем snap во время перетаскивания
     sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
-    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Уменьшили множитель для более плавного движения
-    sliderRef.current.scrollLeft = scrollLeft - walk;
+    // Нативная прокрутка браузера обрабатывает движение
   };
 
   const handleTouchEnd = () => {
@@ -173,7 +169,7 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
       <div
         ref={sliderRef}
         className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 py-8"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pinch-zoom' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
