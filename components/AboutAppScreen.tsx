@@ -2,6 +2,7 @@
 import { useContent } from './ContentContext';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { ReferralSection } from './ProfileReferralSection';
 
 // Типы для пропсов компонента
 interface AboutAppScreenProps {
@@ -19,7 +20,7 @@ interface AboutAppScreenProps {
 /**
  * Адаптивная секция с логотипом приложения
  */
-function AppLogoSection({ content }: { content: any }) {
+function AppLogoSection({ content: _content }: { content: any }) {
   return (
     <div className="flex flex-col items-center gap-4 sm:gap-5 w-full" data-name="App logo section">
       <div className="flex justify-center items-center w-full">
@@ -30,13 +31,8 @@ function AppLogoSection({ content }: { content: any }) {
         </div>
       </div>
         <div className="flex flex-col items-center gap-2">
-          <div className="typography-h1 text-[#e1ff00] text-center">
+          <div className="typography-h1 text-brand-primary text-center">
             <h1 className="block">Menhausen</h1>
-          </div>
-          <div className="bg-[#e1ff00] px-3 py-1 rounded-xl">
-            <div className="typography-caption text-[#2d2b2b] text-center tracking-[-0.43px]">
-              <p className="adjustLetterSpacing block">{content?.about?.betaVersion || 'Beta Version 1.0.0'}</p>
-            </div>
           </div>
         </div>
     </div>
@@ -48,16 +44,16 @@ function AppLogoSection({ content }: { content: any }) {
  */
 function AppInfoSection({ content }: { content: any }) {
   return (
-    <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 sm:p-5 relative w-full" data-name="App info section">
+    <div className="bg-bg-card rounded-xl p-4 sm:p-5 relative w-full" data-name="App info section">
       <div
         aria-hidden="true"
-        className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+        className="absolute border border-border-primary border-solid inset-0 pointer-events-none rounded-xl"
       />
       <div className="flex flex-col gap-4">
-        <div className="typography-h2 text-[#e1ff00] text-left">
+        <div className="typography-h2 text-brand-primary text-left">
           <h2 className="block">{content?.about?.title || 'О приложении'}</h2>
         </div>
-        <div className="typography-body text-[#cfcfcf] text-left whitespace-pre-line">
+        <div className="typography-body text-secondary text-left whitespace-pre-line">
           <p className="block">
             {content?.about?.description || `Menhausen — это ваш персональный помощник для ментального здоровья, созданный специально для Telegram.
 
@@ -96,13 +92,13 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   // Если контент не загружен, показываем загрузку
   if (!content || !content.about || !content.about.title) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#111111]">
+      <div className="flex items-center justify-center min-h-screen bg-bg-primary">
         <div className="text-center">
-          <div className="text-lg text-[#e1ff00]">Загрузка контента...</div>
-          <div className="text-sm text-[#cfcfcf] mt-2">Язык: {currentLanguage}</div>
-          <div className="text-xs text-[#696969] mt-1">Контент: {content ? 'загружен' : 'не загружен'}</div>
-          <div className="text-xs text-[#696969] mt-1">About: {content?.about ? 'есть' : 'нет'}</div>
-          <div className="text-xs text-[#696969] mt-1">UI: {content?.ui ? 'есть' : 'нет'}</div>
+          <div className="text-lg text-brand-primary">Загрузка контента...</div>
+          <div className="text-sm text-secondary mt-2">Язык: {currentLanguage}</div>
+          <div className="text-xs text-tertiary mt-1">Контент: {content ? 'загружен' : 'не загружен'}</div>
+          <div className="text-xs text-tertiary mt-1">About: {content?.about ? 'есть' : 'нет'}</div>
+          <div className="text-xs text-tertiary mt-1">UI: {content?.ui ? 'есть' : 'нет'}</div>
         </div>
       </div>
     );
@@ -110,7 +106,7 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom overflow-x-hidden" 
+      className="bg-bg-primary relative w-full h-full min-h-screen overflow-y-auto safe-top safe-bottom overflow-x-hidden" 
       data-name="About App Page"
       style={{
         msOverflowStyle: 'none',
@@ -124,13 +120,16 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
       <MiniStripeLogo />
       
       {/* Основной контент */}
-      <div className="flex flex-col gap-8 sm:gap-10 px-4 sm:px-6 md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+      <div className="flex flex-col gap-8 sm:gap-10 px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
         
         {/* Логотип и название приложения */}
         <AppLogoSection content={content} />
         
         {/* Информация о приложении */}
         <AppInfoSection content={content} />
+        
+        {/* Секция реферальной программы */}
+        <ReferralSection />
         
       </div>
     </div>

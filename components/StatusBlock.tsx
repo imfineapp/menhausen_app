@@ -13,10 +13,15 @@ interface StatusBlockProps {
  * Включает подложку, иконку с кружком и свечением, и два текста
  */
 export function StatusBlock({ icon, title, value, subtitle, onClick }: StatusBlockProps) {
+  const isClickable = !!onClick;
+  const Component = isClickable ? 'button' : 'div';
+  
   return (
-    <button
+    <Component
       onClick={onClick}
-      className="relative rounded-xl p-3 sm:p-4 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] transition-colors duration-200"
+      className={`relative rounded-xl p-3 sm:p-4 w-full h-full min-h-[44px] min-w-[44px] transition-colors duration-200 ${
+        isClickable ? 'cursor-pointer hover:bg-[rgba(217,217,217,0.06)]' : 'cursor-default'
+      }`}
       data-name="Status block"
     >
       {/* Подложка блока */}
@@ -30,32 +35,32 @@ export function StatusBlock({ icon, title, value, subtitle, onClick }: StatusBlo
       </div>
       
       {/* Контент блока */}
-      <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 w-full">
-        {/* Иконка с эффектом свечения */}
-        <div className="relative mb-1">
-          <div className="absolute inset-0 bg-[#e1ff00]/30 rounded-full blur-lg scale-150"></div>
+      <div className="relative z-10 flex flex-col items-center w-full h-full pt-3 pb-2">
+        {/* Иконка с эффектом свечения - фиксированный отступ от верха */}
+        <div className="relative flex-shrink-0 h-14 sm:h-15 flex items-center justify-center">
+          <div className="absolute inset-0 bg-[#e1ff00]/15 rounded-full blur-md scale-125"></div>
           <div className="relative w-14 h-14 sm:w-15 sm:h-15 flex items-center justify-center">
             {icon}
           </div>
         </div>
         
-        {/* Основное значение */}
-        <div className="text-lg sm:text-xl font-bold text-white text-center leading-tight">
+        {/* Основное значение - фиксированный отступ от иконки */}
+        <div className="text-2xl font-semibold text-white text-center leading-tight flex-shrink-0 h-8 flex items-center justify-center mt-3">
           {value}
         </div>
         
-        {/* Заголовок */}
-        <div className="text-sm text-[#696969] text-center leading-tight">
+        {/* Заголовок - фиксированный отступ от числа */}
+        <div className="text-sm text-[#696969] text-center leading-tight flex-shrink-0 flex items-center justify-center mt-3">
           {title}
         </div>
         
         {/* Дополнительный подзаголовок (если есть) */}
         {subtitle && (
-          <div className="text-xs text-[#696969] text-center leading-tight">
+          <div className="text-xs text-[#696969] text-center leading-tight flex-shrink-0 mt-1">
             {subtitle}
           </div>
         )}
       </div>
-    </button>
+    </Component>
   );
 }

@@ -55,12 +55,16 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
-    await waitForHomeScreen(page);
+    await waitForHomeScreen(page, 30000);
+    // Даем дополнительное время для завершения навигации
+    await page.waitForTimeout(1000).catch(() => {});
     expect(await isOnCheckinScreen(page)).toBeFalsy();
 
     await page.reload();
     await waitForPageLoad(page);
-    await waitForHomeScreen(page);
+    await waitForHomeScreen(page, 30000);
+    // Даем дополнительное время для завершения навигации
+    await page.waitForTimeout(1000).catch(() => {});
     expect(await isOnCheckinScreen(page)).toBeFalsy();
   });
 

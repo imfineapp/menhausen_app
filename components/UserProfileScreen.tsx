@@ -1,45 +1,30 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
-import { useState } from 'react';
-import { useLanguage, useTranslation } from './LanguageContext';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
-import { LanguageModal } from './LanguageModal';
-import { Switch } from './ui/switch';
+import { PointsManager } from '../utils/PointsManager';
+import { PointsTransaction } from '../types/points';
 
 // Импортируем выделенные компоненты
 import { 
-  UnlockIcon, 
-  DonationIcon, 
-  ActivityIcon, 
-  ShareIcon, 
-  LanguageIcon, 
-  ReminderIcon, 
-  SecurityIcon, 
-  InfoIcon, 
-  PrivacyIcon, 
-  TermsIcon, 
-  DeleteIcon
+  SettingsIcon
 } from './UserProfileIcons';
-import { UserInfoSection, SettingsItem } from './UserProfileComponents';
-import { FeedbackSection } from './ProfileFeedbackSection';
+import { UserInfoSection } from './UserProfileComponents';
 import { ReferralSection } from './ProfileReferralSection';
 import { Light, MiniStripeLogo } from './ProfileLayoutComponents';
-import { useAppShare } from './ProfileShareUtils';
 import { StatusBlocksRow } from './StatusBlocksRow';
-import { ProgressBlock } from './ProgressBlock';
+import { AchievementsBlock } from './AchievementsBlock';
+import { MentalLevelBlock } from './MentalLevelBlock';
+import { ActivityHeatmapBlock } from './ActivityHeatmapBlock';
+import { PremiumUnlockBlock } from './PremiumUnlockBlock';
+import { RegularExerciseNotification } from './RegularExerciseNotification';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
   onBack: () => void; // Функция для возврата к главной странице
-  onShowAboutApp: () => void; // Функция для открытия страницы "О приложении"
-  onShowPinSettings: () => void; // Функция для перехода к настройкам PIN кода
-  onShowPrivacy: () => void; // Функция для открытия Privacy Policy
-  onShowTerms: () => void; // Функция для открытия Terms of Use
-  onShowDeleteAccount: () => void; // Функция для перехода к странице удаления аккаунта
   onShowPayments: () => void; // Функция для перехода к странице покупки Premium подписки
-  onShowDonations: () => void; // Функция для перехода к странице донатов
-  onShowUnderConstruction: (featureName: string) => void; // Функция для перехода к странице "Under Construction"
   onGoToBadges: () => void; // Функция для перехода к странице достижений
-  onGoToLevels: () => void; // Функция для перехода к странице уровней
+  onShowSettings: () => void; // Функция для перехода к странице настроек приложения
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -49,102 +34,102 @@ interface UserProfileScreenProps {
  */
 export function UserProfileScreen({ 
   onBack: _onBack, 
-  onShowAboutApp, 
-  onShowPinSettings, 
-  onShowPrivacy, 
-  onShowTerms, 
-  onShowDeleteAccount, 
   onShowPayments, 
-  onShowDonations,
-  onShowUnderConstruction, 
   onGoToBadges,
-  onGoToLevels,
+  onShowSettings,
   userHasPremium 
 }: UserProfileScreenProps) {
-  // Состояние для настроек
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  
-  // Хуки для управления языком и шарингом
-  const { language, openLanguageModal } = useLanguage();
   const { t } = useTranslation();
   const { getUI } = useContent();
-  const { handleShare } = useAppShare();
   
   // Получаем переводы UI
-  const _ui = getUI();
+  const ui = getUI();
+  
+  // Состояние для истории баллов
+  const [pointsHistory, setPointsHistory] = useState<PointsTransaction[]>([]);
+  // Состояние для пагинации
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Количество элементов на странице
+  
+  // Загрузка истории баллов
+  useEffect(() => {
+    const updatePointsData = () => {
+      try {
+        // Get all transactions, sorted newest first
+        const transactions = PointsManager.getTransactions().sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setPointsHistory(transactions);
+        // Сброс на первую страницу при обновлении данных
+        setCurrentPage(1);
+      } catch (error) {
+        console.warn('UserProfileScreen: failed to load points history', error);
+      }
+    };
+
+    updatePointsData(); // Initial load
+
+    window.addEventListener('storage', updatePointsData);
+    window.addEventListener('points:updated', updatePointsData as EventListener);
+
+    return () => {
+      window.removeEventListener('storage', updatePointsData);
+      window.removeEventListener('points:updated', updatePointsData as EventListener);
+    };
+  }, []);
+  
+  // Вычисление данных для пагинации
+  const totalPages = Math.ceil(pointsHistory.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPageItems = pointsHistory.slice(startIndex, endIndex);
+  
+  // Обработчики навигации
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(1, prev - 1));
+  };
+  
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+  };
+  
+  // Получаем локализованные тексты для действий
+  const getLocalizedAction = (transaction: PointsTransaction) => {
+    const actions = ui.levels.actions;
+    switch (transaction.correlationId?.split('_')[0]) {
+      case 'checkin':
+        return actions.dailyCheckin;
+      case 'card':
+        return actions.exerciseComplete;
+      case 'achievement':
+        return actions.achievementEarned;
+      default:
+        return transaction.note || transaction.type;
+    }
+  };
+
+  const formatDate = (isoString: string) => {
+    const d = new Date(isoString);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
 
   /**
    * Обработчики для различных действий профиля
    */
-
-  const handleUnlockThemes = () => {
-    console.log('Opening unlock themes - redirecting to Premium purchase');
-    onShowPayments();
-  };
-
-  const handleDonation = () => {
-    console.log('Opening donation - navigating to Donations');
-    onShowDonations();
-  };
-
-  const handleActivity = () => {
-    console.log('Opening activity - redirecting to Under Construction');
-    onShowUnderConstruction('Your activity');
-  };
-
-  const handleLanguage = () => {
-    console.log('Opening language selection');
-    openLanguageModal();
-  };
-
-  const handleSecurityPin = () => {
-    console.log('Opening security PIN settings');
-    onShowPinSettings();
-  };
-
-  const handleAboutApp = () => {
-    console.log('Opening about app');
-    onShowAboutApp();
-  };
-
-  const handlePrivacyPolicy = () => {
-    console.log('Opening privacy policy from profile');
-    onShowPrivacy();
-  };
-
-  const handleTermsOfUse = () => {
-    console.log('Opening terms of use from profile');
-    onShowTerms();
-  };
-
-  const handleDeleteAccount = () => {
-    console.log('Navigating to delete account page');
-    onShowDeleteAccount();
-  };
-
-  const handleNotificationToggle = (enabled: boolean) => {
-    setNotificationsEnabled(enabled);
-    console.log('Notifications', enabled ? 'enabled' : 'disabled');
-  };
-
   const handleStatusBlockBadges = () => {
     console.log('Status block badges clicked - navigating to badges');
     onGoToBadges();
   };
 
-  const handleStatusBlockLevel = () => {
-    console.log('Status block level clicked - navigating to levels');
-    onGoToLevels();
-  };
-
   const handleStatusBlockStatus = () => {
     console.log('Status block status clicked - redirecting to Under Construction');
-    onShowUnderConstruction('How are you status');
+    // TODO: Implement status block click handler
   };
 
   return (
     <div 
-      className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
+      className="bg-bg-primary relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom" 
       data-name="User Profile Page"
       style={{
         msOverflowStyle: 'none',
@@ -163,117 +148,135 @@ export function UserProfileScreen({
           {/* Основной контент */}
           <div className="flex flex-col gap-8 sm:gap-10 w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
             
-            {/* Информация о пользователе */}
-            <UserInfoSection userHasPremium={userHasPremium} />
+            {/* Информация о пользователе с иконкой настроек */}
+            <div className="relative w-full">
+              <UserInfoSection userHasPremium={userHasPremium} />
+              {/* Иконка настроек в правой части на уровне верхней границы UserAvatar */}
+              <button
+                onClick={onShowSettings}
+                className="absolute top-0 right-0 flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer hover:opacity-80 transition-opacity"
+                data-name="Settings icon button"
+                aria-label={t('settings')}
+              >
+                <SettingsIcon />
+              </button>
+            </div>
             
             {/* Ряд статусных блоков */}
             <div className="w-full mt-6 sm:mt-8">
               <StatusBlocksRow 
                 onBadgesClick={handleStatusBlockBadges}
-                onLevelClick={handleStatusBlockLevel}
                 onStatusClick={handleStatusBlockStatus}
               />
             </div>
+          </div>
+          
+          {/* Основной контент (продолжение) */}
+          <div className="flex flex-col gap-8 sm:gap-10 w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+            {/* Уведомление о регулярности упражнений */}
+            <RegularExerciseNotification />
             
-            {/* Блок прогресса */}
-            <div className="w-full mt-3 sm:mt-4">
-              <ProgressBlock onBadgesClick={handleStatusBlockBadges} />
+            {/* Блок активности с heat map и блок разблокировки премиума */}
+            <div className="w-full">
+              {!userHasPremium ? (
+                <div className="flex flex-row gap-3 sm:gap-4 w-full items-stretch">
+                  <div className="flex-1">
+                    <ActivityHeatmapBlock weeksCount={7} />
+                  </div>
+                  <div className="flex-1">
+                    <PremiumUnlockBlock onClick={onShowPayments} />
+                  </div>
+                </div>
+              ) : (
+                <ActivityHeatmapBlock weeksCount={14} />
+              )}
+            </div>
+            
+            {/* Блок истории чекинов */}
+            <div className="w-full">
+              <MentalLevelBlock />
+            </div>
+            {/* Блок достижений */}
+            <div className="w-full">
+              <AchievementsBlock onClick={handleStatusBlockBadges} />
             </div>
             
             {/* Секция реферальной программы */}
-            <div className="w-full mt-3 sm:mt-4">
+            <div className="w-full">
               <ReferralSection />
             </div>
             
-            {/* Меню без заголовка с отступом 40px */}
-            <div className="flex flex-col gap-4 sm:gap-5 w-full mt-10">
-              <div className="flex flex-col w-full">
-                <SettingsItem
-                  icon={<UnlockIcon />}
-                  title={t('unlock_all_themes')}
-                  onClick={handleUnlockThemes}
-                  isHighlighted={true}
-                />
-                <SettingsItem
-                  icon={<DonationIcon />}
-                  title={t('make_donation')}
-                  onClick={handleDonation}
-                />
-                <SettingsItem
-                  icon={<ActivityIcon />}
-                  title={t('your_activity')}
-                  onClick={handleActivity}
-                />
-                <SettingsItem
-                  icon={<ShareIcon />}
-                  title={t('share_app_to_friend')}
-                  onClick={handleShare}
-                  isHighlighted={true}
-                />
-              </div>
-            </div>
-            
-            {/* Секция обратной связи */}
-            <FeedbackSection />
-            
-            {/* Секция "Settings" */}
-            <div className="flex flex-col gap-4 sm:gap-5 w-full">
-              <h2 className="typography-h2 text-[#e1ff00] text-left">{t('settings')}</h2>
-              <div className="flex flex-col w-full">
-                <SettingsItem
-                  icon={<LanguageIcon />}
-                  title={t('language')}
-                  rightElement={
-                    <div className="typography-body text-[#ffffff] text-right">
-                      <p className="block">{language === 'en' ? t('english') : t('russian')}</p>
-                    </div>
-                  }
-                  onClick={handleLanguage}
-                />
-                <SettingsItem
-                  icon={<ReminderIcon />}
-                  title={t('daily_reminder')}
-                  rightElement={
-                    <Switch 
-                      checked={notificationsEnabled} 
-                      onCheckedChange={handleNotificationToggle}
-                      data-testid="notifications-switch"
+            {/* История получения баллов */}
+            <div className="w-full">
+              <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
+                {/* Фон блока */}
+                <div className="absolute inset-0" data-name="points_history_block_background">
+                  <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+                    <div
+                      aria-hidden="true"
+                      className="absolute border border-border-primary border-solid inset-0 pointer-events-none rounded-xl"
                     />
-                  }
-                />
-                <SettingsItem
-                  icon={<SecurityIcon />}
-                  title={t('security_pin')}
-                  onClick={handleSecurityPin}
-                />
-                <SettingsItem
-                  icon={<InfoIcon />}
-                  title={t('about_app')}
-                  onClick={handleAboutApp}
-                />
-                <SettingsItem
-                  icon={<PrivacyIcon />}
-                  title={t('privacy_policy')}
-                  onClick={handlePrivacyPolicy}
-                />
-                <SettingsItem
-                  icon={<TermsIcon />}
-                  title={t('terms_of_use')}
-                  onClick={handleTermsOfUse}
-                />
-                <SettingsItem
-                  icon={<DeleteIcon />}
-                  title={t('delete_account')}
-                  onClick={handleDeleteAccount}
-                  isHighlighted={true}
-                />
+                  </div>
+                </div>
+                
+                {/* Контент блока */}
+                <div className="relative z-10">
+                  <h3 className="text-white text-lg font-semibold mb-4">{ui.levels.pointsHistory}</h3>
+                  <div className="space-y-3">
+                    {currentPageItems.length > 0 ? (
+                      currentPageItems.map((tx, index) => (
+                        <div key={tx.id || index} className="flex items-center justify-between py-2 border-b border-gray-800 last:border-b-0">
+                          <div className="flex items-center gap-3">
+                            <span className="text-gray-400 text-sm w-20">{formatDate(tx.timestamp)}</span>
+                            <span className="text-white text-sm">{getLocalizedAction(tx)}</span>
+                          </div>
+                          <span className="text-brand-primary text-sm font-semibold">{tx.type === 'earn' ? '+' : '-'}{tx.amount}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-400 text-sm text-center py-4">
+                        {t('no_points_history')}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Пагинация */}
+                  {pointsHistory.length > itemsPerPage && (
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-800">
+                      <button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px]"
+                        aria-label={ui.navigation.previous}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="hidden sm:inline">{ui.navigation.previous}</span>
+                      </button>
+                      
+                      <span className="text-gray-400 text-sm">
+                        {t('page')} {currentPage} {t('of')} {totalPages}
+                      </span>
+                      
+                      <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px]"
+                        aria-label={ui.navigation.next}
+                      >
+                        <span className="hidden sm:inline">{ui.navigation.next}</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      
-        {/* Модальное окно выбора языка */}
-        <LanguageModal />
       </div>
     </div>
   );

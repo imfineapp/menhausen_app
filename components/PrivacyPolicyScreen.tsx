@@ -28,7 +28,7 @@ function MainContent() {
   
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[21px] pt-[100px] w-full max-w-[351px] mx-auto"
+      className="box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] w-full max-w-[351px] mx-auto"
       data-name="main_content"
     >
       {/* Заголовок страницы */}

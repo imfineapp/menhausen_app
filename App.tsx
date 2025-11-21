@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import type { MutableRefObject } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -8,11 +10,16 @@ import { SurveyScreen03 } from './components/SurveyScreen03';
 import { SurveyScreen04 } from './components/SurveyScreen04';
 import { SurveyScreen05 } from './components/SurveyScreen05';
 import { SurveyScreen06 } from './components/SurveyScreen06';
+import { PsychologicalTestPreambulaScreen } from './components/PsychologicalTestPreambulaScreen';
+import { PsychologicalTestInstructionScreen } from './components/PsychologicalTestInstructionScreen';
+import { PsychologicalTestQuestionScreen } from './components/PsychologicalTestQuestionScreen';
+import { PsychologicalTestResultsScreen } from './components/PsychologicalTestResultsScreen';
 import { PinSetupScreen } from './components/PinSetupScreen';
 import { CheckInScreen } from './components/CheckInScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { UserProfileScreen } from './components/UserProfileScreen';
 import { AboutAppScreen } from './components/AboutAppScreen';
+import { AppSettingsScreen } from './components/AppSettingsScreen';
 import { PrivacyPolicyScreen } from './components/PrivacyPolicyScreen';
 import { TermsOfUseScreen } from './components/TermsOfUseScreen';
 import { DeleteAccountScreen } from './components/DeleteAccountScreen';
@@ -31,7 +38,6 @@ import { RateCardScreen } from './components/RateCardScreen';
 import { BackButton } from './components/ui/back-button'; // Импорт компонента BackButton
 import { BadgesScreen } from './components/BadgesScreen'; // Импорт страницы достижений
 import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт для сохранения ответов
-import { LevelsScreen } from './components/LevelsScreen'; // Импорт страницы уровней
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт страницы всех статей
 import { ArticleScreen } from './components/ArticleScreen'; // Импорт страницы статьи
@@ -53,6 +59,9 @@ import { LanguageProvider } from './components/LanguageContext';
 import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
+import { LikertScaleAnswer, PsychologicalTestPercentages } from './types/psychologicalTest';
+import { calculateTestResults } from './utils/psychologicalTestCalculator';
+import { saveTestResults, hasTestBeenCompleted, loadTestResults, clearTestResults } from './utils/psychologicalTestStorage';
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
@@ -61,13 +70,22 @@ import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
 // Achievements system imports
 import { useAchievements } from './contexts/AchievementsContext';
-import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated } from './services/userStatsService';
+import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated, markCardAsOpened, loadUserStats } from './services/userStatsService';
 import { getAchievementMetadata } from './utils/achievementsMetadata';
 import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService';
 import { getTelegramUserId } from './utils/telegramUserUtils';
+import { AppScreen } from './types/userState';
+import { criticalDataManager } from './utils/dataManager';
+import { resetUserStats } from './services/userStatsService';
 
-type AppScreen = 'onboarding1' | 'onboarding2' | 'survey01' | 'survey02' | 'survey03' | 'survey04' | 'survey05' | 'survey06' | 'pin' | 'checkin' | 'home' | 'profile' | 'about' | 'privacy' | 'terms' | 'pin-settings' | 'delete' | 'payments' | 'donations' | 'under-construction' | 'theme-welcome' | 'theme-home' | 'card-details' | 'checkin-details' | 'card-welcome' | 'question-01' | 'question-02' | 'final-message' | 'rate-card' | 'breathing-4-7-8' | 'breathing-square' | 'grounding-5-4-3-2-1' | 'grounding-anchor' | 'badges' | 'levels' | 'reward' | 'all-articles' | 'article';
+const clearTimeoutFromRef = (ref: MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+  const timeoutId = ref.current;
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    ref.current = null;
+  }
+};
 
 /**
  * Компонент для загрузки вопросов и отображения QuestionScreen01
@@ -368,6 +386,7 @@ function AppContent() {
   type AppFlowProgress = {
     onboardingCompleted: boolean;
     surveyCompleted: boolean;
+    psychologicalTestCompleted: boolean;
     pinEnabled: boolean;       // feature flag, disabled for now
     pinCompleted: boolean;
     firstCheckinDone: boolean;
@@ -379,6 +398,7 @@ function AppContent() {
   const defaultProgress: AppFlowProgress = {
     onboardingCompleted: false,
     surveyCompleted: false,
+    psychologicalTestCompleted: false,
     pinEnabled: false, // skip PIN in the main flow for now
     pinCompleted: false,
     firstCheckinDone: false,
@@ -425,6 +445,12 @@ function AppContent() {
       return 'survey01';
     }
 
+  // Проверяем, был ли пройден психологический тест
+  // Используем localStorage как единственный источник истины, чтобы избежать рассинхрона
+  if (!hasTestBeenCompleted()) {
+      return 'psychological-test-preambula';
+    }
+
     // Daily check-in logic: Check if check-in is needed today
     const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
     
@@ -443,11 +469,13 @@ function AppContent() {
 
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());
   const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([getInitialScreen()]);
+  const [isNavigatingForward, setIsNavigatingForward] = useState(true);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
   const [currentCheckin, setCurrentCheckin] = useState<{id: string; cardTitle?: string; date?: string}>({id: ''});
   const [currentArticle, setCurrentArticle] = useState<string>('');
+  const [articleReturnScreen, setArticleReturnScreen] = useState<AppScreen>('home');
   const [userAnswers, setUserAnswers] = useState<{question1?: string; question2?: string}>({});
   const [finalAnswers, setFinalAnswers] = useState<{question1?: string; question2?: string}>({});
   const [_cardRating, setCardRating] = useState<number>(0);
@@ -476,13 +504,18 @@ function AppContent() {
     screen05: []
   });
 
+  // =====================================================================================
+  // СОСТОЯНИЕ ДЛЯ ПСИХОЛОГИЧЕСКОГО ТЕСТА
+  // =====================================================================================
+  const [psychologicalTestAnswers, setPsychologicalTestAnswers] = useState<LikertScaleAnswer[]>([]);
+
   // Получение системы контента
   const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage, getUI } = useContent();
   
   // Получение системы достижений
   const { checkAndUnlockAchievements } = useAchievements();
   
-  // Refs для хранения ID таймеров для очистки
+// Refs для хранения ID таймеров для очистки
   const telegramTimeoutRefs = useRef<{ expand?: ReturnType<typeof setTimeout>; fullscreen?: ReturnType<typeof setTimeout> }>({});
   const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -516,7 +549,20 @@ function AppContent() {
   // Список экранов, на которых не показываем RewardScreen автоматически
   // Эти экраны требуют завершения действия пользователя перед показом уведомлений
   const blockedScreensForReward: AppScreen[] = useMemo(() => [
-    'onboarding1', 'onboarding2', 'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'onboarding1', 'onboarding2', 
+    'survey01', 'survey02', 'survey03', 'survey04', 'survey05', 'survey06',
+    'psychological-test-preambula', 'psychological-test-instruction',
+    'psychological-test-question-01', 'psychological-test-question-02', 'psychological-test-question-03',
+    'psychological-test-question-04', 'psychological-test-question-05', 'psychological-test-question-06',
+    'psychological-test-question-07', 'psychological-test-question-08', 'psychological-test-question-09',
+    'psychological-test-question-10', 'psychological-test-question-11', 'psychological-test-question-12',
+    'psychological-test-question-13', 'psychological-test-question-14', 'psychological-test-question-15',
+    'psychological-test-question-16', 'psychological-test-question-17', 'psychological-test-question-18',
+    'psychological-test-question-19', 'psychological-test-question-20', 'psychological-test-question-21',
+    'psychological-test-question-22', 'psychological-test-question-23', 'psychological-test-question-24',
+    'psychological-test-question-25', 'psychological-test-question-26', 'psychological-test-question-27',
+    'psychological-test-question-28', 'psychological-test-question-29', 'psychological-test-question-30',
+    'psychological-test-results',
     'pin', 'checkin', 'reward', 'card-welcome', 'question-01', 'question-02', 'final-message', 'rate-card'
     // Примечание: 'card-details' не заблокирован, чтобы можно было показывать уведомления во время просмотра карточки
   ], []);
@@ -533,6 +579,7 @@ function AppContent() {
 
   // Функция для навигации с отслеживанием истории
   const navigateTo = useCallback((screen: AppScreen) => {
+    setIsNavigatingForward(true);
     setNavigationHistory(prev => [...prev, screen]);
     setCurrentScreen(screen);
   }, []);
@@ -794,12 +841,6 @@ function AppContent() {
   // Проверка достижений при переходе на theme-home (в дополнение к проверке после завершения карточки)
   useEffect(() => {
     if (currentScreen === 'theme-home') {
-      // Предотвращаем повторное выполнение - устанавливаем флаг СРАЗУ, до setTimeout
-      if (themeHomeProcessingRef.current) {
-        console.log('[Achievements] theme-home processing already in progress, skipping');
-        return;
-      }
-      
       console.log('[Achievements] theme-home screen detected, earnedAchievementIds:', earnedAchievementIds);
       
       // Проверяем, возвращаемся ли мы из reward screen
@@ -819,10 +860,35 @@ function AppContent() {
       // это может быть первый вход на theme-home с уже разблокированными достижениями
       // В этом случае проверяем storage (но только если нет earnedAchievementIds)
       
-      // Устанавливаем флаг ДО setTimeout, чтобы предотвратить повторное выполнение
-      themeHomeProcessingRef.current = true;
+      // Предотвращаем повторное выполнение только если earnedAchievementIds пустой
+      // Если earnedAchievementIds содержит достижения, обрабатываем их в любом случае
+      if (earnedAchievementIds.length === 0 && themeHomeProcessingRef.current) {
+        console.log('[Achievements] theme-home processing already in progress, skipping');
+        return;
+      }
       
-      // Небольшая задержка, чтобы убедиться, что все state обновился
+      // Устанавливаем флаг ДО setTimeout, чтобы предотвратить повторное выполнение
+      // Но только если earnedAchievementIds пустой
+      if (earnedAchievementIds.length === 0) {
+        themeHomeProcessingRef.current = true;
+      }
+      
+      // Задержка зависит от того, есть ли уже earnedAchievementIds
+      // Если earnedAchievementIds пустой, используем большую задержку (800мс), 
+      // чтобы дать время checkAndShowAchievements завершиться:
+      // - внешняя задержка в handleCompleteRating: 300мс
+      // - внутренняя задержка в checkAndShowAchievements: 300мс
+      // - время на разблокировку и сохранение: ~200мс
+      // Итого: ~800мс
+      // Если earnedAchievementIds уже содержит достижения, используем небольшую задержку (200мс),
+      // чтобы дать время state обновиться и убедиться, что достижения сохранены в storage
+      const delay = earnedAchievementIds.length > 0 ? 200 : 800;
+      
+      // Если earnedAchievementIds содержит достижения, сбрасываем флаг, чтобы разрешить обработку
+      if (earnedAchievementIds.length > 0) {
+        themeHomeProcessingRef.current = false;
+      }
+      
       const timeoutId = setTimeout(() => {
         try {
           // Используем централизованный сервис для получения достижений для показа
@@ -853,7 +919,7 @@ function AppContent() {
           console.error('[Achievements] Error processing achievements on theme-home:', error);
           themeHomeProcessingRef.current = false;
         }
-      }, 200);
+      }, delay);
       
       return () => {
         clearTimeout(timeoutId);
@@ -866,29 +932,26 @@ function AppContent() {
   
   // Общий cleanup для всех таймеров при размонтировании компонента
   useEffect(() => {
+    const telegramTimeouts = telegramTimeoutRefs.current;
     return () => {
       // Очищаем все таймеры Telegram WebApp
-      if (telegramTimeoutRefs.current.expand) {
-        clearTimeout(telegramTimeoutRefs.current.expand);
+      if (telegramTimeouts.expand) {
+        clearTimeout(telegramTimeouts.expand);
+        telegramTimeouts.expand = undefined;
       }
-      if (telegramTimeoutRefs.current.fullscreen) {
-        clearTimeout(telegramTimeoutRefs.current.fullscreen);
+      if (telegramTimeouts.fullscreen) {
+        clearTimeout(telegramTimeouts.fullscreen);
+        telegramTimeouts.fullscreen = undefined;
       }
       
       // Очищаем таймер чекина
-      if (checkInTimeoutRef.current) {
-        clearTimeout(checkInTimeoutRef.current);
-      }
+      clearTimeoutFromRef(checkInTimeoutRef);
       
       // Очищаем таймер завершения карточки
-      if (cardExerciseTimeoutRef.current) {
-        clearTimeout(cardExerciseTimeoutRef.current);
-      }
+      clearTimeoutFromRef(cardExerciseTimeoutRef);
       
       // Очищаем таймер клика по карточке темы
-      if (themeCardClickTimeoutRef.current) {
-        clearTimeout(themeCardClickTimeoutRef.current);
-      }
+      clearTimeoutFromRef(themeCardClickTimeoutRef);
     };
   }, []);
   
@@ -906,6 +969,7 @@ function AppContent() {
   const goBack = () => {
     if (navigationHistory.length > 1) {
       // Standard navigation back
+      setIsNavigatingForward(false);
       const newHistory = [...navigationHistory];
       newHistory.pop(); // Удаляем текущий экран
       const previousScreen = newHistory[newHistory.length - 1];
@@ -1269,8 +1333,8 @@ function AppContent() {
         // через функцию updateReferrerStatsFromList, которая должна вызываться при инициализации
       }
 
-      // Decide next step: skip PIN if disabled
-      const nextScreen: AppScreen = flow.pinEnabled ? 'pin' : 'checkin';
+      // После опроса переходим к психологическому тесту
+      const nextScreen: AppScreen = 'psychological-test-preambula';
 
     if (saveSuccess) {
       console.log('Survey completed successfully');
@@ -1292,6 +1356,50 @@ function AppContent() {
   const handleBackToSurvey04 = () => navigateTo('survey04');
   const handleBackToSurvey05 = () => navigateTo('survey05');
 
+  // =====================================================================================
+  // ОБРАБОТЧИКИ ДЛЯ ПСИХОЛОГИЧЕСКОГО ТЕСТА
+  // =====================================================================================
+  
+  const handlePsychologicalTestPreambulaNext = () => {
+    navigateTo('psychological-test-instruction');
+  };
+
+  const handlePsychologicalTestInstructionNext = () => {
+    navigateTo('psychological-test-question-01');
+  };
+
+  const handlePsychologicalTestQuestionNext = (questionNumber: number, answer: LikertScaleAnswer) => {
+    // Сохраняем ответ
+    const newAnswers = [...psychologicalTestAnswers];
+    newAnswers[questionNumber - 1] = answer; // questionNumber 1-based, array 0-based
+    setPsychologicalTestAnswers(newAnswers);
+
+    // Если это последний вопрос (30), переходим к результатам
+    if (questionNumber === 30) {
+      // Рассчитываем результаты
+      const { scores, percentages } = calculateTestResults(newAnswers);
+      
+      // Сохраняем результаты
+      saveTestResults(scores, percentages);
+      
+      // Обновляем flow
+      updateFlow(p => ({ ...p, psychologicalTestCompleted: true }));
+      
+      // Переходим к экрану результатов
+      navigateTo('psychological-test-results');
+    } else {
+      // Переходим к следующему вопросу
+      const nextQuestionNumber = questionNumber + 1;
+      const nextScreen = `psychological-test-question-${String(nextQuestionNumber).padStart(2, '0')}` as AppScreen;
+      navigateTo(nextScreen);
+    }
+  };
+
+  const handlePsychologicalTestResultsNext = () => {
+    // После результатов теста переходим к чекину
+    navigateTo('checkin');
+  };
+
   const _handleGoToCheckIn = () => {
     navigateTo('checkin');
   };
@@ -1304,10 +1412,6 @@ function AppContent() {
     navigateTo('badges');
   };
 
-  const handleGoToLevels = () => {
-    console.log('Navigating to levels screen');
-    navigateTo('levels');
-  };
 
   /**
    * Навигация к списку всех статей
@@ -1322,6 +1426,8 @@ function AppContent() {
    */
   const handleOpenArticle = (articleId: string) => {
     console.log(`Opening article: ${articleId}`);
+    const originScreen: AppScreen = currentScreen === 'all-articles' ? 'all-articles' : 'home';
+    setArticleReturnScreen(originScreen);
     setCurrentArticle(articleId);
     navigateTo('article');
   };
@@ -1329,8 +1435,13 @@ function AppContent() {
   /**
    * Возврат из статьи к списку статей
    */
-  const handleBackToAllArticles = () => {
-    navigateTo('all-articles');
+  const handleBackFromArticle = () => {
+    setCurrentArticle('');
+    if (articleReturnScreen === 'all-articles') {
+      navigateTo('all-articles');
+    } else {
+      navigateTo('home');
+    }
   };
 
   /**
@@ -1440,6 +1551,29 @@ function AppContent() {
     
     // Сохраняем финальные ответы в дополнительном состоянии для надежности
     setFinalAnswers(finalAnswers);
+    
+    // Отмечаем карточку как открытую (после ответа на второй вопрос, когда показывается финальное сообщение)
+    // Это правильный момент, когда карточка считается "открытой" для достижений
+    const currentStats = loadUserStats();
+    const wasOpenedBefore = currentStats.openedCardIds?.includes(currentCard.id) || false;
+    
+    if (!wasOpenedBefore) {
+      console.log(`[Card] First time opening card ${currentCard.id}, marking as opened`);
+      // Отмечаем карточку как открытую
+      markCardAsOpened(currentCard.id);
+      
+      // Увеличиваем счетчик открытых карточек в теме
+      const themeId = getThemeIdFromCardId(currentCard.id);
+      if (themeId) {
+        console.log(`[Card] Incrementing cardsOpened for theme: ${themeId}`);
+        incrementCardsOpened(themeId);
+        // НЕ проверяем достижения здесь - карточка еще не завершена (нужно пройти rate-card)
+        // Проверка достижений будет выполнена в handleCompleteRating после перехода на theme-home
+      }
+    } else {
+      console.log(`[Card] Card ${currentCard.id} was already opened before, skipping increment`);
+    }
+    
     navigateTo('final-message');
   };
 
@@ -1448,15 +1582,25 @@ function AppContent() {
     navigateTo('rate-card');
   };
 
-  const handleCompleteRating = (rating: number, textMessage?: string) => {
-    console.log(`Card rated: ${rating} stars for card: ${currentCard.id}`, textMessage ? `with message: ${textMessage}` : 'without message');
+  const handleCompleteRating = (rating?: number, textMessage?: string) => {
+    // Если рейтинг не указан (пропущен), используем 0
+    const finalRating = rating ?? 0;
+    const hasRating = rating !== undefined;
+    
+    console.log(
+      hasRating 
+        ? `Card rated: ${rating} stars for card: ${currentCard.id}${textMessage ? ` with message: ${textMessage}` : ' without message'}`
+        : `Card completion skipped (no rating) for card: ${currentCard.id}`
+    );
     console.log('Current userAnswers before saving:', userAnswers);
     console.log('Final answers to save:', finalAnswers);
     
+    // Отправляем аналитику всегда, даже при пропуске рейтинга (для анализа отказов)
     capture(AnalyticsEvent.CARD_RATED, {
       cardId: currentCard.id,
       themeId: currentTheme,
-      rating,
+      rating: finalRating,
+      hasRating: hasRating,
       ratingComment: textMessage || undefined,
       hasComment: !!textMessage,
       language: currentLanguage,
@@ -1466,18 +1610,19 @@ function AppContent() {
       // Используем finalAnswers для надежности, fallback на userAnswers
       const answersToSave = Object.keys(finalAnswers).length > 0 ? finalAnswers : userAnswers;
       
-      // Сохраняем завершенную попытку через ThemeCardManager
+      // Сохраняем завершенную попытку через ThemeCardManager (используем 0 для рейтинга при пропуске)
       const completedAttempt = ThemeCardManager.addCompletedAttempt(
         currentCard.id,
         answersToSave, // Все ответы пользователя (question1, question2)
-        rating,
+        finalRating, // 0 если рейтинг пропущен
         textMessage
       );
       
       console.log('Exercise completed and saved:', {
         cardId: currentCard.id,
         answers: answersToSave,
-        rating: rating,
+        rating: finalRating,
+        hasRating: hasRating,
         attemptId: completedAttempt.completedAttempts[completedAttempt.completedAttempts.length - 1]?.attemptId,
         totalAttempts: completedAttempt.totalCompletedAttempts
       });
@@ -1534,7 +1679,7 @@ function AppContent() {
       }
 
       // Обновляем локальные состояния для UI
-      setCardRating(rating);
+      setCardRating(finalRating);
       setCompletedCards(prev => new Set([...prev, currentCard.id]));
       setCardCompletionCounts(prev => ({
         ...prev,
@@ -1617,43 +1762,15 @@ function AppContent() {
   const handleThemeCardClick = async (cardId: string) => {
     console.log(`[Card] Card clicked: ${cardId}`);
     
-    // Обновляем статистику открытия карточки для достижений
-    const themeId = getThemeIdFromCardId(cardId);
-    if (themeId) {
-      console.log(`[Card] Incrementing cardsOpened for theme: ${themeId}`);
-      const updatedStats = incrementCardsOpened(themeId);
-      console.log(`[Card] Updated stats - cardsOpened[${themeId}]:`, updatedStats.cardsOpened[themeId]);
-      
-      // Проверяем текущую статистику для отладки
-      const { loadUserStats } = await import('./services/userStatsService');
-      const currentStats = loadUserStats();
-      console.log(`[Card] Current user stats after increment:`, {
-        cardsOpened: currentStats.cardsOpened,
-        stress: currentStats.cardsOpened['stress'] || 0
-      });
-    }
+    // НЕ увеличиваем счетчик cardsOpened здесь - карточка еще не пройдена
+    // Счетчик будет увеличен в handleCompleteExercise после ответа на второй вопрос
     
     const cardData = await getCardData(cardId, currentLanguage);
     setCurrentCard(cardData);
     navigateTo('card-details');
     
-    // Проверяем достижения после навигации (с задержкой, чтобы навигация завершилась)
-    if (themeId) {
-      // Очищаем предыдущий таймер, если он существует
-      if (themeCardClickTimeoutRef.current) {
-        clearTimeout(themeCardClickTimeoutRef.current);
-      }
-      
-      // Используем setTimeout, чтобы проверить достижения после того, как state обновится
-      themeCardClickTimeoutRef.current = setTimeout(() => {
-        // Проверяем, что компонент все еще смонтирован перед вызовом
-        if (isMountedRef.current) {
-          console.log(`[Card] Checking achievements after card click, themeId: ${themeId}`);
-          checkAndShowAchievements();
-        }
-        themeCardClickTimeoutRef.current = null;
-      }, 300);
-    }
+    // НЕ проверяем достижения здесь - карточка еще не пройдена
+    // Проверка достижений будет выполнена в handleCompleteRating после завершения карточки
   };
 
   /**
@@ -1785,7 +1902,15 @@ function AppContent() {
     navigateTo('about');
   };
 
+  const handleShowAppSettings = () => {
+    navigateTo('app-settings');
+  };
+
   const handleBackToProfile = () => {
+    navigateTo('profile');
+  };
+
+  const handleBackToProfileFromSettings = () => {
     navigateTo('profile');
   };
 
@@ -1845,6 +1970,7 @@ function AppContent() {
 
   const handleDeleteAccount = () => {
     console.log('Account deleted, returning to onboarding');
+    
     // Очищаем все данные пользователя включая результаты опроса
     setCompletedCards(new Set());
     setCardCompletionCounts({});
@@ -1860,7 +1986,65 @@ function AppContent() {
       screen04: [],
       screen05: []
     });
+    
+    // Очищаем данные психологического теста
+    setPsychologicalTestAnswers([]);
+    clearTestResults();
+    
+    // Очищаем все данные из localStorage
+    // 1. Удаляем основные ключи приложения
     localStorage.removeItem('survey-results');
+    localStorage.removeItem('app-flow-progress');
+    localStorage.removeItem('checkin-data');
+    localStorage.removeItem('has-shown-first-achievement');
+    
+    // 2. Удаляем все данные с префиксом 'menhausen_' (через CriticalDataManager)
+    criticalDataManager.clearAllData();
+    
+    // 3. Удаляем баллы и транзакции
+    localStorage.removeItem('menhausen_points_balance');
+    localStorage.removeItem('menhausen_points_transactions');
+    
+    // 4. Удаляем статистику пользователя
+    resetUserStats();
+    
+    // 5. Удаляем данные карточек (theme_card_progress_*)
+    const cardProgressKeys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('theme_card_progress_')) {
+        cardProgressKeys.push(key);
+      }
+    }
+    cardProgressKeys.forEach(key => localStorage.removeItem(key));
+    
+    // 6. Удаляем данные чекинов (daily_checkin_*)
+    const checkinKeys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('daily_checkin_')) {
+        checkinKeys.push(key);
+      }
+    }
+    checkinKeys.forEach(key => localStorage.removeItem(key));
+    
+    // 7. Удаляем реферальные данные
+    localStorage.removeItem('menhausen_referred_by');
+    localStorage.removeItem('menhausen_referral_code');
+    localStorage.removeItem('menhausen_referral_registered');
+    // Удаляем все ключи реферальных списков
+    const referralListKeys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('menhausen_referral_list_')) {
+        referralListKeys.push(key);
+      }
+    }
+    referralListKeys.forEach(key => localStorage.removeItem(key));
+    
+    // 8. Удаляем язык (опционально, можно оставить для удобства пользователя)
+    // localStorage.removeItem('menhausen-language');
+    
     // Сбрасываем историю навигации
     setNavigationHistory(['onboarding1']);
     setCurrentScreen('onboarding1');
@@ -1889,7 +2073,7 @@ function AppContent() {
     navigateTo('profile');
   };
 
-  const handleShowUnderConstruction = (featureName: string) => {
+  const _handleShowUnderConstruction = (featureName: string) => {
     console.log(`Navigating to Under Construction for: ${featureName}`);
     setCurrentFeatureName(featureName);
     navigateTo('under-construction');
@@ -1928,10 +2112,24 @@ function AppContent() {
   // РЕНДЕРИНГ ЭКРАНОВ С ИСПОЛЬЗОВАНИЕМ КОНТЕНТА
   // =====================================================================================
 
+  // Вспомогательная функция для обертки экранов в motion.div с анимацией
+  const wrapScreen = (screen: React.ReactNode) => (
+    <motion.div
+      key={currentScreen}
+      initial={{ x: isNavigatingForward ? '100%' : '-100%', opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: isNavigatingForward ? '-100%' : '100%', opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
+      style={{ position: 'absolute', width: '100%', height: '100%', top: 0, left: 0 }}
+    >
+      {screen}
+    </motion.div>
+  );
+
   const renderCurrentScreen = () => {
     switch (currentScreen) {
       case 'onboarding1':
-        return (
+        return wrapScreen(
           <OnboardingScreen01 
             onNext={handleNextScreen}
             onShowPrivacy={handleShowPrivacy}
@@ -1939,11 +2137,13 @@ function AppContent() {
           />
         );
       case 'onboarding2':
-        return <OnboardingScreen02 onComplete={handleShowSurvey} />;
+        return wrapScreen(
+          <OnboardingScreen02 onComplete={handleShowSurvey} />
+        );
       
       // Экраны опроса
       case 'survey01':
-        return (
+        return wrapScreen(
           <SurveyScreen01 
             onNext={handleSurvey01Next} 
             onBack={handleBackToOnboarding2}
@@ -1951,7 +2151,7 @@ function AppContent() {
           />
         );
       case 'survey02':
-        return (
+        return wrapScreen(
           <SurveyScreen02 
             onNext={handleSurvey02Next} 
             onBack={handleBackToSurvey01}
@@ -1959,7 +2159,7 @@ function AppContent() {
           />
         );
       case 'survey03':
-        return (
+        return wrapScreen(
           <SurveyScreen03 
             onNext={handleSurvey03Next} 
             onBack={handleBackToSurvey02}
@@ -1967,7 +2167,7 @@ function AppContent() {
           />
         );
       case 'survey04':
-        return (
+        return wrapScreen(
           <SurveyScreen04 
             onNext={handleSurvey04Next} 
             onBack={handleBackToSurvey03}
@@ -1975,7 +2175,7 @@ function AppContent() {
           />
         );
       case 'survey05':
-        return (
+        return wrapScreen(
           <SurveyScreen05 
             onNext={handleSurvey05Next} 
             onBack={handleBackToSurvey04}
@@ -1984,7 +2184,7 @@ function AppContent() {
         );
 
       case 'survey06':
-        return (
+        return wrapScreen(
           <SurveyScreen06 
             onNext={handleSurvey06Next} 
             onBack={handleBackToSurvey05}
@@ -1992,8 +2192,297 @@ function AppContent() {
           />
         );
 
+      // Экраны психологического теста
+      case 'psychological-test-preambula':
+        return wrapScreen(
+          <PsychologicalTestPreambulaScreen 
+            onNext={handlePsychologicalTestPreambulaNext}
+          />
+        );
+      
+      case 'psychological-test-instruction':
+        return wrapScreen(
+          <PsychologicalTestInstructionScreen 
+            onNext={handlePsychologicalTestInstructionNext}
+          />
+        );
+      
+      case 'psychological-test-question-01':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={1}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(1, answer)}
+            initialAnswer={psychologicalTestAnswers[0] || null}
+          />
+        );
+      case 'psychological-test-question-02':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={2}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(2, answer)}
+            initialAnswer={psychologicalTestAnswers[1] || null}
+          />
+        );
+      case 'psychological-test-question-03':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={3}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(3, answer)}
+            initialAnswer={psychologicalTestAnswers[2] || null}
+          />
+        );
+      case 'psychological-test-question-04':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={4}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(4, answer)}
+            initialAnswer={psychologicalTestAnswers[3] || null}
+          />
+        );
+      case 'psychological-test-question-05':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={5}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(5, answer)}
+            initialAnswer={psychologicalTestAnswers[4] || null}
+          />
+        );
+      case 'psychological-test-question-06':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={6}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(6, answer)}
+            initialAnswer={psychologicalTestAnswers[5] || null}
+          />
+        );
+      case 'psychological-test-question-07':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={7}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(7, answer)}
+            initialAnswer={psychologicalTestAnswers[6] || null}
+          />
+        );
+      case 'psychological-test-question-08':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={8}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(8, answer)}
+            initialAnswer={psychologicalTestAnswers[7] || null}
+          />
+        );
+      case 'psychological-test-question-09':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={9}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(9, answer)}
+            initialAnswer={psychologicalTestAnswers[8] || null}
+          />
+        );
+      case 'psychological-test-question-10':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={10}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(10, answer)}
+            initialAnswer={psychologicalTestAnswers[9] || null}
+          />
+        );
+      case 'psychological-test-question-11':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={11}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(11, answer)}
+            initialAnswer={psychologicalTestAnswers[10] || null}
+          />
+        );
+      case 'psychological-test-question-12':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={12}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(12, answer)}
+            initialAnswer={psychologicalTestAnswers[11] || null}
+          />
+        );
+      case 'psychological-test-question-13':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={13}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(13, answer)}
+            initialAnswer={psychologicalTestAnswers[12] || null}
+          />
+        );
+      case 'psychological-test-question-14':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={14}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(14, answer)}
+            initialAnswer={psychologicalTestAnswers[13] || null}
+          />
+        );
+      case 'psychological-test-question-15':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={15}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(15, answer)}
+            initialAnswer={psychologicalTestAnswers[14] || null}
+          />
+        );
+      case 'psychological-test-question-16':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={16}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(16, answer)}
+            initialAnswer={psychologicalTestAnswers[15] || null}
+          />
+        );
+      case 'psychological-test-question-17':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={17}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(17, answer)}
+            initialAnswer={psychologicalTestAnswers[16] || null}
+          />
+        );
+      case 'psychological-test-question-18':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={18}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(18, answer)}
+            initialAnswer={psychologicalTestAnswers[17] || null}
+          />
+        );
+      case 'psychological-test-question-19':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={19}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(19, answer)}
+            initialAnswer={psychologicalTestAnswers[18] || null}
+          />
+        );
+      case 'psychological-test-question-20':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={20}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(20, answer)}
+            initialAnswer={psychologicalTestAnswers[19] || null}
+          />
+        );
+      case 'psychological-test-question-21':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={21}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(21, answer)}
+            initialAnswer={psychologicalTestAnswers[20] || null}
+          />
+        );
+      case 'psychological-test-question-22':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={22}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(22, answer)}
+            initialAnswer={psychologicalTestAnswers[21] || null}
+          />
+        );
+      case 'psychological-test-question-23':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={23}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(23, answer)}
+            initialAnswer={psychologicalTestAnswers[22] || null}
+          />
+        );
+      case 'psychological-test-question-24':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={24}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(24, answer)}
+            initialAnswer={psychologicalTestAnswers[23] || null}
+          />
+        );
+      case 'psychological-test-question-25':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={25}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(25, answer)}
+            initialAnswer={psychologicalTestAnswers[24] || null}
+          />
+        );
+      case 'psychological-test-question-26':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={26}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(26, answer)}
+            initialAnswer={psychologicalTestAnswers[25] || null}
+          />
+        );
+      case 'psychological-test-question-27':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={27}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(27, answer)}
+            initialAnswer={psychologicalTestAnswers[26] || null}
+          />
+        );
+      case 'psychological-test-question-28':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={28}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(28, answer)}
+            initialAnswer={psychologicalTestAnswers[27] || null}
+          />
+        );
+      case 'psychological-test-question-29':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={29}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(29, answer)}
+            initialAnswer={psychologicalTestAnswers[28] || null}
+          />
+        );
+      case 'psychological-test-question-30':
+        return wrapScreen(
+          <PsychologicalTestQuestionScreen 
+            questionNumber={30}
+            onNext={(answer) => handlePsychologicalTestQuestionNext(30, answer)}
+            initialAnswer={psychologicalTestAnswers[29] || null}
+          />
+        );
+      
+      case 'psychological-test-results': {
+        // Рассчитываем результаты для отображения
+        // Используем сохраненные результаты из localStorage, если они есть
+        const savedResults = loadTestResults();
+        
+        // Безопасное вычисление процентов: проверяем, что есть 30 ответов
+        let percentages: PsychologicalTestPercentages;
+        if (savedResults?.percentages) {
+          percentages = savedResults.percentages;
+        } else if (psychologicalTestAnswers.length === 30) {
+          // Все ответы на месте, можем безопасно рассчитать
+          percentages = calculateTestResults(psychologicalTestAnswers).percentages;
+        } else {
+          // Неполные данные - используем нулевые значения по умолчанию
+          console.warn(`Psychological test results: incomplete answers (${psychologicalTestAnswers.length}/30). Using default zero percentages.`);
+          percentages = {
+            stress: 0,
+            anxiety: 0,
+            relationships: 0,
+            selfEsteem: 0,
+            anger: 0,
+            depression: 0
+          };
+        }
+        
+        return wrapScreen(
+          <PsychologicalTestResultsScreen 
+            percentages={percentages}
+            onNext={handlePsychologicalTestResultsNext}
+          />
+        );
+      }
+
       case 'pin':
-        return (
+        return wrapScreen(
           <PinSetupScreen 
             onComplete={handleCompletePinSetup} 
             onSkip={handleSkipPinSetup}
@@ -2001,9 +2490,9 @@ function AppContent() {
           />
         );
       case 'checkin':
-        return <CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />;
+        return wrapScreen(<CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />);
       case 'home':
-        return (
+        return wrapScreen(
           <HomeScreen
             onGoToProfile={handleGoToProfile}
             onGoToTheme={handleGoToTheme}
@@ -2015,7 +2504,7 @@ function AppContent() {
       case 'theme-welcome': {
         const themeData = getTheme(currentTheme);
         
-        return (
+        return wrapScreen(
           <ThemeWelcomeScreen
             onBack={handleBackToHomeFromTheme}
             onStart={handleStartTheme}
@@ -2027,7 +2516,7 @@ function AppContent() {
         );
       }
       case 'theme-home': {
-        return (
+        return wrapScreen(
           <ThemeHomeScreen
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
@@ -2037,7 +2526,7 @@ function AppContent() {
         );
       }
       case 'card-details':
-        return (
+        return wrapScreen(
           <CardDetailsScreen
             onBack={handleBackToThemeHome}
             onOpenCard={handleOpenCardExercise}
@@ -2048,7 +2537,7 @@ function AppContent() {
           />
         );
       case 'checkin-details':
-        return (
+        return wrapScreen(
           <CheckinDetailsScreen
             onBack={handleBackToCardDetails}
             checkinId={currentCheckin.id}
@@ -2057,7 +2546,7 @@ function AppContent() {
           />
         );
       case 'card-welcome':
-        return (
+        return wrapScreen(
           <CardWelcomeScreen
             onBack={handleBackToCardDetailsFromWelcome}
             onNext={handleStartCardExercise}
@@ -2068,7 +2557,7 @@ function AppContent() {
         );
       case 'question-01': {
         // Используем новую систему для получения вопросов
-        return (
+        return wrapScreen(
           <QuestionScreen01WithLoader
             onBack={handleBackToCardDetails}
             onNext={handleNextQuestion}
@@ -2081,7 +2570,7 @@ function AppContent() {
       }
       case 'question-02': {
         // Используем новую систему для получения вопросов
-        return (
+        return wrapScreen(
           <QuestionScreen02WithLoader
             onBack={handleBackToQuestion01}
             onNext={handleCompleteExercise}
@@ -2095,7 +2584,7 @@ function AppContent() {
       }
       case 'final-message': {
         // Используем новую систему для получения данных финального сообщения
-        return (
+        return wrapScreen(
           <FinalCardMessageScreenWithLoader
             onBack={handleBackToQuestion02}
             onNext={handleCompleteFinalMessage}
@@ -2107,7 +2596,7 @@ function AppContent() {
         );
       }
       case 'rate-card':
-        return (
+        return wrapScreen(
           <RateCardScreen
             onBack={handleBackToFinalMessage}
             onNext={handleCompleteRating}
@@ -2116,26 +2605,31 @@ function AppContent() {
           />
         );
       case 'profile':
-        return (
+        return wrapScreen(
           <UserProfileScreen 
             onBack={handleBackToHome} 
-            onShowAboutApp={handleShowAboutApp} 
-            onShowPinSettings={handleShowPinSettings}
-            onShowPrivacy={handleShowPrivacyFromProfile}
-            onShowTerms={handleShowTermsFromProfile}
-            onShowDeleteAccount={handleShowDeleteAccount}
             onShowPayments={handleShowPayments}
-            onShowDonations={handleShowDonations}
-            onShowUnderConstruction={handleShowUnderConstruction}
             onGoToBadges={handleGoToBadges}
-            onGoToLevels={handleGoToLevels}
+            onShowSettings={handleShowAppSettings}
             userHasPremium={userHasPremium}
           />
         );
       case 'about':
-        return <AboutAppScreen onBack={handleBackToProfile} />;
+        return wrapScreen(<AboutAppScreen onBack={handleBackToProfile} />);
+      case 'app-settings':
+        return wrapScreen(
+          <AppSettingsScreen 
+            onBack={handleBackToProfileFromSettings}
+            onShowAboutApp={handleShowAboutApp}
+            onShowPinSettings={handleShowPinSettings}
+            onShowPrivacy={handleShowPrivacyFromProfile}
+            onShowTerms={handleShowTermsFromProfile}
+            onShowDeleteAccount={handleShowDeleteAccount}
+            onShowDonations={handleShowDonations}
+          />
+        );
       case 'pin-settings':
-        return (
+        return wrapScreen(
           <PinSetupScreen 
             onComplete={handleCompletePinSettings} 
             onSkip={handleSkipPinSettings}
@@ -2143,39 +2637,39 @@ function AppContent() {
           />
         );
       case 'privacy':
-        return (
+        return wrapScreen(
           <PrivacyPolicyScreen 
             onBack={goBack} 
           />
         );
       case 'terms':
-        return (
+        return wrapScreen(
           <TermsOfUseScreen 
             onBack={goBack} 
           />
         );
       case 'delete':
-        return (
+        return wrapScreen(
           <DeleteAccountScreen 
             onBack={handleBackToProfileFromDelete}
             onDeleteAccount={handleDeleteAccount}
           />
         );
       case 'payments':
-        return (
+        return wrapScreen(
           <PaymentsScreen 
             onBack={handleBackToProfileFromPayments}
             onPurchaseComplete={handlePurchaseComplete}
           />
         );
       case 'donations':
-        return (
+        return wrapScreen(
           <DonationsScreen 
             onBack={handleBackToProfileFromDonations}
           />
         );
       case 'under-construction':
-        return (
+        return wrapScreen(
           <UnderConstructionScreen 
             onBack={handleBackToProfileFromUnderConstruction}
             featureName={currentFeatureName}
@@ -2184,32 +2678,32 @@ function AppContent() {
       
       // Экраны ментальных техник
       case 'breathing-4-7-8':
-        return (
+        return wrapScreen(
           <Breathing478Screen 
             onBack={handleBackFromMentalTechnique}
           />
         );
       case 'breathing-square':
-        return (
+        return wrapScreen(
           <SquareBreathingScreen 
             onBack={handleBackFromMentalTechnique}
           />
         );
       case 'grounding-5-4-3-2-1':
-        return (
+        return wrapScreen(
           <Grounding54321Screen 
             onBack={handleBackFromMentalTechnique}
           />
         );
       case 'grounding-anchor':
-        return (
+        return wrapScreen(
           <GroundingAnchorScreen 
             onBack={handleBackFromMentalTechnique}
           />
         );
       
       case 'reward':
-        return (
+        return wrapScreen(
           <RewardManager 
             earnedAchievementIds={earnedAchievementIds}
             onComplete={() => {
@@ -2248,22 +2742,14 @@ function AppContent() {
         );
       
       case 'badges':
-        return (
+        return wrapScreen(
           <BadgesScreen 
             onBack={goBack}
           />
         );
       
-      case 'levels':
-        return (
-          <LevelsScreen 
-            onBack={goBack}
-            onGoToBadges={handleGoToBadges}
-          />
-        );
-      
       case 'all-articles':
-        return (
+        return wrapScreen(
           <AllArticlesScreen
             onBack={handleBackToHomeFromArticles}
             onArticleClick={handleOpenArticle}
@@ -2271,10 +2757,10 @@ function AppContent() {
         );
       
       case 'article':
-        return (
+        return wrapScreen(
           <ArticleScreen
             articleId={currentArticle}
-            onBack={handleBackToAllArticles}
+            onBack={handleBackFromArticle}
             onGoToTheme={handleGoToTheme}
             userHasPremium={userHasPremium}
             checkAndShowAchievements={checkAndShowAchievements}
@@ -2285,7 +2771,7 @@ function AppContent() {
         );
       
       default:
-        return <OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />;
+        return wrapScreen(<OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />);
     }
   };
 
@@ -2295,7 +2781,11 @@ function AppContent() {
         {/* Глобальная кнопка Back для Telegram WebApp */}
         <BackButton isHomePage={isHomePage} onBack={goBack} />
         
-        {renderCurrentScreen()}
+        <div className="relative w-full h-full overflow-hidden">
+          <AnimatePresence mode="wait">
+            {renderCurrentScreen()}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

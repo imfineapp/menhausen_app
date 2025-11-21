@@ -3,7 +3,7 @@
 // ========================================================================================
 
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
 // Моки больше не используются - все тесты используют реальный контент
@@ -30,6 +30,17 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const [content, setContent] = useState<AppContent | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Ref для отслеживания монтирования компонента
+  const isMountedRef = React.useRef(true);
+
+  // Устанавливаем isMountedRef в false при размонтировании
+  React.useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   /**
    * Загрузка контента для текущего языка
@@ -37,18 +48,26 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const loadContentForLanguage = useCallback(async (language: SupportedLanguage) => {
     try {
       console.log(`ContentContext: loadContentForLanguage called with language: ${language}`);
-      setIsLoading(true);
-      setError(null);
+      if (isMountedRef.current) {
+        setIsLoading(true);
+        setError(null);
+      }
       const loadedContent = await loadContentWithCache(language);
-      setContent(loadedContent);
-      console.log(`ContentContext: Content loaded successfully for language: ${language}`);
-      console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
+      if (isMountedRef.current) {
+        setContent(loadedContent);
+        console.log(`ContentContext: Content loaded successfully for language: ${language}`);
+        console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
+      }
     } catch (err) {
       const errorMessage = `Failed to load content for language: ${language}`;
       console.error('ContentContext:', errorMessage, err);
-      setError(errorMessage);
+      if (isMountedRef.current) {
+        setError(errorMessage);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
@@ -222,6 +241,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         level: 'Level',
         progress: 'Progress',
         use80PercentUsers: 'Use 80% users',
+        themeMatchPercentage: 'Matches you {percentage}%',
         activity: {
           title: 'Activity',
           streak: '4 days',
@@ -257,7 +277,14 @@ export function ContentProvider({ children }: ContentProviderProps) {
         premium: 'Premium',
         free: 'Free',
         openProfile: 'Open user profile',
-        status: 'Status'
+        status: 'Status',
+        yourActivity: 'Your activity',
+        heatmap: {
+          checkinAndExercise: 'Check-in + {count} exercise',
+          checkinAndExercisePlural: 'Check-in + {count} exercises',
+          checkinOnly: 'Check-in only',
+          noActivity: 'No activity'
+        }
       },
       survey: {
         progress: 'Step {current} of {total}',
@@ -342,7 +369,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
           subtitle: 'How was it?',
           placeholder: 'Share your thoughts',
           submit: 'Submit',
-          thankYou: 'Thank you!'
+          thankYou: 'Thank you!',
+          skipRating: "I don't want to answer"
         },
         themeHome: {
           card1: 'Card #1',
@@ -380,6 +408,19 @@ export function ContentProvider({ children }: ContentProviderProps) {
           achievementEarned: 'Achievement Earned'
         }
       },
+      deleteAccount: {
+        title: 'Danger zone',
+        description: 'In this section you can delete all information about yourself and your account from the application',
+        warning: 'By clicking the button I understand that all data about me will be deleted without the possibility of return',
+        button: 'Delete',
+        buttonDeleting: 'Deleting...',
+        confirmTitle: 'Are you sure?',
+        confirmMessage: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.',
+        successTitle: 'Account deleted',
+        successMessage: 'Your account has been successfully deleted. You will be redirected to the welcome screen.',
+        errorTitle: 'Error',
+        errorMessage: 'An error occurred while deleting your account. Please try again.'
+      },
         about: {
           title: 'About Menhausen',
           description: 'Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\n• Daily mood tracking and emotional state monitoring\n• Personalized mental health exercises\n• Progress tracking with levels and achievements\n• Complete privacy — your data stays yours\n• Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with ❤️ for the Telegram community.',
@@ -402,8 +443,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         version: 'Version:',
         platform: 'Platform:',
         builtWith: 'Built with:',
-        lastUpdated: 'Last updated:',
-        betaVersion: 'Beta Version 1.0.0'
+        lastUpdated: 'Last updated:'
       }
     };
   }, [content]);
@@ -430,6 +470,13 @@ export function ContentProvider({ children }: ContentProviderProps) {
     if (!content?.articles) return [];
     const articles = Object.values(content.articles);
     return articles.sort((a, b) => (a.order || 0) - (b.order || 0));
+  }, [content]);
+
+  /**
+   * Получение контента психологического теста
+   */
+  const getPsychologicalTest = useCallback((): PsychologicalTestContent | undefined => {
+    return content?.psychologicalTest;
   }, [content]);
 
   /**
@@ -551,6 +598,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getBadges,
     getArticle,
     getAllArticles,
+    getPsychologicalTest,
     getLocalizedBadges
   };
 

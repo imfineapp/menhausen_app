@@ -17,7 +17,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
     console.log(`loadContent: Starting parallel imports for language: ${language}`);
-    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges] = await Promise.all([
+    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges, psychologicalTest] = await Promise.all([
       import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques.json`).then(m => { console.log(`loadContent: mental-techniques.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques-menu.json`).then(m => { console.log(`loadContent: mental-techniques-menu.json loaded`); return m; }),
@@ -25,7 +25,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       import(`../data/content/${language}/onboarding.json`).then(m => { console.log(`loadContent: onboarding.json loaded`); return m; }),
       import(`../data/content/${language}/emergency-cards.json`).then(m => { console.log(`loadContent: emergency-cards.json loaded`); return m; }),
       import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; }),
-      import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; })
+      import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; }),
+      import(`../data/content/${language}/psychologicalTest.json`).then(m => { console.log(`loadContent: psychologicalTest.json loaded`); return m; })
     ]);
     
     // Загружаем статьи
@@ -41,11 +42,20 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     const articlesRecord: Record<string, any> = {};
     articlesModules.forEach((module, index) => {
-      if (module && module.default) {
-        articlesRecord[articlesList[index]] = module.default;
+      if (module) {
+        // Vite может экспортировать JSON как default или как сам объект
+        const articleData = module.default || module;
+        if (articleData && typeof articleData === 'object') {
+          articlesRecord[articlesList[index]] = articleData;
+        } else {
+          console.warn(`loadContent: Article ${articlesList[index]} has invalid format:`, module);
+        }
+      } else {
+        console.warn(`loadContent: Article ${articlesList[index]} failed to load`);
       }
     });
     console.log(`loadContent: Loaded ${Object.keys(articlesRecord).length} articles`);
+    console.log(`loadContent: Articles IDs:`, Object.keys(articlesRecord));
     
     // Загружаем темы через ThemeLoader
     console.log(`loadContent: Loading themes through ThemeLoader for language: ${language}`);
@@ -66,6 +76,7 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       mentalTechniquesMenu: mentalTechniquesMenu.default,
       survey: survey.default,
       onboarding: onboarding.default,
+      psychologicalTest: psychologicalTest.default,
       emergencyCards: emergencyCards.default,
       badges: badges.default,
       about: ui.default.about,

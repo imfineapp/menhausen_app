@@ -30,7 +30,8 @@ function ArticleCard({
   onClick,
   locked,
   requiredPoints,
-  badgeText
+  badgeText,
+  checkIfSwiped
 }: { 
   article: {
     id: string;
@@ -42,39 +43,66 @@ function ArticleCard({
   locked: boolean;
   requiredPoints: number;
   badgeText: string;
+  checkIfSwiped?: () => boolean;
 }) {
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Если был свайп, не вызываем onClick
+    if (checkIfSwiped && checkIfSwiped()) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    onClick();
+  };
+  
+  const handleTouchStart = (_e: React.TouchEvent) => {
+    // Не блокируем событие, чтобы слайдер мог обработать свайп
+    // Событие будет обработано слайдером
+  };
+  
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={(e) => {
+        // Для touch событий также проверяем свайп
+        if (checkIfSwiped && checkIfSwiped()) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        handleClick(e);
+      }}
       disabled={locked}
-      className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-[rgba(217,217,217,0.04)]' : 'cursor-pointer hover:bg-[rgba(217,217,217,0.06)]'}`}
+      style={{ touchAction: 'manipulation' }}
+      className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-bg-card' : 'cursor-pointer hover:bg-bg-card-hover'}`}
       data-name="Article card"
     >
       <div className="absolute inset-0" data-name="article_block_background">
         {locked ? (
-          <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
-            <div aria-hidden="true" className="absolute border border-[#505050] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="article-card-background-locked" data-name="Block">
+            <div aria-hidden="true" className="article-card-border article-card-border-locked" />
           </div>
         ) : (
-          <div className="absolute bg-[#e1ff00] inset-0 rounded-xl" data-name="Block">
-            <div aria-hidden="true" className="absolute border border-[#2d2b2b] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="article-card-background-unlocked" data-name="Block">
+            <div aria-hidden="true" className="article-card-border article-card-border-unlocked" />
           </div>
         )}
       </div>
       
       {/* Article content */}
-      <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
+      <div className="article-card-content box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-0 shrink-0 w-full">
         <div className="flex items-start gap-2 w-full">
-          <div className={`typography-h2 text-left w-full ${locked ? 'text-[#9a9a9a]' : 'text-[#2d2b2b]'}`}>
+          <div className={locked ? 'article-card-title-locked text-left w-full' : 'article-card-title-unlocked text-left w-full'}>
             <h2 className="block line-clamp-2">{article.title}</h2>
           </div>
         </div>
-        <div className={`typography-body text-left w-full ${locked ? 'text-[#8a8a8a]' : 'text-[#2d2b2b]'}`}>
+        <div className={locked ? 'article-card-text-locked text-left w-full' : 'article-card-text-unlocked text-left w-full'}>
           <p className="block line-clamp-2">{article.preview}</p>
         </div>
         {locked && (
           <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+            <span className="article-card-badge">
               {badgeText.replace('{points}', String(requiredPoints))}
             </span>
           </div>
@@ -87,27 +115,53 @@ function ArticleCard({
 /**
  * View All Articles Card Component
  */
-function ViewAllCard({ onClick }: { onClick: () => void }) {
+function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfSwiped?: () => boolean }) {
   const { content } = useContent();
+  
+  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    // Если был свайп, не вызываем onClick
+    if (checkIfSwiped && checkIfSwiped()) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+    onClick();
+  };
+  
+  const handleTouchStart = (_e: React.TouchEvent) => {
+    // Не блокируем событие, чтобы слайдер мог обработать свайп
+    // Событие будет обработано слайдером
+  };
   
   return (
     <button
-      onClick={onClick}
-      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)] transition-all duration-300 flex-1"
+      onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={(e) => {
+        // Для touch событий также проверяем свайп
+        if (checkIfSwiped && checkIfSwiped()) {
+          e.preventDefault();
+          e.stopPropagation();
+          return;
+        }
+        handleClick(e);
+      }}
+      style={{ touchAction: 'manipulation' }}
+      className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-bg-card-hover transition-all duration-300 flex-1"
       data-name="View all articles card"
     >
       <div className="absolute inset-0" data-name="view_all_background">
-        <div className="absolute bg-[#2d2b2b] inset-0 rounded-xl" data-name="Block">
+        <div className="absolute bg-[var(--color-text-dark)] inset-0 rounded-xl" data-name="Block">
           <div
             aria-hidden="true"
-            className="absolute border border-[#e1ff00] border-solid inset-0 pointer-events-none rounded-xl"
+            className="absolute border border-brand-primary border-solid inset-0 pointer-events-none rounded-xl"
           />
         </div>
       </div>
       
       {/* Content */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-0 shrink-0 w-full">
-        <div className="typography-h2 text-[#e1ff00] text-center w-full">
+        <div className="typography-h2 text-brand-primary text-center w-full">
           <h2 className="block">{content.ui.articles?.viewAll || 'Все статьи'}</h2>
         </div>
       </div>
@@ -128,6 +182,11 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  // Отслеживание, был ли свайп (движение пальца), чтобы предотвратить onClick при свайпе
+  const wasSwipedRef = useRef(false);
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const SWIPE_THRESHOLD = 10; // Порог в пикселях для определения свайпа
 
   // Общее количество карточек (статьи + ViewAll)
   const _totalCards = articles.length + 1;
@@ -169,16 +228,34 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!sliderRef.current) return;
     setIsDragging(true);
-    setStartX(e.touches[0].pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
+    wasSwipedRef.current = false;
+    touchStartXRef.current = e.touches[0].pageX;
+    touchStartYRef.current = e.touches[0].pageY;
     sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
-    const x = e.touches[0].pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
+    
+    // Вычисляем смещения по обеим осям
+    const deltaX = Math.abs(e.touches[0].pageX - touchStartXRef.current);
+    const deltaY = Math.abs(e.touches[0].pageY - touchStartYRef.current);
+    
+    // Определяем направление жеста
+    // Если вертикальное движение больше горизонтального и превышает порог - это вертикальный жест
+    if (deltaY > deltaX && deltaY > SWIPE_THRESHOLD) {
+      // Вертикальный жест - разрешаем скролл страницы, отключаем обработку слайдера
+      setIsDragging(false);
+      wasSwipedRef.current = false;
+      sliderRef.current.style.scrollSnapType = 'x mandatory';
+      return;
+    }
+    
+    // Горизонтальный жест - продолжаем обработку слайдера
+    // Проверяем, было ли движение (свайп) для предотвращения onClick на карточках
+    if (deltaX > SWIPE_THRESHOLD) {
+      wasSwipedRef.current = true;
+    }
   };
 
   const handleTouchEnd = () => {
@@ -195,6 +272,23 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       left: targetScroll,
       behavior: 'smooth'
     });
+    
+    // Сбрасываем флаг свайпа через небольшую задержку, чтобы кнопки успели проверить его
+    setTimeout(() => {
+      wasSwipedRef.current = false;
+    }, 100);
+  };
+
+  const handleTouchCancel = () => {
+    if (!sliderRef.current) return;
+    setIsDragging(false);
+    wasSwipedRef.current = false;
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+  };
+  
+  // Функция для проверки, был ли свайп (используется в кнопках)
+  const checkIfSwiped = (): boolean => {
+    return wasSwipedRef.current;
   };
 
   // Обновление текущего индекса при скролле
@@ -235,8 +329,8 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       {/* Слайдер */}
       <div
         ref={sliderRef}
-        className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 py-2 items-stretch"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 items-stretch"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -244,6 +338,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
         data-name="Articles Slider"
       >
         {articles.map((article, index) => {
@@ -253,8 +348,12 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   return (
     <div
       key={article.id}
-      className="flex-shrink-0 snap-center py-2 flex"
-      style={{ width: '256px' }}
+      className="flex-shrink-0 snap-center flex"
+      style={{ width: '256px', touchAction: 'pan-x pan-y' }}
+      onTouchStart={(_e) => {
+        // Позволяем событиям всплывать к слайдеру для обработки свайпа
+        // Событие будет обработано слайдером через handleTouchStart
+      }}
     >
       <ArticleCard
         article={article}
@@ -262,6 +361,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         locked={locked}
         requiredPoints={required}
         badgeText={lockedBadgeText}
+        checkIfSwiped={checkIfSwiped}
       />
     </div>
   );
@@ -269,10 +369,14 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         
         {/* View All Card */}
         <div
-          className="flex-shrink-0 snap-center py-2 flex"
-          style={{ width: '256px' }}
+          className="flex-shrink-0 snap-center flex"
+          style={{ width: '256px', touchAction: 'pan-x pan-y' }}
+          onTouchStart={(_e) => {
+            // Позволяем событиям всплывать к слайдеру для обработки свайпа
+            // Событие будет обработано слайдером через handleTouchStart
+          }}
         >
-          <ViewAllCard onClick={onViewAll} />
+          <ViewAllCard onClick={onViewAll} checkIfSwiped={checkIfSwiped} />
         </div>
       </div>
 
@@ -298,7 +402,7 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
         className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
         data-name="Articles container"
       >
-        <div className="typography-body text-[#696969] text-center w-full py-8">
+        <div className="typography-body text-tertiary text-center w-full py-8">
           <p className="block">{content.ui.articles?.noArticles || 'Статьи скоро появятся'}</p>
         </div>
       </div>

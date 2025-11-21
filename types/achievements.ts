@@ -26,6 +26,7 @@ export interface UserStats {
   topicsRepeated: string[]; // topicIds
   articlesRead: number;
   readArticleIds?: string[]; // список уникально прочитанных статей (опционально для обратной совместимости)
+  openedCardIds?: string[]; // список уникально открытых карточек (опционально для обратной совместимости)
   referralsInvited: number;
   referralsPremium: number;
   lastUpdated: string;

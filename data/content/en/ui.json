@@ -28,17 +28,18 @@
                  "quickHelpTitle":  "Quick mental help",
                  "themesTitle":  "Choose what bothers you",
                  "howAreYou":  "How are you?",
-                 "checkInDescription":  "Check in with yourself вЂ” it\u0027s the first step to self-care! Do it everyday.",
+                 "checkInDescription":  "Check in with yourself — it\u0027s the first step to self-care! Do it everyday.",
                  "checkInButton":  "Send",
                  "checkInInfo":  {
                                      "title":  "Why daily check-in matters?",
-                                     "content":  "Daily check-in is a simple yet powerful tool for improving your mental health. Here\u0027s why it\u0027s important:\n\nвЂў Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\nвЂў Early detection: Allows you to notice mood changes before they become serious problems\n\nвЂў Care habit: Forms a beneficial habit of paying attention to your psychological state\n\nвЂў Progress tracking: Helps track changes in your emotional state over time\n\nвЂў Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being."
+                                     "content":  "Daily check-in is a simple yet powerful tool for improving your mental health. Here\u0027s why it\u0027s important:\n\n• Self-awareness: Regular emotional check-ins help you better understand your feelings and reactions\n\n• Early detection: Allows you to notice mood changes before they become serious problems\n\n• Care habit: Forms a beneficial habit of paying attention to your psychological state\n\n• Progress tracking: Helps track changes in your emotional state over time\n\n• Motivation: Understanding your emotions is the first step to managing them and improving your quality of life\n\nJust a few minutes a day can significantly impact your overall well-being."
                                  },
                  "whatWorriesYou":  "What worries you?",
                  "heroTitle":  "Hero #1275",
                  "level":  "Level",
                  "progress":  "Progress",
                  "use80PercentUsers":  "Use 80% users",
+                 "themeMatchPercentage":  "Matches you {percentage}%",
                  "activity":  {
                                   "title":  "Activity",
                                   "streak":  "4 days",
@@ -78,11 +79,22 @@
                     "level":  "Level",
                     "premium":  "Premium",
                     "free":  "Free",
-                    "follow":  "Follow"
+                    "follow":  "Follow",
+                    "mentalLevel":  "Your check-ins",
+                    "yourActivity":  "Your activity",
+                    "unlockAllThemes":  "Unlock all themes",
+                    "points":  "Points",
+                    "regularExerciseNotification":  "Only by doing exercises regularly will you achieve results.",
+                    "heatmap":  {
+                                      "checkinAndExercise":  "Check-in + {count} exercise",
+                                      "checkinAndExercisePlural":  "Check-in + {count} exercises",
+                                      "checkinOnly":  "Check-in only",
+                                      "noActivity":  "No activity"
+                                  }
                 },
     "about":  {
                   "title":  "About Menhausen",
-                  "description":  "Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\nвЂў Daily mood tracking and emotional state monitoring\nвЂў Personalized mental health exercises\nвЂў Progress tracking with levels and achievements\nвЂў Complete privacy вЂ” your data stays yours\nвЂў Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with вќ¤пёЏ for the Telegram community.",
+                  "description":  "Menhausen is your personal mental health companion, created specifically for Telegram.\n\nOur app helps you track your emotional state, develop healthy habits, and support your psychological well-being through daily check-ins and mindful exercises.\n\nKey features:\n• Daily mood tracking and emotional state monitoring\n• Personalized mental health exercises\n• Progress tracking with levels and achievements\n• Complete privacy — your data stays yours\n• Telegram Mini Apps integration\n\nMenhausen uses scientifically proven methods from cognitive behavioral therapy (CBT), acceptance and commitment therapy (ACT), and positive psychology to help you cope with anxiety, stress, and other emotional challenges.\n\nThe app is developed by a team of mental health and technology specialists who believe that psychological well-being care should be accessible, convenient, and effective for everyone.\n\nMade with ❤️ for the Telegram community.",
                   "keyFeatures":  "Key Features",
                   "features":  {
                                    "moodTracking":  "Daily mood tracking and emotional check-ins",
@@ -93,8 +105,8 @@
                                },
                   "developmentTeam":  "Development Team",
                   "teamDescription":  "Created with care by a dedicated team of developers and mental health advocates. Our mission is to make mental wellness accessible and engaging for everyone.",
-                  "madeWithLove":  "Made with вќ¤пёЏ for the Telegram community",
-                  "copyright":  "В© 2024 Menhausen Team. All rights reserved.",
+                  "madeWithLove":  "Made with ❤️ for the Telegram community",
+                  "copyright":  "© 2024 Menhausen Team. All rights reserved.",
                   "technicalInformation":  "Technical Information",
                   "importantNote":  "Important Note",
                   "disclaimer":  "Menhausen is designed to support your mental wellness journey, but it is not a substitute for professional medical advice, diagnosis, or treatment. If you\u0027re experiencing serious mental health concerns, please consult with qualified healthcare professionals.",
@@ -102,8 +114,7 @@
                   "version":  "Version:",
                   "platform":  "Platform:",
                   "builtWith":  "Built with:",
-                  "lastUpdated":  "Last updated:",
-                  "betaVersion":  "Beta Version 1.0.0"
+                  "lastUpdated":  "Last updated:"
               },
     "survey":  {
                    "progress":  "Step {current} of {total}",
@@ -133,7 +144,7 @@
                                                              "Works directly in Telegram. No accounts, no email required",
                                                              "AES-256, Web3 technology. Your data is protected at banking-grade level",
                                                              "In your pocket, in Telegram. Help available 24/7, when you need it",
-                                                             "CBT, ACT, MBCT, positive psychology вЂ” scientifically proven methods. No fluff. Straight, honest, to the point. Man to man."
+                                                             "CBT, ACT, MBCT, positive psychology — scientifically proven methods. No fluff. Straight, honest, to the point. Man to man."
                                                          ]
                                     }
                    },
@@ -149,7 +160,7 @@
                  },
     "checkin":  {
                     "title":  "How are you?",
-                    "subtitle":  "Check in with yourself вЂ” it\u0027s the first step to self-care! Do it everyday.",
+                    "subtitle":  "Check in with yourself — it\u0027s the first step to self-care! Do it everyday.",
                     "moodOptions":  {
                                         "down":  "I\u0027m feeling down...",
                                         "anxious":  "I\u0027m anxious",
@@ -201,7 +212,8 @@
                                  "placeholder":  "Leave feedback (optional)...",
                                  "submit":  "Submit",
                                  "back":  "Back",
-                                 "thankYou":  "Thank you!"
+                                 "thankYou":  "Thank you!",
+                                 "skipRating":  "I don't want to answer"
                              },
                   "themeHome":  {
                                     "card1":  "Card #1",
@@ -229,9 +241,9 @@
                    "congratulations":  "Congratulations!",
                    "unlockedBadge":  "You unlocked a new achievement!",
                    "shareButton":  "Share",
-                   "shareMessage":  "I got a new achievement in Menhausen! рџЋ‰",
+                   "shareMessage":  "I got a new achievement in Menhausen! 🎉",
                    "shareDescription":  "Join me in caring for mental health",
-                   "appLink":  "https://t.me/menhausen_bot/app",
+                   "appLink":  "https://t.me/menhausen_app_bot/app",
                    "lockedBadge":  "Locked",
                    "unlockCondition":  "Unlock condition:",
                    "progress":  "Progress",
@@ -302,6 +314,7 @@
     "articles":  {
                      "title":  "Articles",
                      "viewAll":  "View All Articles",
+                     "description":  "Useful articles for improving mental health",
                      "relatedThemes":  "Related Themes:",
                      "noArticles":  "Articles coming soon",
                      "lockedBadge":  "Opens at {points}"
@@ -316,5 +329,18 @@
                       "currency_usdt_ton":  "USDT (TON)",
                       "copy":  "Copy",
                       "copied":  "Copied"
-                  }
+                  },
+    "deleteAccount":  {
+                          "title":  "Danger zone",
+                          "description":  "In this section you can delete all information about yourself and your account from the application",
+                          "warning":  "By clicking the button I understand that all data about me will be deleted without the possibility of return",
+                          "button":  "Delete",
+                          "buttonDeleting":  "Deleting...",
+                          "confirmTitle":  "Are you sure?",
+                          "confirmMessage":  "Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.",
+                          "successTitle":  "Account deleted",
+                          "successMessage":  "Your account has been successfully deleted. You will be redirected to the welcome screen.",
+                          "errorTitle":  "Error",
+                          "errorMessage":  "An error occurred while deleting your account. Please try again."
+                      }
 }

@@ -256,7 +256,7 @@ describe('referralUtils', () => {
       };
 
       const link = generateReferralLink();
-      expect(link).toBe('https://t.me/menhausen_bot/app?startapp=REF_123456789');
+      expect(link).toBe('https://t.me/menhausen_app_bot/app?startapp=REF_123456789');
       
       (window as any).location = originalLocation;
     });
@@ -271,7 +271,7 @@ describe('referralUtils', () => {
       };
 
       const link = generateReferralLink();
-      expect(link).toBe('https://t.me/menhausen_bot/app');
+      expect(link).toBe('https://t.me/menhausen_app_bot/app');
       
       (window as any).location = originalLocation;
     });

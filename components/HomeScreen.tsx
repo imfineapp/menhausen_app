@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { useEffect, useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -12,6 +13,7 @@ import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { PointsManager } from '../utils/PointsManager';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
+import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 
 
 // Типы для пропсов компонента
@@ -165,15 +167,31 @@ function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
 function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; userHasPremium: boolean }) {
   const { content } = useContent();
   return (
-    <button
-      onClick={onClick}
-      className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0 w-full cursor-pointer rounded-lg min-h-[44px] min-w-[44px] hover:bg-[rgba(217,217,217,0.06)]"
-      data-name="User frame info block"
-      aria-label={content.ui.profile.openProfile || 'Open user profile'}
-    >
-      <UserAvatar />
-      <UserInfoBlock userHasPremium={userHasPremium} />
-    </button>
+    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
+      {/* Фон блока */}
+      <div className="absolute inset-0" data-name="user_frame_info_block_background">
+        <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+          <div
+            aria-hidden="true"
+            className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+          />
+        </div>
+      </div>
+
+      {/* Контент блока */}
+      <button
+        onClick={onClick}
+        className="relative z-10 box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-between w-full cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80 transition-opacity"
+        data-name="User frame info block"
+        aria-label={content.ui.profile.openProfile || 'Open user profile'}
+      >
+        <div className="flex flex-row gap-4 sm:gap-5 items-center justify-start">
+          <UserAvatar />
+          <UserInfoBlock userHasPremium={userHasPremium} />
+        </div>
+        <ChevronRight className="w-5 h-5 text-[#696969] flex-shrink-0" />
+      </button>
+    </div>
   );
 }
 
@@ -294,6 +312,9 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
       const totalCards = allCardIds.length;
       const progress = totalCards > 0 ? Math.round((attemptedCardsCount / totalCards) * 100) : 0;
 
+      // Получаем процент соответствия из результатов психологического теста
+      const matchPercentage = getThemeMatchPercentage(theme.id);
+
       return {
         title: theme.title,
         description: theme.description,
@@ -302,14 +323,34 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
         isAvailable: userHasPremium || !theme.isPremium,
         themeId: theme.id,
         order: theme.order || 999, // Используем порядок из файла, если не указан - в конец
+        matchPercentage: matchPercentage ?? -1, // Используем -1 для тем без соответствия, чтобы они шли в конец
       };
     })
     .sort((a, b) => {
-      // Сначала сортируем по порядку файлов (01-*, 02-*, и т.д.)
-      const orderDiff = a.order - b.order;
-      if (orderDiff !== 0) return orderDiff;
+      // 1. Stress всегда первая, если она бесплатная
+      const aIsStress = a.themeId === 'stress';
+      const bIsStress = b.themeId === 'stress';
       
-      // Потом сортируем по доступности (премиум или нет)
+      if (aIsStress && !a.isPremium && !bIsStress) return -1;
+      if (bIsStress && !b.isPremium && !aIsStress) return 1;
+      
+      // Если обе темы Stress, оставляем их в исходном порядке (Stress уже первая)
+      if (aIsStress && bIsStress) return 0;
+      
+      // 2. Остальные темы сортируем по наличию процента соответствия
+      const aHasMatch = a.matchPercentage >= 0;
+      const bHasMatch = b.matchPercentage >= 0;
+      if (aHasMatch !== bHasMatch) {
+        return aHasMatch ? -1 : 1;
+      }
+      
+      // 3. Если оба имеют процент соответствия, сортируем по нему (по убыванию)
+      if (aHasMatch && bHasMatch) {
+        const matchDiff = b.matchPercentage - a.matchPercentage;
+        if (matchDiff !== 0) return matchDiff;
+      }
+      
+      // 4. Если проценты совпадают или оба отсутствуют, сортируем по доступности (премиум или нет)
       return Number(b.isAvailable) - Number(a.isAvailable);
     });
 
@@ -332,7 +373,9 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
           description={worry.description}
           progress={worry.progress}
           isPremium={worry.isPremium}
+          userHasPremium={userHasPremium}
           onClick={() => handleThemeClick(worry.themeId, worry.isAvailable)}
+          themeId={worry.themeId}
         />
       ))}
     </div>
@@ -414,7 +457,9 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
       data-testid="home-ready"
       style={{
         msOverflowStyle: 'none',
-        scrollbarWidth: 'none'
+        scrollbarWidth: 'none',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch'
       }}
     >
       {/* Световые эффекты фона */}
@@ -424,7 +469,13 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
       <MiniStripeLogo />
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+        className="flex-1 overflow-y-auto"
+        style={{
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
           {/* Основной контент страницы */}
           <MainPageContentBlock

@@ -1,5 +1,47 @@
 # Menhausen Telegram Mini App - Design Guidelines
 
+## Design Tokens System
+
+### Overview
+Все цвета, размеры и другие дизайн-значения определены как CSS переменные и доступны через Tailwind классы. Это обеспечивает централизованное управление дизайном и упрощает поддержку.
+
+### Использование токенов
+
+**Всегда используйте токены вместо захардкоженных значений:**
+
+```tsx
+// ❌ Плохо
+<div className="bg-[#111111] text-[#e1ff00]">
+  Контент
+</div>
+
+// ✅ Хорошо
+<div className="bg-bg-primary text-brand-primary">
+  Контент
+</div>
+```
+
+### Основные токены
+
+- **Brand Colors**: `bg-brand-primary`, `text-brand-primary`, `bg-brand-primary-hover`
+- **Background Colors**: `bg-bg-primary`, `bg-bg-card`, `bg-bg-card-hover`
+- **Text Colors**: `text-primary`, `text-secondary`, `text-tertiary`, `text-disabled`, `text-dark`
+- **Border Colors**: `border-border-primary`, `border-border-secondary`, `border-border-accent`
+- **Status Colors**: `text-status-amber`, `text-status-green`
+- **Activity Colors**: Используйте CSS переменные в JavaScript функциях
+
+### Полная документация
+
+См. [Design Tokens Reference](./design-tokens.md) для полного списка доступных токенов и примеров использования.
+
+### Проверка кода
+
+Используйте скрипт `scripts/find-hardcoded-values.js` для автоматического поиска захардкоженных значений:
+
+```bash
+node scripts/find-hardcoded-values.js
+```
+
 ## General Guidelines
 
 ### Responsive Design Principles

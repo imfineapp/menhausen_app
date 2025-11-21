@@ -3,6 +3,7 @@ import { useState } from 'react';
 import warningIconPaths from "../imports/svg-iawz1hhk6y";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { useContent } from './ContentContext';
 
 /**
  * Компонент страницы удаления аккаунта
@@ -23,21 +24,26 @@ interface DeleteAccountScreenProps {
 /**
  * Кнопка удаления аккаунта с состоянием загрузки
  */
-function DeleteButton({ onDelete, isLoading }: { onDelete: () => void; isLoading: boolean }) {
+function DeleteButton({ onDelete, isLoading, buttonText, deletingText }: { 
+  onDelete: () => void; 
+  isLoading: boolean;
+  buttonText: string;
+  deletingText: string;
+}) {
   return (
     <button
       onClick={onDelete}
       disabled={isLoading}
-      className={`bg-[#e1ff00] h-[46px] relative rounded-xl shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-[#d1ef00] ${
+      className={`bg-brand-primary h-[46px] relative rounded-xl shrink-0 w-full min-h-[44px] min-w-[44px] hover:bg-brand-primary-hover ${
         isLoading ? 'opacity-70 cursor-not-allowed' : ''
       }`}
       data-name="Delete Button"
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center px-[126px] py-[15px] relative w-full">
-          <div className="typography-button text-[#2d2b2b] text-center">
+          <div className="typography-button text-dark text-center">
             <p className="block">
-              {isLoading ? 'Deleting...' : 'Delete'}
+              {isLoading ? deletingText : buttonText}
             </p>
           </div>
         </div>
@@ -49,18 +55,30 @@ function DeleteButton({ onDelete, isLoading }: { onDelete: () => void; isLoading
 /**
  * Блок с предупреждением и кнопкой удаления
  */
-function ButtonBlock({ onDelete, isLoading }: { onDelete: () => void; isLoading: boolean }) {
+function ButtonBlock({ 
+  onDelete, 
+  isLoading, 
+  warningText, 
+  buttonText, 
+  deletingText 
+}: { 
+  onDelete: () => void; 
+  isLoading: boolean;
+  warningText: string;
+  buttonText: string;
+  deletingText: string;
+}) {
   return (
     <div
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start left-1/2 -translate-x-1/2 p-0 bottom-4 sm:bottom-6 md:bottom-8 w-[351px]"
       data-name="button block"
     >
-      <div className="typography-caption text-[#e1ff00] text-center w-full">
+      <div className="typography-caption text-brand-primary text-center w-full">
         <p className="block">
-          By clicking the button I understand that all data about me will be deleted without the possibility of return
+          {warningText}
         </p>
       </div>
-      <DeleteButton onDelete={onDelete} isLoading={isLoading} />
+      <DeleteButton onDelete={onDelete} isLoading={isLoading} buttonText={buttonText} deletingText={deletingText} />
     </div>
   );
 }
@@ -111,18 +129,18 @@ function WarningIconComponent() {
 /**
  * Основной контент с заголовком и описанием
  */
-function MainContent() {
+function MainContent({ title, description }: { title: string; description: string }) {
   return (
     <div
       className="absolute box-border content-stretch flex flex-col gap-10 items-start justify-start leading-[0] left-1/2 -translate-x-1/2 p-0 text-center top-[470px] w-[351px]"
       data-name="main_content"
     >
-      <div className="typography-h1 text-[#e1ff00] w-full">
-        <h1 className="block">Danger zone</h1>
+      <div className="typography-h1 text-brand-primary w-full">
+        <h1 className="block">{title}</h1>
       </div>
-      <div className="typography-body text-[#ffffff] w-full">
+      <div className="typography-body text-primary w-full">
         <p className="block">
-          In this section you can delete all information about yourself and your account from the application
+          {description}
         </p>
       </div>
     </div>
@@ -136,6 +154,18 @@ function MainContent() {
  */
 export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: DeleteAccountScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { content, getLocalizedText } = useContent();
+
+  // Получаем переводы для экрана удаления аккаунта
+  const deleteAccountTexts = content?.ui?.deleteAccount;
+  const title = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.title) : 'Danger zone';
+  const description = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.description) : 'In this section you can delete all information about yourself and your account from the application';
+  const warning = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.warning) : 'By clicking the button I understand that all data about me will be deleted without the possibility of return';
+  const buttonText = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.button) : 'Delete';
+  const deletingText = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.buttonDeleting) : 'Deleting...';
+  const confirmMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.confirmMessage) : 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.';
+  const successMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.successMessage) : 'Your account has been successfully deleted. You will be redirected to the welcome screen.';
+  const errorMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.errorMessage) : 'An error occurred while deleting your account. Please try again.';
 
   /**
    * Обработчик удаления аккаунта с подтверждением
@@ -143,9 +173,7 @@ export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: Delete
   const handleDelete = async () => {
     try {
       // Подтверждение действия
-      const confirmed = confirm(
-        'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.'
-      );
+      const confirmed = confirm(confirmMessage);
 
       if (!confirmed) {
         return;
@@ -165,29 +193,35 @@ export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: Delete
       console.log('Account deletion completed');
       
       // Показываем уведомление об успешном удалении
-      alert('Your account has been successfully deleted. You will be redirected to the welcome screen.');
+      alert(successMessage);
 
       // Вызываем callback для удаления аккаунта
       onDeleteAccount();
 
     } catch (error) {
       console.error('Error deleting account:', error);
-      alert('An error occurred while deleting your account. Please try again.');
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-[#111111] relative size-full" data-name="Delete Account Screen">
+    <div className="bg-bg-primary relative size-full" data-name="Delete Account Screen">
       <Light />
       
       {/* Логотип */}
       <MiniStripeLogo />
       
-      <ButtonBlock onDelete={handleDelete} isLoading={isLoading} />
+      <ButtonBlock 
+        onDelete={handleDelete} 
+        isLoading={isLoading} 
+        warningText={warning}
+        buttonText={buttonText}
+        deletingText={deletingText}
+      />
       <WarningIconComponent />
-      <MainContent />
+      <MainContent title={title} description={description} />
     </div>
   );
 }

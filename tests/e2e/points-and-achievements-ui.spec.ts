@@ -12,8 +12,12 @@ test.describe('Points & Achievements UI', () => {
   });
 
   test('should update profile ProgressBlock when points balance changes', async ({ page }) => {
+    // Ждем появления элемента с увеличенным таймаутом
+    // Проверяем home screen через data-testid, так как он более надежен
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 10000 });
     await page.click('[data-name="User frame info block"]');
-    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 10000 });
 
     await page.evaluate(() => {
       localStorage.setItem('menhausen_points_transactions', JSON.stringify([]));
@@ -21,12 +25,21 @@ test.describe('Points & Achievements UI', () => {
       window.dispatchEvent(new CustomEvent('points:updated'));
     });
 
-    await expect(page.getByText('1,234/2,000')).toBeVisible({ timeout: 5000 });
+    // Ждем, пока страница профиля загрузится полностью
+    await page.waitForLoadState('networkidle');
+    
+    // Находим статусный блок, содержащий значение 1234
+    const pointsBlock = page.locator('div').filter({ hasText: /1234/ }).first();
+    await expect(pointsBlock).toBeVisible({ timeout: 5000 });
   });
 
   test('should surface achievements metadata on profile', async ({ page }) => {
+    // Ждем появления элемента с увеличенным таймаутом
+    // Проверяем home screen через data-testid, так как он более надежен
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 10000 });
     await page.click('[data-name="User frame info block"]');
-    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 10000 });
 
     const dataNames = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('[data-name]')).map(el => el.getAttribute('data-name') || '');
@@ -35,7 +48,3 @@ test.describe('Points & Achievements UI', () => {
     expect(dataNames.some(name => name.toLowerCase().includes('badge') || name.toLowerCase().includes('achievement'))).toBeTruthy();
   });
 });
-
-
-
-

@@ -4,7 +4,12 @@ export const ARTICLES_IDS: string[] = [
   'anxiety-coping',
   'emotional-regulation',
   'sleep-hygiene',
-  'mindfulness-basics'
+  'mindfulness-basics',
+  'relationships-health',
+  'depression-support',
+  'grief-healing',
+  'anger-management',
+  'burnout-prevention'
 ];
 
 export function getTotalArticlesCount(): number {
