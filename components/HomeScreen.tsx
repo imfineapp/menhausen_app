@@ -457,7 +457,9 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
       data-testid="home-ready"
       style={{
         msOverflowStyle: 'none',
-        scrollbarWidth: 'none'
+        scrollbarWidth: 'none',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch'
       }}
     >
       {/* Световые эффекты фона */}
@@ -467,7 +469,13 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
       <MiniStripeLogo />
       
       {/* Контент с прокруткой */}
-      <div className="flex-1 overflow-y-auto">
+      <div 
+        className="flex-1 overflow-y-auto"
+        style={{
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
           {/* Основной контент страницы */}
           <MainPageContentBlock

@@ -17,6 +17,7 @@ import { AchievementsBlock } from './AchievementsBlock';
 import { MentalLevelBlock } from './MentalLevelBlock';
 import { ActivityHeatmapBlock } from './ActivityHeatmapBlock';
 import { PremiumUnlockBlock } from './PremiumUnlockBlock';
+import { RegularExerciseNotification } from './RegularExerciseNotification';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -172,8 +173,11 @@ export function UserProfileScreen({
           
           {/* Основной контент (продолжение) */}
           <div className="flex flex-col gap-8 sm:gap-10 w-full max-w-[351px] mx-auto pb-6 sm:pb-8">
+            {/* Уведомление о регулярности упражнений */}
+            <RegularExerciseNotification />
+            
             {/* Блок активности с heat map и блок разблокировки премиума */}
-            <div className="w-full mt-3 sm:mt-4">
+            <div className="w-full">
               {!userHasPremium ? (
                 <div className="flex flex-row gap-3 sm:gap-4 w-full items-stretch">
                   <div className="flex-1">
@@ -189,21 +193,21 @@ export function UserProfileScreen({
             </div>
             
             {/* Блок истории чекинов */}
-            <div className="w-full mt-3 sm:mt-4">
+            <div className="w-full">
               <MentalLevelBlock />
             </div>
             {/* Блок достижений */}
-            <div className="w-full mt-3 sm:mt-4">
+            <div className="w-full">
               <AchievementsBlock onClick={handleStatusBlockBadges} />
             </div>
             
             {/* Секция реферальной программы */}
-            <div className="w-full mt-3 sm:mt-4">
+            <div className="w-full">
               <ReferralSection />
             </div>
             
             {/* История получения баллов */}
-            <div className="w-full mt-6 sm:mt-8">
+            <div className="w-full">
               <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
                 {/* Фон блока */}
                 <div className="absolute inset-0" data-name="points_history_block_background">

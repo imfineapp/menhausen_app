@@ -70,7 +70,7 @@ import { capture, AnalyticsEvent } from './utils/analytics/posthog';
 
 // Achievements system imports
 import { useAchievements } from './contexts/AchievementsContext';
-import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated, markCardAsOpened } from './services/userStatsService';
+import { incrementCheckin, incrementCardsOpened, addTopicCompleted, incrementCardsRepeated, addTopicRepeated, markCardAsOpened, loadUserStats } from './services/userStatsService';
 import { getAchievementMetadata } from './utils/achievementsMetadata';
 import { processReferralCode, getReferrerId, markReferralAsRegistered, addReferralToList, updateReferrerStatsFromList } from './utils/referralUtils';
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService';
@@ -1542,7 +1542,7 @@ function AppContent() {
     navigateTo('question-02');
   };
 
-  const handleCompleteExercise = async (answer: string) => {
+  const handleCompleteExercise = (answer: string) => {
     console.log(`Question 2 answered for card: ${currentCard.id}`, answer);
     console.log('Current userAnswers before updating:', userAnswers);
     const finalAnswers = { ...userAnswers, question2: answer };
@@ -1554,7 +1554,6 @@ function AppContent() {
     
     // Отмечаем карточку как открытую (после ответа на второй вопрос, когда показывается финальное сообщение)
     // Это правильный момент, когда карточка считается "открытой" для достижений
-    const { loadUserStats } = await import('./services/userStatsService');
     const currentStats = loadUserStats();
     const wasOpenedBefore = currentStats.openedCardIds?.includes(currentCard.id) || false;
     

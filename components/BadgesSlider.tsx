@@ -69,14 +69,14 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
   };
 
   // Обработка касаний для мобильных устройств
-  const handleTouchStart = (e: React.TouchEvent) => {
+  const handleTouchStart = (_e: React.TouchEvent) => {
     if (!sliderRef.current) return;
     setIsDragging(true);
     // Отключаем snap во время перетаскивания
     sliderRef.current.style.scrollSnapType = 'none';
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
+  const handleTouchMove = (_e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
     // Нативная прокрутка браузера обрабатывает движение
   };

@@ -190,6 +190,10 @@ export function useTranslation() {
         'en': 'Unlock all themes & cards',
         'ru': 'Разблокировать все темы и карточки'
       },
+      'regularExerciseNotification': {
+        'en': 'Only by doing exercises regularly will you achieve results.',
+        'ru': 'Только регулярно выполняя упражнения, ты добьешься результатов'
+      },
       'make_donation': {
         'en': 'Make donation',
         'ru': 'Сделать пожертвование'

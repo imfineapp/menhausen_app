@@ -229,6 +229,7 @@ export interface UITexts {
     points?: LocalizedContent;
     mentalLevel?: LocalizedContent;
     yourActivity?: LocalizedContent;
+    regularExerciseNotification?: LocalizedContent;
     heatmap?: {
       checkinAndExercise: LocalizedContent;
       checkinAndExercisePlural: LocalizedContent;

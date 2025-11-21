@@ -74,7 +74,7 @@ function ArticleCard({
         handleClick(e);
       }}
       disabled={locked}
-      style={{ touchAction: 'pan-x' }}
+      style={{ touchAction: 'manipulation' }}
       className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-bg-card' : 'cursor-pointer hover:bg-bg-card-hover'}`}
       data-name="Article card"
     >
@@ -146,7 +146,7 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
         }
         handleClick(e);
       }}
-      style={{ touchAction: 'pan-x' }}
+      style={{ touchAction: 'manipulation' }}
       className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-bg-card-hover transition-all duration-300 flex-1"
       data-name="View all articles card"
     >
@@ -185,6 +185,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   // Отслеживание, был ли свайп (движение пальца), чтобы предотвратить onClick при свайпе
   const wasSwipedRef = useRef(false);
   const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
   const SWIPE_THRESHOLD = 10; // Порог в пикселях для определения свайпа
 
   // Общее количество карточек (статьи + ViewAll)
@@ -229,14 +230,29 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
     setIsDragging(true);
     wasSwipedRef.current = false;
     touchStartXRef.current = e.touches[0].pageX;
+    touchStartYRef.current = e.touches[0].pageY;
     sliderRef.current.style.scrollSnapType = 'none';
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !sliderRef.current) return;
     
-    // Проверяем, было ли движение (свайп) для предотвращения onClick на карточках
+    // Вычисляем смещения по обеим осям
     const deltaX = Math.abs(e.touches[0].pageX - touchStartXRef.current);
+    const deltaY = Math.abs(e.touches[0].pageY - touchStartYRef.current);
+    
+    // Определяем направление жеста
+    // Если вертикальное движение больше горизонтального и превышает порог - это вертикальный жест
+    if (deltaY > deltaX && deltaY > SWIPE_THRESHOLD) {
+      // Вертикальный жест - разрешаем скролл страницы, отключаем обработку слайдера
+      setIsDragging(false);
+      wasSwipedRef.current = false;
+      sliderRef.current.style.scrollSnapType = 'x mandatory';
+      return;
+    }
+    
+    // Горизонтальный жест - продолжаем обработку слайдера
+    // Проверяем, было ли движение (свайп) для предотвращения onClick на карточках
     if (deltaX > SWIPE_THRESHOLD) {
       wasSwipedRef.current = true;
     }
@@ -314,7 +330,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       <div
         ref={sliderRef}
         className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 items-stretch"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pinch-zoom' }}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
@@ -333,7 +349,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
     <div
       key={article.id}
       className="flex-shrink-0 snap-center flex"
-      style={{ width: '256px', touchAction: 'pan-x' }}
+      style={{ width: '256px', touchAction: 'pan-x pan-y' }}
       onTouchStart={(_e) => {
         // Позволяем событиям всплывать к слайдеру для обработки свайпа
         // Событие будет обработано слайдером через handleTouchStart
@@ -354,7 +370,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         {/* View All Card */}
         <div
           className="flex-shrink-0 snap-center flex"
-          style={{ width: '256px', touchAction: 'pan-x' }}
+          style={{ width: '256px', touchAction: 'pan-x pan-y' }}
           onTouchStart={(_e) => {
             // Позволяем событиям всплывать к слайдеру для обработки свайпа
             // Событие будет обработано слайдером через handleTouchStart

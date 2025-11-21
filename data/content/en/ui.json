@@ -84,6 +84,7 @@
                     "yourActivity":  "Your activity",
                     "unlockAllThemes":  "Unlock all themes",
                     "points":  "Points",
+                    "regularExerciseNotification":  "Only by doing exercises regularly will you achieve results.",
                     "heatmap":  {
                                       "checkinAndExercise":  "Check-in + {count} exercise",
                                       "checkinAndExercisePlural":  "Check-in + {count} exercises",

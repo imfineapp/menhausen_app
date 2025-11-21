@@ -85,6 +85,7 @@
                     "yourActivity":  "Твоя активность",
                     "unlockAllThemes":  "Разблокируй все темы",
                     "points":  "Баллов",
+                    "regularExerciseNotification":  "Только регулярно выполняя упражнения, ты добьешься результатов",
                     "heatmap":  {
                                       "checkinAndExercise":  "Чекин + {count} упражнение",
                                       "checkinAndExercisePlural":  "Чекин + {count} упражнений",
