@@ -100,7 +100,7 @@ export default defineConfig({
       'sonner',
       'react-hook-form',
       'recharts',
-      'motion',
+      'framer-motion',
     ],
   },
   define: {

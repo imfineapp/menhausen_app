@@ -188,6 +188,7 @@ export interface UITexts {
     level: LocalizedContent;
     progress: LocalizedContent;
     use80PercentUsers: LocalizedContent;
+    themeMatchPercentage: LocalizedContent;
     activity: {
       title: LocalizedContent;
       streak: LocalizedContent;
@@ -225,6 +226,16 @@ export interface UITexts {
     follow?: LocalizedContent;
     openProfile?: LocalizedContent;
     status?: LocalizedContent;
+    points?: LocalizedContent;
+    mentalLevel?: LocalizedContent;
+    yourActivity?: LocalizedContent;
+    regularExerciseNotification?: LocalizedContent;
+    heatmap?: {
+      checkinAndExercise: LocalizedContent;
+      checkinAndExercisePlural: LocalizedContent;
+      checkinOnly: LocalizedContent;
+      noActivity: LocalizedContent;
+    };
   };
   about: {
     title: LocalizedContent;
@@ -249,7 +260,6 @@ export interface UITexts {
     platform: LocalizedContent;
     builtWith: LocalizedContent;
     lastUpdated: LocalizedContent;
-    betaVersion: LocalizedContent;
   };
   survey: {
     progress: LocalizedContent; // "Step {current} of {total}"
@@ -336,6 +346,7 @@ export interface UITexts {
       placeholder: LocalizedContent;
       submit: LocalizedContent;
       thankYou: LocalizedContent;
+      skipRating: LocalizedContent;
     };
     themeHome: {
       card1: LocalizedContent;
@@ -376,8 +387,22 @@ export interface UITexts {
   articles?: {
     title: LocalizedContent;
     viewAll: LocalizedContent;
+    description: LocalizedContent;
     relatedThemes: LocalizedContent;
     noArticles: LocalizedContent;
+  };
+  deleteAccount?: {
+    title: LocalizedContent;
+    description: LocalizedContent;
+    warning: LocalizedContent;
+    button: LocalizedContent;
+    buttonDeleting: LocalizedContent;
+    confirmTitle: LocalizedContent;
+    confirmMessage: LocalizedContent;
+    successTitle: LocalizedContent;
+    successMessage: LocalizedContent;
+    errorTitle: LocalizedContent;
+    errorMessage: LocalizedContent;
   };
 }
 
@@ -474,7 +499,6 @@ export interface AboutContent {
   platform: LocalizedContent;
   builtWith: LocalizedContent;
   lastUpdated: LocalizedContent;
-  betaVersion: LocalizedContent;
 }
 
 /**
@@ -497,6 +521,44 @@ export interface ArticlesCollection {
 }
 
 /**
+ * Контент психологического теста
+ */
+export interface PsychologicalTestContent {
+  preambula: LocalizedContent;
+  instruction: LocalizedContent;
+  topics: {
+    stress: LocalizedContent;
+    anxiety: LocalizedContent;
+    relationships: LocalizedContent;
+    'self-esteem': LocalizedContent;
+    anger: LocalizedContent;
+    depression: LocalizedContent;
+  };
+  questions: Array<{
+    id: string;
+    topic: 'stress' | 'anxiety' | 'relationships' | 'self-esteem' | 'anger' | 'depression';
+    text: LocalizedContent;
+    order: number;
+  }>;
+  results: {
+    title: LocalizedContent;
+    subtitle: LocalizedContent;
+    buttonText: LocalizedContent;
+    depressionWarning?: {
+      title: LocalizedContent;
+      text: LocalizedContent;
+    };
+  };
+  likertScale: {
+    '0': LocalizedContent;
+    '1': LocalizedContent;
+    '2': LocalizedContent;
+    '3': LocalizedContent;
+    '4': LocalizedContent;
+  };
+}
+
+/**
  * Полная структура контента приложения
  */
 export interface AppContent {
@@ -505,6 +567,7 @@ export interface AppContent {
   emergencyCards: Record<string, EmergencyCardData>;
   onboarding: OnboardingContent;
   survey: SurveyContent;
+  psychologicalTest: PsychologicalTestContent;
   ui: UITexts;
   mentalTechniques: Record<string, MentalTechniqueData>;
   mentalTechniquesMenu: MentalTechniquesMenuData;
@@ -543,6 +606,7 @@ export interface ContentContextType {
   getBadges: () => BadgesContent;
   getArticle: (articleId: string) => ArticleData | undefined;
   getAllArticles: () => ArticleData[];
+  getPsychologicalTest: () => PsychologicalTestContent | undefined;
   getLocalizedBadges: () => {
     title: string;
     subtitle: string;

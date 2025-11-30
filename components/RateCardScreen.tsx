@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -8,7 +8,7 @@ import { useContent } from './ContentContext';
 // Типы для пропсов компонента
 interface RateCardScreenProps {
   onBack: () => void; // Функция для возврата к предыдущему экрану
-  onNext: (rating: number, textMessage?: string) => void; // Функция для перехода к следующему экрану с рейтингом и опциональным текстовым сообщением
+  onNext: (rating?: number, textMessage?: string) => void; // Функция для перехода к следующему экрану с опциональным рейтингом и опциональным текстовым сообщением
   cardId: string; // ID карточки
   cardTitle?: string; // Название карточки (опционально)
 }
@@ -38,13 +38,13 @@ function RatingTextContainer() {
   
   return (
     <div
-      className="grid-cols-[max-content] grid-rows-[max-content] inline-grid leading-[0] place-items-start relative shrink-0 text-center w-full"
+      className="flex flex-col gap-0 items-center justify-start text-center w-full"
       data-name="Rating text container"
     >
-      <div className="[grid-area:1_/_1] typography-h2 text-[#e1ff00] w-full">
+      <div className="typography-h2 text-[#e1ff00] w-full">
         <h2 className="block">{content.ui.cards.rating.title}</h2>
       </div>
-      <div className="[grid-area:1_/_1] typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
+      <div className="typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
         <p className="block">{content.ui.cards.rating.subtitle}</p>
       </div>
     </div>
@@ -216,6 +216,23 @@ function RatingOptions({ selectedRating, onRatingChange }: {
 }
 
 /**
+ * Кнопка "Не хочу отвечать" - прозрачная с желтой обводкой
+ */
+function SkipRatingButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className="absolute left-1/2 transform -translate-x-1/2 bottom-[95px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225,255,0,0.1)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px]"
+      data-name="Skip Rating Button"
+    >
+      <div className="typography-button text-[#e1ff00] text-center text-nowrap tracking-[-0.43px]">
+        <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">{children}</p>
+      </div>
+    </button>
+  );
+}
+
+/**
  * Адаптивный контейнер карточки рейтинга
  */
 function RatingCardContainer({ 
@@ -234,7 +251,7 @@ function RatingCardContainer({
   const { content } = useContent();
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="absolute box-border content-stretch flex flex-col gap-5 items-center justify-start left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[264px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
       data-name="Rating card container"
     >
       <RatingTextContainer />
@@ -291,6 +308,15 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
   };
 
   /**
+   * Функция для обработки кнопки "Не хочу отвечать"
+   * Завершает карточку без рейтинга и комментария
+   */
+  const handleSkipRating = () => {
+    console.log(`Card completion skipped (no rating) for card: ${cardId}`);
+    onNext(undefined, undefined);
+  };
+
+  /**
    * Функция для обработки изменения текстового сообщения
    */
   const handleTextMessageChange = (value: string) => {
@@ -325,6 +351,11 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
         textMessage={textMessage}
         onTextMessageChange={handleTextMessageChange}
       />
+      
+      {/* Кнопка "Не хочу отвечать" - над кнопкой Submit */}
+      <SkipRatingButton onClick={handleSkipRating}>
+        {content.ui.cards.rating.skipRating}
+      </SkipRatingButton>
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton 

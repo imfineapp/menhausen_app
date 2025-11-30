@@ -32,4 +32,19 @@ describe('ThemeCardManager - ratingComment', () => {
     expect(progress!.completedAttempts[0].rating).toBe(rating);
     expect(progress!.completedAttempts[0].ratingComment).toBe(ratingComment);
   });
+
+  it('should persist completed attempt with rating 0 when rating is skipped', () => {
+    const cardId = 'STRESS-02';
+    const answers = { question1: 'A1', question2: 'A2' };
+    const rating = 0; // Rating skipped
+
+    ThemeCardManager.addCompletedAttempt(cardId, answers, rating);
+
+    const progress = ThemeCardManager.getCardProgress(cardId);
+    expect(progress).not.toBeNull();
+    expect(progress!.completedAttempts.length).toBe(1);
+    expect(progress!.completedAttempts[0].rating).toBe(0);
+    expect(progress!.completedAttempts[0].ratingComment).toBeUndefined();
+    expect(progress!.isCompleted).toBe(true);
+  });
 });

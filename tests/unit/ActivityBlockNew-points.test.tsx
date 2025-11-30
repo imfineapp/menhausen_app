@@ -1,5 +1,5 @@
-import { describe, it, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import React from 'react';
 import { ActivityBlockNew } from '../../components/ActivityBlockNew';
 import { PointsManager } from '../../utils/PointsManager';
@@ -13,10 +13,17 @@ describe('ActivityBlockNew points display', () => {
     localStorage.clear();
   });
 
+  afterEach(() => {
+    // Очищаем все таймеры и промисы перед завершением теста
+    cleanup();
+    // Даем время для завершения всех асинхронных операций
+    return new Promise(resolve => setTimeout(resolve, 100));
+  });
+
   it('shows total earned and next target (5863 / 6000)', async () => {
     PointsManager.earn(5863);
 
-    render(
+    const { unmount } = render(
       <LanguageProvider>
         <ContentProvider>
           <ActivityBlockNew />
@@ -24,26 +31,32 @@ describe('ActivityBlockNew points display', () => {
       </LanguageProvider>
     );
 
-    // Ждём появления очков с помощью waitFor
-    await waitFor(() => {
-      // Ищем число 5863 (текущие очки)
-      const currentAll = screen.queryAllByText((_, node) => {
-        const text = node?.textContent || '';
-        const normalized = text.replace(/\s/g, '');
-        return normalized.includes('5863');
-      });
-      return currentAll.length > 0;
-    }, { timeout: 5000 });
+    try {
+      // Ждём появления очков с помощью waitFor
+      await waitFor(() => {
+        // Ищем число 5863 (текущие очки)
+        const currentAll = screen.queryAllByText((_, node) => {
+          const text = node?.textContent || '';
+          const normalized = text.replace(/\s/g, '');
+          return normalized.includes('5863');
+        });
+        return currentAll.length > 0;
+      }, { timeout: 5000 });
 
-    // Ищем следующую цель /6000
-    await waitFor(() => {
-      const targetAll = screen.queryAllByText((_, node) => {
-        const text = node?.textContent || '';
-        const normalized = text.replace(/\s/g, '');
-        return normalized.includes('/6000');
-      });
-      return targetAll.length > 0;
-    }, { timeout: 5000 });
+      // Ищем следующую цель /6000
+      await waitFor(() => {
+        const targetAll = screen.queryAllByText((_, node) => {
+          const text = node?.textContent || '';
+          const normalized = text.replace(/\s/g, '');
+          return normalized.includes('/6000');
+        });
+        return targetAll.length > 0;
+      }, { timeout: 5000 });
+    } finally {
+      // Явно размонтируем компонент и ждем завершения всех операций
+      unmount();
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
   });
 });
 

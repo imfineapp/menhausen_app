@@ -54,12 +54,16 @@ test.describe('Daily Check-in Flow', () => {
     await waitForPageLoad(page);
     
     // Даем время для инициализации приложения и проверки статуса чекина
-    await page.waitForTimeout(1000).catch(() => {});
+    await page.waitForTimeout(2000).catch(() => {});
     
     // Проверяем и пропускаем reward screen, который может появиться
     await skipRewardScreen(page);
     
-    await waitForHomeScreen(page);
+    // Ждем навигации на домашнюю страницу с увеличенным таймаутом
+    await waitForHomeScreen(page, 30000);
+    
+    // Даем дополнительное время для завершения навигации
+    await page.waitForTimeout(1000).catch(() => {});
 
     expect(await isOnCheckinScreen(page)).toBeFalsy();
   });

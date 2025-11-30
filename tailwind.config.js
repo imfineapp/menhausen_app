@@ -119,6 +119,9 @@ export default {
           foreground: 'var(--color-destructive-foreground)',
         },
         border: 'var(--color-border)',
+        'border-primary': 'var(--color-border-primary)',
+        'border-secondary': 'var(--color-border-secondary)',
+        'border-accent': 'var(--color-border-accent)',
         input: 'var(--color-input)',
         'input-background': 'var(--color-input-background)',
         'switch-background': 'var(--color-switch-background)',
@@ -139,6 +142,44 @@ export default {
           'accent-foreground': 'var(--color-sidebar-accent-foreground)',
           border: 'var(--color-sidebar-border)',
           ring: 'var(--color-sidebar-ring)',
+        },
+        // Brand Colors - Design Tokens
+        brand: {
+          primary: 'var(--color-brand-primary)',
+          'primary-hover': 'var(--color-brand-primary-hover)',
+          'primary-muted': 'var(--color-brand-primary-muted)',
+        },
+        // Background Colors - Design Tokens
+        bg: {
+          primary: 'var(--color-bg-primary)',
+          card: 'var(--color-bg-card)',
+          'card-hover': 'var(--color-bg-card-hover)',
+          'card-active': 'var(--color-bg-card-active)',
+        },
+        // Text Colors - Design Tokens
+        // Note: In Tailwind v4, nested colors create classes like text-text-primary
+        // For @apply, use CSS variables directly. For JSX, use text-text-* classes
+        text: {
+          primary: 'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
+          tertiary: 'var(--color-text-tertiary)',
+          disabled: 'var(--color-text-disabled)',
+          'disabled-light': 'var(--color-text-disabled-light)',
+          dark: 'var(--color-text-dark)',
+        },
+        // Status Colors - Design Tokens
+        status: {
+          amber: 'var(--color-status-amber)',
+          green: 'var(--color-status-green)',
+          gray: 'var(--color-status-gray)',
+        },
+        // Activity Colors - Design Tokens
+        activity: {
+          active: 'var(--color-activity-active)',
+          'active-glow': 'var(--color-activity-active-glow)',
+          partial: 'var(--color-activity-partial)',
+          'partial-glow': 'var(--color-activity-partial-glow)',
+          none: 'var(--color-activity-none)',
         },
       },
       borderRadius: {

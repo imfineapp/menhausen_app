@@ -59,9 +59,3 @@ describe('achievementChecker additional cases', () => {
     expect(r2.progress).toBe(100);
   });
 });
-
-
-
-
-
-

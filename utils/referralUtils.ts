@@ -182,7 +182,7 @@ export function generateReferralLink(): string {
   try {
     const userId = getTelegramUserId();
     // Используем стандартную ссылку на Telegram WebApp
-    const telegramAppUrl = 'https://t.me/menhausen_bot/app';
+    const telegramAppUrl = 'https://t.me/menhausen_app_bot/app';
 
     if (!userId) {
       // Fallback: обычная ссылка без реферального кода
@@ -204,7 +204,7 @@ export function generateReferralLink(): string {
     return referralLink;
   } catch (error) {
     console.error('Error generating referral link:', error);
-    return 'https://t.me/menhausen_bot/app';
+    return 'https://t.me/menhausen_app_bot/app';
   }
 }
 

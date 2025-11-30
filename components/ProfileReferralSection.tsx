@@ -52,7 +52,7 @@ export function ReferralSection() {
     console.log('  - Generated referral link:', referralLink);
     
     // Используем реферальную ссылку, если она была сгенерирована
-    const shareUrl = referralLink.includes('startapp=') ? referralLink : 'https://t.me/menhausen_bot/app';
+    const shareUrl = referralLink.includes('startapp=') ? referralLink : 'https://t.me/menhausen_app_bot/app';
     
     // Создаем текст для шаринга
     const shareText = getText(

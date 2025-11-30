@@ -1,0 +1,211 @@
+{
+  "preambula": "We created this short test to help you understand where your inner support is now, and where tension may have accumulated.\n\nIt's based on proven psychological methods adapted to real male situations — without clinical labels or unnecessary philosophy.\n\nIt takes 5–7 minutes to complete, and the results will help select self-help cards that are right for you.",
+  "instruction": "Answer honestly and spontaneously — there are no \"right\" answers here.\n\nIf you're not sure — choose what feels closer to your overall feelings, not to individual days.\n\nIt's better not to analyze, but to feel. Just assess how much the statement resembles your life right now.\n\nThere are about 30 questions, it will take 5–7 minutes.\n\nAt the end, you'll get an emotional map — we'll show which topics are most relevant now and suggest exercises that may help.\n\nThis is not a medical test, not a diagnosis, and not a label. It's a tool to better understand yourself and notice when you should give yourself a break.",
+  "topics": {
+    "stress": "Stress and burnout",
+    "anxiety": "Anxiety and uncertainty",
+    "relationships": "Relationship problems",
+    "self-esteem": "Self-esteem and identity",
+    "anger": "Anger and irritability",
+    "depression": "Depressive states"
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "topic": "stress",
+      "text": "Lately I feel tired even from familiar tasks.",
+      "order": 1
+    },
+    {
+      "id": "q2",
+      "topic": "stress",
+      "text": "I find it hard to relax, even when I have time to rest.",
+      "order": 2
+    },
+    {
+      "id": "q3",
+      "topic": "stress",
+      "text": "Work or household tasks seem excessively difficult to me.",
+      "order": 3
+    },
+    {
+      "id": "q4",
+      "topic": "stress",
+      "text": "I feel like I'm \"working on autopilot\".",
+      "order": 4
+    },
+    {
+      "id": "q5",
+      "topic": "stress",
+      "text": "I increasingly feel irritation or apathy without reason.",
+      "order": 5
+    },
+    {
+      "id": "q6",
+      "topic": "anxiety",
+      "text": "I often feel anxious about the future or finances.",
+      "order": 6
+    },
+    {
+      "id": "q7",
+      "topic": "anxiety",
+      "text": "I replay the same anxious thoughts.",
+      "order": 7
+    },
+    {
+      "id": "q8",
+      "topic": "anxiety",
+      "text": "I doubt my decisions, even if they are logical.",
+      "order": 8
+    },
+    {
+      "id": "q9",
+      "topic": "anxiety",
+      "text": "I avoid situations where I might make a mistake or be judged.",
+      "order": 9
+    },
+    {
+      "id": "q10",
+      "topic": "anxiety",
+      "text": "I feel physical tension when thinking about problems.",
+      "order": 10
+    },
+    {
+      "id": "q11",
+      "topic": "relationships",
+      "text": "I find it difficult to openly talk about my feelings.",
+      "order": 11
+    },
+    {
+      "id": "q12",
+      "topic": "relationships",
+      "text": "I often feel misunderstood by loved ones.",
+      "order": 12
+    },
+    {
+      "id": "q13",
+      "topic": "relationships",
+      "text": "Conflicts repeat for the same reasons.",
+      "order": 13
+    },
+    {
+      "id": "q14",
+      "topic": "relationships",
+      "text": "I avoid conversations to avoid escalating the situation.",
+      "order": 14
+    },
+    {
+      "id": "q15",
+      "topic": "relationships",
+      "text": "I feel lonely, even when others are nearby.",
+      "order": 15
+    },
+    {
+      "id": "q16",
+      "topic": "self-esteem",
+      "text": "I feel like I'm not successful enough.",
+      "order": 16
+    },
+    {
+      "id": "q17",
+      "topic": "self-esteem",
+      "text": "I often compare myself to others.",
+      "order": 17
+    },
+    {
+      "id": "q18",
+      "topic": "self-esteem",
+      "text": "I doubt my value as a person.",
+      "order": 18
+    },
+    {
+      "id": "q19",
+      "topic": "self-esteem",
+      "text": "I find it difficult to accept compliments.",
+      "order": 19
+    },
+    {
+      "id": "q20",
+      "topic": "self-esteem",
+      "text": "I feel like I've lost connection with myself and my desires.",
+      "order": 20
+    },
+    {
+      "id": "q21",
+      "topic": "anger",
+      "text": "I easily get irritated by small things.",
+      "order": 21
+    },
+    {
+      "id": "q22",
+      "topic": "anger",
+      "text": "Sometimes I feel like I \"explode\" suddenly.",
+      "order": 22
+    },
+    {
+      "id": "q23",
+      "topic": "anger",
+      "text": "I'm angry at myself for not controlling my emotions.",
+      "order": 23
+    },
+    {
+      "id": "q24",
+      "topic": "anger",
+      "text": "After outbursts of irritation, I feel guilty.",
+      "order": 24
+    },
+    {
+      "id": "q25",
+      "topic": "anger",
+      "text": "I often notice inner tension, even without a reason.",
+      "order": 25
+    },
+    {
+      "id": "q26",
+      "topic": "depression",
+      "text": "I feel a loss of interest in what used to bring joy.",
+      "order": 26
+    },
+    {
+      "id": "q27",
+      "topic": "depression",
+      "text": "In the morning, it's hard for me to get up and start the day.",
+      "order": 27
+    },
+    {
+      "id": "q28",
+      "topic": "depression",
+      "text": "I find it difficult to concentrate even on simple tasks.",
+      "order": 28
+    },
+    {
+      "id": "q29",
+      "topic": "depression",
+      "text": "I feel emptiness or hopelessness.",
+      "order": 29
+    },
+    {
+      "id": "q30",
+      "topic": "depression",
+      "text": "I feel like my efforts don't make sense.",
+      "order": 30
+    }
+  ],
+  "results": {
+    "title": "Your emotional map",
+    "subtitle": "Results show which topics are most relevant for you right now:",
+    "buttonText": "Continue",
+    "depressionWarning": {
+      "title": "Important Warning",
+      "text": "With a low score in the \"Depression\" topic, this application may not provide the necessary assistance. We strongly recommend seeking qualified psychological or psychotherapeutic help for professional support. By continuing to use the application, the user assumes full responsibility for any possible negative consequences. The developers and creators of the application are not responsible for the results of using the application in this situation."
+    }
+  },
+  "likertScale": {
+    "0": "Not at all",
+    "1": "A little",
+    "2": "Moderately",
+    "3": "Strongly",
+    "4": "Very strongly"
+  }
+}
+

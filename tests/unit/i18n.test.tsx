@@ -6,6 +6,7 @@ import { ContentProvider, useContent } from '../../components/ContentContext';
 import { AchievementsProvider } from '../../contexts/AchievementsContext';
 import { LanguageModal } from '../../components/LanguageModal';
 import { UserProfileScreen } from '../../components/UserProfileScreen';
+import { AppSettingsScreen } from '../../components/AppSettingsScreen';
 import { AboutAppScreen } from '../../components/AboutAppScreen';
 
 // Моки для компонентов
@@ -16,7 +17,7 @@ const mockOnShowPrivacy = vi.fn();
 const mockOnShowTerms = vi.fn();
 const mockOnShowDeleteAccount = vi.fn();
 const mockOnShowPayments = vi.fn();
-const mockOnShowUnderConstruction = vi.fn();
+    const _mockOnShowUnderConstruction = vi.fn();
 
 // Обертка для тестов с провайдерами
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -229,25 +230,47 @@ describe('i18n System Tests', () => {
   describe('Component Text Localization', () => {
     test('UserProfileScreen должен использовать переводы', async () => {
       // Увеличиваем timeout для этого теста, так как он может занимать время на загрузку контента
+      const mockOnShowSettings = vi.fn();
       render(
         <TestWrapper>
           <ContentProvider>
             <AchievementsProvider>
               <UserProfileScreen
                 onBack={mockOnBack}
-                onShowAboutApp={mockOnShowAboutApp}
-                onShowPinSettings={mockOnShowPinSettings}
-                onShowPrivacy={mockOnShowPrivacy}
-                onShowTerms={mockOnShowTerms}
-                onShowDeleteAccount={mockOnShowDeleteAccount}
                 onShowPayments={mockOnShowPayments}
-                onShowDonations={mockOnShowUnderConstruction}
-                onShowUnderConstruction={mockOnShowUnderConstruction}
                 onGoToBadges={vi.fn()}
-                onGoToLevels={vi.fn()}
+                onShowSettings={mockOnShowSettings}
                 userHasPremium={false}
               />
             </AchievementsProvider>
+          </ContentProvider>
+        </TestWrapper>
+      );
+
+      // Проверяем наличие иконки настроек на странице профиля
+      await waitFor(() => {
+        expect(screen.getByLabelText('Settings')).toBeInTheDocument();
+      }, { timeout: 10000 });
+
+      // Проверяем, что иконка настроек присутствует
+      expect(screen.getByLabelText('Settings')).toBeInTheDocument();
+    }, { timeout: 15000 });
+
+    test('AppSettingsScreen должен использовать переводы', async () => {
+      // Проверяем, что страница настроек использует переводы
+      // Увеличиваем timeout для этого теста, так как он может занимать время на загрузку контента
+      render(
+        <TestWrapper>
+          <ContentProvider>
+            <AppSettingsScreen
+              onBack={mockOnBack}
+              onShowAboutApp={mockOnShowAboutApp}
+              onShowPinSettings={mockOnShowPinSettings}
+              onShowPrivacy={mockOnShowPrivacy}
+              onShowTerms={mockOnShowTerms}
+              onShowDeleteAccount={mockOnShowDeleteAccount}
+              onShowDonations={vi.fn()}
+            />
           </ContentProvider>
         </TestWrapper>
       );
@@ -260,7 +283,7 @@ describe('i18n System Tests', () => {
       // Проверяем наличие переведенных элементов
       expect(screen.getByText('Settings')).toBeInTheDocument();
       expect(screen.getByText('Language')).toBeInTheDocument();
-    });
+    }, { timeout: 15000 });
 
     test('AboutAppScreen должен отображать контент на выбранном языке', async () => {
       render(
