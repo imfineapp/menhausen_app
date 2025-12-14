@@ -21,7 +21,7 @@ Menhausen is a Telegram mini app focused on mental health support, featuring a c
 - Centralized content management system
 - Survey system with 5-screen onboarding
 - Exercise card system with themes
-- Local storage persistence
+- Local storage persistence with cloud sync (IN PROGRESS)
 - Premium feature support
 
 ## Current Status
@@ -30,3 +30,15 @@ Menhausen is a Telegram mini app focused on mental health support, featuring a c
 ✅ Content management system active
 ✅ Component library (ShadCN) integrated
 ✅ Navigation system functional
+🔄 **IN PROGRESS**: Telegram User API Sync with Supabase
+  - Comprehensive architectural plan completed
+  - Ready for CREATIVE phase for detailed design decisions
+  - See: `memory-bank/creative/creative-telegram-sync-architecture.md`
+
+## Cloud Sync Architecture (NEW)
+- **Backend**: Supabase (PostgreSQL + Edge Functions)
+- **Sync Strategy**: Incremental sync with debouncing
+- **Authentication**: Telegram WebApp initData validation
+- **Data Privacy**: Client-side encryption for sensitive data
+- **Conflict Resolution**: Remote wins for preferences, smart merge for collections
+- **Migration**: Auto-sync existing users on app load

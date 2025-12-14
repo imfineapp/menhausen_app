@@ -29,9 +29,16 @@
 ### State Management
 - **React Hooks**: useState, useEffect for local state
 - **Context API**: Content management and global state
-- **Local Storage**: Data persistence
+- **Local Storage**: Data persistence (primary local source of truth)
+- **Cloud Sync**: Supabase backend for multi-device synchronization (NEW)
 - **Points System**: Transaction-based points with idempotency
 - **Event-Driven Updates**: `points:updated` events for real-time UI reactivity
+
+### Backend Infrastructure (NEW)
+- **Supabase**: PostgreSQL database + Edge Functions
+- **Telegram Authentication**: Server-side initData validation
+- **REST API**: Edge Functions for sync endpoints
+- **Data Encryption**: Client-side encryption for sensitive data
 
 ### Build Configuration
 - **TypeScript**: Strict typing throughout
@@ -57,8 +64,17 @@ menhausen_app/
 ├── data/               # Content management
 ├── types/              # TypeScript definitions
 ├── utils/              # Utility functions
+│   ├── supabaseSync/   # Cloud sync service (NEW)
+│   │   ├── supabaseSyncService.ts
+│   │   ├── dataTransformers.ts
+│   │   ├── conflictResolver.ts
+│   │   └── encryption.ts
+│   └── telegramAuth/   # Telegram authentication (NEW)
+│       └── telegramAuthService.ts
 ├── styles/             # Global styles
 ├── imports/            # Figma imports
+├── supabase/           # Supabase configuration (NEW)
+│   └── functions/      # Edge Functions
 └── memory-bank/        # Project documentation
 ```
 

@@ -1,13 +1,36 @@
 # Memory Bank: Active Context
 
 ## Current Focus
-🎯 **READY FOR NEW TASK** - Awaiting task assignment
+🎯 **PLAN MODE - Level 4 Complex System Task**
+**Task**: Telegram Users API Sync with Supabase
+**Phase**: Architectural Planning → CREATIVE Phase
 
 ## Status
-⏸️ **IDLE MODE**: Previous task completed and archived
-✅ **LAST TASK**: Fix Memory Leak Risk & E2E Test Overhaul (2025-11-07)
-✅ **COMPLETED**: Mounted guards in `App.tsx`, deterministic Playwright helpers, full suite passing (`npx playwright test`, `npm run lint:all`)
-🎯 **NEXT**: Use VAN MODE to initialize next task
+📋 **PLANNING COMPLETE**: Comprehensive architectural plan created
+✅ **ARCHITECTURAL PLAN**: `memory-bank/creative/creative-telegram-sync-architecture.md`
+⏭️ **NEXT PHASE**: CREATIVE mode for detailed design decisions
+
+## Current Task Summary
+**Task**: Telegram Users API Sync - Sync all localStorage data (except card answers) to Supabase API for multi-device access
+**Started**: 2025-01-XX
+**Complexity**: Level 4 - Complex System
+**Status**: ✅ Architectural Planning Complete
+
+**Key Requirements**:
+- Sync all localStorage data except card answers (question1/question2)
+- Real-time sync on localStorage changes (debounced)
+- Telegram user authentication with server-side validation
+- Intelligent conflict resolution (remote wins for preferences, smart merge for collections)
+- Encryption for sensitive data (survey, check-ins, test results)
+- Auto-migration for existing users
+
+**Architecture Decisions**:
+- Backend: Supabase (PostgreSQL + Edge Functions)
+- Sync Strategy: Incremental sync with 100-200ms debouncing
+- Authentication: Telegram initData server-side validation
+- Encryption: Client-side encryption integrated with CriticalDataManager
+- Conflict Resolution: Remote wins for preferences/flags, smart merge for collections
+- Migration: Auto-sync on first app load after deployment
 
 ## Previous Task Summary
 **Task**: Fix Memory Leak Risk from Uncleaned Timeouts + Update E2E Tests for Branch Changes  
