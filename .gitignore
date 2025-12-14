@@ -24,6 +24,8 @@ temp_*.txt
 *not_use*
 
 .env
+.env.local
+.env.*.local
  
 # macOS system files
 .DS_Store
