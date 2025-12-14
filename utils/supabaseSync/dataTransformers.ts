@@ -4,7 +4,7 @@
  * Transform data between localStorage format and API format
  */
 
-import type { SyncDataType, UserDataFromAPI } from './types';
+import type { SyncDataType } from './types';
 
 /**
  * Transform localStorage data to API format
@@ -359,12 +359,12 @@ export function removeCardAnswers(cardProgress: any): any {
         }
 
         // Remove question1 and question2 from answers object
-        const { question1, question2, answers, ...rest } = attempt;
+        const { question1: _question1, question2: _question2, answers, ...rest } = attempt;
         
         // If answers is an object, remove question1/question2 from it
         let cleanedAnswers = answers;
         if (answers && typeof answers === 'object') {
-          const { question1: q1, question2: q2, ...otherAnswers } = answers;
+          const { question1: _q1, question2: _q2, ...otherAnswers } = answers;
           cleanedAnswers = Object.keys(otherAnswers).length > 0 ? otherAnswers : undefined;
         }
 

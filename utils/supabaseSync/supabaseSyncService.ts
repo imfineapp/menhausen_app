@@ -22,7 +22,7 @@ import { loadUserAchievements } from '../../services/achievementStorage';
 import { PointsManager } from '../PointsManager';
 import { loadTestResults } from '../psychologicalTestStorage';
 import { DailyCheckinManager } from '../DailyCheckinManager';
-import { ThemeCardManager, CardProgress } from '../ThemeCardManager';
+import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 
 /**
@@ -295,7 +295,7 @@ export class SupabaseSyncService {
         try {
           const referralList = getReferralList(telegramUserId);
           referralData.referralList = referralList.referrals.map(r => r.userId);
-        } catch (e) {
+        } catch {
           // Ignore if referral list doesn't exist
         }
         data.referralData = transformToAPIFormat('referralData', referralData);
@@ -330,7 +330,7 @@ export class SupabaseSyncService {
   /**
    * Fetch user data from Supabase
    */
-  private async fetchFromSupabase(telegramUserId: number): Promise<UserDataFromAPI | null> {
+  private async fetchFromSupabase(_telegramUserId: number): Promise<UserDataFromAPI | null> {
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
     }
