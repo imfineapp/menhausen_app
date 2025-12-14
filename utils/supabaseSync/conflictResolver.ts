@@ -18,8 +18,9 @@ export function resolveConflict(
     case 'preferences':
     case 'language':
     case 'hasShownFirstAchievement':
-      // Remote wins for preferences/flags
-      return remoteData;
+    case 'flowProgress':
+      // Remote wins for preferences/flags/progress
+      return remoteData || localData;
     
     case 'dailyCheckins':
       return mergeDailyCheckins(localData, remoteData);
@@ -33,9 +34,20 @@ export function resolveConflict(
     case 'userStats':
       return mergeUserStats(localData, remoteData);
     
+    case 'surveyResults':
+    case 'psychologicalTest':
+      // Remote wins for completed tests/surveys
+      return remoteData || localData;
+    
+    case 'cardProgress':
+      return mergeCardProgress(localData, remoteData);
+    
+    case 'referralData':
+      return mergeReferralData(localData, remoteData);
+    
     default:
       // Default: remote wins
-      return remoteData;
+      return remoteData || localData;
   }
 }
 
@@ -112,16 +124,127 @@ function mergeUserStats(local: any, remote: any): any {
   if (!local) return remote;
   if (!remote) return local;
 
-  // Merge arrays (readArticleIds, openedCardIds, topicsCompleted, etc.)
+  // Merge arrays (readArticleIds, openedCardIds, topicsCompleted, topicsRepeated)
   const readArticleIds = mergeArrays(local.readArticleIds, remote.readArticleIds);
   const openedCardIds = mergeArrays(local.openedCardIds, remote.openedCardIds);
   const topicsCompleted = mergeArrays(local.topicsCompleted, remote.topicsCompleted);
+  const topicsRepeated = mergeArrays(local.topicsRepeated, remote.topicsRepeated);
+
+  // Merge objects (cardsOpened, cardsRepeated) - take maximum values
+  const cardsOpened = mergeObjects(local.cardsOpened, remote.cardsOpened);
+  const cardsRepeated = mergeObjects(local.cardsRepeated, remote.cardsRepeated);
 
   return {
     ...remote,
     readArticleIds,
     openedCardIds,
     topicsCompleted,
+    topicsRepeated,
+    cardsOpened,
+    cardsRepeated,
+    // Use maximum values for counters (to avoid data loss)
+    checkins: Math.max(local.checkins || 0, remote.checkins || 0),
+    checkinStreak: Math.max(local.checkinStreak || 0, remote.checkinStreak || 0),
+    articlesRead: Math.max(local.articlesRead || 0, remote.articlesRead || 0),
+    referralsInvited: Math.max(local.referralsInvited || 0, remote.referralsInvited || 0),
+    referralsPremium: Math.max(local.referralsPremium || 0, remote.referralsPremium || 0),
+    // Use latest date
+    lastCheckinDate: remote.lastCheckinDate || local.lastCheckinDate || null,
+    lastUpdated: remote.lastUpdated > local.lastUpdated ? remote.lastUpdated : local.lastUpdated,
+  };
+}
+
+/**
+ * Merge two objects by taking maximum values
+ */
+function mergeObjects(local: Record<string, number> | undefined, remote: Record<string, number> | undefined): Record<string, number> {
+  const localObj = local || {};
+  const remoteObj = remote || {};
+  const merged: Record<string, number> = { ...localObj };
+
+  Object.keys(remoteObj).forEach(key => {
+    merged[key] = Math.max(localObj[key] || 0, remoteObj[key] || 0);
+  });
+
+  return merged;
+}
+
+/**
+ * Merge card progress (merge attempts by cardId)
+ */
+function mergeCardProgress(local: any, remote: any): any {
+  if (!local) return remote;
+  if (!remote) return local;
+
+  // If both are objects with cardId keys
+  const merged: Record<string, any> = { ...local };
+
+  Object.keys(remote).forEach(cardId => {
+    const localCard = local[cardId];
+    const remoteCard = remote[cardId];
+
+    if (!localCard) {
+      merged[cardId] = remoteCard;
+    } else if (!remoteCard) {
+      merged[cardId] = localCard;
+    } else {
+      // Merge attempts by attemptId
+      const localAttempts = localCard.completedAttempts || [];
+      const remoteAttempts = remoteCard.completedAttempts || [];
+      const attemptMap = new Map();
+
+      // Add local attempts
+      localAttempts.forEach((attempt: any) => {
+        if (attempt.attemptId) {
+          attemptMap.set(attempt.attemptId, attempt);
+        }
+      });
+
+      // Add/update with remote attempts
+      remoteAttempts.forEach((attempt: any) => {
+        if (attempt.attemptId) {
+          attemptMap.set(attempt.attemptId, attempt);
+        }
+      });
+
+      const mergedAttempts = Array.from(attemptMap.values())
+        .sort((a: any, b: any) => 
+          new Date(a.completedAt || a.date || 0).getTime() - 
+          new Date(b.completedAt || b.date || 0).getTime()
+        );
+
+      merged[cardId] = {
+        ...remoteCard,
+        completedAttempts: mergedAttempts,
+        totalCompletedAttempts: mergedAttempts.length,
+        isCompleted: mergedAttempts.length > 0,
+      };
+    }
+  });
+
+  return merged;
+}
+
+/**
+ * Merge referral data (remote wins for most fields, merge lists)
+ */
+function mergeReferralData(local: any, remote: any): any {
+  if (!local) return remote;
+  if (!remote) return local;
+
+  // Remote wins for referredBy and referralCode
+  // Merge referralList arrays
+  const localList = local.referralList || [];
+  const remoteList = remote.referralList || [];
+  const mergedList = mergeArrays(localList, remoteList);
+
+  return {
+    referredBy: remote.referredBy || local.referredBy || null,
+    referralCode: remote.referralCode || local.referralCode || null,
+    referralRegistered: remote.referralRegistered !== undefined 
+      ? remote.referralRegistered 
+      : local.referralRegistered,
+    referralList: mergedList,
   };
 }
 
@@ -131,7 +254,32 @@ function mergeUserStats(local: any, remote: any): any {
 function mergeArrays(local: any[] | undefined, remote: any[] | undefined): any[] {
   const localArr = local || [];
   const remoteArr = remote || [];
-  const merged = new Set([...localArr, ...remoteArr]);
-  return Array.from(merged);
+  
+  // Handle both string arrays and object arrays
+  if (localArr.length === 0 && remoteArr.length === 0) {
+    return [];
+  }
+
+  // For primitive arrays (strings, numbers)
+  if (localArr.length > 0 && typeof localArr[0] !== 'object') {
+    const merged = new Set([...localArr, ...remoteArr]);
+    return Array.from(merged);
+  }
+
+  // For object arrays, merge by unique identifier
+  // If objects have userId, use that; otherwise use full object comparison
+  const mergedMap = new Map();
+  
+  localArr.forEach((item: any) => {
+    const key = item?.userId || item?.id || JSON.stringify(item);
+    mergedMap.set(key, item);
+  });
+
+  remoteArr.forEach((item: any) => {
+    const key = item?.userId || item?.id || JSON.stringify(item);
+    mergedMap.set(key, item);
+  });
+
+  return Array.from(mergedMap.values());
 }
 

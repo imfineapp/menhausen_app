@@ -363,6 +363,32 @@ function AppContent() {
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
+  // INITIAL SYNC WITH SUPABASE (должен вызываться после инициализации Telegram WebApp)
+  // =====================================================================================
+  useEffect(() => {
+    // Initial sync with Supabase (non-blocking)
+    const performInitialSync = async () => {
+      try {
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        await syncService.initialSync();
+      } catch (error) {
+        // Silently fail - sync should not block app initialization
+        console.warn('Initial sync failed (non-blocking):', error);
+      }
+    };
+
+    // Delay sync to not block app initialization
+    const syncTimeout = setTimeout(() => {
+      performInitialSync();
+    }, 1000); // 1 second delay
+
+    return () => {
+      clearTimeout(syncTimeout);
+    };
+  }, []); // Вызывается только при монтировании компонента
+
+  // =====================================================================================
   // СОСТОЯНИЕ НАВИГАЦИИ И ДАННЫХ
   // =====================================================================================
   // В E2E тестовой среде начинаем с главной страницы

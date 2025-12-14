@@ -28,6 +28,276 @@ interface SyncUserDataResponse {
   code?: string;
 }
 
+/**
+ * Sync survey results
+ */
+async function syncSurveyResults(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('survey_results')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      screen01: data.screen01 || null,
+      screen02: data.screen02 || null,
+      screen03: data.screen03 || null,
+      screen04: data.screen04 || null,
+      screen05: data.screen05 || null,
+      completed_at: data.completedAt || null,
+      encrypted_data: data.encryptedData || null,
+      version: 1,
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync daily checkins
+ */
+async function syncDailyCheckins(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  // Delete existing checkins for this user
+  await supabase
+    .from('daily_checkins')
+    .delete()
+    .eq('telegram_user_id', telegramUserId);
+
+  // Insert all checkins
+  const checkins = Object.keys(data).map(dateKey => ({
+    telegram_user_id: telegramUserId,
+    date_key: dateKey,
+    mood: data[dateKey].mood || null,
+    value: data[dateKey].value || null,
+    color: data[dateKey].color || null,
+    encrypted_data: data[dateKey].encryptedData || null,
+    completed: data[dateKey].completed !== undefined ? data[dateKey].completed : true,
+  }));
+
+  if (checkins.length > 0) {
+    await supabase
+      .from('daily_checkins')
+      .insert(checkins);
+  }
+}
+
+/**
+ * Sync user stats
+ */
+async function syncUserStats(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('user_stats')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      version: data.version || 1,
+      checkins: data.checkins || 0,
+      checkin_streak: data.checkinStreak || 0,
+      last_checkin_date: data.lastCheckinDate || null,
+      cards_opened: data.cardsOpened || {},
+      topics_completed: data.topicsCompleted || [],
+      cards_repeated: data.cardsRepeated || {},
+      topics_repeated: data.topicsRepeated || [],
+      articles_read: data.articlesRead || 0,
+      read_article_ids: data.readArticleIds || [],
+      opened_card_ids: data.openedCardIds || [],
+      referrals_invited: data.referralsInvited || 0,
+      referrals_premium: data.referralsPremium || 0,
+      last_updated: data.lastUpdated || new Date().toISOString(),
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync achievements
+ */
+async function syncAchievements(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('user_achievements')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      version: data.version || 1,
+      achievements: data.achievements || {},
+      total_xp: data.totalXP || 0,
+      unlocked_count: data.unlockedCount || 0,
+      last_synced_at: new Date().toISOString(),
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync points
+ */
+async function syncPoints(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  // Sync balance
+  await supabase
+    .from('user_points')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      balance: data.balance || 0,
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+
+  // Sync transactions
+  if (data.transactions && Array.isArray(data.transactions)) {
+    // Delete existing transactions for this user
+    await supabase
+      .from('points_transactions')
+      .delete()
+      .eq('telegram_user_id', telegramUserId);
+
+    // Insert all transactions
+    const transactions = data.transactions.map((tx: any) => ({
+      telegram_user_id: telegramUserId,
+      transaction_id: tx.id,
+      type: tx.type,
+      amount: tx.amount,
+      balance_after: tx.balanceAfter,
+      note: tx.note || null,
+      correlation_id: tx.correlationId || null,
+      timestamp: tx.timestamp,
+    }));
+
+    if (transactions.length > 0) {
+      await supabase
+        .from('points_transactions')
+        .insert(transactions);
+    }
+  }
+}
+
+/**
+ * Sync preferences
+ */
+async function syncPreferences(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('user_preferences')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      language: data.language || 'en',
+      theme: data.theme || 'light',
+      notifications: data.notifications !== undefined ? data.notifications : true,
+      analytics: data.analytics !== undefined ? data.analytics : false,
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync flow progress
+ */
+async function syncFlowProgress(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('app_flow_progress')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      onboarding_completed: data.onboardingCompleted || false,
+      survey_completed: data.surveyCompleted || false,
+      psychological_test_completed: data.psychologicalTestCompleted || false,
+      pin_enabled: data.pinEnabled || false,
+      pin_completed: data.pinCompleted || false,
+      first_checkin_done: data.firstCheckinDone || false,
+      first_reward_shown: data.firstRewardShown || false,
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync psychological test results
+ */
+async function syncPsychologicalTest(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('psychological_test_results')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      last_completed_at: data.lastCompletedAt || null,
+      scores: data.scores || null,
+      percentages: data.percentages || null,
+      history: data.history || [],
+      encrypted_data: data.encryptedData || null,
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Sync card progress
+ */
+async function syncCardProgress(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  // Delete existing card progress for this user
+  await supabase
+    .from('card_progress')
+    .delete()
+    .eq('telegram_user_id', telegramUserId);
+
+  // Insert all card progress
+  const cardProgress = Object.keys(data).map(cardId => ({
+    telegram_user_id: telegramUserId,
+    card_id: cardId,
+    completed_attempts: data[cardId].completedAttempts || [],
+    is_completed: data[cardId].isCompleted || false,
+    total_completed_attempts: data[cardId].totalCompletedAttempts || 0,
+  }));
+
+  if (cardProgress.length > 0) {
+    await supabase
+      .from('card_progress')
+      .insert(cardProgress);
+  }
+}
+
+/**
+ * Sync referral data
+ */
+async function syncReferralData(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+
+  await supabase
+    .from('referral_data')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      referred_by: data.referredBy || null,
+      referral_code: data.referralCode || null,
+      referral_registered: data.referralRegistered || false,
+      referral_list: data.referralList || [],
+    }, {
+      onConflict: 'telegram_user_id',
+    });
+}
+
+/**
+ * Update sync metadata for a data type
+ */
+async function updateSyncMetadata(supabase: any, telegramUserId: number, dataType: string): Promise<void> {
+  await supabase
+    .from('sync_metadata')
+    .upsert({
+      telegram_user_id: telegramUserId,
+      data_type: dataType,
+      last_synced_at: new Date().toISOString(),
+      sync_version: 1,
+    }, {
+      onConflict: 'telegram_user_id,data_type',
+    });
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -101,6 +371,8 @@ serve(async (req) => {
       );
     }
 
+    const data = requestData.data;
+
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -112,12 +384,13 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Ensure user exists
+    const now = new Date().toISOString();
     const { error: upsertError } = await supabase
       .from('users')
       .upsert({
         telegram_user_id: telegramUserId,
-        updated_at: new Date().toISOString(),
-        last_sync_at: new Date().toISOString(),
+        updated_at: now,
+        last_sync_at: now,
       }, {
         onConflict: 'telegram_user_id',
       });
@@ -126,13 +399,71 @@ serve(async (req) => {
       throw upsertError;
     }
 
-    // TODO: Sync data to all tables (survey_results, daily_checkins, etc.)
-    // This is a placeholder - full implementation will be completed in Phase 2
+    // Sync all data types
     const syncedTypes: string[] = [];
 
-    // Update sync metadata
-    const now = new Date().toISOString();
-    // TODO: Update sync_metadata table for each synced data type
+    if (data.surveyResults) {
+      await syncSurveyResults(supabase, telegramUserId, data.surveyResults);
+      await updateSyncMetadata(supabase, telegramUserId, 'surveyResults');
+      syncedTypes.push('surveyResults');
+    }
+
+    if (data.dailyCheckins) {
+      await syncDailyCheckins(supabase, telegramUserId, data.dailyCheckins);
+      await updateSyncMetadata(supabase, telegramUserId, 'dailyCheckins');
+      syncedTypes.push('dailyCheckins');
+    }
+
+    if (data.userStats) {
+      await syncUserStats(supabase, telegramUserId, data.userStats);
+      await updateSyncMetadata(supabase, telegramUserId, 'userStats');
+      syncedTypes.push('userStats');
+    }
+
+    if (data.achievements) {
+      await syncAchievements(supabase, telegramUserId, data.achievements);
+      await updateSyncMetadata(supabase, telegramUserId, 'achievements');
+      syncedTypes.push('achievements');
+    }
+
+    if (data.points) {
+      await syncPoints(supabase, telegramUserId, data.points);
+      await updateSyncMetadata(supabase, telegramUserId, 'points');
+      syncedTypes.push('points');
+    }
+
+    if (data.preferences) {
+      await syncPreferences(supabase, telegramUserId, data.preferences);
+      await updateSyncMetadata(supabase, telegramUserId, 'preferences');
+      syncedTypes.push('preferences');
+    }
+
+    if (data.flowProgress) {
+      await syncFlowProgress(supabase, telegramUserId, data.flowProgress);
+      await updateSyncMetadata(supabase, telegramUserId, 'flowProgress');
+      syncedTypes.push('flowProgress');
+    }
+
+    if (data.psychologicalTest) {
+      await syncPsychologicalTest(supabase, telegramUserId, data.psychologicalTest);
+      await updateSyncMetadata(supabase, telegramUserId, 'psychologicalTest');
+      syncedTypes.push('psychologicalTest');
+    }
+
+    if (data.cardProgress) {
+      await syncCardProgress(supabase, telegramUserId, data.cardProgress);
+      await updateSyncMetadata(supabase, telegramUserId, 'cardProgress');
+      syncedTypes.push('cardProgress');
+    }
+
+    if (data.referralData) {
+      await syncReferralData(supabase, telegramUserId, data.referralData);
+      await updateSyncMetadata(supabase, telegramUserId, 'referralData');
+      syncedTypes.push('referralData');
+    }
+
+    // Note: language and hasShownFirstAchievement are stored in preferences/flowProgress
+    // They don't need separate sync
 
     return new Response(
       JSON.stringify({
