@@ -9,4 +9,5 @@ export * from './types';
 export * from './dataTransformers';
 export * from './conflictResolver';
 export * from './encryption';
+export { LocalStorageInterceptor, getLocalStorageInterceptor, initializeLocalStorageInterceptor } from './localStorageInterceptor';
 

@@ -18,19 +18,25 @@ export function isTelegramEnvironment(): boolean {
 
 /**
  * Get the Telegram user ID from WebApp API
- * @returns {string | null} User ID as string, or null if not available
+ * In local development (non-Telegram environment or no user ID), returns "111" as default user ID
+ * @returns {string | null} User ID as string, "111" for local dev, or null if error
  */
 export function getTelegramUserId(): string | null {
   try {
-    if (!isTelegramEnvironment()) {
-      return null;
+    // Check if we have a real Telegram user ID
+    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    
+    // If we have a real user ID, return it
+    if (userId) {
+      return String(userId);
     }
 
-    const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    return userId ? String(userId) : null;
+    // No user ID available - treat as local development and return default ID 111
+    return '111';
   } catch (error) {
     console.warn('Error getting Telegram user ID:', error);
-    return null;
+    // In case of error, still return default for local dev
+    return '111';
   }
 }
 

@@ -359,22 +359,21 @@ export function removeCardAnswers(cardProgress: any): any {
         }
 
         // Remove question1 and question2 from answers object
-        const { question1: _question1, question2: _question2, answers, ...rest } = attempt;
+        const { answers, ...rest } = attempt;
         
         // If answers is an object, remove question1/question2 from it
-        let cleanedAnswers = answers;
+        let cleanedAnswers = answers || {};
         if (answers && typeof answers === 'object') {
           const { question1: _q1, question2: _q2, ...otherAnswers } = answers;
-          cleanedAnswers = Object.keys(otherAnswers).length > 0 ? otherAnswers : undefined;
+          // Always keep answers as an object (even if empty) to maintain structure
+          cleanedAnswers = otherAnswers;
         }
 
-        // Return attempt without question1/question2
-        const cleanedAttempt = { ...rest };
-        if (cleanedAnswers && Object.keys(cleanedAnswers).length > 0) {
-          cleanedAttempt.answers = cleanedAnswers;
-        }
-
-        return cleanedAttempt;
+        // Return attempt without question1/question2, but always include answers object
+        return {
+          ...rest,
+          answers: cleanedAnswers, // Ensure answers is always an object
+        };
       }),
     };
   }

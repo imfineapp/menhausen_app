@@ -16,7 +16,7 @@ import type {
 import { DEFAULT_SYNC_CONFIG } from './types';
 import { transformToAPIFormat, transformFromAPIFormat } from './dataTransformers';
 import { resolveConflict } from './conflictResolver';
-import { getTelegramUserId, isTelegramEnvironment } from '../telegramUserUtils';
+import { getTelegramUserId } from '../telegramUserUtils';
 import { loadUserStats } from '../../services/userStatsService';
 import { loadUserAchievements } from '../../services/achievementStorage';
 import { PointsManager } from '../PointsManager';
@@ -24,6 +24,7 @@ import { loadTestResults } from '../psychologicalTestStorage';
 import { DailyCheckinManager } from '../DailyCheckinManager';
 import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
+import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
 
 /**
  * Supabase Sync Service Class
@@ -49,6 +50,7 @@ export class SupabaseSyncService {
     this.initializeSupabase();
     this.setupOnlineListeners();
     this.loadOfflineQueue();
+    this.setupLocalStorageInterceptor();
   }
 
   /**
@@ -134,11 +136,161 @@ export class SupabaseSyncService {
   }
 
   /**
-   * Perform sync operation
+   * Create mock initData for local development
+   */
+  private createMockInitData(): string {
+    const mockUserId = 111;
+    const authDate = Math.floor(Date.now() / 1000);
+    const mockUser = JSON.stringify({ id: mockUserId, first_name: 'Local', username: 'local_dev' });
+    return `user=${encodeURIComponent(mockUser)}&auth_date=${authDate}`;
+  }
+
+  /**
+   * Get initData from Telegram WebApp or create mock for local development
+   */
+  private getInitData(): string {
+    const initData = window.Telegram?.WebApp?.initData;
+    if (!initData) {
+      // Local development: create mock initData with user ID 111
+      const mockInitData = this.createMockInitData();
+      console.log('[SyncService] Using mock initData for local development (user ID 111)');
+      return mockInitData;
+    }
+    return initData;
+  }
+
+  /**
+   * Perform incremental sync operation for a specific data type
    */
   private async performSync(type: SyncDataType, data: any): Promise<void> {
-    // TODO: Implement actual sync logic in Phase 2
-    console.log(`[SyncService] Syncing ${type}`, data);
+    if (!this.supabase || !this.syncStatus.isOnline) {
+      // Queue for later if offline
+      if (this.config.enableOfflineQueue) {
+        this.offlineQueue.push({
+          type,
+          data,
+          timestamp: new Date(),
+          retryCount: 0,
+        });
+        this.saveOfflineQueue();
+      }
+      return;
+    }
+
+    try {
+      // Get data for this specific type
+      const localData = this.getAllLocalStorageData();
+      const typeData = localData[type];
+
+      if (!typeData) {
+        return; // No data to sync
+      }
+
+      // Sync to Supabase using incremental sync (PATCH)
+      await this.syncIncremental(type, typeData);
+      
+      // Update sync status
+      this.syncStatus.lastSync = new Date();
+      this.syncStatus.syncInProgress = false;
+    } catch (error) {
+      console.error(`[SyncService] Error syncing ${type}:`, error);
+      
+      // Add to offline queue if retryable
+      if (this.config.enableOfflineQueue) {
+        this.offlineQueue.push({
+          type,
+          data,
+          timestamp: new Date(),
+          retryCount: 0,
+        });
+        this.saveOfflineQueue();
+      }
+
+      // Track error
+      this.syncStatus.errors.push({
+        type,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date(),
+        retryable: true,
+      });
+    }
+  }
+
+  /**
+   * Setup localStorage interceptor for real-time sync
+   */
+  private setupLocalStorageInterceptor(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const interceptor = initializeLocalStorageInterceptor();
+      
+      // Register change handler
+      interceptor.onKeyChange((key: string, syncType: SyncDataType | null, _value: string | null) => {
+        if (syncType) {
+          // Get current data for this type
+          const localData = this.getAllLocalStorageData();
+          const typeData = localData[syncType];
+          
+          if (typeData) {
+            // Queue sync operation (will be debounced)
+            this.queueSync(syncType, typeData);
+          }
+        }
+      });
+    } catch (error) {
+      console.warn('[SyncService] Failed to setup localStorage interceptor:', error);
+    }
+  }
+
+  /**
+   * Perform incremental sync for a specific data type
+   */
+  private async syncIncremental(type: SyncDataType, data: any): Promise<void> {
+    if (!this.supabase) {
+      throw new Error('Supabase client not initialized');
+    }
+
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error('VITE_SUPABASE_URL not configured');
+      }
+
+      // Get initData from Telegram WebApp or create mock for local development
+      const initData = this.getInitData();
+      
+      // Get anon key for apikey header (required by Edge Functions)
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+      // Call Edge Function with PATCH method for incremental sync
+      const response = await fetch(`${supabaseUrl}/functions/v1/sync-user-data`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Init-Data': initData,
+          'apikey': anonKey,
+        },
+        body: JSON.stringify({
+          dataType: type,
+          data,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to sync ${type}: ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Sync failed');
+      }
+    } catch (error) {
+      console.error(`[SyncService] Error in incremental sync for ${type}:`, error);
+      throw error;
+    }
   }
 
   /**
@@ -149,8 +301,25 @@ export class SupabaseSyncService {
       return;
     }
 
-    // TODO: Process queued items
-    console.log(`[SyncService] Processing ${this.offlineQueue.length} queued items`);
+    // Process queued items with retry logic
+    const itemsToProcess = [...this.offlineQueue];
+    this.offlineQueue = [];
+
+    for (const item of itemsToProcess) {
+      try {
+        await this.performSync(item.type, item.data);
+      } catch {
+        // Re-queue if retries not exhausted
+        if (item.retryCount < this.config.maxRetries) {
+          this.offlineQueue.push({
+            ...item,
+            retryCount: item.retryCount + 1,
+          });
+        }
+      }
+    }
+
+    this.saveOfflineQueue();
   }
 
   /**
@@ -341,11 +510,11 @@ export class SupabaseSyncService {
         throw new Error('VITE_SUPABASE_URL not configured');
       }
 
-      // Get initData from Telegram WebApp
-      const initData = window.Telegram?.WebApp?.initData;
-      if (!initData) {
-        throw new Error('Telegram initData not available');
-      }
+      // Get initData from Telegram WebApp or create mock for local development
+      const initData = this.getInitData();
+      
+      // Get anon key for apikey header (required by Edge Functions)
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
       // Call Edge Function
       const response = await fetch(`${supabaseUrl}/functions/v1/get-user-data`, {
@@ -353,6 +522,7 @@ export class SupabaseSyncService {
         headers: {
           'Content-Type': 'application/json',
           'X-Telegram-Init-Data': initData,
+          'apikey': anonKey,
         },
       });
 
@@ -389,11 +559,11 @@ export class SupabaseSyncService {
         throw new Error('VITE_SUPABASE_URL not configured');
       }
 
-      // Get initData from Telegram WebApp
-      const initData = window.Telegram?.WebApp?.initData;
-      if (!initData) {
-        throw new Error('Telegram initData not available');
-      }
+      // Get initData from Telegram WebApp or create mock for local development
+      const initData = this.getInitData();
+      
+      // Get anon key for apikey header (required by Edge Functions)
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
       // Call Edge Function
       const response = await fetch(`${supabaseUrl}/functions/v1/sync-user-data`, {
@@ -401,6 +571,7 @@ export class SupabaseSyncService {
         headers: {
           'Content-Type': 'application/json',
           'X-Telegram-Init-Data': initData,
+          'apikey': anonKey,
         },
         body: JSON.stringify({ data }),
       });
@@ -429,7 +600,12 @@ export class SupabaseSyncService {
    * Merge remote data with local data and save to localStorage
    */
   private mergeAndSave(remoteData: UserDataFromAPI): void {
-    const localData = this.getAllLocalStorageData();
+    // Disable interceptor notifications during merge to avoid infinite loops
+    const interceptor = getLocalStorageInterceptor();
+    interceptor.setSilentMode(true);
+
+    try {
+      const localData = this.getAllLocalStorageData();
 
     // Merge each data type
     if (remoteData.surveyResults) {
@@ -516,6 +692,10 @@ export class SupabaseSyncService {
       const merged = resolveConflict('hasShownFirstAchievement', localData.hasShownFirstAchievement, remoteData.hasShownFirstAchievement);
       localStorage.setItem('has-shown-first-achievement', String(merged));
     }
+    } finally {
+      // Re-enable interceptor notifications
+      interceptor.setSilentMode(false);
+    }
   }
 
   /**
@@ -533,17 +713,8 @@ export class SupabaseSyncService {
       };
     }
 
-    // Check if we're in Telegram environment
-    if (!isTelegramEnvironment()) {
-      console.warn('[SyncService] Not in Telegram environment, skipping sync');
-      return {
-        success: false,
-        syncedTypes: [],
-        errors: [{ type: 'surveyResults', error: 'Not in Telegram environment' }],
-      };
-    }
-
     // Check if Supabase is configured
+    // Note: In local development, getTelegramUserId() returns "111" automatically
     if (!this.supabase) {
       console.warn('[SyncService] Supabase not configured, skipping sync');
       return {

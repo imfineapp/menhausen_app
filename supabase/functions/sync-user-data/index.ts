@@ -304,11 +304,12 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders });
   }
 
-  if (req.method !== 'POST') {
+  // Support both POST (full sync) and PATCH (incremental sync)
+  if (req.method !== 'POST' && req.method !== 'PATCH') {
     return new Response(
       JSON.stringify({
         success: false,
-        error: 'Method not allowed',
+        error: 'Method not allowed. Use POST for full sync or PATCH for incremental sync',
         code: 'INVALID_REQUEST',
       } as SyncUserDataResponse),
       {
@@ -357,6 +358,123 @@ serve(async (req) => {
 
     // Parse request body
     const requestData = await req.json();
+    
+    // Handle PATCH (incremental sync) vs POST (full sync)
+    if (req.method === 'PATCH') {
+      // PATCH request: sync single data type
+      if (!requestData || !requestData.dataType || requestData.data === undefined) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Invalid request body - missing dataType or data field for PATCH',
+            code: 'INVALID_REQUEST',
+          } as SyncUserDataResponse),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      // Initialize Supabase client
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+      
+      if (!supabaseUrl || !supabaseServiceKey) {
+        throw new Error('Supabase configuration missing');
+      }
+
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+      // Ensure user exists
+      const now = new Date().toISOString();
+      await supabase
+        .from('users')
+        .upsert({
+          telegram_user_id: telegramUserId,
+          updated_at: now,
+          last_sync_at: now,
+        }, {
+          onConflict: 'telegram_user_id',
+        });
+
+      // Sync single data type
+      const dataType = requestData.dataType as string;
+      const syncedTypes: string[] = [];
+      const data = { [dataType]: requestData.data };
+
+      // Use existing sync functions
+      if (dataType === 'surveyResults' && data.surveyResults) {
+        await syncSurveyResults(supabase, telegramUserId, data.surveyResults);
+        await updateSyncMetadata(supabase, telegramUserId, 'surveyResults');
+        syncedTypes.push('surveyResults');
+      } else if (dataType === 'dailyCheckins' && data.dailyCheckins) {
+        await syncDailyCheckins(supabase, telegramUserId, data.dailyCheckins);
+        await updateSyncMetadata(supabase, telegramUserId, 'dailyCheckins');
+        syncedTypes.push('dailyCheckins');
+      } else if (dataType === 'userStats' && data.userStats) {
+        await syncUserStats(supabase, telegramUserId, data.userStats);
+        await updateSyncMetadata(supabase, telegramUserId, 'userStats');
+        syncedTypes.push('userStats');
+      } else if (dataType === 'achievements' && data.achievements) {
+        await syncAchievements(supabase, telegramUserId, data.achievements);
+        await updateSyncMetadata(supabase, telegramUserId, 'achievements');
+        syncedTypes.push('achievements');
+      } else if (dataType === 'points' && data.points) {
+        await syncPoints(supabase, telegramUserId, data.points);
+        await updateSyncMetadata(supabase, telegramUserId, 'points');
+        syncedTypes.push('points');
+      } else if (dataType === 'preferences' && data.preferences) {
+        await syncPreferences(supabase, telegramUserId, data.preferences);
+        await updateSyncMetadata(supabase, telegramUserId, 'preferences');
+        syncedTypes.push('preferences');
+      } else if (dataType === 'flowProgress' && data.flowProgress) {
+        await syncFlowProgress(supabase, telegramUserId, data.flowProgress);
+        await updateSyncMetadata(supabase, telegramUserId, 'flowProgress');
+        syncedTypes.push('flowProgress');
+      } else if (dataType === 'psychologicalTest' && data.psychologicalTest) {
+        await syncPsychologicalTest(supabase, telegramUserId, data.psychologicalTest);
+        await updateSyncMetadata(supabase, telegramUserId, 'psychologicalTest');
+        syncedTypes.push('psychologicalTest');
+      } else if (dataType === 'cardProgress' && data.cardProgress) {
+        await syncCardProgress(supabase, telegramUserId, data.cardProgress);
+        await updateSyncMetadata(supabase, telegramUserId, 'cardProgress');
+        syncedTypes.push('cardProgress');
+      } else if (dataType === 'referralData' && data.referralData) {
+        await syncReferralData(supabase, telegramUserId, data.referralData);
+        await updateSyncMetadata(supabase, telegramUserId, 'referralData');
+        syncedTypes.push('referralData');
+      } else {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: `Unknown or unsupported dataType: ${dataType}`,
+            code: 'INVALID_REQUEST',
+          } as SyncUserDataResponse),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          syncedTypes,
+          metadata: {
+            lastSyncAt: now,
+            syncVersion: 1,
+          },
+        } as SyncUserDataResponse),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // POST request: full sync (existing logic)
     if (!requestData || !requestData.data) {
       return new Response(
         JSON.stringify({
