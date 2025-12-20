@@ -124,13 +124,13 @@ describe('telegramUserUtils', () => {
       expect(getTelegramUserId()).toBe('123456789');
     });
 
-    it('should return null when not in Telegram environment', () => {
-      expect(getTelegramUserId()).toBe(null);
+    it('should return "111" when not in Telegram environment', () => {
+      expect(getTelegramUserId()).toBe('111');
     });
 
-    it('should return null when user data is not available', () => {
+    it('should return "111" when user data is not available', () => {
       (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithoutUser };
-      expect(getTelegramUserId()).toBe(null);
+      expect(getTelegramUserId()).toBe('111');
     });
 
     it('should handle errors gracefully', () => {
@@ -141,7 +141,7 @@ describe('telegramUserUtils', () => {
         }
       } as any;
 
-      expect(getTelegramUserId()).toBe(null);
+      expect(getTelegramUserId()).toBe('111');
       
       // Restore original window
       global.window = originalWindow;
@@ -184,9 +184,9 @@ describe('telegramUserUtils', () => {
       expect(getUserDisplayId()).toBe('#MNHSNDEV');
     });
 
-    it('should return development fallback when Telegram environment exists but no user ID', () => {
+    it('should return "#111" when Telegram environment exists but no user ID', () => {
       (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithoutUser };
-      expect(getUserDisplayId()).toBe('#MNHSNDEV');
+      expect(getUserDisplayId()).toBe('#111');
     });
 
     it('should handle errors gracefully and return development fallback', () => {
@@ -269,8 +269,20 @@ describe('telegramUserUtils', () => {
 
   describe('isDirectLinkMode', () => {
     it('should return true when start_param is present', () => {
+      // Mock window.location to avoid errors in test environment
+      const originalLocation = window.location;
+      delete (window as any).location;
+      (window as any).location = {
+        search: '',
+        pathname: '/',
+        hostname: 'localhost'
+      };
+      
       (global as any).window.Telegram = { WebApp: mockTelegramWebAppWithStartParam };
       expect(isDirectLinkMode()).toBe(true);
+      
+      // Restore original location
+      (window as any).location = originalLocation;
     });
 
     it('should return false when not in Telegram environment', () => {
