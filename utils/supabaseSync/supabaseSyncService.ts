@@ -281,8 +281,9 @@ export class SupabaseSyncService {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'X-Telegram-Init-Data': initData,
+          'Authorization': `Bearer ${anonKey}`,
           'apikey': anonKey,
+          'X-Telegram-Init-Data': initData,
         },
         body,
       });
@@ -552,8 +553,9 @@ export class SupabaseSyncService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'X-Telegram-Init-Data': initData,
+          'Authorization': `Bearer ${anonKey}`,
           'apikey': anonKey,
+          'X-Telegram-Init-Data': initData,
         },
       });
 
@@ -633,8 +635,9 @@ export class SupabaseSyncService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Telegram-Init-Data': initData,
+          'Authorization': `Bearer ${anonKey}`,
           'apikey': anonKey,
+          'X-Telegram-Init-Data': initData,
         },
         body,
       });
