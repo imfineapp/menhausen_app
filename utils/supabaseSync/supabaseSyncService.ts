@@ -265,28 +265,45 @@ export class SupabaseSyncService {
       // Get anon key for apikey header (required by Edge Functions)
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+      console.log(`[SyncService] syncIncremental - Syncing ${type}`);
+      console.log(`[SyncService] syncIncremental - Data preview:`, typeof data === 'object' ? JSON.stringify(data).substring(0, 200) : data);
+
+      const url = `${supabaseUrl}/functions/v1/sync-user-data`;
+      const body = JSON.stringify({
+        dataType: type,
+        data,
+      });
+      console.log(`[SyncService] syncIncremental - URL:`, url);
+      console.log(`[SyncService] syncIncremental - Body size:`, body.length, 'bytes');
+
       // Call Edge Function with PATCH method for incremental sync
-      const response = await fetch(`${supabaseUrl}/functions/v1/sync-user-data`, {
+      const response = await fetch(url, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'X-Telegram-Init-Data': initData,
           'apikey': anonKey,
         },
-        body: JSON.stringify({
-          dataType: type,
-          data,
-        }),
+        body,
       });
 
+      console.log(`[SyncService] syncIncremental - Response status:`, response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`Failed to sync ${type}: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`[SyncService] syncIncremental - Error response:`, errorText);
+        throw new Error(`Failed to sync ${type}: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log(`[SyncService] syncIncremental - Response success:`, result.success);
+      
       if (!result.success) {
+        console.error(`[SyncService] syncIncremental - Sync failed:`, result.error);
         throw new Error(result.error || 'Sync failed');
       }
+      
+      console.log(`[SyncService] syncIncremental - Successfully synced ${type}`);
     } catch (error) {
       console.error(`[SyncService] Error in incremental sync for ${type}:`, error);
       throw error;
@@ -333,6 +350,7 @@ export class SupabaseSyncService {
    * Get all localStorage data in API format
    */
   private getAllLocalStorageData(): any {
+    console.log('[SyncService] getAllLocalStorageData - Starting data collection');
     const data: any = {};
 
     // Survey results
@@ -493,6 +511,13 @@ export class SupabaseSyncService {
       console.warn('Error loading has-shown-first-achievement:', e);
     }
 
+    console.log('[SyncService] getAllLocalStorageData - Collected data keys:', Object.keys(data));
+    console.log('[SyncService] getAllLocalStorageData - Data summary:', Object.keys(data).reduce((acc, key) => {
+      const value = data[key];
+      acc[key] = value ? (typeof value === 'object' ? 'present' : typeof value) : 'null';
+      return acc;
+    }, {} as Record<string, string>));
+
     return data;
   }
 
@@ -512,12 +537,18 @@ export class SupabaseSyncService {
 
       // Get initData from Telegram WebApp or create mock for local development
       const initData = this.getInitData();
+      console.log('[SyncService] fetchFromSupabase - User ID:', _telegramUserId);
+      console.log('[SyncService] fetchFromSupabase - InitData length:', initData?.length || 0);
       
       // Get anon key for apikey header (required by Edge Functions)
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+      console.log('[SyncService] fetchFromSupabase - Anon key present:', !!anonKey);
+
+      const url = `${supabaseUrl}/functions/v1/get-user-data`;
+      console.log('[SyncService] fetchFromSupabase - Calling URL:', url);
 
       // Call Edge Function
-      const response = await fetch(`${supabaseUrl}/functions/v1/get-user-data`, {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -526,14 +557,22 @@ export class SupabaseSyncService {
         },
       });
 
+      console.log('[SyncService] fetchFromSupabase - Response status:', response.status, response.statusText);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[SyncService] fetchFromSupabase - Error response:', errorText);
         if (response.status === 404) {
+          console.log('[SyncService] fetchFromSupabase - User not found (404)');
           return null; // User doesn't exist
         }
-        throw new Error(`Failed to fetch user data: ${response.status}`);
+        throw new Error(`Failed to fetch user data: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('[SyncService] fetchFromSupabase - Response success:', result.success);
+      console.log('[SyncService] fetchFromSupabase - Response data keys:', result.data ? Object.keys(result.data) : 'no data');
+      
       if (result.success && result.data) {
         return result.data;
       }
@@ -565,22 +604,55 @@ export class SupabaseSyncService {
       // Get anon key for apikey header (required by Edge Functions)
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+      console.log('[SyncService] syncToSupabase - Starting full sync');
+      console.log('[SyncService] syncToSupabase - Data keys:', Object.keys(data));
+      const dataSummary = Object.keys(data).reduce((acc, key) => {
+        const value = data[key];
+        if (value === null || value === undefined) {
+          acc[key] = 'null/undefined';
+        } else if (typeof value === 'object') {
+          if (Array.isArray(value)) {
+            acc[key] = `Array[${value.length}]`;
+          } else {
+            acc[key] = `Object[${Object.keys(value).length} keys]`;
+          }
+        } else {
+          acc[key] = typeof value;
+        }
+        return acc;
+      }, {} as Record<string, string>);
+      console.log('[SyncService] syncToSupabase - Data summary:', dataSummary);
+
+      const url = `${supabaseUrl}/functions/v1/sync-user-data`;
+      const body = JSON.stringify({ data });
+      console.log('[SyncService] syncToSupabase - URL:', url);
+      console.log('[SyncService] syncToSupabase - Body size:', body.length, 'bytes');
+
       // Call Edge Function
-      const response = await fetch(`${supabaseUrl}/functions/v1/sync-user-data`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-Telegram-Init-Data': initData,
           'apikey': anonKey,
         },
-        body: JSON.stringify({ data }),
+        body,
       });
 
+      console.log('[SyncService] syncToSupabase - Response status:', response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error(`Failed to sync user data: ${response.status}`);
+        const errorText = await response.text();
+        console.error('[SyncService] syncToSupabase - Error response:', errorText);
+        throw new Error(`Failed to sync user data: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
+      console.log('[SyncService] syncToSupabase - Response success:', result.success);
+      console.log('[SyncService] syncToSupabase - Synced types:', result.syncedTypes);
+      if (result.errors && result.errors.length > 0) {
+        console.error('[SyncService] syncToSupabase - Errors:', result.errors);
+      }
       if (result.success) {
         return {
           success: true,
@@ -744,21 +816,30 @@ export class SupabaseSyncService {
       };
     }
 
+    console.log('[SyncService] Starting initial sync for user ID:', telegramUserId);
+    console.log('[SyncService] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+
     this.syncInProgress = true;
     this.syncStatus.syncInProgress = true;
 
     try {
       // Check if user exists in Supabase
+      console.log('[SyncService] Checking if user exists in Supabase...');
       const remoteData = await this.fetchFromSupabase(telegramUserId);
+      console.log('[SyncService] Remote data check result:', remoteData ? 'User exists' : 'New user');
 
       if (remoteData) {
         // Existing user: merge remote with local
         console.log('[SyncService] Existing user detected, merging data');
+        console.log('[SyncService] Remote data keys:', Object.keys(remoteData));
         this.mergeAndSave(remoteData);
 
         // Upload merged local data to ensure consistency
         const localData = this.getAllLocalStorageData();
+        console.log('[SyncService] Local data keys after merge:', Object.keys(localData));
+        console.log('[SyncService] Uploading merged data to Supabase...');
         const uploadResult = await this.syncToSupabase(localData);
+        console.log('[SyncService] Upload result:', uploadResult);
 
         this.syncStatus.lastSync = new Date();
         this.syncStatus.syncInProgress = false;
@@ -769,10 +850,17 @@ export class SupabaseSyncService {
         // New user: upload all local data
         console.log('[SyncService] New user detected, uploading local data');
         const localData = this.getAllLocalStorageData();
+        console.log('[SyncService] Local data keys:', Object.keys(localData));
+        console.log('[SyncService] Local data summary:', Object.keys(localData).reduce((acc, key) => {
+          acc[key] = localData[key] ? (typeof localData[key] === 'object' ? Object.keys(localData[key]).length + ' items' : 'present') : 'null';
+          return acc;
+        }, {} as Record<string, string>));
 
         // Only upload if there's data to upload
         if (Object.keys(localData).length > 0) {
+          console.log('[SyncService] Uploading local data to Supabase...');
           const uploadResult = await this.syncToSupabase(localData);
+          console.log('[SyncService] Upload result:', uploadResult);
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
