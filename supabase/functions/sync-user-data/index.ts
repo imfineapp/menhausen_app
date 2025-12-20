@@ -10,6 +10,7 @@ import { validateTelegramAuth, getTelegramBotToken } from '../_shared/telegram-a
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
 };
 
