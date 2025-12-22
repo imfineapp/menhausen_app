@@ -98,9 +98,6 @@ function mergeDailyCheckins(local: any, remote: any): any {
   });
 
   console.log('[mergeDailyCheckins] Final merged keys:', Object.keys(merged));
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'conflictResolver.ts:89',message:'mergeDailyCheckins result',data:{localKeys:local?Object.keys(local):null,remoteKeys:remote?Object.keys(remote):null,mergedKeys:Object.keys(merged),localCount:local?Object.keys(local).length:0,remoteCount:remote?Object.keys(remote).length:0,mergedCount:Object.keys(merged).length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
-  // #endregion
   return merged;
 }
 
