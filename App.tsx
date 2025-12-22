@@ -368,22 +368,60 @@ function AppContent() {
   const [isInitialSyncComplete, setIsInitialSyncComplete] = useState(false);
 
   useEffect(() => {
-    // Initial sync with Supabase - MUST complete before showing initial screen
+    // Show app immediately based on local data, sync in background
+    const initialProgress = loadProgress();
+    const hasLocalData = initialProgress.onboardingCompleted || hasTestBeenCompleted() || 
+                         localStorage.getItem('survey-results') !== null;
+    
+    // Determine initial screen from local data immediately
+    let initialScreen: AppScreen;
+    if (!initialProgress.onboardingCompleted) {
+      initialScreen = 'onboarding1';
+    } else if (!initialProgress.surveyCompleted) {
+      initialScreen = 'survey01';
+    } else if (!hasTestBeenCompleted()) {
+      initialScreen = 'psychological-test-preambula';
+    } else {
+      const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+      if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+        initialScreen = 'checkin';
+      } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+        initialScreen = 'home';
+      } else {
+        initialScreen = 'checkin';
+      }
+    }
+    
+    console.log('[App] Initial screen from local data:', initialScreen, 'hasLocalData:', hasLocalData);
+    setCurrentScreen(initialScreen);
+    setNavigationHistory([initialScreen]);
+    
+    // If no local data, show loading until sync completes (new user on new device)
+    // If local data exists, show app immediately and sync in background
+    if (!hasLocalData) {
+      console.log('[App] No local data found, waiting for sync...');
+      // Will show loading screen until sync completes
+    } else {
+      // Show app immediately, sync in background
+      setIsInitialSyncComplete(true);
+    }
+
+    // Start sync in background (non-blocking)
     const performInitialSync = async () => {
+      const syncStartTime = Date.now();
       try {
-        console.log('[App] Starting initial sync before determining initial screen...');
+        console.log('[App] Starting background sync...');
         const { getSyncService } = await import('./utils/supabaseSync');
         const syncService = getSyncService();
         const result = await syncService.initialSync();
-        console.log('[App] Initial sync completed:', result.success);
+        const syncDuration = Date.now() - syncStartTime;
+        console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
         
         // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
         const updatedProgress = loadProgress();
-        console.log('[App] Progress after sync:', updatedProgress);
         setFlow(updatedProgress);
         
         // Recalculate initial screen after sync completes
-        // Inline logic to avoid dependency on getInitialScreen function
         const p = updatedProgress;
         let correctScreen: AppScreen;
         
@@ -400,48 +438,26 @@ function AppContent() {
           } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
             correctScreen = 'home';
           } else {
-            console.warn('Daily check-in status error, defaulting to check-in screen');
             correctScreen = 'checkin';
           }
         }
         
-        console.log('[App] Correct initial screen after sync:', correctScreen);
-        setCurrentScreen(correctScreen);
-        setNavigationHistory([correctScreen]);
+        // Only switch screen if it's different (to avoid flickering)
+        if (correctScreen !== initialScreen) {
+          console.log(`[App] Screen changed after sync: ${initialScreen} -> ${correctScreen}`);
+          setCurrentScreen(correctScreen);
+          setNavigationHistory([correctScreen]);
+        }
         
         setIsInitialSyncComplete(true);
       } catch (error) {
-        // Even on error, mark as complete to show app (with potentially wrong screen)
-        console.warn('[App] Initial sync failed, continuing with local data:', error);
-        // Recalculate screen based on current local data (may be empty for new users)
-        const p = loadProgress();
-        let fallbackScreen: AppScreen;
-        
-        if (!p.onboardingCompleted) {
-          fallbackScreen = 'onboarding1';
-        } else if (!p.surveyCompleted) {
-          fallbackScreen = 'survey01';
-        } else if (!hasTestBeenCompleted()) {
-          fallbackScreen = 'psychological-test-preambula';
-        } else {
-          const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
-          if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
-            fallbackScreen = 'checkin';
-          } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
-            fallbackScreen = 'home';
-          } else {
-            fallbackScreen = 'checkin';
-          }
-        }
-        
-        console.log('[App] Fallback initial screen after sync error:', fallbackScreen);
-        setCurrentScreen(fallbackScreen);
-        setNavigationHistory([fallbackScreen]);
+        const syncDuration = Date.now() - syncStartTime;
+        console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
         setIsInitialSyncComplete(true);
       }
     };
 
-    // Start sync immediately (no delay)
+    // Start sync immediately in background
     performInitialSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
