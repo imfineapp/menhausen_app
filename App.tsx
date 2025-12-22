@@ -363,17 +363,14 @@ function AppContent() {
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
-  // INITIAL SYNC WITH SUPABASE (должен вызываться ДО определения начального экрана)
+  // INITIAL SYNC WITH SUPABASE (runs in background, app shows immediately)
   // =====================================================================================
-  const [isInitialSyncComplete, setIsInitialSyncComplete] = useState(false);
 
   useEffect(() => {
-    // Show app immediately based on local data, sync in background
+    // Show app IMMEDIATELY based on local data (never wait for sync)
     const initialProgress = loadProgress();
-    const hasLocalData = initialProgress.onboardingCompleted || hasTestBeenCompleted() || 
-                         localStorage.getItem('survey-results') !== null;
     
-    // Determine initial screen from local data immediately
+    // Determine initial screen from local data immediately (always show app right away)
     let initialScreen: AppScreen;
     if (!initialProgress.onboardingCompleted) {
       initialScreen = 'onboarding1';
@@ -392,25 +389,15 @@ function AppContent() {
       }
     }
     
-    console.log('[App] Initial screen from local data:', initialScreen, 'hasLocalData:', hasLocalData);
+    console.log('[App] Showing app immediately with screen:', initialScreen);
     setCurrentScreen(initialScreen);
     setNavigationHistory([initialScreen]);
-    
-    // If no local data, show loading until sync completes (new user on new device)
-    // If local data exists, show app immediately and sync in background
-    if (!hasLocalData) {
-      console.log('[App] No local data found, waiting for sync...');
-      // Will show loading screen until sync completes
-    } else {
-      // Show app immediately, sync in background
-      setIsInitialSyncComplete(true);
-    }
 
-    // Start sync in background (non-blocking)
+    // Start sync in background (completely non-blocking)
     const performInitialSync = async () => {
       const syncStartTime = Date.now();
       try {
-        console.log('[App] Starting background sync...');
+        console.log('[App] Starting background sync (non-blocking)...');
         const { getSyncService } = await import('./utils/supabaseSync');
         const syncService = getSyncService();
         const result = await syncService.initialSync();
@@ -448,16 +435,14 @@ function AppContent() {
           setCurrentScreen(correctScreen);
           setNavigationHistory([correctScreen]);
         }
-        
-        setIsInitialSyncComplete(true);
       } catch (error) {
         const syncDuration = Date.now() - syncStartTime;
         console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
-        setIsInitialSyncComplete(true);
+        // Don't change screen on error - user is already using the app
       }
     };
 
-    // Start sync immediately in background
+    // Start sync immediately in background (non-blocking)
     performInitialSync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
@@ -2881,19 +2866,6 @@ function AppContent() {
         return wrapScreen(<OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />);
     }
   };
-
-  // Show loading state while initial sync is in progress
-  // This ensures we show the correct screen based on synced data
-  if (!isInitialSyncComplete) {
-    return (
-      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-white text-lg mb-4">Loading...</div>
-          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
