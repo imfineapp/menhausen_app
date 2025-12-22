@@ -264,8 +264,31 @@ export class DailyCheckinManager {
           const data = localStorage.getItem(key);
           if (data) {
             try {
-              const checkinData = JSON.parse(data) as CheckinData;
-              checkins.push(checkinData);
+              const checkinData = JSON.parse(data) as Partial<CheckinData>;
+              
+              // Extract date from key if not present in data
+              // Key format: "daily_checkin_YYYY-MM-DD"
+              if (!checkinData.date && key) {
+                const dateKey = key.replace(this.STORAGE_KEY_PREFIX, '');
+                // Validate date format (YYYY-MM-DD)
+                if (/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+                  checkinData.date = dateKey;
+                }
+              }
+              
+              // Ensure all required fields are present
+              if (checkinData.date) {
+                const fullCheckinData: CheckinData = {
+                  id: checkinData.id || `checkin_${checkinData.date}_${Date.now()}`,
+                  date: checkinData.date,
+                  timestamp: checkinData.timestamp || Date.now(),
+                  mood: checkinData.mood || '',
+                  value: checkinData.value || 0,
+                  color: checkinData.color || '',
+                  completed: checkinData.completed !== undefined ? checkinData.completed : true,
+                };
+                checkins.push(fullCheckinData);
+              }
             } catch (parseError) {
               console.warn('Error parsing check-in data:', parseError);
             }
