@@ -324,7 +324,12 @@ function transformHasShownFirstAchievement(data: any): boolean {
  * Transform daily checkins from API format to localStorage format
  */
 function transformDailyCheckinsFromAPI(data: any): Record<string, any> {
+  console.log('[transformDailyCheckinsFromAPI] Input data:', data);
+  console.log('[transformDailyCheckinsFromAPI] Input data type:', typeof data);
+  console.log('[transformDailyCheckinsFromAPI] Input data keys:', data ? Object.keys(data) : 'null/undefined');
+  
   if (!data || typeof data !== 'object') {
+    console.warn('[transformDailyCheckinsFromAPI] Invalid input data, returning empty object');
     return {};
   }
 
@@ -346,9 +351,20 @@ function transformDailyCheckinsFromAPI(data: any): Record<string, any> {
     }
 
     const localStorageKey = `daily_checkin_${dateKey}`;
+    console.log('[transformDailyCheckinsFromAPI] Transforming:', dateKey, '->', localStorageKey);
     result[localStorageKey] = data[dateKey];
   });
 
+  console.log('[transformDailyCheckinsFromAPI] Result keys:', Object.keys(result));
+  // #region agent log
+  const inputKeys = data ? Object.keys(data) : [];
+  const outputKeys = Object.keys(result);
+  const inputSample = data ? inputKeys.slice(0, 3).reduce((acc: Record<string, any>, k: string) => {
+    acc[k] = data[k];
+    return acc;
+  }, {}) : null;
+  fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'dataTransformers.ts:365',message:'transformDailyCheckinsFromAPI result',data:{inputKeys,outputKeys,inputSample},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+  // #endregion
   return result;
 }
 

@@ -55,10 +55,21 @@ export function resolveConflict(
  * Merge daily checkins (by date_key)
  */
 function mergeDailyCheckins(local: any, remote: any): any {
-  if (!local) return remote;
-  if (!remote) return local;
+  console.log('[mergeDailyCheckins] Starting merge');
+  console.log('[mergeDailyCheckins] local:', local ? Object.keys(local) : 'null/undefined');
+  console.log('[mergeDailyCheckins] remote:', remote ? Object.keys(remote) : 'null/undefined');
+  
+  if (!local) {
+    console.log('[mergeDailyCheckins] No local data, returning remote');
+    return remote;
+  }
+  if (!remote) {
+    console.log('[mergeDailyCheckins] No remote data, returning local');
+    return local;
+  }
 
   const merged = { ...local };
+  console.log('[mergeDailyCheckins] Initial merged keys:', Object.keys(merged));
 
   // Merge by date_key
   Object.keys(remote).forEach(dateKey => {
@@ -74,11 +85,22 @@ function mergeDailyCheckins(local: any, remote: any): any {
       return;
     }
 
+    console.log('[mergeDailyCheckins] Processing dateKey:', dateKey);
+    console.log('[mergeDailyCheckins] - merged[dateKey] exists:', !!merged[dateKey]);
+    console.log('[mergeDailyCheckins] - remote[dateKey]:', remote[dateKey]);
+    
     if (!merged[dateKey] || new Date(remote[dateKey].date || dateKey) > new Date(local[dateKey]?.date || dateKey)) {
+      console.log('[mergeDailyCheckins] - Merging remote data for', dateKey);
       merged[dateKey] = remote[dateKey];
+    } else {
+      console.log('[mergeDailyCheckins] - Keeping local data for', dateKey);
     }
   });
 
+  console.log('[mergeDailyCheckins] Final merged keys:', Object.keys(merged));
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'conflictResolver.ts:89',message:'mergeDailyCheckins result',data:{localKeys:local?Object.keys(local):null,remoteKeys:remote?Object.keys(remote):null,mergedKeys:Object.keys(merged),localCount:local?Object.keys(local).length:0,remoteCount:remote?Object.keys(remote).length:0,mergedCount:Object.keys(merged).length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
+  // #endregion
   return merged;
 }
 

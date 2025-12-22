@@ -593,6 +593,26 @@ export class SupabaseSyncService {
       console.log('[SyncService] fetchFromSupabase - Response success:', result.success);
       console.log('[SyncService] fetchFromSupabase - Response data keys:', result.data ? Object.keys(result.data) : 'no data');
       
+      // Debug: Check dailyCheckins data
+      if (result.data && result.data.dailyCheckins) {
+        const checkinsCount = Object.keys(result.data.dailyCheckins).length;
+        const checkinsDates = Object.keys(result.data.dailyCheckins);
+        const checkinsSample = checkinsDates.slice(0, 3).reduce((acc: Record<string, any>, date: string) => {
+          acc[date] = result.data.dailyCheckins[date];
+          return acc;
+        }, {});
+        console.log('[SyncService] fetchFromSupabase - dailyCheckins found:', checkinsCount, 'checkins');
+        console.log('[SyncService] fetchFromSupabase - dailyCheckins dates:', checkinsDates);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:598',message:'dailyCheckins received from API',data:{count:checkinsCount,dates:checkinsDates,sample:checkinsSample},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+      } else {
+        console.log('[SyncService] fetchFromSupabase - No dailyCheckins in response data');
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:607',message:'No dailyCheckins in API response',data:{hasData:!!result.data,dataKeys:result.data?Object.keys(result.data):[]},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+      }
+      
       if (result.success && result.data) {
         return result.data;
       }
@@ -708,11 +728,39 @@ export class SupabaseSyncService {
     }
 
     if (remoteData.dailyCheckins) {
-      const merged = resolveConflict('dailyCheckins', localData.dailyCheckins, remoteData.dailyCheckins);
+      console.log('[SyncService] mergeAndSave - Processing dailyCheckins');
+      const remoteCheckins = remoteData.dailyCheckins;
+      const remoteDates = Object.keys(remoteCheckins);
+      console.log('[SyncService] mergeAndSave - remoteData.dailyCheckins dates:', remoteDates);
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:723',message:'mergeAndSave dailyCheckins start',data:{remoteDates,remoteCount:remoteDates.length,localDates:localData.dailyCheckins?Object.keys(localData.dailyCheckins):null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      
+      const merged = resolveConflict('dailyCheckins', localData.dailyCheckins, remoteCheckins);
+      const mergedDates = Object.keys(merged);
+      console.log('[SyncService] mergeAndSave - merged dailyCheckins dates:', mergedDates);
+      
       const localFormat = transformFromAPIFormat('dailyCheckins', merged);
-      Object.keys(localFormat).forEach(key => {
+      const localFormatKeys = Object.keys(localFormat);
+      console.log('[SyncService] mergeAndSave - localFormat keys (localStorage):', localFormatKeys);
+      console.log('[SyncService] mergeAndSave - Saving', localFormatKeys.length, 'checkins to localStorage');
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:738',message:'mergeAndSave dailyCheckins before save',data:{mergedDates,mergedCount:mergedDates.length,localFormatKeys,savingCount:localFormatKeys.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      
+      localFormatKeys.forEach(key => {
+        console.log('[SyncService] mergeAndSave - Saving checkin key:', key);
         localStorage.setItem(key, JSON.stringify(localFormat[key]));
       });
+      console.log('[SyncService] mergeAndSave - dailyCheckins saved successfully');
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:745',message:'mergeAndSave dailyCheckins saved',data:{savedKeys:localFormatKeys},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
+    } else {
+      console.log('[SyncService] mergeAndSave - No remoteData.dailyCheckins');
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/72c0ac2e-1b66-47f4-8353-2f9d5ed05c5e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'supabaseSyncService.ts:749',message:'mergeAndSave no dailyCheckins',data:{hasRemoteData:!!remoteData,remoteDataKeys:remoteData?Object.keys(remoteData):[]},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+      // #endregion
     }
 
     if (remoteData.userStats) {
