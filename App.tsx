@@ -2630,8 +2630,6 @@ function AppContent() {
             onBack={handleBackToSurvey} 
           />
         );
-      case 'loading':
-        return <LoadingScreen />;
       case 'checkin':
         return wrapScreen(<CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />);
       case 'home':

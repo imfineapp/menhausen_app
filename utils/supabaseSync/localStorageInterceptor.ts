@@ -14,7 +14,7 @@ const KEY_TO_SYNC_TYPE: Record<string, SyncDataType> = {
   'survey-results': 'surveyResults',
   'app-flow-progress': 'flowProgress',
   'has-shown-first-achievement': 'hasShownFirstAchievement',
-  'menhausen-language': 'language',
+  'menhausen-language': 'preferences', // Language is part of preferences
   'menhausen_user_stats': 'userStats',
   'menhausen_achievements': 'achievements',
   'menhausen_points_balance': 'points',

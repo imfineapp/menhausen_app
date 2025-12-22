@@ -436,11 +436,28 @@ export class SupabaseSyncService {
       console.warn('Error loading points:', e);
     }
 
-    // Preferences
+    // Preferences (include language)
     try {
+      let preferences: any = {};
+      
+      // Load existing preferences if available
       const preferencesRaw = localStorage.getItem('menhausen_user_preferences');
       if (preferencesRaw) {
-        const preferences = JSON.parse(preferencesRaw);
+        try {
+          preferences = JSON.parse(preferencesRaw);
+        } catch (e) {
+          console.warn('Error parsing preferences:', e);
+        }
+      }
+      
+      // Include language from localStorage if available
+      const language = localStorage.getItem('menhausen-language');
+      if (language && (language === 'en' || language === 'ru')) {
+        preferences.language = language;
+      }
+      
+      // Only include preferences if we have at least language
+      if (preferences.language || Object.keys(preferences).length > 0) {
         data.preferences = transformToAPIFormat('preferences', preferences);
       }
     } catch (e) {
@@ -508,16 +525,6 @@ export class SupabaseSyncService {
       }
     } catch (e) {
       console.warn('Error loading referral data:', e);
-    }
-
-    // Language
-    try {
-      const language = localStorage.getItem('menhausen-language');
-      if (language) {
-        data.language = transformToAPIFormat('language', language);
-      }
-    } catch (e) {
-      console.warn('Error loading language:', e);
     }
 
     // Has shown first achievement
@@ -597,10 +604,6 @@ export class SupabaseSyncService {
       if (result.data && result.data.dailyCheckins) {
         const checkinsCount = Object.keys(result.data.dailyCheckins).length;
         const checkinsDates = Object.keys(result.data.dailyCheckins);
-        const checkinsSample = checkinsDates.slice(0, 3).reduce((acc: Record<string, any>, date: string) => {
-          acc[date] = result.data.dailyCheckins[date];
-          return acc;
-        }, {});
         console.log('[SyncService] fetchFromSupabase - dailyCheckins found:', checkinsCount, 'checkins');
         console.log('[SyncService] fetchFromSupabase - dailyCheckins dates:', checkinsDates);
       } else {
@@ -767,7 +770,14 @@ export class SupabaseSyncService {
     if (remoteData.preferences) {
       const merged = resolveConflict('preferences', localData.preferences, remoteData.preferences);
       const localFormat = transformFromAPIFormat('preferences', merged);
+      
+      // Save preferences object
       localStorage.setItem('menhausen_user_preferences', JSON.stringify(localFormat));
+      
+      // Also save language separately for compatibility with existing code
+      if (localFormat.language) {
+        localStorage.setItem('menhausen-language', localFormat.language);
+      }
     }
 
     if (remoteData.flowProgress) {
