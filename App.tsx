@@ -367,83 +367,133 @@ function AppContent() {
   // =====================================================================================
 
   useEffect(() => {
-    // Show app IMMEDIATELY based on local data (never wait for sync)
     const initialProgress = loadProgress();
+    const hasLocalData = initialProgress.onboardingCompleted || hasTestBeenCompleted() || 
+                         localStorage.getItem('survey-results') !== null;
     
-    // Determine initial screen from local data immediately (always show app right away)
-    let initialScreen: AppScreen;
-    if (!initialProgress.onboardingCompleted) {
-      initialScreen = 'onboarding1';
-    } else if (!initialProgress.surveyCompleted) {
-      initialScreen = 'survey01';
-    } else if (!hasTestBeenCompleted()) {
-      initialScreen = 'psychological-test-preambula';
-    } else {
-      const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
-      if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
-        initialScreen = 'checkin';
-      } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
-        initialScreen = 'home';
-      } else {
-        initialScreen = 'checkin';
+    // If no local data, try fast sync of critical data first (max 200ms wait)
+    const performFastSync = async (): Promise<{ flowProgress?: any; psychologicalTest?: any } | null> => {
+      if (hasLocalData) {
+        return null; // Skip if we have local data
       }
-    }
-    
-    console.log('[App] Showing app immediately with screen:', initialScreen);
-    setCurrentScreen(initialScreen);
-    setNavigationHistory([initialScreen]);
 
-    // Start sync in background (completely non-blocking)
-    const performInitialSync = async () => {
-      const syncStartTime = Date.now();
       try {
-        console.log('[App] Starting background sync (non-blocking)...');
+        console.log('[App] No local data, attempting fast critical data sync...');
         const { getSyncService } = await import('./utils/supabaseSync');
         const syncService = getSyncService();
-        const result = await syncService.initialSync();
-        const syncDuration = Date.now() - syncStartTime;
-        console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
         
-        // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
-        const updatedProgress = loadProgress();
-        setFlow(updatedProgress);
+        // Race between fast sync and 200ms timeout
+        const fastSyncPromise = syncService.fastSyncCriticalData();
+        const timeoutPromise = new Promise<null>((resolve) => 
+          setTimeout(() => resolve(null), 200)
+        );
         
-        // Recalculate initial screen after sync completes
-        const p = updatedProgress;
-        let correctScreen: AppScreen;
+        const result = await Promise.race([fastSyncPromise, timeoutPromise]);
         
-        if (!p.onboardingCompleted) {
-          correctScreen = 'onboarding1';
-        } else if (!p.surveyCompleted) {
-          correctScreen = 'survey01';
-        } else if (!hasTestBeenCompleted()) {
-          correctScreen = 'psychological-test-preambula';
+        if (result) {
+          console.log('[App] Fast critical data sync succeeded');
+          // Update progress from localStorage (was updated by fastSyncCriticalData)
+          const updatedProgress = loadProgress();
+          setFlow(updatedProgress);
+          return result;
         } else {
-          const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
-          if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
-            correctScreen = 'checkin';
-          } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
-            correctScreen = 'home';
-          } else {
-            correctScreen = 'checkin';
-          }
-        }
-        
-        // Only switch screen if it's different (to avoid flickering)
-        if (correctScreen !== initialScreen) {
-          console.log(`[App] Screen changed after sync: ${initialScreen} -> ${correctScreen}`);
-          setCurrentScreen(correctScreen);
-          setNavigationHistory([correctScreen]);
+          console.log('[App] Fast critical data sync timeout (200ms), showing app anyway');
+          return null;
         }
       } catch (error) {
-        const syncDuration = Date.now() - syncStartTime;
-        console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
-        // Don't change screen on error - user is already using the app
+        console.warn('[App] Fast critical data sync failed:', error);
+        return null;
       }
     };
 
-    // Start sync immediately in background (non-blocking)
-    performInitialSync();
+    const determineInitialScreen = (progress: AppFlowProgress): AppScreen => {
+      if (!progress.onboardingCompleted) {
+        return 'onboarding1';
+      } else if (!progress.surveyCompleted) {
+        return 'survey01';
+      } else if (!hasTestBeenCompleted()) {
+        return 'psychological-test-preambula';
+      } else {
+        const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+        if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+          return 'checkin';
+        } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+          return 'home';
+        } else {
+          return 'checkin';
+        }
+      }
+    };
+
+    // Start fast sync if no local data, then show app
+    const initializeApp = async () => {
+      const fastSyncStartTime = Date.now();
+      const fastSyncResult = await performFastSync();
+      const fastSyncDuration = Date.now() - fastSyncStartTime;
+      
+      // Determine screen after fast sync (if any)
+      const progressAfterFastSync = loadProgress();
+      const initialScreen = determineInitialScreen(progressAfterFastSync);
+      
+      console.log(`[App] Showing app after ${fastSyncDuration}ms with screen:`, initialScreen);
+      setCurrentScreen(initialScreen);
+      setNavigationHistory([initialScreen]);
+
+        // Start full sync in background (completely non-blocking)
+        const performInitialSync = async () => {
+          const syncStartTime = Date.now();
+          try {
+            console.log('[App] Starting background sync (non-blocking)...');
+            const { getSyncService } = await import('./utils/supabaseSync');
+            const syncService = getSyncService();
+            const result = await syncService.initialSync();
+            const syncDuration = Date.now() - syncStartTime;
+            console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
+            
+            // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
+            const updatedProgress = loadProgress();
+            setFlow(updatedProgress);
+            
+            // Recalculate initial screen after sync completes
+            const p = updatedProgress;
+            let correctScreen: AppScreen;
+            
+            if (!p.onboardingCompleted) {
+              correctScreen = 'onboarding1';
+            } else if (!p.surveyCompleted) {
+              correctScreen = 'survey01';
+            } else if (!hasTestBeenCompleted()) {
+              correctScreen = 'psychological-test-preambula';
+            } else {
+              const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+              if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+                correctScreen = 'checkin';
+              } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+                correctScreen = 'home';
+              } else {
+                correctScreen = 'checkin';
+              }
+            }
+            
+            // Only switch screen if it's different (to avoid flickering)
+            if (correctScreen !== initialScreen) {
+              console.log(`[App] Screen changed after sync: ${initialScreen} -> ${correctScreen}`);
+              setCurrentScreen(correctScreen);
+              setNavigationHistory([correctScreen]);
+            }
+          } catch (error) {
+            const syncDuration = Date.now() - syncStartTime;
+            console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
+            // Don't change screen on error - user is already using the app
+          }
+        };
+        
+      // Start full sync immediately in background (non-blocking)
+      performInitialSync();
+    };
+
+    // Start initialization
+    initializeApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
 

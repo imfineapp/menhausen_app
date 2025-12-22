@@ -786,6 +786,99 @@ export class SupabaseSyncService {
   }
 
   /**
+   * Fast sync of critical data only (flowProgress + psychologicalTest)
+   * Used for initial screen determination when local data is missing
+   * Uses direct Supabase REST API calls for speed (bypasses Edge Function overhead)
+   */
+  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any } | null> {
+    const telegramUserIdStr = getTelegramUserId();
+    if (!telegramUserIdStr) {
+      return null;
+    }
+
+    const telegramUserId = parseInt(telegramUserIdStr, 10);
+    if (isNaN(telegramUserId)) {
+      return null;
+    }
+
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (!supabaseUrl || !anonKey) {
+        return null;
+      }
+
+      // Fetch only critical data in parallel using direct REST API (faster than Edge Function)
+      // Using RPC would be ideal but requires custom function, REST is simpler
+      const [flowProgressRes, psychologicalTestRes] = await Promise.all([
+        fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${anonKey}`,
+            'apikey': anonKey,
+            'Prefer': 'return=representation',
+          },
+        }),
+        fetch(`${supabaseUrl}/rest/v1/psychological_test_results?telegram_user_id=eq.${telegramUserId}&select=last_completed_at`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${anonKey}`,
+            'apikey': anonKey,
+            'Prefer': 'return=representation',
+          },
+        }),
+      ]);
+
+      const result: { flowProgress?: any; psychologicalTest?: any } = {};
+
+      if (flowProgressRes.ok) {
+        const flowData = await flowProgressRes.json();
+        if (flowData && flowData.length > 0) {
+          const fp = flowData[0];
+          result.flowProgress = {
+            onboardingCompleted: fp.onboarding_completed || false,
+            surveyCompleted: fp.survey_completed || false,
+            psychologicalTestCompleted: fp.psychological_test_completed || false,
+            pinEnabled: fp.pin_enabled || false,
+            pinCompleted: fp.pin_completed || false,
+            firstCheckinDone: fp.first_checkin_done || false,
+            firstRewardShown: fp.first_reward_shown || false,
+          };
+          // Save to localStorage immediately
+          localStorage.setItem('app-flow-progress', JSON.stringify(result.flowProgress));
+        }
+      }
+
+      if (psychologicalTestRes.ok) {
+        const testData = await psychologicalTestRes.json();
+        if (testData && testData.length > 0 && testData[0].last_completed_at) {
+          result.psychologicalTest = {
+            lastCompletedAt: testData[0].last_completed_at,
+          };
+          // Save minimal test data to indicate test was completed
+          const existingTest = localStorage.getItem('psychological-test-results');
+          if (!existingTest) {
+            localStorage.setItem('psychological-test-results', JSON.stringify({
+              lastCompletedAt: result.psychologicalTest.lastCompletedAt,
+              scores: {},
+              percentages: {},
+              history: [],
+            }));
+          }
+        }
+      }
+
+      return Object.keys(result).length > 0 ? result : null;
+    } catch (error) {
+      console.warn('[SyncService] Fast critical data sync failed:', error);
+      return null;
+    }
+  }
+
+  /**
    * Initial sync on app load
    * - If new user (no data in Supabase): upload all local data
    * - If existing user: fetch and merge with local data
