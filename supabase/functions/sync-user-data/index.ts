@@ -54,17 +54,14 @@ async function syncSurveyResults(supabase: any, telegramUserId: number, data: an
 
 /**
  * Sync daily checkins
+ * Uses upsert to preserve existing checkins that are not in the data object
+ * Only updates/inserts the checkins provided in the data parameter
  */
 async function syncDailyCheckins(supabase: any, telegramUserId: number, data: any): Promise<void> {
   if (!data || typeof data !== 'object') return;
 
-  // Delete existing checkins for this user
-  await supabase
-    .from('daily_checkins')
-    .delete()
-    .eq('telegram_user_id', telegramUserId);
-
-  // Insert all checkins
+  // Upsert checkins (update existing or insert new)
+  // This preserves checkins in the database that are not in the data object
   const checkins = Object.keys(data).map(dateKey => ({
     telegram_user_id: telegramUserId,
     date_key: dateKey,
@@ -75,10 +72,20 @@ async function syncDailyCheckins(supabase: any, telegramUserId: number, data: an
     completed: data[dateKey].completed !== undefined ? data[dateKey].completed : true,
   }));
 
+  console.log(`[syncDailyCheckins] Upserting ${checkins.length} checkins for user ${telegramUserId}`);
+
   if (checkins.length > 0) {
-    await supabase
+    const { error } = await supabase
       .from('daily_checkins')
-      .insert(checkins);
+      .upsert(checkins, {
+        onConflict: 'telegram_user_id,date_key',
+      });
+
+    if (error) {
+      console.error('[syncDailyCheckins] Error upserting checkins:', error);
+      throw error;
+    }
+    console.log(`[syncDailyCheckins] Successfully upserted ${checkins.length} checkins`);
   }
 }
 
