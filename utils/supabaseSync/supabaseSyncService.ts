@@ -368,7 +368,10 @@ export class SupabaseSyncService {
     // Daily checkins
     try {
       const checkins = DailyCheckinManager.getAllCheckins();
+      console.log('[SyncService] getAllLocalStorageData - Daily checkins count:', checkins.length);
       if (checkins.length > 0) {
+        // Transform array to API format: { "YYYY-MM-DD": { ...checkinData } }
+        // This is already in API format, no need for transformToAPIFormat
         const checkinsObj: Record<string, any> = {};
         checkins.forEach(checkin => {
           checkinsObj[checkin.date] = {
@@ -378,10 +381,13 @@ export class SupabaseSyncService {
             completed: checkin.completed,
           };
         });
-        data.dailyCheckins = transformToAPIFormat('dailyCheckins', checkinsObj);
+        console.log('[SyncService] getAllLocalStorageData - Daily checkins dates:', Object.keys(checkinsObj));
+        data.dailyCheckins = checkinsObj;
+      } else {
+        console.log('[SyncService] getAllLocalStorageData - No daily checkins found');
       }
     } catch (e) {
-      console.warn('Error loading checkins:', e);
+      console.warn('[SyncService] Error loading checkins:', e);
     }
 
     // User stats
