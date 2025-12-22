@@ -382,8 +382,29 @@ function AppContent() {
         console.log('[App] Progress after sync:', updatedProgress);
         setFlow(updatedProgress);
         
-        // Recalculate initial screen after sync completes (uses updated flow state)
-        const correctScreen = getInitialScreen();
+        // Recalculate initial screen after sync completes
+        // Inline logic to avoid dependency on getInitialScreen function
+        const p = updatedProgress;
+        let correctScreen: AppScreen;
+        
+        if (!p.onboardingCompleted) {
+          correctScreen = 'onboarding1';
+        } else if (!p.surveyCompleted) {
+          correctScreen = 'survey01';
+        } else if (!hasTestBeenCompleted()) {
+          correctScreen = 'psychological-test-preambula';
+        } else {
+          const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+          if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+            correctScreen = 'checkin';
+          } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+            correctScreen = 'home';
+          } else {
+            console.warn('Daily check-in status error, defaulting to check-in screen');
+            correctScreen = 'checkin';
+          }
+        }
+        
         console.log('[App] Correct initial screen after sync:', correctScreen);
         setCurrentScreen(correctScreen);
         setNavigationHistory([correctScreen]);
@@ -393,7 +414,26 @@ function AppContent() {
         // Even on error, mark as complete to show app (with potentially wrong screen)
         console.warn('[App] Initial sync failed, continuing with local data:', error);
         // Recalculate screen based on current local data (may be empty for new users)
-        const fallbackScreen = getInitialScreen();
+        const p = loadProgress();
+        let fallbackScreen: AppScreen;
+        
+        if (!p.onboardingCompleted) {
+          fallbackScreen = 'onboarding1';
+        } else if (!p.surveyCompleted) {
+          fallbackScreen = 'survey01';
+        } else if (!hasTestBeenCompleted()) {
+          fallbackScreen = 'psychological-test-preambula';
+        } else {
+          const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+          if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+            fallbackScreen = 'checkin';
+          } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+            fallbackScreen = 'home';
+          } else {
+            fallbackScreen = 'checkin';
+          }
+        }
+        
         console.log('[App] Fallback initial screen after sync error:', fallbackScreen);
         setCurrentScreen(fallbackScreen);
         setNavigationHistory([fallbackScreen]);
@@ -403,6 +443,7 @@ function AppContent() {
 
     // Start sync immediately (no delay)
     performInitialSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
@@ -476,7 +517,9 @@ function AppContent() {
   };
   
   // Smart Navigation: Dynamic screen determination based on user state
-  const getInitialScreen = (): AppScreen => {
+  // Note: Logic is inlined in useEffect to avoid dependency issues
+  // This helper function is kept for reference but not used
+  const _getInitialScreen = (): AppScreen => {
     // Primary: flow-driven initial screen
     const p = loadProgress();
     console.log('[App] getInitialScreen - Progress:', p);
