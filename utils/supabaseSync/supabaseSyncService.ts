@@ -731,13 +731,19 @@ export class SupabaseSyncService {
     if (remoteData.flowProgress) {
       const merged = resolveConflict('flowProgress', localData.flowProgress, remoteData.flowProgress);
       const localFormat = transformFromAPIFormat('flowProgress', merged);
+      console.log('[SyncService] mergeAndSave - Updating app-flow-progress:', localFormat);
       localStorage.setItem('app-flow-progress', JSON.stringify(localFormat));
+    } else {
+      console.log('[SyncService] mergeAndSave - No remote flowProgress data');
     }
 
     if (remoteData.psychologicalTest) {
       const merged = resolveConflict('psychologicalTest', localData.psychologicalTest, remoteData.psychologicalTest);
       const localFormat = transformFromAPIFormat('psychologicalTest', merged);
+      console.log('[SyncService] mergeAndSave - Updating psychological-test-results, hasResults:', !!localFormat);
       localStorage.setItem('psychological-test-results', JSON.stringify(localFormat));
+    } else {
+      console.log('[SyncService] mergeAndSave - No remote psychologicalTest data');
     }
 
     if (remoteData.cardProgress) {

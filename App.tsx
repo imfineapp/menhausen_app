@@ -363,29 +363,46 @@ function AppContent() {
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
-  // INITIAL SYNC WITH SUPABASE (должен вызываться после инициализации Telegram WebApp)
+  // INITIAL SYNC WITH SUPABASE (должен вызываться ДО определения начального экрана)
   // =====================================================================================
+  const [isInitialSyncComplete, setIsInitialSyncComplete] = useState(false);
+
   useEffect(() => {
-    // Initial sync with Supabase (non-blocking)
+    // Initial sync with Supabase - MUST complete before showing initial screen
     const performInitialSync = async () => {
       try {
+        console.log('[App] Starting initial sync before determining initial screen...');
         const { getSyncService } = await import('./utils/supabaseSync');
         const syncService = getSyncService();
-        await syncService.initialSync();
+        const result = await syncService.initialSync();
+        console.log('[App] Initial sync completed:', result.success);
+        
+        // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
+        const updatedProgress = loadProgress();
+        console.log('[App] Progress after sync:', updatedProgress);
+        setFlow(updatedProgress);
+        
+        // Recalculate initial screen after sync completes (uses updated flow state)
+        const correctScreen = getInitialScreen();
+        console.log('[App] Correct initial screen after sync:', correctScreen);
+        setCurrentScreen(correctScreen);
+        setNavigationHistory([correctScreen]);
+        
+        setIsInitialSyncComplete(true);
       } catch (error) {
-        // Silently fail - sync should not block app initialization
-        console.warn('Initial sync failed (non-blocking):', error);
+        // Even on error, mark as complete to show app (with potentially wrong screen)
+        console.warn('[App] Initial sync failed, continuing with local data:', error);
+        // Recalculate screen based on current local data (may be empty for new users)
+        const fallbackScreen = getInitialScreen();
+        console.log('[App] Fallback initial screen after sync error:', fallbackScreen);
+        setCurrentScreen(fallbackScreen);
+        setNavigationHistory([fallbackScreen]);
+        setIsInitialSyncComplete(true);
       }
     };
 
-    // Delay sync to not block app initialization
-    const syncTimeout = setTimeout(() => {
-      performInitialSync();
-    }, 1000); // 1 second delay
-
-    return () => {
-      clearTimeout(syncTimeout);
-    };
+    // Start sync immediately (no delay)
+    performInitialSync();
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
@@ -462,6 +479,8 @@ function AppContent() {
   const getInitialScreen = (): AppScreen => {
     // Primary: flow-driven initial screen
     const p = loadProgress();
+    console.log('[App] getInitialScreen - Progress:', p);
+    console.log('[App] getInitialScreen - hasTestBeenCompleted:', hasTestBeenCompleted());
 
     if (!p.onboardingCompleted) {
       return 'onboarding1';
@@ -493,8 +512,11 @@ function AppContent() {
     }
   };
 
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([getInitialScreen()]);
+  // Initialize with a default screen - will be updated after sync completes
+  // For new users without data, this will show onboarding which is correct
+  // For users with data, sync will update this to the correct screen
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding1');
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['onboarding1']);
   const [isNavigatingForward, setIsNavigatingForward] = useState(true);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
@@ -2800,6 +2822,19 @@ function AppContent() {
         return wrapScreen(<OnboardingScreen01 onNext={handleNextScreen} onShowPrivacy={handleShowPrivacy} onShowTerms={handleShowTerms} />);
     }
   };
+
+  // Show loading state while initial sync is in progress
+  // This ensures we show the correct screen based on synced data
+  if (!isInitialSyncComplete) {
+    return (
+      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-white text-lg mb-4">Loading...</div>
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
