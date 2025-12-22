@@ -56,7 +56,7 @@ import { GroundingAnchorScreen } from './components/mental-techniques/GroundingA
 
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
-import { LanguageProvider } from './components/LanguageContext';
+import { LanguageProvider, useLanguage } from './components/LanguageContext';
 import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
@@ -298,6 +298,8 @@ function FinalCardMessageScreenWithLoader({
  * Теперь использует централизованную систему управления контентом и расширенную систему опроса
  */
 function AppContent() {
+  // Get language context to update language after sync
+  const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage();
 
   // =====================================================================================
   // TELEGRAM WEBAPP INITIALIZATION (Direct-Link Full Screen Support)
@@ -421,6 +423,20 @@ function AppContent() {
         
         if (result) {
           console.log('[App] Critical data loaded successfully');
+          
+          // Update language if it was loaded from Supabase and is different from current
+          try {
+            const savedLanguage = localStorage.getItem('menhausen-language');
+            if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+              // Check if language changed (compare with current language from context)
+              if (savedLanguage !== currentLanguageFromContext) {
+                console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
+                updateLanguage(savedLanguage as 'en' | 'ru');
+              }
+            }
+          } catch (error) {
+            console.warn('[App] Error updating language after fast sync:', error);
+          }
         } else {
           console.log('[App] No critical data found in Supabase (new user)');
         }
@@ -444,6 +460,20 @@ function AppContent() {
         // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
         const updatedProgress = loadProgress();
         setFlow(updatedProgress);
+        
+        // Update language if it was loaded from Supabase and is different from current
+        try {
+          const savedLanguage = localStorage.getItem('menhausen-language');
+          if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+            // Check if language changed (compare with current language from context)
+            if (savedLanguage !== currentLanguageFromContext) {
+              console.log(`[App] Language changed after sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
+              updateLanguage(savedLanguage as 'en' | 'ru');
+            }
+          }
+        } catch (error) {
+          console.warn('[App] Error updating language after sync:', error);
+        }
         
         // Recalculate screen after sync completes (in case data changed)
         const currentProgress = loadProgress();
