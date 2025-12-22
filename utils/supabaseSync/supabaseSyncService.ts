@@ -828,11 +828,11 @@ export class SupabaseSyncService {
   }
 
   /**
-   * Fast sync of critical data only (flowProgress + psychologicalTest)
+   * Fast sync of critical data only (flowProgress + psychologicalTest + today's checkin)
    * Used for initial screen determination when local data is missing
    * Uses direct Supabase REST API calls for speed (bypasses Edge Function overhead)
    */
-  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any } | null> {
+  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any } | null> {
     const telegramUserIdStr = getTelegramUserId();
     if (!telegramUserIdStr) {
       return null;
@@ -851,9 +851,12 @@ export class SupabaseSyncService {
         return null;
       }
 
+      // Get today's date key (YYYY-MM-DD format)
+      const todayDateKey = DailyCheckinManager.getCurrentDayKey();
+
       // Fetch only critical data in parallel using direct REST API (faster than Edge Function)
       // Using RPC would be ideal but requires custom function, REST is simpler
-      const [flowProgressRes, psychologicalTestRes] = await Promise.all([
+      const [flowProgressRes, psychologicalTestRes, todayCheckinRes] = await Promise.all([
         fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',
           headers: {
@@ -872,9 +875,18 @@ export class SupabaseSyncService {
             'Prefer': 'return=representation',
           },
         }),
+        fetch(`${supabaseUrl}/rest/v1/daily_checkins?telegram_user_id=eq.${telegramUserId}&date_key=eq.${todayDateKey}&select=*`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${anonKey}`,
+            'apikey': anonKey,
+            'Prefer': 'return=representation',
+          },
+        }),
       ]);
 
-      const result: { flowProgress?: any; psychologicalTest?: any } = {};
+      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any } = {};
 
       if (flowProgressRes.ok) {
         const flowData = await flowProgressRes.json();
@@ -910,6 +922,31 @@ export class SupabaseSyncService {
               history: [],
             }));
           }
+        }
+      }
+
+      if (todayCheckinRes.ok) {
+        const checkinData = await todayCheckinRes.json();
+        if (checkinData && checkinData.length > 0) {
+          const checkin = checkinData[0];
+          result.todayCheckin = {
+            mood: checkin.mood,
+            value: checkin.value,
+            color: checkin.color,
+            completed: checkin.completed !== undefined ? checkin.completed : true,
+          };
+          // Save today's checkin to localStorage immediately
+          const storageKey = DailyCheckinManager.getStorageKey(todayDateKey);
+          const fullCheckinData = {
+            id: `checkin_${todayDateKey}_${Date.now()}`,
+            date: todayDateKey,
+            timestamp: Date.now(),
+            mood: checkin.mood,
+            value: checkin.value,
+            color: checkin.color,
+            completed: checkin.completed !== undefined ? checkin.completed : true,
+          };
+          localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
         }
       }
 

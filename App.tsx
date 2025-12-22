@@ -41,6 +41,7 @@ import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт д�
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт страницы всех статей
 import { ArticleScreen } from './components/ArticleScreen'; // Импорт страницы статьи
+import { LoadingScreen } from './components/LoadingScreen'; // Импорт экрана загрузки
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
 
@@ -367,44 +368,9 @@ function AppContent() {
   // =====================================================================================
 
   useEffect(() => {
-    const initialProgress = loadProgress();
-    const hasLocalData = initialProgress.onboardingCompleted || hasTestBeenCompleted() || 
-                         localStorage.getItem('survey-results') !== null;
-    
-    // If no local data, try fast sync of critical data first (max 200ms wait)
-    const performFastSync = async (): Promise<{ flowProgress?: any; psychologicalTest?: any } | null> => {
-      if (hasLocalData) {
-        return null; // Skip if we have local data
-      }
-
-      try {
-        console.log('[App] No local data, attempting fast critical data sync...');
-        const { getSyncService } = await import('./utils/supabaseSync');
-        const syncService = getSyncService();
-        
-        // Race between fast sync and 200ms timeout
-        const fastSyncPromise = syncService.fastSyncCriticalData();
-        const timeoutPromise = new Promise<null>((resolve) => 
-          setTimeout(() => resolve(null), 200)
-        );
-        
-        const result = await Promise.race([fastSyncPromise, timeoutPromise]);
-        
-        if (result) {
-          console.log('[App] Fast critical data sync succeeded');
-          // Update progress from localStorage (was updated by fastSyncCriticalData)
-          const updatedProgress = loadProgress();
-          setFlow(updatedProgress);
-          return result;
-        } else {
-          console.log('[App] Fast critical data sync timeout (200ms), showing app anyway');
-          return null;
-        }
-      } catch (error) {
-        console.warn('[App] Fast critical data sync failed:', error);
-        return null;
-      }
-    };
+    // Start with loading screen
+    setCurrentScreen('loading');
+    setNavigationHistory(['loading']);
 
     const determineInitialScreen = (progress: AppFlowProgress): AppScreen => {
       if (!progress.onboardingCompleted) {
@@ -425,71 +391,102 @@ function AppContent() {
       }
     };
 
-    // Start fast sync if no local data, then show app
-    const initializeApp = async () => {
-      const fastSyncStartTime = Date.now();
-      const fastSyncResult = await performFastSync();
-      const fastSyncDuration = Date.now() - fastSyncStartTime;
+    // Check if we have critical data in localStorage
+    const checkLocalCriticalData = (): boolean => {
+      const progress = loadProgress();
+      const hasProgress = progress.onboardingCompleted || progress.surveyCompleted;
+      const hasTest = hasTestBeenCompleted();
+      const hasTodayCheckin = DailyCheckinManager.getCurrentDayStatus() !== DailyCheckinStatus.ERROR;
       
-      // Determine screen after fast sync (if any)
-      const progressAfterFastSync = loadProgress();
-      const initialScreen = determineInitialScreen(progressAfterFastSync);
-      
-      console.log(`[App] Showing app after ${fastSyncDuration}ms with screen:`, initialScreen);
-      setCurrentScreen(initialScreen);
-      setNavigationHistory([initialScreen]);
+      return hasProgress || hasTest || hasTodayCheckin;
+    };
 
-        // Start full sync in background (completely non-blocking)
-        const performInitialSync = async () => {
-          const syncStartTime = Date.now();
-          try {
-            console.log('[App] Starting background sync (non-blocking)...');
-            const { getSyncService } = await import('./utils/supabaseSync');
-            const syncService = getSyncService();
-            const result = await syncService.initialSync();
-            const syncDuration = Date.now() - syncStartTime;
-            console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
-            
-            // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
-            const updatedProgress = loadProgress();
-            setFlow(updatedProgress);
-            
-            // Recalculate initial screen after sync completes
-            const p = updatedProgress;
-            let correctScreen: AppScreen;
-            
-            if (!p.onboardingCompleted) {
-              correctScreen = 'onboarding1';
-            } else if (!p.surveyCompleted) {
-              correctScreen = 'survey01';
-            } else if (!hasTestBeenCompleted()) {
-              correctScreen = 'psychological-test-preambula';
-            } else {
-              const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
-              if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
-                correctScreen = 'checkin';
-              } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
-                correctScreen = 'home';
-              } else {
-                correctScreen = 'checkin';
-              }
-            }
-            
-            // Only switch screen if it's different (to avoid flickering)
-            if (correctScreen !== initialScreen) {
-              console.log(`[App] Screen changed after sync: ${initialScreen} -> ${correctScreen}`);
-              setCurrentScreen(correctScreen);
-              setNavigationHistory([correctScreen]);
-            }
-          } catch (error) {
-            const syncDuration = Date.now() - syncStartTime;
-            console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
-            // Don't change screen on error - user is already using the app
-          }
-        };
+    // Load critical data from Supabase if localStorage is empty
+    const loadCriticalData = async (): Promise<void> => {
+      try {
+        console.log('[App] Loading critical data from Supabase...');
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        const result = await syncService.fastSyncCriticalData();
         
-      // Start full sync immediately in background (non-blocking)
-      performInitialSync();
+        if (result) {
+          console.log('[App] Critical data loaded successfully');
+        } else {
+          console.log('[App] No critical data found in Supabase (new user)');
+        }
+      } catch (error) {
+        console.warn('[App] Failed to load critical data:', error);
+        // Continue anyway - will show onboarding for new users
+      }
+    };
+
+    // Load all remaining data in background (non-blocking)
+    const performBackgroundSync = async () => {
+      const syncStartTime = Date.now();
+      try {
+        console.log('[App] Starting background sync (non-blocking)...');
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        const result = await syncService.initialSync();
+        const syncDuration = Date.now() - syncStartTime;
+        console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
+        
+        // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
+        const updatedProgress = loadProgress();
+        setFlow(updatedProgress);
+        
+        // Recalculate screen after sync completes (in case data changed)
+        const currentProgress = loadProgress();
+        const correctScreen = determineInitialScreen(currentProgress);
+        
+        // Only switch screen if it's different (to avoid flickering)
+        if (correctScreen !== currentScreen) {
+          console.log(`[App] Screen changed after background sync: ${currentScreen} -> ${correctScreen}`);
+          setCurrentScreen(correctScreen);
+          setNavigationHistory([correctScreen]);
+        }
+      } catch (error) {
+        const syncDuration = Date.now() - syncStartTime;
+        console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
+        // Don't change screen on error - user is already using the app
+      }
+    };
+
+    // Main initialization flow
+    const initializeApp = async () => {
+      const initStartTime = Date.now();
+      
+      // Check if we have critical data locally
+      const hasLocalCriticalData = checkLocalCriticalData();
+      
+      if (hasLocalCriticalData) {
+        // We have local data, determine screen immediately
+        const progress = loadProgress();
+        const initialScreen = determineInitialScreen(progress);
+        const initDuration = Date.now() - initStartTime;
+        
+        console.log(`[App] Local critical data found, showing app after ${initDuration}ms with screen:`, initialScreen);
+        setCurrentScreen(initialScreen);
+        setNavigationHistory([initialScreen]);
+        
+        // Start background sync for remaining data
+        performBackgroundSync();
+      } else {
+        // No local data, load critical data from Supabase first
+        await loadCriticalData();
+        
+        // Determine screen after loading critical data
+        const progress = loadProgress();
+        const initialScreen = determineInitialScreen(progress);
+        const initDuration = Date.now() - initStartTime;
+        
+        console.log(`[App] Critical data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
+        setCurrentScreen(initialScreen);
+        setNavigationHistory([initialScreen]);
+        
+        // Start background sync for remaining data
+        performBackgroundSync();
+      }
     };
 
     // Start initialization
@@ -609,8 +606,8 @@ function AppContent() {
   // Initialize with a default screen - will be updated after sync completes
   // For new users without data, this will show onboarding which is correct
   // For users with data, sync will update this to the correct screen
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding1');
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['onboarding1']);
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('loading');
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['loading']);
   const [isNavigatingForward, setIsNavigatingForward] = useState(true);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
@@ -2270,6 +2267,8 @@ function AppContent() {
 
   const renderCurrentScreen = () => {
     switch (currentScreen) {
+      case 'loading':
+        return <LoadingScreen />;
       case 'onboarding1':
         return wrapScreen(
           <OnboardingScreen01 
@@ -2631,6 +2630,8 @@ function AppContent() {
             onBack={handleBackToSurvey} 
           />
         );
+      case 'loading':
+        return <LoadingScreen />;
       case 'checkin':
         return wrapScreen(<CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />);
       case 'home':
