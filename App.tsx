@@ -392,13 +392,23 @@ function AppContent() {
     };
 
     // Check if we have critical data in localStorage
+    // Critical data = onboarding completion OR survey completion OR psychological test completion
+    // We don't need to check checkin status here because it's not critical for initial screen determination
     const checkLocalCriticalData = (): boolean => {
       const progress = loadProgress();
       const hasProgress = progress.onboardingCompleted || progress.surveyCompleted;
       const hasTest = hasTestBeenCompleted();
-      const hasTodayCheckin = DailyCheckinManager.getCurrentDayStatus() !== DailyCheckinStatus.ERROR;
       
-      return hasProgress || hasTest || hasTodayCheckin;
+      const hasCriticalData = hasProgress || hasTest;
+      console.log('[App] checkLocalCriticalData:', {
+        hasProgress,
+        hasTest,
+        hasCriticalData,
+        onboardingCompleted: progress.onboardingCompleted,
+        surveyCompleted: progress.surveyCompleted,
+      });
+      
+      return hasCriticalData;
     };
 
     // Load critical data from Supabase if localStorage is empty
@@ -2268,7 +2278,7 @@ function AppContent() {
   const renderCurrentScreen = () => {
     switch (currentScreen) {
       case 'loading':
-        return <LoadingScreen />;
+        return wrapScreen(<LoadingScreen />);
       case 'onboarding1':
         return wrapScreen(
           <OnboardingScreen01 
