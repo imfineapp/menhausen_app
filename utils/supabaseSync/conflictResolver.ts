@@ -62,6 +62,18 @@ function mergeDailyCheckins(local: any, remote: any): any {
 
   // Merge by date_key
   Object.keys(remote).forEach(dateKey => {
+    // Skip invalid date keys to prevent "daily_checkin_undefined"
+    if (!dateKey || dateKey === 'undefined' || dateKey === 'null' || typeof dateKey !== 'string') {
+      console.warn('[mergeDailyCheckins] Skipping invalid dateKey:', dateKey);
+      return;
+    }
+    
+    // Validate dateKey format (should be YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+      console.warn('[mergeDailyCheckins] Skipping invalid dateKey format, expected YYYY-MM-DD, got:', dateKey);
+      return;
+    }
+
     if (!merged[dateKey] || new Date(remote[dateKey].date || dateKey) > new Date(local[dateKey]?.date || dateKey)) {
       merged[dateKey] = remote[dateKey];
     }

@@ -374,6 +374,18 @@ export class SupabaseSyncService {
         // This is already in API format, no need for transformToAPIFormat
         const checkinsObj: Record<string, any> = {};
         checkins.forEach(checkin => {
+          // Skip checkins without a valid date to prevent "daily_checkin_undefined"
+          if (!checkin.date || typeof checkin.date !== 'string') {
+            console.warn('[SyncService] getAllLocalStorageData - Skipping checkin with invalid date:', checkin);
+            return;
+          }
+          
+          // Validate date format (should be YYYY-MM-DD)
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(checkin.date)) {
+            console.warn('[SyncService] getAllLocalStorageData - Skipping checkin with invalid date format:', checkin.date);
+            return;
+          }
+          
           checkinsObj[checkin.date] = {
             mood: checkin.mood,
             value: checkin.value,

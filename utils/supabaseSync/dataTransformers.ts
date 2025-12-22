@@ -333,6 +333,18 @@ function transformDailyCheckinsFromAPI(data: any): Record<string, any> {
   const result: Record<string, any> = {};
 
   Object.keys(data).forEach(dateKey => {
+    // Skip undefined, null, or empty keys to prevent "daily_checkin_undefined"
+    if (!dateKey || dateKey === 'undefined' || dateKey === 'null') {
+      console.warn('[transformDailyCheckinsFromAPI] Skipping invalid dateKey:', dateKey);
+      return;
+    }
+    
+    // Validate dateKey format (should be YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+      console.warn('[transformDailyCheckinsFromAPI] Invalid dateKey format, expected YYYY-MM-DD, got:', dateKey);
+      return;
+    }
+
     const localStorageKey = `daily_checkin_${dateKey}`;
     result[localStorageKey] = data[dateKey];
   });
