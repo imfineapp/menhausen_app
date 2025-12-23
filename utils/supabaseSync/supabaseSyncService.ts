@@ -116,6 +116,12 @@ export class SupabaseSyncService {
    * Queue a sync operation
    */
   public queueSync(type: SyncDataType, data: any): void {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log(`[SyncService] Mocked: queueSync(${type}) - skipping sync (e2e test mode)`);
+      return;
+    }
+    
     if (!this.config.enableOfflineQueue) {
       return;
     }
@@ -163,6 +169,12 @@ export class SupabaseSyncService {
    * Perform incremental sync operation for a specific data type
    */
   private async performSync(type: SyncDataType, data: any): Promise<void> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log(`[SyncService] Mocked: performSync(${type}) - skipping sync (e2e test mode)`);
+      return;
+    }
+    
     if (!this.supabase || !this.syncStatus.isOnline) {
       // Queue for later if offline
       if (this.config.enableOfflineQueue) {
@@ -249,6 +261,12 @@ export class SupabaseSyncService {
    * Perform incremental sync for a specific data type
    */
   private async syncIncremental(type: SyncDataType, data: any): Promise<void> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log(`[SyncService] Mocked: syncIncremental(${type}) - skipping sync (e2e test mode)`);
+      return;
+    }
+    
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
     }
@@ -551,6 +569,12 @@ export class SupabaseSyncService {
    * Fetch user data from Supabase
    */
   private async fetchFromSupabase(_telegramUserId: number): Promise<UserDataFromAPI | null> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log('[SyncService] Mocked: fetchFromSupabase - returning null (e2e test mode)');
+      return null;
+    }
+    
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
     }
@@ -625,6 +649,16 @@ export class SupabaseSyncService {
    * Sync data to Supabase
    */
   private async syncToSupabase(data: any): Promise<SyncResult> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log('[SyncService] Mocked: syncToSupabase - returning success without syncing (e2e test mode)');
+      return {
+        success: true,
+        syncedTypes: [],
+        errors: [],
+      };
+    }
+    
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
     }
@@ -843,6 +877,12 @@ export class SupabaseSyncService {
    * Uses direct Supabase REST API calls for speed (bypasses Edge Function overhead)
    */
   public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any } | null> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log('[SyncService] Mocked: fastSyncCriticalData - returning null (e2e test mode)');
+      return null;
+    }
+    
     const telegramUserIdStr = getTelegramUserId();
     if (!telegramUserIdStr) {
       return null;
@@ -973,6 +1013,16 @@ export class SupabaseSyncService {
    * - If existing user: fetch and merge with local data
    */
   public async initialSync(): Promise<SyncResult> {
+    // Check if sync is mocked (e2e tests)
+    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
+      console.log('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
+      return {
+        success: true,
+        syncedTypes: [],
+        errors: [],
+      };
+    }
+    
     if (this.syncInProgress) {
       console.warn('[SyncService] Sync already in progress');
       return {
@@ -1105,11 +1155,51 @@ export class SupabaseSyncService {
 let syncServiceInstance: SupabaseSyncService | null = null;
 
 /**
+ * Check if we're in Playwright test environment with mocked sync
+ */
+function isMockedSyncEnabled(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return !!(window as any).__PLAYWRIGHT__ && !!(window as any).__MOCK_SUPABASE_SYNC__;
+}
+
+/**
  * Get or create sync service instance
  */
 export function getSyncService(): SupabaseSyncService {
   if (!syncServiceInstance) {
     syncServiceInstance = new SupabaseSyncService();
+    
+    // If we're in Playwright test mode with mocked sync, override methods to do nothing
+    if (isMockedSyncEnabled()) {
+      console.log('[SyncService] E2E test mode detected - Supabase sync is mocked');
+      
+      // Override fastSyncCriticalData to return null (no data from Supabase)
+      syncServiceInstance.fastSyncCriticalData = async () => {
+        console.log('[SyncService] Mocked: fastSyncCriticalData - returning null (e2e test mode)');
+        return null;
+      };
+      
+      // Override initialSync to return success without syncing
+      syncServiceInstance.initialSync = async () => {
+        console.log('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
+        return {
+          success: true,
+          syncedTypes: [],
+          errors: [],
+        };
+      };
+      
+      // Override queueSync to do nothing (prevent incremental syncs)
+      const originalQueueSync = (syncServiceInstance as any).queueSync;
+      if (originalQueueSync) {
+        (syncServiceInstance as any).queueSync = () => {
+          console.log('[SyncService] Mocked: queueSync - skipping sync (e2e test mode)');
+          // Do nothing - skip sync operations
+        };
+      }
+    }
   }
   return syncServiceInstance;
 }

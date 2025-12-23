@@ -29,6 +29,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации и обработку случая, когда чекин уже выполнен
     await waitForCheckinScreen(page);
 
     await completeCheckin(page);
@@ -73,6 +74,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
   });
 
@@ -81,6 +83,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
     await completeCheckin(page);
     await waitForHomeScreen(page);
@@ -90,8 +93,8 @@ test.describe('Daily Check-in Flow', () => {
     // After reload, check-in should be completed, so we should go directly to home
     // But we need to handle potential intermediate screens (check-in, reward)
     
-    // Wait a bit for app to initialize after reload
-    await page.waitForTimeout(1000);
+    // Даем больше времени для инициализации и синхронизации после перезагрузки
+    await page.waitForTimeout(3000);
     
     // Check what screen we're on and handle accordingly
     const isCheckinVisible = await isOnCheckinScreen(page).catch(() => false);
@@ -114,6 +117,8 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // Даем время для завершения начальной синхронизации перед проверкой экрана
+    await page.waitForTimeout(1500).catch(() => {});
     await waitForCheckinScreen(page);
     await completeCheckin(page);
     await waitForHomeScreen(page);

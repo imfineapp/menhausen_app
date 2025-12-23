@@ -28,7 +28,13 @@ test.describe('Basic App Functionality', () => {
 
   test('должен переключаться на страницу темы', async ({ page }) => {
     await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 5000 });
+    // Проверяем, что мы на home screen перед кликом
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
+    
     await page.locator('[data-name="Theme card narrow"]').first().click();
-    await expect(page.locator('[data-testid="home-ready"]')).not.toBeVisible({ timeout: 5000 });
+    
+    // После клика на карточку темы User frame info block должен исчезнуть
+    // (так как он есть только на home screen)
+    await expect(page.locator('[data-name="User frame info block"]')).not.toBeVisible({ timeout: 5000 });
   });
 });

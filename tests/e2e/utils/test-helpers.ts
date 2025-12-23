@@ -110,6 +110,7 @@ export async function primeAppForHome(page: Page): Promise<void> {
 export async function primeAppForCheckin(page: Page): Promise<void> {
   await page.addInitScript(() => {
     (window as any).__PLAYWRIGHT__ = true;
+    (window as any).__MOCK_SUPABASE_SYNC__ = true; // Enable Supabase sync mocking for this test
     const progress = {
       onboardingCompleted: true,
       surveyCompleted: true,
@@ -204,6 +205,7 @@ export async function seedCheckinHistory(
 ): Promise<void> {
   await page.addInitScript(({ history, options }) => {
     (window as any).__PLAYWRIGHT__ = true;
+    (window as any).__MOCK_SUPABASE_SYNC__ = true; // Enable Supabase sync mocking for this test
     localStorage.clear();
 
     const progress = {
@@ -301,6 +303,39 @@ export async function seedCheckinHistory(
       console.warn('Failed to seed check-in history:', error);
     }
   }, { history, options });
+  
+  // После загрузки страницы удаляем чекин на сегодня, если firstCheckinDone: false
+  // Это нужно на случай, если синхронизация с Supabase добавила данные после init script
+  if (options.firstCheckinDone === false) {
+    // Используем addInitScript для установки флага, который будет проверяться после загрузки
+    await page.addInitScript(() => {
+      (window as any).__PLAYWRIGHT_CLEAR_TODAY_CHECKIN__ = true;
+    });
+  }
+}
+
+/**
+ * Удаляет чекин на сегодня после синхронизации (для использования в тестах)
+ * Это нужно на случай, если синхронизация с Supabase добавила данные
+ */
+export async function clearTodayCheckinAfterSync(page: Page): Promise<void> {
+  // Даем время для завершения синхронизации
+  await page.waitForTimeout(5000).catch(() => {});
+  // Удаляем чекин на сегодня после синхронизации
+  await page.evaluate(() => {
+    const today = new Date().toISOString().split('T')[0];
+    localStorage.removeItem(`daily_checkin_${today}`);
+    const progressRaw = localStorage.getItem('app-flow-progress');
+    if (progressRaw) {
+      try {
+        const progress = JSON.parse(progressRaw);
+        progress.firstCheckinDone = false;
+        localStorage.setItem('app-flow-progress', JSON.stringify(progress));
+      } catch {
+        // Игнорируем ошибки
+      }
+    }
+  });
 }
 
 /**
@@ -413,9 +448,67 @@ export async function waitForHomeScreen(page: Page, timeout = 5000): Promise<voi
 
 /**
  * Ожидание экрана check-in (альтернатива waitForTimeout)
+ * Увеличен timeout для учета времени синхронизации с Supabase
  */
-export async function waitForCheckinScreen(page: Page, timeout = 5000): Promise<void> {
-  await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout });
+export async function waitForCheckinScreen(page: Page, timeout = 30000): Promise<void> {
+  const startTime = Date.now();
+  const maxWait = timeout;
+  
+  // Приложение может показывать loading во время синхронизации с Supabase
+  // Ждем исчезновения loading текста, если он есть
+  try {
+    const loadingLocator = page.locator('text=/Loading|Загрузка/i');
+    const isLoadingVisible = await loadingLocator.isVisible({ timeout: 2000 }).catch(() => false);
+    if (isLoadingVisible) {
+      // Ждем исчезновения loading (максимум 20 секунд)
+      await loadingLocator.waitFor({ state: 'hidden', timeout: 20000 }).catch(() => {});
+    }
+  } catch {
+    // Игнорируем ошибки при проверке loading
+  }
+  
+  // Даем время для завершения начальной синхронизации
+  await page.waitForTimeout(3000).catch(() => {});
+  
+  // Проверяем, не на check-in screen ли мы уже
+  let isCheckinVisible = await isOnCheckinScreen(page);
+  if (isCheckinVisible) {
+    return;
+  }
+  
+  // Ждем появления check-in экрана в цикле, проверяя также другие возможные экраны
+  while (Date.now() - startTime < maxWait) {
+    // Проверяем check-in screen
+    isCheckinVisible = await isOnCheckinScreen(page);
+    if (isCheckinVisible) {
+      return;
+    }
+    
+    // Проверяем, не на home screen ли мы (возможно чекин уже выполнен после синхронизации)
+    const isHome = await isOnHomeScreen(page);
+    if (isHome) {
+      // Если мы на home screen, возможно чекин был добавлен синхронизацией с Supabase
+      // Проверяем, есть ли чекин на сегодня в localStorage
+      const hasTodayCheckin = await page.evaluate(() => {
+        const today = new Date().toISOString().split('T')[0];
+        return localStorage.getItem(`daily_checkin_${today}`) !== null;
+      });
+      if (hasTodayCheckin) {
+        // Чекин уже выполнен - но синхронизация должна быть замоканной в тестах
+        // Если мы видим чекин, значит он был установлен тестом или остался от предыдущего запуска
+        // Это нормально - просто продолжаем ожидание, возможно приложение переключится на check-in screen
+        // после небольшой задержки, или мы уже на правильном экране
+        console.log('[waitForCheckinScreen] Check-in already completed, but continuing to wait for check-in screen');
+        // Не выбрасываем ошибку, продолжаем ожидание
+      }
+    }
+    
+    // Небольшая задержка перед следующей проверкой
+    await page.waitForTimeout(500).catch(() => {});
+  }
+  
+  // Если не удалось найти check-in screen, выбросим ошибку
+  await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout: 1000 });
 }
 
 /**
@@ -483,7 +576,7 @@ export async function completeCheckin(page: Page): Promise<void> {
       return; // Уже на home screen, ничего не делаем
     }
     // Если ни на check-in, ни на home, ждем check-in screen
-    await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout: 5000 });
+    await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout: 20000 });
   }
   
   if (page.isClosed()) {
@@ -491,7 +584,9 @@ export async function completeCheckin(page: Page): Promise<void> {
   }
   
   const sendButton = page.getByRole('button', { name: /Send|Отправить/i }).or(page.locator('text=/^(Send|Отправить)$/i'));
-  await expect(sendButton).toBeVisible({ timeout: 5000 });
+  await expect(sendButton).toBeVisible({ timeout: 10000 });
+  // Даем время для стабилизации элемента перед кликом
+  await page.waitForTimeout(200).catch(() => {});
   await sendButton.click();
 
   // Handle reward screen if it appears (after first check-in or achievement unlock)

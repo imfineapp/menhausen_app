@@ -13,10 +13,14 @@ async function globalSetup(_config: FullConfig) {
     // допустимо в dev среде, продолжим
   }
   
-  // Внедряем мок для ContentProvider
+  // Внедряем мок для ContentProvider и Supabase Sync
   await page.addInitScript(() => {
     // Устанавливаем флаг для определения E2E тестов
     (window as any).__PLAYWRIGHT__ = true;
+    
+    // Мокаем Supabase sync - переопределяем методы синхронизации, чтобы они ничего не делали
+    // Это предотвращает синхронизацию с Supabase во время e2e тестов
+    (window as any).__MOCK_SUPABASE_SYNC__ = true;
     
     // Мок для ContentProvider
     (window as any).__MOCK_CONTENT__ = {
