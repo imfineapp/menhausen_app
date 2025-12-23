@@ -124,7 +124,4 @@ export default defineConfig({
 
   /* Test output directories */
   outputDir: 'test-results/',
-  
-  /* Global setup and teardown */
-  globalSetup: './tests/e2e/global-setup.ts',
 });
