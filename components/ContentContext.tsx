@@ -81,10 +81,30 @@ export function ContentProvider({ children }: ContentProviderProps) {
   }, [setLanguageFromContext, loadContentForLanguage]);
 
   // Загружаем контент при изменении языка
+  // Optimization: Use ref to track loading state and loaded language to prevent duplicate loads
+  const isLoadingRef = React.useRef(false);
+  const loadedLanguageRef = React.useRef<SupportedLanguage | null>(null);
+  
   useEffect(() => {
+    // Prevent duplicate loads if content is already loading
+    if (isLoadingRef.current) {
+      console.log('ContentContext: Content already loading, skipping duplicate load for language:', currentLanguage);
+      return;
+    }
+    
+    // Check if content for this language is already loaded
+    if (loadedLanguageRef.current === currentLanguage && content) {
+      console.log('ContentContext: Content already loaded for language:', currentLanguage);
+      return;
+    }
+    
     console.log('ContentContext: useEffect triggered, language:', currentLanguage);
-    loadContentForLanguage(currentLanguage);
-  }, [currentLanguage, loadContentForLanguage]);
+    isLoadingRef.current = true;
+    loadContentForLanguage(currentLanguage).finally(() => {
+      isLoadingRef.current = false;
+      loadedLanguageRef.current = currentLanguage;
+    });
+  }, [currentLanguage, loadContentForLanguage, content]);
 
   /**
    * Получение локализованного текста для текущего языка

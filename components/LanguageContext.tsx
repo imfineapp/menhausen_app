@@ -1,6 +1,6 @@
 // Импортируем необходимые хуки React
-import { createContext, useContext, useState, ReactNode } from 'react';
-import { getInitialLanguage, saveLanguage } from '../utils/languageDetector';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { getInitialLanguage, saveLanguage, getSavedLanguage } from '../utils/languageDetector';
 
 // Типы для языков приложения
 export type Language = 'en' | 'ru';
@@ -38,11 +38,36 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
 
   /**
+   * Оптимизация: Синхронизируем язык с localStorage после монтирования
+   * Это позволяет учесть язык, загруженный из Supabase в fastSyncCriticalData
+   * до того, как ContentContext загрузит контент
+   */
+  useEffect(() => {
+    // Небольшая задержка для того, чтобы fastSyncCriticalData успел сохранить язык в localStorage
+    const checkLanguageTimeout = setTimeout(() => {
+      const savedLanguage = getSavedLanguage();
+      if (savedLanguage && savedLanguage !== language) {
+        console.log(`LanguageProvider: Language synchronized from localStorage: ${language} -> ${savedLanguage}`);
+        setLanguageState(savedLanguage);
+      }
+    }, 100); // 100ms достаточно для завершения fastSyncCriticalData в большинстве случаев
+
+    return () => clearTimeout(checkLanguageTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Выполняется только один раз при монтировании - language не нужен в зависимостях, чтобы избежать циклов
+
+  /**
    * Функция для изменения языка приложения
    * Сохраняет выбор в localStorage для постоянства
    * ContentContext будет автоматически обновлен через useEffect
    */
   const setLanguage = (lang: Language) => {
+    // Проверяем, действительно ли язык изменился, чтобы избежать лишних обновлений
+    if (lang === language) {
+      console.log('LanguageProvider: Language unchanged, skipping update:', lang);
+      return;
+    }
+    
     console.log('LanguageProvider: setLanguage called with:', lang);
     setLanguageState(lang);
     saveLanguage(lang);

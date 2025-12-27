@@ -425,6 +425,7 @@ function AppContent() {
           console.log('[App] Critical data loaded successfully');
           
           // Update language if preferences were loaded from Supabase
+          // Optimization: Only update if language actually changed to prevent unnecessary content reloading
           if (result.preferences && result.preferences.language) {
             try {
               const loadedLanguage = result.preferences.language;
@@ -434,7 +435,7 @@ function AppContent() {
                   console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${loadedLanguage}`);
                   updateLanguage(loadedLanguage as 'en' | 'ru');
                 } else {
-                  console.log(`[App] Language loaded from Supabase: ${loadedLanguage} (already set)`);
+                  console.log(`[App] Language loaded from Supabase: ${loadedLanguage} (already set, skipping update)`);
                 }
               }
             } catch (error) {
