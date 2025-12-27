@@ -424,18 +424,36 @@ function AppContent() {
         if (result) {
           console.log('[App] Critical data loaded successfully');
           
-          // Update language if it was loaded from Supabase and is different from current
-          try {
-            const savedLanguage = localStorage.getItem('menhausen-language');
-            if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
-              // Check if language changed (compare with current language from context)
-              if (savedLanguage !== currentLanguageFromContext) {
-                console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
-                updateLanguage(savedLanguage as 'en' | 'ru');
+          // Update language if preferences were loaded from Supabase
+          if (result.preferences && result.preferences.language) {
+            try {
+              const loadedLanguage = result.preferences.language;
+              if ((loadedLanguage === 'en' || loadedLanguage === 'ru')) {
+                // Check if language changed (compare with current language from context)
+                if (loadedLanguage !== currentLanguageFromContext) {
+                  console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${loadedLanguage}`);
+                  updateLanguage(loadedLanguage as 'en' | 'ru');
+                } else {
+                  console.log(`[App] Language loaded from Supabase: ${loadedLanguage} (already set)`);
+                }
               }
+            } catch (error) {
+              console.warn('[App] Error updating language after fast sync:', error);
             }
-          } catch (error) {
-            console.warn('[App] Error updating language after fast sync:', error);
+          } else {
+            // Fallback: try to get language from localStorage (if it was set during sync)
+            try {
+              const savedLanguage = localStorage.getItem('menhausen-language');
+              if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+                // Check if language changed (compare with current language from context)
+                if (savedLanguage !== currentLanguageFromContext) {
+                  console.log(`[App] Language changed after fast sync (from localStorage): ${currentLanguageFromContext} -> ${savedLanguage}`);
+                  updateLanguage(savedLanguage as 'en' | 'ru');
+                }
+              }
+            } catch (error) {
+              console.warn('[App] Error updating language after fast sync (fallback):', error);
+            }
           }
         } else {
           console.log('[App] No critical data found in Supabase (new user)');

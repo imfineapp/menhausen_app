@@ -876,7 +876,7 @@ export class SupabaseSyncService {
    * Used for initial screen determination when local data is missing
    * Uses direct Supabase REST API calls for speed (bypasses Edge Function overhead)
    */
-  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any } | null> {
+  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } | null> {
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
       console.log('[SyncService] Mocked: fastSyncCriticalData - returning null (e2e test mode)');
@@ -906,7 +906,8 @@ export class SupabaseSyncService {
 
       // Fetch only critical data in parallel using direct REST API (faster than Edge Function)
       // Using RPC would be ideal but requires custom function, REST is simpler
-      const [flowProgressRes, psychologicalTestRes, todayCheckinRes] = await Promise.all([
+      // Adding preferences to load language before UI renders
+      const [flowProgressRes, psychologicalTestRes, todayCheckinRes, preferencesRes] = await Promise.all([
         fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',
           headers: {
@@ -934,9 +935,18 @@ export class SupabaseSyncService {
             'Prefer': 'return=representation',
           },
         }),
+        fetch(`${supabaseUrl}/rest/v1/user_preferences?telegram_user_id=eq.${telegramUserId}&select=*`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${anonKey}`,
+            'apikey': anonKey,
+            'Prefer': 'return=representation',
+          },
+        }),
       ]);
 
-      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any } = {};
+      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } = {};
 
       if (flowProgressRes.ok) {
         const flowData = await flowProgressRes.json();
@@ -997,6 +1007,26 @@ export class SupabaseSyncService {
             completed: checkin.completed !== undefined ? checkin.completed : true,
           };
           localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
+        }
+      }
+
+      if (preferencesRes.ok) {
+        const preferencesData = await preferencesRes.json();
+        if (preferencesData && preferencesData.length > 0) {
+          const prefs = preferencesData[0];
+          result.preferences = {
+            language: prefs.language || 'en',
+            theme: prefs.theme || 'light',
+            notifications: prefs.notifications !== undefined ? prefs.notifications : true,
+            analytics: prefs.analytics !== undefined ? prefs.analytics : false,
+          };
+          // Save preferences to localStorage immediately
+          localStorage.setItem('menhausen_user_preferences', JSON.stringify(result.preferences));
+          
+          // Also save language separately for compatibility with existing code
+          if (result.preferences.language) {
+            localStorage.setItem('menhausen-language', result.preferences.language);
+          }
         }
       }
 
