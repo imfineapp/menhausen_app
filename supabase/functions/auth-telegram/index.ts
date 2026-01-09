@@ -25,7 +25,19 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
   'Access-Control-Max-Age': '86400', // 24 hours
+  'Access-Control-Allow-Credentials': 'false',
 };
+
+// Helper function to create CORS response
+function corsResponse(body: any, status: number = 200, additionalHeaders: Record<string, string> = {}) {
+  return new Response(body, {
+    status,
+    headers: {
+      ...corsHeaders,
+      ...additionalHeaders,
+    },
+  });
+}
 
 interface AuthTelegramResponse {
   success: boolean;
@@ -177,33 +189,35 @@ async function ensureUserExists(
 }
 
 serve(async (req) => {
+  const method = req.method;
+  const origin = req.headers.get('Origin') || '*';
+  
   console.log('[auth-telegram] Request received:', {
-    method: req.method,
+    method,
     url: req.url,
+    origin,
     hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
     hasAuth: !!req.headers.get('Authorization'),
   });
   
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    console.log('[auth-telegram] OPTIONS preflight handled, headers:', Object.keys(corsHeaders));
-    return new Response(null, { 
-      status: 200,
-      headers: corsHeaders 
+  // Handle CORS preflight - MUST be first
+  if (method === 'OPTIONS') {
+    console.log('[auth-telegram] OPTIONS preflight handled, origin:', origin);
+    return new Response('', {
+      status: 204,
+      headers: corsHeaders,
     });
   }
 
-  if (req.method !== 'POST') {
-    return new Response(
+  if (method !== 'POST') {
+    return corsResponse(
       JSON.stringify({
         success: false,
         error: 'Method not allowed. Use POST',
         code: 'INVALID_METHOD',
       } as AuthTelegramResponse),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      405,
+      { 'Content-Type': 'application/json' }
     );
   }
 
@@ -211,16 +225,14 @@ serve(async (req) => {
     // Get Telegram initData from header
     const initData = req.headers.get('X-Telegram-Init-Data');
     if (!initData) {
-      return new Response(
+      return corsResponse(
         JSON.stringify({
           success: false,
           error: 'Missing X-Telegram-Init-Data header',
           code: 'AUTH_FAILED',
         } as AuthTelegramResponse),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        401,
+        { 'Content-Type': 'application/json' }
       );
     }
 
@@ -229,16 +241,14 @@ serve(async (req) => {
     const authResult = await validateTelegramAuth(initData, botToken);
     
     if (!authResult.valid || !authResult.userId) {
-      return new Response(
+      return corsResponse(
         JSON.stringify({
           success: false,
           error: authResult.error || 'Authentication failed',
           code: 'AUTH_FAILED',
         } as AuthTelegramResponse),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        401,
+        { 'Content-Type': 'application/json' }
       );
     }
 
@@ -355,7 +365,7 @@ serve(async (req) => {
       throw new Error('Failed to create session with access token');
     }
 
-    return new Response(
+    return corsResponse(
       JSON.stringify({
         success: true,
         token: session.access_token,
@@ -364,23 +374,19 @@ serve(async (req) => {
           telegram_user_id: telegramUserId,
         },
       } as AuthTelegramResponse),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      200,
+      { 'Content-Type': 'application/json' }
     );
   } catch (error) {
     console.error('Error in auth-telegram:', error);
-    return new Response(
+    return corsResponse(
       JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : 'Internal server error',
         code: 'INTERNAL_ERROR',
       } as AuthTelegramResponse),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      500,
+      { 'Content-Type': 'application/json' }
     );
   }
 });

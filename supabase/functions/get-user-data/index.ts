@@ -13,7 +13,19 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
   'Access-Control-Max-Age': '86400', // 24 hours
+  'Access-Control-Allow-Credentials': 'false',
 };
+
+// Helper function to create CORS response
+function corsResponse(body: any, status: number = 200, additionalHeaders: Record<string, string> = {}) {
+  return new Response(body, {
+    status,
+    headers: {
+      ...corsHeaders,
+      ...additionalHeaders,
+    },
+  });
+}
 
 /**
  * Extract telegram_user_id from JWT token
@@ -277,19 +289,23 @@ async function getSyncMetadata(supabase: any, telegramUserId: number): Promise<{
 }
 
 serve(async (req) => {
+  const method = req.method;
+  const origin = req.headers.get('Origin') || '*';
+  
   console.log('[get-user-data] Request received:', {
-    method: req.method,
+    method,
     url: req.url,
+    origin,
     hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
     hasAuth: !!req.headers.get('Authorization'),
   });
   
-  // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    console.log('[get-user-data] OPTIONS preflight handled, headers:', Object.keys(corsHeaders));
-    return new Response(null, { 
-      status: 200,
-      headers: corsHeaders 
+  // Handle CORS preflight - MUST be first
+  if (method === 'OPTIONS') {
+    console.log('[get-user-data] OPTIONS preflight handled, origin:', origin);
+    return new Response('', {
+      status: 204,
+      headers: corsHeaders,
     });
   }
 
