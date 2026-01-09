@@ -64,7 +64,7 @@ async function getAuthUserByTelegramId(
     .single();
 
   if (error) {
-    // If no rows found, user doesn't exist
+    // If no rows found, user doesn't exist in mapping
     if (error.code === 'PGRST116') {
       return { authUserId: null, exists: false };
     }
@@ -72,6 +72,36 @@ async function getAuthUserByTelegramId(
   }
 
   return { authUserId: data?.auth_user_id || null, exists: !!data?.auth_user_id };
+}
+
+/**
+ * Check if auth user exists by email (for cases where user exists but mapping is missing)
+ */
+async function getAuthUserByEmail(
+  supabase: any,
+  email: string
+): Promise<{ authUserId: string | null; exists: boolean }> {
+  try {
+    // Use admin API to list users and find by email
+    // Note: This is a workaround - Supabase doesn't have a direct "get user by email" admin method
+    // We'll try to get user by attempting to list users with email filter
+    const { data, error } = await supabase.auth.admin.listUsers();
+    
+    if (error) {
+      console.log('[auth-telegram] Error listing users:', error);
+      return { authUserId: null, exists: false };
+    }
+
+    const user = data.users.find((u: any) => u.email === email);
+    if (user) {
+      return { authUserId: user.id, exists: true };
+    }
+
+    return { authUserId: null, exists: false };
+  } catch (error) {
+    console.log('[auth-telegram] Error checking user by email:', error);
+    return { authUserId: null, exists: false };
+  }
 }
 
 /**
@@ -204,9 +234,12 @@ serve(async (req) => {
       origin,
       hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
       hasAuth: !!req.headers.get('Authorization'),
+      hasApikey: !!req.headers.get('apikey'),
+      allHeaders: Object.fromEntries(req.headers.entries()),
     });
 
     if (method !== 'POST') {
+      console.log('[auth-telegram] Method not allowed:', method);
       return corsResponse(
         JSON.stringify({
           success: false,
@@ -217,9 +250,13 @@ serve(async (req) => {
         { 'Content-Type': 'application/json' }
       );
     }
+    
     // Get Telegram initData from header
     const initData = req.headers.get('X-Telegram-Init-Data');
+    console.log('[auth-telegram] POST request received, has initData:', !!initData);
+    
     if (!initData) {
+      console.log('[auth-telegram] Missing X-Telegram-Init-Data header');
       return corsResponse(
         JSON.stringify({
           success: false,
@@ -233,9 +270,12 @@ serve(async (req) => {
 
     // Validate Telegram authentication
     const botToken = getTelegramBotToken();
+    console.log('[auth-telegram] Validating Telegram auth, has botToken:', !!botToken);
     const authResult = await validateTelegramAuth(initData, botToken);
+    console.log('[auth-telegram] Auth result:', { valid: authResult.valid, userId: authResult.userId, error: authResult.error });
     
     if (!authResult.valid || !authResult.userId) {
+      console.log('[auth-telegram] Telegram auth validation failed');
       return corsResponse(
         JSON.stringify({
           success: false,
@@ -347,13 +387,77 @@ serve(async (req) => {
 
       session = signInData.session;
     } else {
-      // Create new auth user
-      const result = await createAuthUser(supabase, telegramUserId);
-      authUser = result.user;
-      session = result.session;
+      // No mapping found - check if user exists by email (might have been created before)
+      const email = `telegram_${telegramUserId}@telegram.local`;
+      const { authUserId: existingUserIdByEmail, exists: existsByEmail } = await getAuthUserByEmail(
+        supabase,
+        email
+      );
 
-      // Link auth user to telegram_user_id
-      await linkAuthUser(supabase, authUser.id, telegramUserId);
+      if (existsByEmail && existingUserIdByEmail) {
+        // User exists in auth.users but mapping is missing - use existing user and create mapping
+        console.log('[auth-telegram] User exists by email but mapping missing, creating mapping');
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserById(
+          existingUserIdByEmail
+        );
+
+        if (userError) {
+          throw userError;
+        }
+
+        authUser = userData.user;
+
+        // Create mapping
+        await linkAuthUser(supabase, authUser.id, telegramUserId);
+
+        // Generate password and update user if needed
+        const storedPasswordHash = authUser.app_metadata?.password_hash;
+        let password: string;
+        
+        if (storedPasswordHash) {
+          password = crypto.randomUUID();
+          await supabase.auth.admin.updateUserById(existingUserIdByEmail, {
+            password,
+            app_metadata: {
+              ...authUser.app_metadata,
+              password_hash: await hashPassword(password),
+            },
+          });
+        } else {
+          password = crypto.randomUUID();
+          await supabase.auth.admin.updateUserById(existingUserIdByEmail, {
+            password,
+            app_metadata: {
+              ...authUser.app_metadata,
+              password_hash: await hashPassword(password),
+            },
+          });
+        }
+
+        // Sign in to get session
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) {
+          throw new Error(`Failed to create session: ${signInError.message}`);
+        }
+
+        if (!signInData.session) {
+          throw new Error('Failed to create session: no session returned');
+        }
+
+        session = signInData.session;
+      } else {
+        // Create new auth user
+        const result = await createAuthUser(supabase, telegramUserId);
+        authUser = result.user;
+        session = result.session;
+
+        // Link auth user to telegram_user_id
+        await linkAuthUser(supabase, authUser.id, telegramUserId);
+      }
     }
 
     if (!session || !session.access_token) {

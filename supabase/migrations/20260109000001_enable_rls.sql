@@ -29,7 +29,9 @@ ALTER TABLE psychological_test_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE card_progress ENABLE ROW LEVEL SECURITY;
 ALTER TABLE referral_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sync_metadata ENABLE ROW LEVEL SECURITY;
-ALTER TABLE auth_user_mapping ENABLE ROW LEVEL SECURITY;
+-- auth_user_mapping is managed by service role only (Edge Functions)
+-- RLS is not needed as it's not directly accessible to users
+-- ALTER TABLE auth_user_mapping ENABLE ROW LEVEL SECURITY;
 
 -- ============================================================================
 -- RLS POLICIES FOR users TABLE
@@ -315,11 +317,6 @@ USING (telegram_user_id = get_telegram_user_id_from_jwt());
 -- RLS POLICIES FOR auth_user_mapping TABLE
 -- ============================================================================
 
--- Users can view their own mapping
-CREATE POLICY "Users can view own auth mapping"
-ON auth_user_mapping FOR SELECT
-TO authenticated
-USING (telegram_user_id = get_telegram_user_id_from_jwt());
-
--- Note: INSERT and UPDATE for auth_user_mapping should be done by service role
--- in the auth-telegram Edge Function, so we don't create policies for those
+-- auth_user_mapping is managed exclusively by service role (Edge Functions)
+-- No RLS policies needed - table is not directly accessible to users
+-- Users can access their mapping through the auth-telegram function which uses service role

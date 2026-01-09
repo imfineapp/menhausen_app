@@ -110,7 +110,15 @@ export async function authenticateWithTelegram(): Promise<AuthResponse> {
     console.log('[authService] Response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      const errorText = await response.text().catch(() => '');
+      console.log('[authService] Error response body:', errorText);
+      let errorData: any = {};
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        errorData = { error: errorText || `HTTP ${response.status}` };
+      }
+      console.log('[authService] Parsed error data:', errorData);
       return {
         success: false,
         error: errorData.error || `HTTP ${response.status}`,
