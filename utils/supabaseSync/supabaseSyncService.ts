@@ -342,11 +342,18 @@ export class SupabaseSyncService {
       }
 
       // Call Edge Function with PATCH method for incremental sync
+      console.log('[SyncService] Making PATCH request to:', url);
+      console.log('[SyncService] Request headers:', Object.keys(headers));
+      
       const response = await fetch(url, {
         method: 'PATCH',
+        mode: 'cors',
+        credentials: 'omit',
         headers,
         body,
       });
+      
+      console.log('[SyncService] Response headers:', Object.fromEntries(response.headers.entries()));
 
       console.log(`[SyncService] syncIncremental - Response status:`, response.status, response.statusText);
 
@@ -652,11 +659,18 @@ export class SupabaseSyncService {
         throw new Error('No authentication method available (JWT token or Telegram initData)');
       }
 
+      console.log('[SyncService] Making GET request to:', url);
+      console.log('[SyncService] Request headers:', Object.keys(headers));
+      
       // Call Edge Function
       const response = await fetch(url, {
         method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
         headers,
       });
+      
+      console.log('[SyncService] Response headers:', Object.fromEntries(response.headers.entries()));
 
       console.log('[SyncService] fetchFromSupabase - Response status:', response.status, response.statusText);
 
@@ -984,18 +998,26 @@ export class SupabaseSyncService {
       const [flowProgressRes, psychologicalTestRes, todayCheckinRes, preferencesRes] = await Promise.all([
         fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
           headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/psychological_test_results?telegram_user_id=eq.${telegramUserId}&select=last_completed_at`, {
           method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
           headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/daily_checkins?telegram_user_id=eq.${telegramUserId}&date_key=eq.${todayDateKey}&select=*`, {
           method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
           headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/user_preferences?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${anonKey}`,

@@ -350,6 +350,22 @@ async function updateSyncMetadata(supabase: any, telegramUserId: number, dataTyp
 }
 
 serve(async (req) => {
+  // Handle CORS preflight - MUST be absolute first, before any other code
+  if (req.method === 'OPTIONS') {
+    const origin = req.headers.get('Origin') || '*';
+    console.log('[sync-user-data] OPTIONS preflight handled, origin:', origin);
+    return new Response('', {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+        'Access-Control-Max-Age': '86400',
+        'Content-Length': '0',
+      },
+    });
+  }
+
   const method = req.method;
   const origin = req.headers.get('Origin') || '*';
   
@@ -360,15 +376,6 @@ serve(async (req) => {
     hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
     hasAuth: !!req.headers.get('Authorization'),
   });
-  
-  // Handle CORS preflight - MUST be first
-  if (method === 'OPTIONS') {
-    console.log('[sync-user-data] OPTIONS preflight handled, origin:', origin);
-    return new Response('', {
-      status: 204,
-      headers: corsHeaders,
-    });
-  }
 
   // Support both POST (full sync) and PATCH (incremental sync)
   if (req.method !== 'POST' && req.method !== 'PATCH') {

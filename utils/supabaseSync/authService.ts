@@ -92,14 +92,22 @@ export async function authenticateWithTelegram(): Promise<AuthResponse> {
     const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
     
     
+    console.log('[authService] Making request to:', url);
+    console.log('[authService] Headers:', { 'Content-Type': 'application/json', 'apikey': anonKey ? 'present' : 'missing', 'X-Telegram-Init-Data': initData ? 'present' : 'missing' });
+    
     const response = await fetch(url, {
       method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
       headers: {
         'Content-Type': 'application/json',
         'apikey': anonKey,
         'X-Telegram-Init-Data': initData,
       },
     });
+    
+    console.log('[authService] Response status:', response.status, response.statusText);
+    console.log('[authService] Response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));

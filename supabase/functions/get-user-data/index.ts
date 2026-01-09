@@ -289,6 +289,22 @@ async function getSyncMetadata(supabase: any, telegramUserId: number): Promise<{
 }
 
 serve(async (req) => {
+  // Handle CORS preflight - MUST be absolute first, before any other code
+  if (req.method === 'OPTIONS') {
+    const origin = req.headers.get('Origin') || '*';
+    console.log('[get-user-data] OPTIONS preflight handled, origin:', origin);
+    return new Response('', {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+        'Access-Control-Max-Age': '86400',
+        'Content-Length': '0',
+      },
+    });
+  }
+
   const method = req.method;
   const origin = req.headers.get('Origin') || '*';
   
@@ -299,15 +315,6 @@ serve(async (req) => {
     hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
     hasAuth: !!req.headers.get('Authorization'),
   });
-  
-  // Handle CORS preflight - MUST be first
-  if (method === 'OPTIONS') {
-    console.log('[get-user-data] OPTIONS preflight handled, origin:', origin);
-    return new Response('', {
-      status: 204,
-      headers: corsHeaders,
-    });
-  }
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
