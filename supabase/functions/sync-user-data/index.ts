@@ -12,6 +12,7 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+  'Access-Control-Max-Age': '86400', // 24 hours
 };
 
 /**
@@ -337,9 +338,20 @@ async function updateSyncMetadata(supabase: any, telegramUserId: number, dataTyp
 }
 
 serve(async (req) => {
+  console.log('[sync-user-data] Request received:', {
+    method: req.method,
+    url: req.url,
+    hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
+    hasAuth: !!req.headers.get('Authorization'),
+  });
+  
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    console.log('[sync-user-data] OPTIONS preflight handled, headers:', Object.keys(corsHeaders));
+    return new Response(null, { 
+      status: 200,
+      headers: corsHeaders 
+    });
   }
 
   // Support both POST (full sync) and PATCH (incremental sync)

@@ -89,11 +89,14 @@ export async function authenticateWithTelegram(): Promise<AuthResponse> {
     }
 
     const url = `${supabaseUrl}/functions/v1/auth-telegram`;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+    
     
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'apikey': anonKey,
         'X-Telegram-Init-Data': initData,
       },
     });

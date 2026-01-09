@@ -24,6 +24,7 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+  'Access-Control-Max-Age': '86400', // 24 hours
 };
 
 interface AuthTelegramResponse {
@@ -176,9 +177,20 @@ async function ensureUserExists(
 }
 
 serve(async (req) => {
+  console.log('[auth-telegram] Request received:', {
+    method: req.method,
+    url: req.url,
+    hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
+    hasAuth: !!req.headers.get('Authorization'),
+  });
+  
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    console.log('[auth-telegram] OPTIONS preflight handled, headers:', Object.keys(corsHeaders));
+    return new Response(null, { 
+      status: 200,
+      headers: corsHeaders 
+    });
   }
 
   if (req.method !== 'POST') {
