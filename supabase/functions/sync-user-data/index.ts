@@ -350,49 +350,48 @@ async function updateSyncMetadata(supabase: any, telegramUserId: number, dataTyp
 }
 
 serve(async (req) => {
-  // Handle CORS preflight - MUST be absolute first, before any other code
-  if (req.method === 'OPTIONS') {
-    const origin = req.headers.get('Origin') || '*';
-    console.log('[sync-user-data] OPTIONS preflight handled, origin:', origin);
-    return new Response('', {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
-        'Access-Control-Max-Age': '86400',
-        'Content-Length': '0',
-      },
-    });
-  }
-
-  const method = req.method;
-  const origin = req.headers.get('Origin') || '*';
-  
-  console.log('[sync-user-data] Request received:', {
-    method,
-    url: req.url,
-    origin,
-    hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
-    hasAuth: !!req.headers.get('Authorization'),
-  });
-
-  // Support both POST (full sync) and PATCH (incremental sync)
-  if (req.method !== 'POST' && req.method !== 'PATCH') {
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'Method not allowed. Use POST for full sync or PATCH for incremental sync',
-        code: 'INVALID_REQUEST',
-      } as SyncUserDataResponse),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
-  }
-
   try {
+    // Handle CORS preflight - MUST be absolute first, before any other code
+    if (req.method === 'OPTIONS') {
+      const origin = req.headers.get('Origin') || '*';
+      console.log('[sync-user-data] OPTIONS preflight handled, origin:', origin);
+      return new Response('', {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+          'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+          'Access-Control-Max-Age': '86400',
+          'Content-Length': '0',
+        },
+      });
+    }
+
+    const method = req.method;
+    const origin = req.headers.get('Origin') || '*';
+    
+    console.log('[sync-user-data] Request received:', {
+      method,
+      url: req.url,
+      origin,
+      hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
+      hasAuth: !!req.headers.get('Authorization'),
+    });
+
+    // Support both POST (full sync) and PATCH (incremental sync)
+    if (req.method !== 'POST' && req.method !== 'PATCH') {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Method not allowed. Use POST for full sync or PATCH for incremental sync',
+          code: 'INVALID_REQUEST',
+        } as SyncUserDataResponse),
+        {
+          status: 405,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -628,15 +627,8 @@ serve(async (req) => {
 
     const data = requestData.data;
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Supabase configuration missing');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    // Supabase client already initialized above (supabase variable)
+    // No need to reinitialize
 
     // Ensure user exists
     const now = new Date().toISOString();
@@ -735,7 +727,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Error in sync-user-data:', error);
+    console.error('[sync-user-data] Error:', error);
     return new Response(
       JSON.stringify({
         success: false,

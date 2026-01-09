@@ -132,17 +132,6 @@ async function createAuthUser(
 }
 
 /**
- * Hash password for storage (simple implementation - in production use proper hashing)
- */
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-/**
  * Link auth user to telegram_user_id in auth_user_mapping table
  */
 async function linkAuthUser(
@@ -189,46 +178,45 @@ async function ensureUserExists(
 }
 
 serve(async (req) => {
-  // Handle CORS preflight - MUST be absolute first, before any other code
-  if (req.method === 'OPTIONS') {
-    const origin = req.headers.get('Origin') || '*';
-    console.log('[auth-telegram] OPTIONS preflight handled, origin:', origin);
-    return new Response('', {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
-        'Access-Control-Max-Age': '86400',
-        'Content-Length': '0',
-      },
-    });
-  }
-
-  const method = req.method;
-  const origin = req.headers.get('Origin') || '*';
-  
-  console.log('[auth-telegram] Request received:', {
-    method,
-    url: req.url,
-    origin,
-    hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
-    hasAuth: !!req.headers.get('Authorization'),
-  });
-
-  if (method !== 'POST') {
-    return corsResponse(
-      JSON.stringify({
-        success: false,
-        error: 'Method not allowed. Use POST',
-        code: 'INVALID_METHOD',
-      } as AuthTelegramResponse),
-      405,
-      { 'Content-Type': 'application/json' }
-    );
-  }
-
   try {
+    // Handle CORS preflight - MUST be absolute first, before any other code
+    if (req.method === 'OPTIONS') {
+      const origin = req.headers.get('Origin') || '*';
+      console.log('[auth-telegram] OPTIONS preflight handled, origin:', origin);
+      return new Response('', {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+          'Access-Control-Max-Age': '86400',
+          'Content-Length': '0',
+        },
+      });
+    }
+
+    const method = req.method;
+    const origin = req.headers.get('Origin') || '*';
+    
+    console.log('[auth-telegram] Request received:', {
+      method,
+      url: req.url,
+      origin,
+      hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
+      hasAuth: !!req.headers.get('Authorization'),
+    });
+
+    if (method !== 'POST') {
+      return corsResponse(
+        JSON.stringify({
+          success: false,
+          error: 'Method not allowed. Use POST',
+          code: 'INVALID_METHOD',
+        } as AuthTelegramResponse),
+        405,
+        { 'Content-Type': 'application/json' }
+      );
+    }
     // Get Telegram initData from header
     const initData = req.headers.get('X-Telegram-Init-Data');
     if (!initData) {
@@ -385,7 +373,7 @@ serve(async (req) => {
       { 'Content-Type': 'application/json' }
     );
   } catch (error) {
-    console.error('Error in auth-telegram:', error);
+    console.error('[auth-telegram] Error:', error);
     return corsResponse(
       JSON.stringify({
         success: false,

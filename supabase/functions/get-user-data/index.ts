@@ -289,34 +289,33 @@ async function getSyncMetadata(supabase: any, telegramUserId: number): Promise<{
 }
 
 serve(async (req) => {
-  // Handle CORS preflight - MUST be absolute first, before any other code
-  if (req.method === 'OPTIONS') {
-    const origin = req.headers.get('Origin') || '*';
-    console.log('[get-user-data] OPTIONS preflight handled, origin:', origin);
-    return new Response('', {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
-        'Access-Control-Max-Age': '86400',
-        'Content-Length': '0',
-      },
-    });
-  }
-
-  const method = req.method;
-  const origin = req.headers.get('Origin') || '*';
-  
-  console.log('[get-user-data] Request received:', {
-    method,
-    url: req.url,
-    origin,
-    hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
-    hasAuth: !!req.headers.get('Authorization'),
-  });
-
   try {
+    // Handle CORS preflight - MUST be absolute first, before any other code
+    if (req.method === 'OPTIONS') {
+      const origin = req.headers.get('Origin') || '*';
+      console.log('[get-user-data] OPTIONS preflight handled, origin:', origin);
+      return new Response('', {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
+          'Access-Control-Max-Age': '86400',
+          'Content-Length': '0',
+        },
+      });
+    }
+
+    const method = req.method;
+    const origin = req.headers.get('Origin') || '*';
+    
+    console.log('[get-user-data] Request received:', {
+      method,
+      url: req.url,
+      origin,
+      hasInitData: !!req.headers.get('X-Telegram-Init-Data'),
+      hasAuth: !!req.headers.get('Authorization'),
+    });
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -450,7 +449,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Error in get-user-data:', error);
+    console.error('[get-user-data] Error:', error);
     return new Response(
       JSON.stringify({
         success: false,
