@@ -406,3 +406,294 @@
 4. Migration Testing
 5. Documentation
 6. Production Deployment
+
+---
+
+# Supabase Auth Integration - Implementation Tasks
+
+## Task Overview
+**Task**: Supabase Auth Integration with JWT Tokens  
+**Complexity**: Level 4 - Complex System  
+**Status**: Planning → Ready for Implementation  
+**Created**: 2026-01-09  
+**Current Phase**: Phase 1 - Database Schema Updates  
+**Related Plan**: `memory-bank/supabase-auth-integration-plan.md`
+
+---
+
+## Implementation Phases
+
+### Phase 1: Database Schema Updates ⏭️ **NEXT PHASE**
+
+#### 1.1 Create Auth Users Link Table
+- [ ] Create migration file `supabase/migrations/[timestamp]_link_auth_users.sql`
+- [ ] Create `auth_user_mapping` table
+- [ ] Add foreign key to `auth.users(id)`
+- [ ] Add foreign key to `users(telegram_user_id)`
+- [ ] Create index on `telegram_user_id`
+- [ ] Test migration locally
+
+#### 1.2 Enable RLS on All Tables
+- [ ] Create migration file `supabase/migrations/[timestamp]_enable_rls.sql`
+- [ ] Create helper function `get_telegram_user_id_from_jwt()`
+- [ ] Enable RLS on `users` table
+- [ ] Enable RLS on `survey_results` table
+- [ ] Enable RLS on `daily_checkins` table
+- [ ] Enable RLS on `user_stats` table
+- [ ] Enable RLS on `user_achievements` table
+- [ ] Enable RLS on `user_points` table
+- [ ] Enable RLS on `points_transactions` table
+- [ ] Enable RLS on `user_preferences` table
+- [ ] Enable RLS on `app_flow_progress` table
+- [ ] Enable RLS on `psychological_test_results` table
+- [ ] Enable RLS on `card_progress` table
+- [ ] Enable RLS on `referral_data` table
+- [ ] Enable RLS on `sync_metadata` table
+- [ ] Create SELECT policies for all tables
+- [ ] Create INSERT policies for all tables
+- [ ] Create UPDATE policies for all tables
+- [ ] Create DELETE policies for all tables
+- [ ] Test RLS policies locally
+
+**Phase 1 Success Criteria**:
+- ✅ `auth_user_mapping` table created and tested
+- ✅ RLS enabled on all tables
+- ✅ Helper function working correctly
+- ✅ All RLS policies created and tested
+- ✅ No breaking changes to existing functionality
+
+---
+
+### Phase 2: Auth Edge Function ⏭️ **PENDING**
+
+#### 2.1 Create Auth Function
+- [ ] Create `supabase/functions/auth-telegram/` directory
+- [ ] Create `supabase/functions/auth-telegram/index.ts`
+- [ ] Implement Telegram initData validation
+- [ ] Implement check for existing Supabase Auth user
+- [ ] Implement user creation using `supabase.auth.admin.createUser()`
+- [ ] Store `telegram_user_id` in `user_metadata`
+- [ ] Implement JWT token generation with custom claims
+- [ ] Link auth user to `telegram_user_id` in `auth_user_mapping`
+- [ ] Add error handling
+- [ ] Add CORS headers
+- [ ] Write unit tests
+- [ ] Test locally with Supabase CLI
+
+**Phase 2 Success Criteria**:
+- ✅ Auth function validates Telegram initData
+- ✅ Creates Supabase Auth users correctly
+- ✅ Generates JWT tokens with `telegram_user_id` claim
+- ✅ Links users in `auth_user_mapping` table
+- ✅ Returns JWT token to client
+- ✅ Error handling works correctly
+
+---
+
+### Phase 3: Update Existing Edge Functions ⏭️ **PENDING**
+
+#### 3.1 Update get-user-data Function
+- [ ] Update `supabase/functions/get-user-data/index.ts`
+- [ ] Accept JWT token in `Authorization` header
+- [ ] Validate JWT token using Supabase client
+- [ ] Extract `telegram_user_id` from JWT claims
+- [ ] Replace Service Role Key with Anon Key + JWT token
+- [ ] Remove direct Telegram validation (keep for backward compatibility initially)
+- [ ] Add backward compatibility for Telegram initData header
+- [ ] Test with JWT token
+- [ ] Test backward compatibility
+
+#### 3.2 Update sync-user-data Function
+- [ ] Update `supabase/functions/sync-user-data/index.ts`
+- [ ] Accept JWT token in `Authorization` header
+- [ ] Validate JWT token
+- [ ] Extract `telegram_user_id` from JWT claims
+- [ ] Replace Service Role Key with Anon Key + JWT token
+- [ ] Remove direct Telegram validation (keep for backward compatibility initially)
+- [ ] Add backward compatibility for Telegram initData header
+- [ ] Test with JWT token
+- [ ] Test backward compatibility
+
+**Phase 3 Success Criteria**:
+- ✅ Both Edge Functions accept JWT tokens
+- ✅ JWT tokens validated correctly
+- ✅ `telegram_user_id` extracted from claims
+- ✅ Anon Key + JWT token used instead of Service Role Key
+- ✅ Backward compatibility maintained
+- ✅ All existing functionality works
+
+---
+
+### Phase 4: Client-Side Updates ⏭️ **PENDING**
+
+#### 4.1 Create Auth Service
+- [ ] Create `utils/supabaseSync/authService.ts`
+- [ ] Implement `authenticateWithTelegram()` function
+- [ ] Implement `getJWTToken()` function
+- [ ] Implement `refreshJWTToken()` function
+- [ ] Implement `storeJWTToken()` function
+- [ ] Implement `retrieveJWTToken()` function
+- [ ] Implement `isJWTTokenExpired()` function
+- [ ] Implement `clearJWTToken()` function
+- [ ] Add error handling
+- [ ] Write unit tests
+
+#### 4.2 Update Supabase Client Initialization
+- [ ] Update `utils/supabaseSync/supabaseSyncService.ts`
+- [ ] Modify `initializeSupabase()` to accept JWT token
+- [ ] Use `accessToken` option when creating client
+- [ ] Add `refreshJWTTokenBeforeCall()` method
+- [ ] Implement token expiration check
+- [ ] Implement automatic token refresh
+- [ ] Handle token refresh errors
+- [ ] Update constructor to initialize auth
+
+#### 4.3 Update API Calls
+- [ ] Update `fetchFromSupabase()` to include JWT token
+- [ ] Update `syncToSupabase()` to include JWT token
+- [ ] Update `fastSyncCriticalData()` to use JWT token
+- [ ] Add token refresh before each API call
+- [ ] Handle token refresh failures
+- [ ] Update all direct REST API calls
+- [ ] Test all API calls with JWT tokens
+
+**Phase 4 Success Criteria**:
+- ✅ Auth service created and tested
+- ✅ JWT tokens stored and retrieved correctly
+- ✅ Token refresh works automatically
+- ✅ Supabase client initialized with JWT tokens
+- ✅ All API calls include JWT tokens
+- ✅ Token expiration handled gracefully
+
+---
+
+### Phase 5: Migration Strategy ⏭️ **PENDING**
+
+#### 5.1 Data Migration Script
+- [ ] Create `supabase/migrations/[timestamp]_migrate_existing_users.sql`
+- [ ] Query all existing users from `users` table
+- [ ] For each user, create Supabase Auth user
+- [ ] Store `telegram_user_id` in `user_metadata`
+- [ ] Populate `auth_user_mapping` table
+- [ ] Generate JWT tokens for existing users
+- [ ] Test migration script on local database
+- [ ] Test migration with sample data
+- [ ] Document migration process
+
+#### 5.2 Backward Compatibility
+- [ ] Keep Telegram validation in Edge Functions
+- [ ] Support both JWT token and Telegram initData headers
+- [ ] Add feature flag for auth method selection
+- [ ] Test both auth methods
+- [ ] Document deprecation timeline
+- [ ] Plan removal of old auth method
+
+**Phase 5 Success Criteria**:
+- ✅ Migration script works correctly
+- ✅ All existing users migrated
+- ✅ JWT tokens generated for existing users
+- ✅ Backward compatibility maintained
+- ✅ Feature flag works correctly
+- ✅ Migration documented
+
+---
+
+### Phase 6: Testing & Deployment ⏭️ **PENDING**
+
+#### 6.1 Comprehensive Testing
+- [ ] Unit tests for JWT token generation
+- [ ] Unit tests for JWT token validation
+- [ ] Unit tests for auth service
+- [ ] Integration tests for auth flow
+- [ ] Integration tests for RLS policies
+- [ ] E2E tests for full auth flow
+- [ ] E2E tests for token refresh
+- [ ] E2E tests for data access with RLS
+- [ ] Test existing user migration
+- [ ] Test backward compatibility
+- [ ] Performance tests
+- [ ] Security tests
+
+#### 6.2 Security Audit
+- [ ] Review JWT token generation
+- [ ] Review JWT token validation
+- [ ] Review RLS policies
+- [ ] Review Service Role Key usage
+- [ ] Test for token tampering
+- [ ] Test for unauthorized access
+- [ ] Review token storage security
+
+#### 6.3 Production Deployment
+- [ ] Deploy database migrations to production
+- [ ] Deploy auth function to production
+- [ ] Deploy updated Edge Functions to production
+- [ ] Configure production environment variables
+- [ ] Run migration script on production
+- [ ] Enable RLS policies in production
+- [ ] Monitor initial auth operations
+- [ ] Monitor RLS policy enforcement
+- [ ] Handle any production issues
+
+**Phase 6 Success Criteria**:
+- ✅ Test coverage >80%
+- ✅ All security checks passed
+- ✅ RLS policies working correctly
+- ✅ Migration completed successfully
+- ✅ Production deployment successful
+- ✅ No breaking changes for users
+- ✅ Performance maintained
+
+---
+
+## Key Implementation Files
+
+### New Files
+- `supabase/migrations/[timestamp]_link_auth_users.sql` - Auth user mapping table
+- `supabase/migrations/[timestamp]_enable_rls.sql` - RLS policies
+- `supabase/migrations/[timestamp]_migrate_existing_users.sql` - Data migration
+- `supabase/functions/auth-telegram/index.ts` - Auth function
+- `utils/supabaseSync/authService.ts` - Client auth service
+
+### Modified Files
+- `supabase/functions/get-user-data/index.ts` - Use JWT tokens
+- `supabase/functions/sync-user-data/index.ts` - Use JWT tokens
+- `utils/supabaseSync/supabaseSyncService.ts` - JWT token handling
+- `supabase/functions/_shared/telegram-auth.ts` - Keep for validation, add JWT generation
+
+---
+
+## Environment Variables
+
+### Edge Functions (New)
+- `SUPABASE_JWT_SECRET` - JWT secret for signing custom tokens
+
+### Edge Functions (Existing)
+- `SUPABASE_URL` - Already exists
+- `SUPABASE_SERVICE_ROLE_KEY` - Already exists (only for auth function)
+- `TELEGRAM_BOT_TOKEN` - Already exists
+
+### Client (No Changes)
+- `VITE_SUPABASE_URL` - Already exists
+- `VITE_SUPABASE_ANON_KEY` - Already exists
+
+---
+
+## Success Metrics
+
+- **Auth Success Rate**: >99%
+- **JWT Token Generation**: <500ms
+- **RLS Policy Enforcement**: 100% data isolation
+- **Migration Success**: 100% of existing users migrated
+- **Backward Compatibility**: Both auth methods work during transition
+- **Performance**: No degradation in API response times
+- **Security**: Service Role Key only used in auth function
+
+---
+
+**Last Updated**: 2026-01-09  
+**Status**: ⏭️ Phase 1 (Database Schema Updates) - Ready to Start  
+**Next Steps**: 
+1. Create `auth_user_mapping` table migration
+2. Create RLS policies migration
+3. Test migrations locally
+4. Deploy to local Supabase instance
