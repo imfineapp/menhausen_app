@@ -25,6 +25,7 @@ import { DailyCheckinManager } from '../DailyCheckinManager';
 import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
+import { getValidJWTToken, authenticateWithTelegram, isJWTTokenExpired } from './authService';
 
 /**
  * Supabase Sync Service Class
@@ -47,16 +48,19 @@ export class SupabaseSyncService {
 
   constructor(config?: Partial<SyncConfig>) {
     this.config = { ...DEFAULT_SYNC_CONFIG, ...config };
-    this.initializeSupabase();
+    // Initialize Supabase asynchronously
+    this.initializeSupabase().catch((error) => {
+      console.error('Error initializing Supabase:', error);
+    });
     this.setupOnlineListeners();
     this.loadOfflineQueue();
     this.setupLocalStorageInterceptor();
   }
 
   /**
-   * Initialize Supabase client
+   * Initialize Supabase client with JWT token support
    */
-  private initializeSupabase(): void {
+  private async initializeSupabase(): Promise<void> {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -65,7 +69,35 @@ export class SupabaseSyncService {
       return;
     }
 
-    this.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    // Get JWT token (will authenticate if needed)
+    const jwtToken = await getValidJWTToken();
+    
+    if (jwtToken) {
+      // Create client with JWT token
+      this.supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        },
+        auth: {
+          persistSession: false, // We manage tokens manually
+          autoRefreshToken: false, // We handle refresh manually
+        },
+      });
+    } else {
+      // Fallback: create client without JWT (will use anon key only)
+      // This maintains backward compatibility but won't work with RLS
+      console.warn('JWT token not available, creating client without authentication');
+      this.supabase = createClient(supabaseUrl, supabaseAnonKey);
+    }
+  }
+
+  /**
+   * Refresh Supabase client with new JWT token
+   */
+  private async refreshSupabaseClient(): Promise<void> {
+    await this.initializeSupabase();
   }
 
   /**
@@ -277,14 +309,16 @@ export class SupabaseSyncService {
         throw new Error('VITE_SUPABASE_URL not configured');
       }
 
-      // Get initData from Telegram WebApp or create mock for local development
-      const initData = this.getInitData();
+      // Get JWT token (refresh if expired)
+      const jwtToken = await getValidJWTToken();
       
-      // Get anon key for apikey header (required by Edge Functions)
+      // Fallback to Telegram initData if JWT not available (backward compatibility)
+      const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
       console.log(`[SyncService] syncIncremental - Syncing ${type}`);
       console.log(`[SyncService] syncIncremental - Data preview:`, typeof data === 'object' ? JSON.stringify(data).substring(0, 200) : data);
+      console.log(`[SyncService] syncIncremental - Using JWT:`, !!jwtToken);
 
       const url = `${supabaseUrl}/functions/v1/sync-user-data`;
       const body = JSON.stringify({
@@ -294,15 +328,23 @@ export class SupabaseSyncService {
       console.log(`[SyncService] syncIncremental - URL:`, url);
       console.log(`[SyncService] syncIncremental - Body size:`, body.length, 'bytes');
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+      };
+
+      if (jwtToken) {
+        headers['Authorization'] = `Bearer ${jwtToken}`;
+      } else if (initData) {
+        headers['X-Telegram-Init-Data'] = initData;
+      } else {
+        throw new Error('No authentication method available (JWT token or Telegram initData)');
+      }
+
       // Call Edge Function with PATCH method for incremental sync
       const response = await fetch(url, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${anonKey}`,
-          'apikey': anonKey,
-          'X-Telegram-Init-Data': initData,
-        },
+        headers,
         body,
       });
 
@@ -585,27 +627,35 @@ export class SupabaseSyncService {
         throw new Error('VITE_SUPABASE_URL not configured');
       }
 
-      // Get initData from Telegram WebApp or create mock for local development
-      const initData = this.getInitData();
-      console.log('[SyncService] fetchFromSupabase - User ID:', _telegramUserId);
-      console.log('[SyncService] fetchFromSupabase - InitData length:', initData?.length || 0);
+      // Get JWT token (refresh if expired)
+      const jwtToken = await getValidJWTToken();
       
-      // Get anon key for apikey header (required by Edge Functions)
+      // Fallback to Telegram initData if JWT not available (backward compatibility)
+      const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-      console.log('[SyncService] fetchFromSupabase - Anon key present:', !!anonKey);
+      console.log('[SyncService] fetchFromSupabase - User ID:', _telegramUserId);
+      console.log('[SyncService] fetchFromSupabase - Using JWT:', !!jwtToken);
 
       const url = `${supabaseUrl}/functions/v1/get-user-data`;
       console.log('[SyncService] fetchFromSupabase - Calling URL:', url);
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+      };
+
+      if (jwtToken) {
+        headers['Authorization'] = `Bearer ${jwtToken}`;
+      } else if (initData) {
+        headers['X-Telegram-Init-Data'] = initData;
+      } else {
+        throw new Error('No authentication method available (JWT token or Telegram initData)');
+      }
+
       // Call Edge Function
       const response = await fetch(url, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${anonKey}`,
-          'apikey': anonKey,
-          'X-Telegram-Init-Data': initData,
-        },
+        headers,
       });
 
       console.log('[SyncService] fetchFromSupabase - Response status:', response.status, response.statusText);
@@ -669,14 +719,16 @@ export class SupabaseSyncService {
         throw new Error('VITE_SUPABASE_URL not configured');
       }
 
-      // Get initData from Telegram WebApp or create mock for local development
-      const initData = this.getInitData();
+      // Get JWT token (refresh if expired)
+      const jwtToken = await getValidJWTToken();
       
-      // Get anon key for apikey header (required by Edge Functions)
+      // Fallback to Telegram initData if JWT not available (backward compatibility)
+      const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
       console.log('[SyncService] syncToSupabase - Starting full sync');
       console.log('[SyncService] syncToSupabase - Data keys:', Object.keys(data));
+      console.log('[SyncService] syncToSupabase - Using JWT:', !!jwtToken);
       const dataSummary = Object.keys(data).reduce((acc, key) => {
         const value = data[key];
         if (value === null || value === undefined) {
@@ -699,15 +751,23 @@ export class SupabaseSyncService {
       console.log('[SyncService] syncToSupabase - URL:', url);
       console.log('[SyncService] syncToSupabase - Body size:', body.length, 'bytes');
 
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+      };
+
+      if (jwtToken) {
+        headers['Authorization'] = `Bearer ${jwtToken}`;
+      } else if (initData) {
+        headers['X-Telegram-Init-Data'] = initData;
+      } else {
+        throw new Error('No authentication method available (JWT token or Telegram initData)');
+      }
+
       // Call Edge Function
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${anonKey}`,
-          'apikey': anonKey,
-          'X-Telegram-Init-Data': initData,
-        },
+        headers,
         body,
       });
 
@@ -901,8 +961,22 @@ export class SupabaseSyncService {
         return null;
       }
 
+      // Get JWT token (refresh if expired)
+      const jwtToken = await getValidJWTToken();
+
       // Get today's date key (YYYY-MM-DD format)
       const todayDateKey = DailyCheckinManager.getCurrentDayKey();
+
+      // Prepare headers with JWT token if available
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'apikey': anonKey,
+        'Prefer': 'return=representation',
+      };
+      
+      if (jwtToken) {
+        headers['Authorization'] = `Bearer ${jwtToken}`;
+      }
 
       // Fetch only critical data in parallel using direct REST API (faster than Edge Function)
       // Using RPC would be ideal but requires custom function, REST is simpler
@@ -910,30 +984,15 @@ export class SupabaseSyncService {
       const [flowProgressRes, psychologicalTestRes, todayCheckinRes, preferencesRes] = await Promise.all([
         fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${anonKey}`,
-            'apikey': anonKey,
-            'Prefer': 'return=representation',
-          },
+          headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/psychological_test_results?telegram_user_id=eq.${telegramUserId}&select=last_completed_at`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${anonKey}`,
-            'apikey': anonKey,
-            'Prefer': 'return=representation',
-          },
+          headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/daily_checkins?telegram_user_id=eq.${telegramUserId}&date_key=eq.${todayDateKey}&select=*`, {
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${anonKey}`,
-            'apikey': anonKey,
-            'Prefer': 'return=representation',
-          },
+          headers,
         }),
         fetch(`${supabaseUrl}/rest/v1/user_preferences?telegram_user_id=eq.${telegramUserId}&select=*`, {
           method: 'GET',

@@ -14,6 +14,36 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
 };
 
+/**
+ * Extract telegram_user_id from JWT token
+ */
+function getTelegramUserIdFromJWT(jwtToken: string): number | null {
+  try {
+    // JWT format: header.payload.signature
+    const parts = jwtToken.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    // Decode payload (base64url)
+    const payload = parts[1];
+    const decoded = JSON.parse(
+      new TextDecoder().decode(
+        Uint8Array.from(
+          atob(payload.replace(/-/g, '+').replace(/_/g, '/')),
+          c => c.charCodeAt(0)
+        )
+      )
+    );
+
+    // Extract telegram_user_id from user_metadata
+    return decoded.user_metadata?.telegram_user_id || null;
+  } catch (error) {
+    console.error('Error extracting telegram_user_id from JWT:', error);
+    return null;
+  }
+}
+
 interface SyncUserDataResponse {
   success: boolean;
   syncedTypes?: string[];
@@ -328,41 +358,113 @@ serve(async (req) => {
   }
 
   try {
-    // Get Telegram initData from header
-    const initData = req.headers.get('X-Telegram-Init-Data');
-    if (!initData) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'Missing X-Telegram-Init-Data header',
-          code: 'AUTH_FAILED',
-        } as SyncUserDataResponse),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
-    }
-
-    // Validate Telegram authentication
-    const botToken = getTelegramBotToken();
-    const authResult = await validateTelegramAuth(initData, botToken);
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     
-    if (!authResult.valid || !authResult.userId) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: authResult.error || 'Authentication failed',
-          code: 'AUTH_FAILED',
-        } as SyncUserDataResponse),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Supabase configuration missing');
     }
 
-    const telegramUserId = authResult.userId;
+    let telegramUserId: number;
+    let supabase: any;
+
+    // Try to get JWT token from Authorization header (new method)
+    const authHeader = req.headers.get('Authorization');
+    const jwtToken = authHeader?.replace('Bearer ', '');
+
+    if (jwtToken) {
+      // New JWT-based authentication
+      // Extract telegram_user_id from JWT
+      const extractedUserId = getTelegramUserIdFromJWT(jwtToken);
+      
+      if (!extractedUserId) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Invalid JWT token: missing telegram_user_id in claims',
+            code: 'AUTH_FAILED',
+          } as SyncUserDataResponse),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      telegramUserId = extractedUserId;
+
+      // Create Supabase client with JWT token (uses Anon Key + JWT)
+      // This will respect RLS policies
+      supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        global: {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        },
+      });
+
+      // Verify the JWT token is valid by getting the user
+      const { data: { user }, error: userError } = await supabase.auth.getUser(jwtToken);
+      
+      if (userError || !user) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Invalid or expired JWT token',
+            code: 'AUTH_FAILED',
+          } as SyncUserDataResponse),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+    } else {
+      // Fallback: Telegram initData authentication (backward compatibility)
+      const initData = req.headers.get('X-Telegram-Init-Data');
+      if (!initData) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'Missing Authorization header (JWT token) or X-Telegram-Init-Data header',
+            code: 'AUTH_FAILED',
+          } as SyncUserDataResponse),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      // Validate Telegram authentication
+      const botToken = getTelegramBotToken();
+      const authResult = await validateTelegramAuth(initData, botToken);
+      
+      if (!authResult.valid || !authResult.userId) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: authResult.error || 'Authentication failed',
+            code: 'AUTH_FAILED',
+          } as SyncUserDataResponse),
+          {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      telegramUserId = authResult.userId;
+
+      // Use Service Role Key for backward compatibility (bypasses RLS)
+      // Note: This should be deprecated in favor of JWT tokens
+      if (!supabaseServiceKey) {
+        throw new Error('SUPABASE_SERVICE_ROLE_KEY not configured');
+      }
+
+      supabase = createClient(supabaseUrl, supabaseServiceKey);
+    }
 
     // Parse request body
     const requestData = await req.json();
@@ -384,15 +486,7 @@ serve(async (req) => {
         );
       }
 
-      // Initialize Supabase client
-      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-      const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-      
-      if (!supabaseUrl || !supabaseServiceKey) {
-        throw new Error('Supabase configuration missing');
-      }
-
-      const supabase = createClient(supabaseUrl, supabaseServiceKey);
+      // supabase client already initialized above
 
       // Ensure user exists
       const now = new Date().toISOString();
