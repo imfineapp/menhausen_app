@@ -25,7 +25,7 @@ import { DailyCheckinManager } from '../DailyCheckinManager';
 import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
-import { getValidJWTToken, authenticateWithTelegram, isJWTTokenExpired } from './authService';
+import { getValidJWTToken } from './authService';
 
 /**
  * Supabase Sync Service Class

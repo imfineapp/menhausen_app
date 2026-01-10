@@ -608,7 +608,27 @@
 
 ---
 
-### Phase 6: Testing & Deployment ⏭️ **PENDING**
+### Phase 5: Migration Strategy ✅ **COMPLETE**
+
+#### 5.1 Data Migration Script ✅
+- [x] Create SQL migration helper functions
+- [x] Create view `users_needing_migration` to track users without auth users
+- [x] Create Edge Function `migrate-existing-users` to migrate users
+- [x] Implement logic to create auth users for existing users
+- [x] Implement logic to populate `auth_user_mapping` table
+- [x] Handle existing auth users (by email check)
+- [x] Add error handling and logging
+- [x] Deploy migration function to production ✅ **DEPLOYED**
+
+**Phase 5 Success Criteria**: ✅ **COMPLETE**
+- ✅ Migration script created (`migrate-existing-users` Edge Function)
+- ✅ SQL helper functions and views created
+- ✅ Function deployed to production
+- ✅ Ready to migrate existing users
+
+---
+
+### Phase 6: Testing & Deployment 🔄 **IN PROGRESS**
 
 #### 6.1 Comprehensive Testing
 - [ ] Unit tests for JWT token generation
@@ -715,9 +735,11 @@
 1. ✅ Start Docker and apply migrations locally - **DONE**
 2. ✅ Apply migrations to production - **DONE**
 3. ✅ Deploy Edge Functions to production - **DONE**
-4. Test auth-telegram function in production
-5. Test JWT token generation and validation
-6. Test RLS policies enforcement
-7. Create migration script for existing users (Phase 5)
-8. Test end-to-end auth flow
-9. Monitor production for any issues
+4. ✅ Create migration script for existing users (Phase 5) - **DONE**
+5. ✅ Deploy migration function to production - **DONE**
+6. Test auth-telegram function in production - **IN PROGRESS** ✅ Working
+7. Test JWT token generation and validation - **IN PROGRESS** ✅ Working
+8. Test RLS policies enforcement - **PENDING**
+9. Run migration for existing users (optional, can be done on-demand)
+10. Test end-to-end auth flow - **IN PROGRESS** ✅ Working
+11. Monitor production for any issues - **ONGOING**

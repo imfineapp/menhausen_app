@@ -16,17 +16,6 @@ const corsHeaders = {
   'Access-Control-Allow-Credentials': 'false',
 };
 
-// Helper function to create CORS response
-function corsResponse(body: any, status: number = 200, additionalHeaders: Record<string, string> = {}) {
-  return new Response(body, {
-    status,
-    headers: {
-      ...corsHeaders,
-      ...additionalHeaders,
-    },
-  });
-}
-
 /**
  * Extract telegram_user_id from JWT token
  */

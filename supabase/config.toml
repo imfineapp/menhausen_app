@@ -413,3 +413,9 @@ entrypoint = "./functions/get-user-data/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/get-user-data/*.html" ]
+
+[functions.migrate-existing-users]
+enabled = true
+verify_jwt = false
+import_map = "./functions/migrate-existing-users/deno.json"
+entrypoint = "./functions/migrate-existing-users/index.ts"
