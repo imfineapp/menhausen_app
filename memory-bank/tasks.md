@@ -1,3 +1,226 @@
+# Telegram Stars Payment Integration - Implementation Tasks
+
+## Task Overview
+**Task**: Telegram Stars Payment Integration for Premium Subscriptions  
+**Complexity**: Level 4 - Complex System  
+**Status**: Planning → Ready for Implementation  
+**Created**: 2026-01-30  
+**Current Phase**: Phase 1 - Infrastructure Setup  
+**Related Plan**: `memory-bank/telegram-stars-payment-plan.md`
+
+---
+
+## Implementation Phases
+
+### Phase 1: Infrastructure Setup (1-2 days) ⏭️ **CURRENT PHASE**
+
+#### 1.1 Telegram Bot Setup for Payments
+- [ ] Verify bot has payment permissions
+- [ ] Configure webhook for payment updates
+- [ ] Store Bot Token in environment variables
+
+#### 1.2 Create Supabase Edge Function for Invoice Creation
+- [ ] Create `create-premium-invoice` function
+- [ ] Integrate with Telegram Bot API (`createInvoiceLink`)
+- [ ] Implement request validation (JWT or Telegram initData)
+- [ ] Define Stars prices for each plan:
+  - Monthly: ~150 Stars (~$1.5)
+  - Annually: ~1500 Stars (~$15, 16% savings)
+  - Lifetime: ~2500 Stars (~$25)
+
+#### 1.3 Database Schema Updates
+- [ ] Create `premium_subscriptions` table migration
+- [ ] Add indexes on `telegram_user_id` and `status`
+- [ ] Add `has_premium` field to `users` table (or separate table)
+
+**Phase 1 Success Criteria**:
+- ✅ Bot configured for payments
+- ✅ Invoice creation function deployed
+- ✅ Database schema updated
+- ✅ Prices defined and configured
+
+---
+
+### Phase 2: Backend - Payment Processing (2-3 days)
+
+#### 2.1 Create Webhook Handler Edge Function
+- [ ] Create `handle-payment-webhook` function
+- [ ] Implement `pre_checkout_query` handling (respond within 10 seconds!)
+- [ ] Implement `successful_payment` handling
+- [ ] Validate payments and activate subscriptions
+
+#### 2.2 Telegram Bot API Integration
+- [ ] Create utility for Bot API calls
+- [ ] Implement `createInvoiceLink()` method
+- [ ] Implement `answerPreCheckoutQuery()` method
+- [ ] Implement `refundStarPayment()` method (for future use)
+
+#### 2.3 Premium Activation Logic
+- [ ] Implement subscription activation function
+- [ ] Calculate subscription expiration dates
+- [ ] Update user premium status
+- [ ] Store payment charge IDs
+
+**Phase 2 Success Criteria**:
+- ✅ Webhook handler functional
+- ✅ Bot API integration complete
+- ✅ Premium activation working
+- ✅ Payment validation implemented
+
+---
+
+### Phase 3: Frontend - WebApp API Integration (2-3 days)
+
+#### 3.1 Create TelegramStarsPaymentService
+- [ ] Create `utils/telegramStarsPaymentService.ts`
+- [ ] Implement `createInvoice()` method
+- [ ] Implement `openInvoice()` wrapper
+- [ ] Implement payment result handling
+
+#### 3.2 Update PaymentsScreen Component
+- [ ] Replace mock purchase with real API calls
+- [ ] Integrate with `TelegramStarsPaymentService`
+- [ ] Implement payment result UI feedback
+- [ ] Add loading states and error handling
+
+#### 3.3 TypeScript Types Update
+- [ ] Update `types/telegram-webapp.d.ts` for `openInvoice`
+- [ ] Create `types/payments.ts` for payment types
+
+**Phase 3 Success Criteria**:
+- ✅ Payment service created
+- ✅ PaymentsScreen updated
+- ✅ Payment flow functional
+- ✅ Error handling implemented
+
+---
+
+### Phase 4: Premium Status Synchronization (1-2 days)
+
+#### 4.1 Update Supabase Sync
+- [ ] Add premium status sync to `supabaseSyncService.ts`
+- [ ] Update `get-user-data` Edge Function
+- [ ] Update `sync-user-data` Edge Function
+
+#### 4.2 Update Local State Management
+- [ ] Update `userStateManager.ts` for premium status
+- [ ] Add premium status check on app load
+- [ ] Implement auto-update after successful payment
+
+#### 4.3 Update Components
+- [ ] Update `HomeScreen.tsx` for premium status display
+- [ ] Update `ThemeHomeScreen.tsx` for premium gating
+- [ ] Update `PaymentsScreen.tsx` for current plan display
+
+**Phase 4 Success Criteria**:
+- ✅ Premium status synced across devices
+- ✅ Components updated
+- ✅ Status updates after payment
+
+---
+
+### Phase 5: Testing & Debugging (2-3 days)
+
+#### 5.1 Telegram Test Environment Testing
+- [ ] Set up test bot for payments
+- [ ] Test invoice creation
+- [ ] Test full payment flow
+- [ ] Test error handling and cancellation
+
+#### 5.2 Integration Testing
+- [ ] Test premium status sync across devices
+- [ ] Test subscription expiration
+- [ ] Test repeat purchases
+- [ ] Test edge cases
+
+#### 5.3 E2E Testing
+- [ ] Create Playwright tests for payment flow
+- [ ] Test UI components
+- [ ] Test Supabase integration
+
+**Phase 5 Success Criteria**:
+- ✅ All tests passing
+- ✅ Payment flow verified
+- ✅ Edge cases handled
+
+---
+
+### Phase 6: Production Preparation (1-2 days)
+
+#### 6.1 Configuration Updates
+- [ ] Configure production Bot Token
+- [ ] Configure production webhook URL
+- [ ] Update Stars prices if needed
+- [ ] Set up payment monitoring
+
+#### 6.2 Documentation
+- [ ] Update payment documentation
+- [ ] Create support user guide
+- [ ] Document refund process
+
+#### 6.3 Security Review
+- [ ] Validate all incoming requests
+- [ ] Verify secret token handling
+- [ ] Check for duplicate payment prevention
+
+**Phase 6 Success Criteria**:
+- ✅ Production ready
+- ✅ Documentation complete
+- ✅ Security verified
+
+---
+
+## Key Implementation Files
+
+### New Files to Create
+- `supabase/functions/create-premium-invoice/index.ts` - Invoice creation
+- `supabase/functions/handle-payment-webhook/index.ts` - Payment webhook handler
+- `utils/telegramStarsPaymentService.ts` - Frontend payment service
+- `types/payments.ts` - Payment TypeScript types
+- `supabase/migrations/[timestamp]_premium_subscriptions.sql` - Database schema
+
+### Files to Modify
+- `components/PaymentsScreen.tsx` - Real payment integration
+- `utils/supabaseSync/supabaseSyncService.ts` - Premium status sync
+- `supabase/functions/get-user-data/index.ts` - Return premium status
+- `supabase/functions/sync-user-data/index.ts` - Sync premium status
+- `types/telegram-webapp.d.ts` - Add openInvoice type
+
+---
+
+## Environment Variables
+
+### Edge Functions (New)
+- `TELEGRAM_BOT_TOKEN` - Bot token for creating invoices
+- `TELEGRAM_WEBHOOK_SECRET` - Secret token for webhook validation
+
+### Edge Functions (Existing)
+- `SUPABASE_URL` - Already exists
+- `SUPABASE_SERVICE_ROLE_KEY` - Already exists
+- `TELEGRAM_BOT_TOKEN` - Already exists (may need separate payment bot)
+
+---
+
+## Success Metrics
+
+- **Invoice Creation Success Rate**: >99%
+- **Payment Processing Time**: <10 seconds for pre_checkout_query
+- **Payment Success Rate**: >95%
+- **Premium Activation Time**: <2 seconds after payment
+- **Test Coverage**: >80%
+
+---
+
+**Last Updated**: 2026-01-30  
+**Status**: ⏭️ Phase 1 - Infrastructure Setup (Ready to Start)  
+**Next Steps**: 
+1. Set up Telegram Bot for payments
+2. Create invoice creation Edge Function
+3. Update database schema
+4. Define Stars prices
+
+---
+
 # Telegram User API Sync - Implementation Tasks
 
 ## Task Overview
