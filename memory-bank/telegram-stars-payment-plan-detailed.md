@@ -1,5 +1,68 @@
 # Детальный технический план внедрения Telegram Stars Payment
 
+## Мульти-бот поддержка
+
+### Идентификация бота при оплате
+
+Поскольку используется несколько ботов с одним бэкендом, важно отслеживать через какой бот была произведена оплата.
+
+#### Определение bot_id при создании инвойса:
+
+1. **Из валидации initData**: При валидации `initData` определяется какой токен сработал
+2. **Через getMe API**: Вызов `getMe` для получения `bot_id` и `username` по токену
+3. **Сохранение в payload**: `bot_id` сохраняется в `invoice_payload` для последующего использования
+
+```typescript
+// Пример определения bot_id
+async function determineBotInfo(initData: string): Promise<{ id: number; username?: string; token: string } | null> {
+  const botTokens = getTelegramBotTokens();
+  
+  for (const botToken of botTokens) {
+    const result = await validateTelegramAuth(initData, botToken);
+    if (result.valid) {
+      // Получаем информацию о боте
+      const botInfoResponse = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+      const botInfo = await botInfoResponse.json();
+      
+      return {
+        id: botInfo.result.id,
+        username: botInfo.result.username,
+        token: botToken
+      };
+    }
+  }
+  
+  return null;
+}
+```
+
+#### Хранение bot_id в базе данных:
+
+- `bot_id` (BIGINT) - ID бота из Telegram
+- `bot_username` (VARCHAR) - Username бота (опционально, для удобства)
+- Индексы для быстрого поиска по bot_id
+
+#### Использование bot_id в аналитике:
+
+- Фильтрация платежей по боту
+- Отдельная статистика для каждого бота
+- Разделение staging/production ботов в отчетах
+
+### Идентификация бота — кратко
+
+- **При создании инвойса**: бот определяется по тому, **какой токен прошёл валидацию initData**; затем `getMe` по этому токену даёт `bot_id`. initData сам по себе bot_id не содержит.
+- **В webhook**: бот **не передаётся** Telegram. Используем **payload инвойса**: при создании инвойса сохраняем в payload `botId` и `isTestPayment`; при `successful_payment` читаем их из `invoice_payload`.
+- **Хранение**: достаточно `bot_id` (число); `bot_username` опционально.
+
+### Тест vs продакшен
+
+- Стейджинг-боты — **тестовая оплата**, продакшен-бот — **реальная**.
+- **Правило**: оплата в тестовой среде **не даёт премиум в продакшене**.
+- В `premium_subscriptions` храним **`is_test_payment`** (boolean).
+- Конфиг тестовых ботов: например `TELEGRAM_TEST_BOT_IDS=id1,id2` или маппинг токенов (STAGING → test).
+- **`users.has_premium`** обновляется только подписками с `is_test_payment = false`.
+- **get-user-data**: по initData определяем бота → окружение (test/production). Продакшен: возвращаем `users.has_premium`. Тест: возвращаем премиум только если есть активная подписка с `is_test_payment = true`.
+
 ## Дополнительные технические детали
 
 ### Структура файлов проекта
@@ -172,6 +235,9 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
      ```sql
      INSERT INTO premium_subscriptions (
        telegram_user_id,
+       bot_id,
+       bot_username,
+       is_test_payment,
        plan_type,
        telegram_payment_charge_id,
        invoice_message_id,
@@ -180,6 +246,9 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
        expires_at
      ) VALUES (
        123456789,
+       1234567890, -- bot_id из payload
+       'menhausen_bot', -- bot_username из payload (опционально)
+       false, -- is_test_payment: true только для тестовых ботов
        'monthly',
        'charge_123456789',
        123,
