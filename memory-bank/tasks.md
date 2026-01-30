@@ -631,15 +631,17 @@
 ### Phase 6: Testing & Deployment 🔄 **IN PROGRESS**
 
 #### 6.1 Comprehensive Testing
-- [ ] Unit tests for JWT token generation
-- [ ] Unit tests for JWT token validation
-- [ ] Unit tests for auth service
+- [x] Unit tests for JWT token generation ✅
+- [x] Unit tests for JWT token validation ✅
+- [x] Unit tests for auth service ✅
+- [x] Create SQL test helpers for RLS policy verification ✅
+- [x] Create comprehensive testing documentation ✅
 - [ ] Integration tests for auth flow
-- [ ] Integration tests for RLS policies
+- [ ] Integration tests for RLS policies (manual testing guide created)
 - [ ] E2E tests for full auth flow
 - [ ] E2E tests for token refresh
 - [ ] E2E tests for data access with RLS
-- [ ] Test existing user migration
+- [ ] Test existing user migration (migration function created and deployed)
 - [ ] Test backward compatibility
 - [ ] Performance tests
 - [ ] Security tests
@@ -654,12 +656,15 @@
 - [ ] Review token storage security
 
 #### 6.3 Production Deployment
-- [ ] Deploy database migrations to production
-- [ ] Deploy auth function to production
-- [ ] Deploy updated Edge Functions to production
-- [ ] Configure production environment variables
-- [ ] Run migration script on production
-- [ ] Enable RLS policies in production
+- [x] Deploy database migrations to production ✅
+- [x] Deploy auth function to production ✅
+- [x] Deploy updated Edge Functions to production ✅
+- [x] Deploy migrate-existing-users function to production ✅
+- [x] Deploy test RLS policies migration to production ✅ **DEPLOYED 2026-01-09**
+- [x] Deploy all Edge Functions (final update) ✅ **DEPLOYED 2026-01-12**
+- [x] Configure production environment variables ✅ (via config.toml with verify_jwt=false)
+- [ ] Run migration script on production (ready to run migrate-existing-users function)
+- [x] Enable RLS policies in production ✅ (via migration 20260109000001_enable_rls.sql)
 - [ ] Monitor initial auth operations
 - [ ] Monitor RLS policy enforcement
 - [ ] Handle any production issues
