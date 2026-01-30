@@ -30,8 +30,9 @@
 
 #### 1.3 Database Schema Updates
 - [ ] Create `premium_subscriptions` table migration
-- [ ] Add indexes on `telegram_user_id` and `status`
-- [ ] Add `has_premium` field to `users` table (or separate table)
+- [ ] Add `bot_id`, optional `bot_username`, and **`is_test_payment`** (тестовая оплата не даёт премиум в продакшене)
+- [ ] Add indexes on `telegram_user_id`, `status`, `bot_id`, `is_test_payment`
+- [ ] Add `has_premium` field to `users` table (обновляется только продакшен-подписками)
 
 **Phase 1 Success Criteria**:
 - ✅ Bot configured for payments
@@ -99,7 +100,7 @@
 
 #### 4.1 Update Supabase Sync
 - [ ] Add premium status sync to `supabaseSyncService.ts`
-- [ ] Update `get-user-data` Edge Function
+- [ ] Update `get-user-data` Edge Function: возвращать `has_premium` с учётом окружения (по initData определяем бота → тест/продакшен; продакшен = `users.has_premium`, тест = активная подписка с `is_test_payment = true`)
 - [ ] Update `sync-user-data` Edge Function
 
 #### 4.2 Update Local State Management
