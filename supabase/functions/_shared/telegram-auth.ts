@@ -189,9 +189,57 @@ export function extractTelegramUserId(initData: string): number | null {
 }
 
 /**
- * Get Telegram bot token from environment
+ * Get all Telegram bot tokens from environment
+ * Supports multiple bots for staging and production environments
+ * 
+ * @returns Array of bot tokens (at least one required)
+ */
+export function getTelegramBotTokens(): string[] {
+  const tokens: string[] = [];
+  
+  // Primary token (required for backward compatibility)
+  const primaryToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
+  if (primaryToken) {
+    tokens.push(primaryToken);
+  }
+  
+  // Staging bot token (optional)
+  const stagingToken = Deno.env.get('TELEGRAM_BOT_TOKEN_STAGING');
+  if (stagingToken) {
+    tokens.push(stagingToken);
+  }
+  
+  // Production bot token (optional)
+  const productionToken = Deno.env.get('TELEGRAM_BOT_TOKEN_PRODUCTION');
+  if (productionToken) {
+    tokens.push(productionToken);
+  }
+  
+  // Additional tokens (TELEGRAM_BOT_TOKEN_2, TELEGRAM_BOT_TOKEN_3, etc.)
+  let index = 2;
+  while (true) {
+    const additionalToken = Deno.env.get(`TELEGRAM_BOT_TOKEN_${index}`);
+    if (!additionalToken) {
+      break;
+    }
+    tokens.push(additionalToken);
+    index++;
+  }
+  
+  if (tokens.length === 0) {
+    throw new Error('No Telegram bot tokens configured. Set at least TELEGRAM_BOT_TOKEN environment variable');
+  }
+  
+  console.log(`[TelegramAuth] Found ${tokens.length} bot token(s) configured`);
+  return tokens;
+}
+
+/**
+ * Get Telegram bot token from environment (backward compatibility)
+ * Returns the primary token (TELEGRAM_BOT_TOKEN)
  * 
  * @returns Bot token or throws error
+ * @deprecated Use validateTelegramAuthWithMultipleTokens() instead for multi-bot support
  */
 export function getTelegramBotToken(): string {
   const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
@@ -199,4 +247,43 @@ export function getTelegramBotToken(): string {
     throw new Error('TELEGRAM_BOT_TOKEN environment variable not set');
   }
   return botToken;
+}
+
+/**
+ * Validate Telegram WebApp initData with multiple bot tokens
+ * Tries each token until one succeeds
+ * 
+ * @param initData - URL-encoded initData string from Telegram WebApp
+ * @returns Validation result with user ID if valid
+ */
+export async function validateTelegramAuthWithMultipleTokens(
+  initData: string
+): Promise<ValidationResult> {
+  const botTokens = getTelegramBotTokens();
+  
+  // Try each token until one succeeds
+  for (let i = 0; i < botTokens.length; i++) {
+    const botToken = botTokens[i];
+    console.log(`[TelegramAuth] Trying bot token ${i + 1}/${botTokens.length}`);
+    
+    const result = await validateTelegramAuth(initData, botToken);
+    
+    if (result.valid) {
+      console.log(`[TelegramAuth] Validation succeeded with bot token ${i + 1}`);
+      return result;
+    }
+    
+    // If signature validation failed, try next token
+    // Other errors (missing hash, expired, etc.) should be returned immediately
+    if (result.error && result.error !== 'Invalid signature') {
+      console.log(`[TelegramAuth] Validation failed with non-signature error: ${result.error}`);
+      return result;
+    }
+  }
+  
+  // All tokens failed
+  return {
+    valid: false,
+    error: 'Invalid signature - none of the configured bot tokens matched',
+  };
 }

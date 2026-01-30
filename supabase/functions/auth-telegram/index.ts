@@ -7,7 +7,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { validateTelegramAuth, getTelegramBotToken } from '../_shared/telegram-auth.ts';
+import { validateTelegramAuthWithMultipleTokens } from '../_shared/telegram-auth.ts';
 
 /**
  * Hash password for storage (simple implementation - in production use proper hashing)
@@ -268,10 +268,9 @@ serve(async (req) => {
       );
     }
 
-    // Validate Telegram authentication
-    const botToken = getTelegramBotToken();
-    console.log('[auth-telegram] Validating Telegram auth, has botToken:', !!botToken);
-    const authResult = await validateTelegramAuth(initData, botToken);
+    // Validate Telegram authentication (tries multiple bot tokens)
+    console.log('[auth-telegram] Validating Telegram auth with multiple bot tokens');
+    const authResult = await validateTelegramAuthWithMultipleTokens(initData);
     console.log('[auth-telegram] Auth result:', { valid: authResult.valid, userId: authResult.userId, error: authResult.error });
     
     if (!authResult.valid || !authResult.userId) {

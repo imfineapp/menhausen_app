@@ -67,7 +67,17 @@ VITE_SUPABASE_ANON_KEY=sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH
 VITE_SUPABASE_SERVICE_KEY=**************************
 
 # Telegram Bot Configuration (for auth validation)
+# Note: For Edge Functions, use TELEGRAM_BOT_TOKEN (without VITE_ prefix)
+# See memory-bank/multi-bot-configuration.md for multi-bot setup
 VITE_TELEGRAM_BOT_TOKEN=your_bot_token_here
+
+# Edge Functions Bot Tokens (set these for local Edge Functions testing)
+# Primary bot token (required)
+TELEGRAM_BOT_TOKEN=your_primary_bot_token
+
+# Additional bot tokens (optional - for multi-bot support)
+TELEGRAM_BOT_TOKEN_STAGING=your_staging_bot_token
+TELEGRAM_BOT_TOKEN_PRODUCTION=your_production_bot_token
 ```
 
 **Note**: `.env.local` should be in `.gitignore` and not committed to version control.

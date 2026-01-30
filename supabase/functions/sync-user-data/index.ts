@@ -6,7 +6,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { validateTelegramAuth, getTelegramBotToken } from '../_shared/telegram-auth.ts';
+import { validateTelegramAuthWithMultipleTokens } from '../_shared/telegram-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -460,9 +460,8 @@ serve(async (req) => {
         );
       }
 
-      // Validate Telegram authentication
-      const botToken = getTelegramBotToken();
-      const authResult = await validateTelegramAuth(initData, botToken);
+      // Validate Telegram authentication (tries multiple bot tokens)
+      const authResult = await validateTelegramAuthWithMultipleTokens(initData);
       
       if (!authResult.valid || !authResult.userId) {
         return new Response(
