@@ -41,6 +41,7 @@ import { ThemeCardManager } from './utils/ThemeCardManager'; // Импорт д�
 import { RewardManager } from './components/RewardManager'; // Импорт менеджера наград
 import { AllArticlesScreen } from './components/AllArticlesScreen'; // Импорт страницы всех статей
 import { ArticleScreen } from './components/ArticleScreen'; // Импорт страницы статьи
+import { LoadingScreen } from './components/LoadingScreen'; // Импорт экрана загрузки
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
 
@@ -55,7 +56,7 @@ import { GroundingAnchorScreen } from './components/mental-techniques/GroundingA
 
 // Новые импорты для централизованного управления контентом
 import { ContentProvider, useContent } from './components/ContentContext';
-import { LanguageProvider } from './components/LanguageContext';
+import { LanguageProvider, useLanguage } from './components/LanguageContext';
 import { AchievementsProvider } from './contexts/AchievementsContext';
 // import { appContent } from './data/content'; // Unused - using ContentContext instead
 import { SurveyResults } from './types/content';
@@ -297,6 +298,8 @@ function FinalCardMessageScreenWithLoader({
  * Теперь использует централизованную систему управления контентом и расширенную систему опроса
  */
 function AppContent() {
+  // Get language context to update language after sync
+  const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage();
 
   // =====================================================================================
   // TELEGRAM WEBAPP INITIALIZATION (Direct-Link Full Screen Support)
@@ -360,6 +363,194 @@ function AppContent() {
     // Обновление статистики реферера на основе списка рефералов
     // Это работает только на устройстве реферера и обновляет его статистику
     updateReferrerStatsFromList();
+  }, []); // Вызывается только при монтировании компонента
+
+  // =====================================================================================
+  // INITIAL SYNC WITH SUPABASE (runs in background, app shows immediately)
+  // =====================================================================================
+
+  useEffect(() => {
+    // Start with loading screen
+    setCurrentScreen('loading');
+    setNavigationHistory(['loading']);
+
+    const determineInitialScreen = (progress: AppFlowProgress): AppScreen => {
+      if (!progress.onboardingCompleted) {
+        return 'onboarding1';
+      } else if (!progress.surveyCompleted) {
+        return 'survey01';
+      } else if (!hasTestBeenCompleted()) {
+        return 'psychological-test-preambula';
+      } else {
+        const checkinStatus = DailyCheckinManager.getCurrentDayStatus();
+        if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+          return 'checkin';
+        } else if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+          return 'home';
+        } else {
+          return 'checkin';
+        }
+      }
+    };
+
+    // Check if we have critical data in localStorage
+    // Critical data = onboarding completion OR survey completion OR psychological test completion
+    // We don't need to check checkin status here because it's not critical for initial screen determination
+    const checkLocalCriticalData = (): boolean => {
+      const progress = loadProgress();
+      const hasProgress = progress.onboardingCompleted || progress.surveyCompleted;
+      const hasTest = hasTestBeenCompleted();
+      
+      const hasCriticalData = hasProgress || hasTest;
+      console.log('[App] checkLocalCriticalData:', {
+        hasProgress,
+        hasTest,
+        hasCriticalData,
+        onboardingCompleted: progress.onboardingCompleted,
+        surveyCompleted: progress.surveyCompleted,
+      });
+      
+      return hasCriticalData;
+    };
+
+    // Load critical data from Supabase if localStorage is empty
+    const loadCriticalData = async (): Promise<void> => {
+      try {
+        console.log('[App] Loading critical data from Supabase...');
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        const result = await syncService.fastSyncCriticalData();
+        
+        if (result) {
+          console.log('[App] Critical data loaded successfully');
+          
+          // Update language if preferences were loaded from Supabase
+          // Optimization: Only update if language actually changed to prevent unnecessary content reloading
+          if (result.preferences && result.preferences.language) {
+            try {
+              const loadedLanguage = result.preferences.language;
+              if ((loadedLanguage === 'en' || loadedLanguage === 'ru')) {
+                // Check if language changed (compare with current language from context)
+                if (loadedLanguage !== currentLanguageFromContext) {
+                  console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${loadedLanguage}`);
+                  updateLanguage(loadedLanguage as 'en' | 'ru');
+                } else {
+                  console.log(`[App] Language loaded from Supabase: ${loadedLanguage} (already set, skipping update)`);
+                }
+              }
+            } catch (error) {
+              console.warn('[App] Error updating language after fast sync:', error);
+            }
+          } else {
+            // Fallback: try to get language from localStorage (if it was set during sync)
+            try {
+              const savedLanguage = localStorage.getItem('menhausen-language');
+              if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+                // Check if language changed (compare with current language from context)
+                if (savedLanguage !== currentLanguageFromContext) {
+                  console.log(`[App] Language changed after fast sync (from localStorage): ${currentLanguageFromContext} -> ${savedLanguage}`);
+                  updateLanguage(savedLanguage as 'en' | 'ru');
+                }
+              }
+            } catch (error) {
+              console.warn('[App] Error updating language after fast sync (fallback):', error);
+            }
+          }
+        } else {
+          console.log('[App] No critical data found in Supabase (new user)');
+        }
+      } catch (error) {
+        console.warn('[App] Failed to load critical data:', error);
+        // Continue anyway - will show onboarding for new users
+      }
+    };
+
+    // Load all remaining data in background (non-blocking)
+    const performBackgroundSync = async () => {
+      const syncStartTime = Date.now();
+      try {
+        console.log('[App] Starting background sync (non-blocking)...');
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        const result = await syncService.initialSync();
+        const syncDuration = Date.now() - syncStartTime;
+        console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
+        
+        // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
+        const updatedProgress = loadProgress();
+        setFlow(updatedProgress);
+        
+        // Update language if it was loaded from Supabase and is different from current
+        try {
+          const savedLanguage = localStorage.getItem('menhausen-language');
+          if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+            // Check if language changed (compare with current language from context)
+            if (savedLanguage !== currentLanguageFromContext) {
+              console.log(`[App] Language changed after sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
+              updateLanguage(savedLanguage as 'en' | 'ru');
+            }
+          }
+        } catch (error) {
+          console.warn('[App] Error updating language after sync:', error);
+        }
+        
+        // Recalculate screen after sync completes (in case data changed)
+        const currentProgress = loadProgress();
+        const correctScreen = determineInitialScreen(currentProgress);
+        
+        // Only switch screen if it's different (to avoid flickering)
+        if (correctScreen !== currentScreen) {
+          console.log(`[App] Screen changed after background sync: ${currentScreen} -> ${correctScreen}`);
+          setCurrentScreen(correctScreen);
+          setNavigationHistory([correctScreen]);
+        }
+      } catch (error) {
+        const syncDuration = Date.now() - syncStartTime;
+        console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
+        // Don't change screen on error - user is already using the app
+      }
+    };
+
+    // Main initialization flow
+    const initializeApp = async () => {
+      const initStartTime = Date.now();
+      
+      // Check if we have critical data locally
+      const hasLocalCriticalData = checkLocalCriticalData();
+      
+      if (hasLocalCriticalData) {
+        // We have local data, determine screen immediately
+        const progress = loadProgress();
+        const initialScreen = determineInitialScreen(progress);
+        const initDuration = Date.now() - initStartTime;
+        
+        console.log(`[App] Local critical data found, showing app after ${initDuration}ms with screen:`, initialScreen);
+        setCurrentScreen(initialScreen);
+        setNavigationHistory([initialScreen]);
+        
+        // Start background sync for remaining data
+        performBackgroundSync();
+      } else {
+        // No local data, load critical data from Supabase first
+        await loadCriticalData();
+        
+        // Determine screen after loading critical data
+        const progress = loadProgress();
+        const initialScreen = determineInitialScreen(progress);
+        const initDuration = Date.now() - initStartTime;
+        
+        console.log(`[App] Critical data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
+        setCurrentScreen(initialScreen);
+        setNavigationHistory([initialScreen]);
+        
+        // Start background sync for remaining data
+        performBackgroundSync();
+      }
+    };
+
+    // Start initialization
+    initializeApp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
@@ -433,9 +624,13 @@ function AppContent() {
   };
   
   // Smart Navigation: Dynamic screen determination based on user state
-  const getInitialScreen = (): AppScreen => {
+  // Note: Logic is inlined in useEffect to avoid dependency issues
+  // This helper function is kept for reference but not used
+  const _getInitialScreen = (): AppScreen => {
     // Primary: flow-driven initial screen
     const p = loadProgress();
+    console.log('[App] getInitialScreen - Progress:', p);
+    console.log('[App] getInitialScreen - hasTestBeenCompleted:', hasTestBeenCompleted());
 
     if (!p.onboardingCompleted) {
       return 'onboarding1';
@@ -467,8 +662,11 @@ function AppContent() {
     }
   };
 
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>(getInitialScreen());
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>([getInitialScreen()]);
+  // Initialize with a default screen - will be updated after sync completes
+  // For new users without data, this will show onboarding which is correct
+  // For users with data, sync will update this to the correct screen
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('loading');
+  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['loading']);
   const [isNavigatingForward, setIsNavigatingForward] = useState(true);
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
@@ -2128,6 +2326,8 @@ function AppContent() {
 
   const renderCurrentScreen = () => {
     switch (currentScreen) {
+      case 'loading':
+        return wrapScreen(<LoadingScreen />);
       case 'onboarding1':
         return wrapScreen(
           <OnboardingScreen01 

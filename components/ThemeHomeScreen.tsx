@@ -93,8 +93,9 @@ function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCar
 
 /**
  * Компонент празднования завершения карточки
+ * @unused - закомментирован в коде, но может быть использован в будущем
  */
-function _CompletionCelebration({ isVisible, onComplete }: { isVisible: boolean; onComplete: () => void }) {
+function CompletionCelebration({ isVisible, onComplete }: { isVisible: boolean; onComplete: () => void }) {
   React.useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {

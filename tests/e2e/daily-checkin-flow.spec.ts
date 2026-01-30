@@ -41,6 +41,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
 
     await completeCheckin(page);
@@ -73,6 +74,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
   });
 
@@ -80,9 +82,17 @@ test.describe('Daily Check-in Flow', () => {
     const contextA = await browser.newContext();
     const pageA = await contextA.newPage();
 
+    // Enable mocked sync for context A
+    await pageA.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+      (window as any).__MOCK_SUPABASE_SYNC__ = true;
+    });
+
     await seedCheckinHistory(pageA, [], { firstCheckinDone: false, firstRewardShown: false });
     await pageA.goto('/');
     await waitForPageLoad(pageA);
+    // Даем время для завершения начальной синхронизации перед проверкой экрана
+    await pageA.waitForTimeout(1500).catch(() => {});
     await waitForCheckinScreen(pageA);
     await completeCheckin(pageA);
     await waitForHomeScreen(pageA);
@@ -93,6 +103,13 @@ test.describe('Daily Check-in Flow', () => {
 
     const contextB = await browser.newContext({ storageState: state });
     const pageB = await contextB.newPage();
+    
+    // Enable mocked sync for context B
+    await pageB.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+      (window as any).__MOCK_SUPABASE_SYNC__ = true;
+    });
+    
     await pageB.goto('/');
     await waitForPageLoad(pageB);
     await waitForHomeScreen(pageB);
@@ -112,6 +129,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
     await completeCheckin(page);
     await waitForHomeScreen(page);
@@ -130,6 +148,7 @@ test.describe('Daily Check-in Flow', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
+    // waitForCheckinScreen уже включает ожидание синхронизации
     await waitForCheckinScreen(page);
     await completeCheckin(page);
     await waitForHomeScreen(page);

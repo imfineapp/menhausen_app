@@ -61,6 +61,12 @@ test.describe('Check-in Data Persistence', () => {
     const contextA = await browser.newContext();
     const pageA = await contextA.newPage();
 
+    // Enable mocked sync for context A
+    await pageA.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+      (window as any).__MOCK_SUPABASE_SYNC__ = true;
+    });
+
     await seedCheckinHistory(pageA, [], { firstCheckinDone: false, firstRewardShown: false });
     await pageA.goto('/');
     await waitForPageLoad(pageA);
@@ -72,6 +78,13 @@ test.describe('Check-in Data Persistence', () => {
 
     const contextB = await browser.newContext({ storageState });
     const pageB = await contextB.newPage();
+    
+    // Enable mocked sync for context B
+    await pageB.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+      (window as any).__MOCK_SUPABASE_SYNC__ = true;
+    });
+    
     await pageB.goto('/');
     await waitForPageLoad(pageB);
     await waitForHomeScreen(pageB);

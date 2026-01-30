@@ -81,9 +81,39 @@ interface AppContent {
 ```
 
 ### Data Persistence Patterns
-- **Local Storage**: Survey results, user preferences, exercise progress
-- **API Ready**: Prepared structure for backend integration
+- **Local Storage**: Survey results, user preferences, exercise progress (primary source of truth locally)
+- **Cloud Sync**: Supabase backend for multi-device synchronization (NEW)
 - **State Sync**: React state synchronized with localStorage
+- **Sync Strategy**: Incremental sync with debouncing, real-time on localStorage changes (NEW)
+
+### Cloud Sync Patterns (NEW)
+```typescript
+// Sync service pattern
+interface SyncService {
+  syncData(dataType: string, data: any): Promise<void>;
+  syncAll(): Promise<void>;
+  getSyncStatus(): SyncStatus;
+}
+
+// Data transformation at boundaries
+const transformed = transformForSync(localStorageKey, localStorageValue);
+await syncToSupabase(transformed);
+
+// Conflict resolution pattern
+const merged = resolveConflict(dataType, localData, remoteData);
+updateLocalStorage(merged);
+
+// Encryption pattern for sensitive data
+const encrypted = shouldEncrypt(dataType) 
+  ? encryptSensitiveData(data) 
+  : data;
+```
+
+### Sync Architecture Pattern
+- **Interceptor Pattern**: Intercept localStorage.setItem to trigger sync
+- **Debouncing**: Batch rapid changes (100-200ms delay)
+- **Offline Queue**: Queue failed syncs, retry when online
+- **Conflict Resolution**: Remote wins for preferences, smart merge for collections
 
 ## Design Patterns
 

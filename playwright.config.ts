@@ -55,8 +55,18 @@ export default defineConfig({
     /* Increased timeouts for actions and navigation */
     actionTimeout: 30 * 1000, // 30 seconds for actions like click, fill
     navigationTimeout: 60 * 1000, // 60 seconds for navigation
+    
+    /* Disable Supabase sync in e2e tests by unsetting environment variables */
+    /* This prevents Supabase sync from interfering with test data setup */
+    /* Note: Supabase sync checks for VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY */
+    /* If they are not set, sync is automatically disabled */
+    // Environment variables are set via process.env, not here
+    // We'll handle this via globalSetup or test fixtures if needed
 
   },
+  
+  /* Global setup can set environment variables */
+  globalSetup: './tests/e2e/global-setup.ts',
 
   /* Configure projects for major browsers */
   projects: [
@@ -114,7 +124,4 @@ export default defineConfig({
 
   /* Test output directories */
   outputDir: 'test-results/',
-  
-  /* Global setup and teardown */
-  globalSetup: './tests/e2e/global-setup.ts',
 });

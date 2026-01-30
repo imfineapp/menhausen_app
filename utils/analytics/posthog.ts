@@ -66,8 +66,9 @@ export async function initPosthog(): Promise<void> {
     capture_pageview: false,
     autocapture: true,
     debug: false,
-    // Disable exception tracking to avoid loading external script blocked by CSP
-    capture_exceptions: false,
+    // Enable exception tracking - uses window.onerror and window.onunhandledrejection
+    // This doesn't require external scripts, so it's safe with CSP
+    capture_exceptions: true,
     // Disable remote config/decide endpoint to avoid loading site apps like ExceptionAutocapture
     advanced_disable_decide: true,
   })
@@ -161,6 +162,41 @@ export async function shutdown(): Promise<void> {
 
 export async function getPostHogClient() {
   return await loadPostHog()
+}
+
+/**
+ * Manually capture an exception/error
+ * @param error - The error object or error message
+ * @param additionalProperties - Additional properties to include with the error event
+ */
+export async function captureException(
+  error: Error | string,
+  additionalProperties?: Record<string, any>
+): Promise<void> {
+  if (!isAnalyticsEnabled()) return
+  
+  try {
+    const ph = await loadPostHog()
+    if (!ph) return
+    
+    // PostHog's captureException method
+    if (typeof ph.captureException === 'function') {
+      ph.captureException(error, additionalProperties)
+    } else {
+      // Fallback: capture as $exception event if captureException is not available
+      const errorMessage = error instanceof Error ? error.message : String(error)
+      const errorStack = error instanceof Error ? error.stack : undefined
+      
+      ph.capture('$exception', {
+        $exception_message: errorMessage,
+        $exception_type: error instanceof Error ? error.name : 'Error',
+        $exception_stack: errorStack,
+        ...additionalProperties,
+      })
+    }
+  } catch {
+    // Swallow analytics errors to avoid breaking UX
+  }
 }
 
 // Centralized event names to avoid typos across the app

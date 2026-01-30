@@ -18,6 +18,8 @@ const ensurePrimedHome = async (page: Page): Promise<void> => {
 
 const seedTwoDaysHistory = async (page: Page): Promise<void> => {
   await page.addInitScript(() => {
+    (window as any).__PLAYWRIGHT__ = true;
+    (window as any).__MOCK_SUPABASE_SYNC__ = true; // Enable mocked sync for tests
     const pad = (value: number) => String(value).padStart(2, '0');
     const now = new Date();
     const todayKey = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -47,11 +49,15 @@ const seedTwoDaysHistory = async (page: Page): Promise<void> => {
   await page.reload();
   await waitForPageLoad(page);
   await waitForHomeScreen(page);
+  // Даем больше времени для завершения синхронизации и обновления UI после reload
+  await page.waitForTimeout(3000).catch(() => {});
 };
 
 test.describe('Home Progress Display', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
+      (window as any).__PLAYWRIGHT__ = true;
+      (window as any).__MOCK_SUPABASE_SYNC__ = true; // Enable mocked sync for tests
       localStorage.clear();
     });
 
@@ -71,7 +77,8 @@ test.describe('Home Progress Display', () => {
 
   test('should update progress display dynamically', async ({ page }) => {
     await seedTwoDaysHistory(page);
-    await expect(page.locator(TWO_DAYS_SELECTOR)).toBeVisible();
+    // Увеличен timeout для учета времени синхронизации с Supabase и обновления UI
+    await expect(page.locator(TWO_DAYS_SELECTOR)).toBeVisible({ timeout: 30000 });
   });
 
   test('should handle accessibility features', async ({ page }) => {

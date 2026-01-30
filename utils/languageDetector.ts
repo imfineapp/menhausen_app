@@ -55,12 +55,25 @@ export function getSavedLanguage(): SupportedLanguage | null {
 
 /**
  * Сохраняет выбранный язык в localStorage
+ * Также обновляет объект preferences для синхронизации
  * @param language - язык для сохранения
  */
 export function saveLanguage(language: SupportedLanguage): void {
   try {
     localStorage.setItem('menhausen-language', language);
     console.log('saveLanguage: Language saved to localStorage:', language);
+    
+    // Also update preferences object to ensure sync works correctly
+    try {
+      const preferencesRaw = localStorage.getItem('menhausen_user_preferences');
+      const preferences: any = preferencesRaw ? JSON.parse(preferencesRaw) : {};
+      preferences.language = language;
+      localStorage.setItem('menhausen_user_preferences', JSON.stringify(preferences));
+    } catch {
+      // If preferences don't exist or are invalid, create new object
+      const preferences = { language };
+      localStorage.setItem('menhausen_user_preferences', JSON.stringify(preferences));
+    }
   } catch (error) {
     console.warn('saveLanguage: Error saving language:', error);
   }

@@ -20,7 +20,7 @@ const loadHome = async (page: Page): Promise<void> => {
   await waitForPageLoad(page);
   
   // Обрабатываем check-in screen в цикле, так как он может появиться с задержкой
-  const maxAttempts = 10;
+  const maxAttempts = 15; // Увеличено для учета времени синхронизации
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Проверяем, не на home screen ли мы уже
     const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
@@ -32,22 +32,22 @@ const loadHome = async (page: Page): Promise<void> => {
     if (await isOnCheckinScreen(page)) {
       await completeCheckin(page);
       // Даем время для обработки после чекина
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(500); // Увеличено для учета синхронизации
     }
     
     // Пропускаем reward screen
     await skipRewardScreen(page);
     
     // Небольшая задержка перед следующей проверкой
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(300); // Увеличено для учета синхронизации
   }
   
   // Финальная проверка home screen
   await waitForHomeScreen(page);
   // Дополнительная проверка: пропускаем reward screen еще раз на случай, если он появился после waitForHomeScreen
   await skipRewardScreen(page);
-  // Даем время для завершения всех анимаций и переходов
-  await page.waitForTimeout(500);
+  // Даем больше времени для завершения всех анимаций, переходов и синхронизации
+  await page.waitForTimeout(3000);
 };
 
 test.describe('Day Boundary Testing', () => {
