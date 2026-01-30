@@ -1,6 +1,34 @@
 # Memory Bank: Active Context
 
 ## Current Focus
+🎯 **Phase 1: Infrastructure Setup - Telegram Stars Payment Integration**
+**Task**: Telegram Stars Payment Integration for Premium Subscriptions (Level 4 Complex System)
+**Status**: ⏭️ **PHASE 1 READY TO START** (Planning Complete)
+**Related Plan**: `memory-bank/telegram-stars-payment-plan.md`
+
+### Task Overview:
+Внедрение оплаты Telegram Stars для Premium подписки в приложение Menhausen. Интеграция включает:
+- Создание инвойсов через Telegram Bot API
+- Обработку платежей через webhook
+- Интеграцию с Telegram WebApp API (`openInvoice`)
+- Синхронизацию premium статуса через Supabase
+- Обновление UI компонентов для реальных платежей
+
+### Key Requirements:
+- Использование валюты XTR (Telegram Stars) - обязательно для цифровых товаров
+- Обработка `pre_checkout_query` в течение 10 секунд
+- Сохранение `telegram_payment_charge_id` для возможных возвратов
+- Синхронизация premium статуса между устройствами
+
+### Next Steps:
+1. Настройка Telegram Bot для платежей
+2. Создание Edge Function для создания инвойсов
+3. Обновление схемы БД для подписок
+4. Определение цен в Stars
+
+---
+
+## Previous Focus
 🎯 **Phase 4: Testing & Deployment - Telegram Users API Sync**
 **Task**: Telegram Users API Sync with Supabase (Level 4 Complex System)
 **Status**: ⏭️ **PHASE 4 IN PROGRESS** (Phases 1-3 Complete)
