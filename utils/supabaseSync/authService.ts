@@ -185,19 +185,25 @@ export function isJWTTokenExpired(): boolean {
   try {
     const token = getJWTToken();
     if (!token) {
+      console.log('[authService] isJWTTokenExpired - no token');
       return true;
     }
 
     const expiry = localStorage.getItem(JWT_TOKEN_EXPIRY_KEY);
     if (!expiry) {
       // If no expiry stored, check token itself
+      console.log('[authService] isJWTTokenExpired - no stored expiry, checking token');
       return isTokenExpired(token);
     }
 
     const expiryTime = parseInt(expiry, 10);
-    return Date.now() >= expiryTime;
+    const now = Date.now();
+    const isExpired = now >= expiryTime;
+    const timeUntilExpiry = expiryTime - now;
+    console.log('[authService] isJWTTokenExpired - expiry:', new Date(expiryTime).toISOString(), 'now:', new Date(now).toISOString(), 'expired:', isExpired, 'time until expiry:', Math.floor(timeUntilExpiry / 1000), 'seconds');
+    return isExpired;
   } catch (error) {
-    console.error('Error checking token expiry:', error);
+    console.error('[authService] Error checking token expiry:', error);
     return true;
   }
 }
@@ -273,16 +279,23 @@ export function clearJWTToken(): void {
  */
 export async function getValidJWTToken(): Promise<string | null> {
   let token = getJWTToken();
+  const isExpired = isJWTTokenExpired();
   
-  if (!token || isJWTTokenExpired()) {
+  console.log('[authService] getValidJWTToken - has token:', !!token, 'is expired:', isExpired);
+  
+  if (!token || isExpired) {
     // Token missing or expired, refresh it
+    console.log('[authService] Refreshing JWT token...');
     const authResult = await refreshJWTToken();
     if (authResult.success && authResult.token) {
       token = authResult.token;
+      console.log('[authService] JWT token refreshed successfully');
     } else {
-      console.error('Failed to refresh JWT token:', authResult.error);
+      console.error('[authService] Failed to refresh JWT token:', authResult.error);
       return null;
     }
+  } else {
+    console.log('[authService] Using existing JWT token');
   }
 
   return token;
