@@ -82,25 +82,21 @@ export async function validateTelegramAuth(
       return { valid: false, error: 'Bot token not configured' };
     }
     
-    // CRITICAL: data-check-string must use raw encoded values as they appear in initData,
-    // NOT decoded values. URLSearchParams decodes values, which causes signature mismatch.
-    // Parse manually to preserve original encoding (per Telegram validation spec).
-    // Exclude hash and signature: hash is the signature itself; signature (Bot API 8.0+) is
-    // for third-party Ed25519 validation - both must be excluded from hash validation.
-    const excludeKeys = ['hash', 'signature'];
-    const pairs = initData.split('&').filter((p) => {
-      const eqIdx = p.indexOf('=');
-      const key = eqIdx >= 0 ? p.slice(0, eqIdx) : p;
-      return !excludeKeys.includes(key);
-    });
-    const parsedPairs = pairs.map((p) => {
-      const eqIdx = p.indexOf('=');
-      const key = eqIdx >= 0 ? p.slice(0, eqIdx) : p;
-      const value = eqIdx >= 0 ? p.slice(eqIdx + 1) : '';
-      return [key, value] as [string, string];
-    });
-    parsedPairs.sort(([a], [b]) => a.localeCompare(b));
-    const dataCheckString = parsedPairs.map(([k, v]) => `${k}=${v}`).join('\n');
+    // Remove hash and signature from params for data-check-string calculation
+    // hash is excluded as per Telegram validation spec
+    // signature (Bot API 8.0+) is for third-party Ed25519 validation and is computed
+    // separately - it must also be excluded from hash validation
+    params.delete('hash');
+    params.delete('signature');
+    
+    // Sort parameters by key
+    const sortedParams = Array.from(params.entries())
+      .sort(([a], [b]) => a.localeCompare(b));
+    
+    // Create data-check-string using decoded values (URLSearchParams provides decoded)
+    const dataCheckString = sortedParams
+      .map(([key, value]) => `${key}=${value}`)
+      .join('\n');
     
     // Calculate secret key using HMAC-SHA256
     // Secret key = HMAC_SHA256('WebAppData', bot_token)
@@ -136,6 +132,12 @@ export async function validateTelegramAuth(
     const calculatedHash = Array.from(calculatedHashArray)
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
+    
+    // Debug: log data-check-string and hash comparison
+    console.log('[TelegramAuth] dataCheckString keys:', sortedParams.map(([k]) => k).join(', '));
+    console.log('[TelegramAuth] calculatedHash:', calculatedHash);
+    console.log('[TelegramAuth] expectedHash:', hash);
+    console.log('[TelegramAuth] hashMatch:', calculatedHash === hash);
     
     // Verify signature
     if (calculatedHash !== hash) {
