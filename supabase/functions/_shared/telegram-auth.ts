@@ -82,12 +82,10 @@ export async function validateTelegramAuth(
       return { valid: false, error: 'Bot token not configured' };
     }
     
-    // Remove hash and signature from params for data-check-string calculation
-    // hash is excluded as per Telegram validation spec
-    // signature (Bot API 8.0+) is for third-party Ed25519 validation and is computed
-    // separately - it must also be excluded from hash validation
+    // Remove hash from params for data-check-string calculation
+    // Per Telegram validation spec, only hash is excluded
+    // signature (Bot API 8.0+) is included in the data-check-string for hash validation
     params.delete('hash');
-    params.delete('signature');
     
     // Sort parameters by key
     const sortedParams = Array.from(params.entries())
@@ -99,20 +97,21 @@ export async function validateTelegramAuth(
       .join('\n');
     
     // Calculate secret key using HMAC-SHA256
-    // Per Telegram docs: secret_key = HMAC_SHA256(bot_token, "WebAppData")
-    // Key is bot_token, message is "WebAppData" (was reversed before - this caused Invalid signature)
+    // Per Telegram docs: "HMAC-SHA-256 signature of the bot's token with WebAppData used as a key"
+    // This means: HMAC(key='WebAppData', message=bot_token)
     const encoder = new TextEncoder();
-    const botTokenData = encoder.encode(botToken);
-    const webAppData = encoder.encode('WebAppData');
+    const secretKeyData = encoder.encode('WebAppData');
     
     const secretKey = await crypto.subtle.importKey(
       'raw',
-      botTokenData,
+      secretKeyData,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
     );
-    const secretKeyBuffer = await crypto.subtle.sign('HMAC', secretKey, webAppData);
+    
+    const botTokenData = encoder.encode(botToken);
+    const secretKeyBuffer = await crypto.subtle.sign('HMAC', secretKey, botTokenData);
     
     // Calculate signature using secret key
     const signatureKey = await crypto.subtle.importKey(
