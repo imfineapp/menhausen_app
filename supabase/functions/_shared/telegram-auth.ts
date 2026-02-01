@@ -82,17 +82,18 @@ export async function validateTelegramAuth(
       return { valid: false, error: 'Bot token not configured' };
     }
     
-    // Remove hash from params for signature calculation
-    params.delete('hash');
-    
-    // Sort parameters by key
-    const sortedParams = Array.from(params.entries())
-      .sort(([a], [b]) => a.localeCompare(b));
-    
-    // Create data-check-string
-    const dataCheckString = sortedParams
-      .map(([key, value]) => `${key}=${value}`)
-      .join('\n');
+    // CRITICAL: data-check-string must use raw encoded values as they appear in initData,
+    // NOT decoded values. URLSearchParams decodes values, which causes signature mismatch.
+    // Parse manually to preserve original encoding (per Telegram validation spec).
+    const pairs = initData.split('&').filter((p) => p.startsWith('hash=') === false);
+    const parsedPairs = pairs.map((p) => {
+      const eqIdx = p.indexOf('=');
+      const key = eqIdx >= 0 ? p.slice(0, eqIdx) : p;
+      const value = eqIdx >= 0 ? p.slice(eqIdx + 1) : '';
+      return [key, value] as [string, string];
+    });
+    parsedPairs.sort(([a], [b]) => a.localeCompare(b));
+    const dataCheckString = parsedPairs.map(([k, v]) => `${k}=${v}`).join('\n');
     
     // Calculate secret key using HMAC-SHA256
     // Secret key = HMAC_SHA256('WebAppData', bot_token)
