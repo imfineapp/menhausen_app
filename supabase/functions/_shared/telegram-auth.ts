@@ -85,7 +85,14 @@ export async function validateTelegramAuth(
     // CRITICAL: data-check-string must use raw encoded values as they appear in initData,
     // NOT decoded values. URLSearchParams decodes values, which causes signature mismatch.
     // Parse manually to preserve original encoding (per Telegram validation spec).
-    const pairs = initData.split('&').filter((p) => p.startsWith('hash=') === false);
+    // Exclude hash and signature: hash is the signature itself; signature (Bot API 8.0+) is
+    // for third-party Ed25519 validation - both must be excluded from hash validation.
+    const excludeKeys = ['hash', 'signature'];
+    const pairs = initData.split('&').filter((p) => {
+      const eqIdx = p.indexOf('=');
+      const key = eqIdx >= 0 ? p.slice(0, eqIdx) : p;
+      return !excludeKeys.includes(key);
+    });
     const parsedPairs = pairs.map((p) => {
       const eqIdx = p.indexOf('=');
       const key = eqIdx >= 0 ? p.slice(0, eqIdx) : p;
