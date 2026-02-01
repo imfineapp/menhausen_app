@@ -99,21 +99,20 @@ export async function validateTelegramAuth(
       .join('\n');
     
     // Calculate secret key using HMAC-SHA256
-    // Secret key = HMAC_SHA256('WebAppData', bot_token)
+    // Per Telegram docs: secret_key = HMAC_SHA256(bot_token, "WebAppData")
+    // Key is bot_token, message is "WebAppData" (was reversed before - this caused Invalid signature)
     const encoder = new TextEncoder();
-    const secretKeyData = encoder.encode('WebAppData');
+    const botTokenData = encoder.encode(botToken);
+    const webAppData = encoder.encode('WebAppData');
     
-    // Create HMAC key for secret key calculation
     const secretKey = await crypto.subtle.importKey(
       'raw',
-      secretKeyData,
+      botTokenData,
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['sign']
     );
-    
-    const botTokenData = encoder.encode(botToken);
-    const secretKeyBuffer = await crypto.subtle.sign('HMAC', secretKey, botTokenData);
+    const secretKeyBuffer = await crypto.subtle.sign('HMAC', secretKey, webAppData);
     
     // Calculate signature using secret key
     const signatureKey = await crypto.subtle.importKey(
@@ -132,12 +131,6 @@ export async function validateTelegramAuth(
     const calculatedHash = Array.from(calculatedHashArray)
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
-    
-    // Debug: log data-check-string and hash comparison
-    console.log('[TelegramAuth] dataCheckString keys:', sortedParams.map(([k]) => k).join(', '));
-    console.log('[TelegramAuth] calculatedHash:', calculatedHash);
-    console.log('[TelegramAuth] expectedHash:', hash);
-    console.log('[TelegramAuth] hashMatch:', calculatedHash === hash);
     
     // Verify signature
     if (calculatedHash !== hash) {
