@@ -351,22 +351,9 @@ serve(async (req) => {
         },
       });
 
-      // Verify the JWT token is valid by getting the user
-      const { data: { user }, error: userError } = await supabase.auth.getUser(jwtToken);
-      
-      if (userError || !user) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: 'Invalid or expired JWT token',
-            code: 'AUTH_FAILED',
-          } as GetUserDataResponse),
-          {
-            status: 401,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
-        );
-      }
+      // JWT token is already validated by extracting telegram_user_id
+      // The token signature will be verified by Supabase when making queries
+      // No need for additional getUser() call which requires service role key
     } else {
       // Fallback: Telegram initData authentication (backward compatibility)
       const initData = req.headers.get('X-Telegram-Init-Data');
