@@ -45,11 +45,12 @@ export class SupabaseSyncService {
   };
   private config: SyncConfig;
   private debounceTimers: Map<SyncDataType, number> = new Map();
+  private initializationPromise: Promise<void>;
 
   constructor(config?: Partial<SyncConfig>) {
     this.config = { ...DEFAULT_SYNC_CONFIG, ...config };
-    // Initialize Supabase asynchronously
-    this.initializeSupabase().catch((error) => {
+    // Initialize Supabase asynchronously and track the promise
+    this.initializationPromise = this.initializeSupabase().catch((error) => {
       console.error('Error initializing Supabase:', error);
     });
     this.setupOnlineListeners();
@@ -957,6 +958,9 @@ export class SupabaseSyncService {
       return null;
     }
     
+    // Wait for initialization to complete
+    await this.initializationPromise;
+    
     const telegramUserIdStr = getTelegramUserId();
     if (!telegramUserIdStr) {
       return null;
@@ -1142,6 +1146,9 @@ export class SupabaseSyncService {
         errors: [{ type: 'surveyResults', error: 'Sync already in progress' }],
       };
     }
+
+    // Wait for initialization to complete before checking if Supabase is configured
+    await this.initializationPromise;
 
     // Check if Supabase is configured
     // Note: In local development, getTelegramUserId() returns "111" automatically
