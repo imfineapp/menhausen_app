@@ -7,8 +7,32 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { answerPreCheckoutQuery } from '../_shared/telegram-bot-api.ts';
+import { answerPreCheckoutQuery, getBotInfo } from '../_shared/telegram-bot-api.ts';
 import { getTelegramBotTokens } from '../_shared/telegram-auth.ts';
+
+/**
+ * Find the bot token that corresponds to the given bot_id (from invoice payload).
+ * Telegram requires answering pre_checkout_query with the SAME bot that created the invoice.
+ * Without this, Telegram returns "query is too old or query ID is invalid".
+ */
+async function getBotTokenByBotId(payloadBotId: number): Promise<string> {
+  const tokens = getTelegramBotTokens();
+  const results = await Promise.all(
+    tokens.map(async (token) => {
+      try {
+        const info = await getBotInfo(token);
+        return { token, id: info.id };
+      } catch {
+        return { token, id: null };
+      }
+    })
+  );
+  const match = results.find((r) => r.id === payloadBotId);
+  if (!match) {
+    throw new Error(`No configured bot token found for bot_id ${payloadBotId}. Check that the bot token for this bot is set in Supabase secrets.`);
+  }
+  return match.token;
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -138,15 +162,10 @@ async function activatePremiumSubscription(
 }
 
 /**
- * Check if plan is available (for pre_checkout_query)
- * This is a fast check - must respond within 10 seconds!
+ * Sync check if plan is available (for pre_checkout_query).
+ * Must be fast - no async work to stay within Telegram's 10s limit.
  */
-async function checkPlanAvailability(planType: string): Promise<boolean> {
-  // For now, all plans are always available
-  // In the future, can add checks like:
-  // - Plan type validation
-  // - User eligibility checks
-  // - Inventory checks (if applicable)
+function checkPlanAvailabilitySync(planType: string): boolean {
   return ['monthly', 'annually', 'lifetime'].includes(planType);
 }
 
@@ -167,16 +186,8 @@ serve(async (req) => {
     // Parse webhook update
     const update: TelegramUpdate = await req.json();
     
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Supabase configuration missing');
-    }
-    
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    // Handle pre_checkout_query (must respond within 10 seconds!)
+    // Handle pre_checkout_query first (must respond within 10 seconds!)
+    // Do NOT create Supabase client here - we don't need it for answering, saves time
     if (update.pre_checkout_query) {
       const query = update.pre_checkout_query;
       
@@ -187,17 +198,22 @@ serve(async (req) => {
         // Extract planType (support both compact and legacy formats)
         const planType = payload.p || payload.planType || 'monthly';
         
-        // Fast check - must be quick!
-        const canProcess = await checkPlanAvailability(planType);
+        // Fast check - must be quick (sync)
+        const canProcess = checkPlanAvailabilitySync(planType);
         
-        // Get bot token to answer the query
-        // We need to find which bot token to use
-        // Since we have botId in payload, we could map it, but for simplicity
-        // we'll try all tokens (answerPreCheckoutQuery will work with any token for the same bot)
-        const botTokens = getTelegramBotTokens();
-        const botToken = botTokens[0]; // Use first token (all tokens for same bot should work)
+        // CRITICAL: Use the SAME bot token that created the invoice (payload.b = botId).
+        // Answering with a different bot's token causes "query is too old or query ID is invalid".
+        const payloadBotId = payload.b ?? payload.botId;
+        let botToken: string;
+        if (payloadBotId != null && typeof payloadBotId === 'number') {
+          botToken = await getBotTokenByBotId(payloadBotId);
+          console.log('[handle-payment-webhook] Using token for bot_id:', payloadBotId);
+        } else {
+          const botTokens = getTelegramBotTokens();
+          botToken = botTokens[0];
+          console.log('[handle-payment-webhook] No bot_id in payload, using first configured token');
+        }
         
-        // Answer within 10 seconds!
         await answerPreCheckoutQuery(botToken, {
           pre_checkout_query_id: query.id,
           ok: canProcess,
@@ -218,10 +234,14 @@ serve(async (req) => {
       } catch (error) {
         console.error('[handle-payment-webhook] Error processing pre_checkout_query:', error);
         
-        // Try to answer with error
+        // Try to answer with error using correct bot (if we can parse payload)
         try {
-          const botTokens = getTelegramBotTokens();
-          await answerPreCheckoutQuery(botTokens[0], {
+          const payload: InvoicePayload = JSON.parse(query.invoice_payload);
+          const payloadBotId = payload.b ?? payload.botId;
+          const botToken = (payloadBotId != null && typeof payloadBotId === 'number')
+            ? await getBotTokenByBotId(payloadBotId)
+            : getTelegramBotTokens()[0];
+          await answerPreCheckoutQuery(botToken, {
             pre_checkout_query_id: query.id,
             ok: false,
             error_message: 'Internal error processing request'
@@ -236,6 +256,15 @@ serve(async (req) => {
         });
       }
     }
+    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Supabase configuration missing');
+    }
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
     // Handle successful_payment
     if (update.message?.successful_payment) {
