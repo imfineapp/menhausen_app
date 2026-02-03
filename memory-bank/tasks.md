@@ -253,7 +253,7 @@
 2. ✅ ~~Create invoice creation Edge Function~~ - DONE
 3. ✅ ~~Update database schema~~ - DONE
 4. ✅ ~~Define Stars prices~~ - DONE
-5. ⏭️ **Применить миграцию БД**: `supabase migration up`
+5. ✅ ~~**Применить миграцию БД**~~ - **DONE** ✅ (2026-01-30: `20260130120000_premium_subscriptions.sql` применена в production)
 6. ⏭️ **Сгенерировать и сохранить Webhook Secret Token** в Supabase Secrets
 7. ⏭️ **Деплой Edge Functions** в production
 8. ⏭️ **Настроить webhook** для каждого бота через `setWebhook`
