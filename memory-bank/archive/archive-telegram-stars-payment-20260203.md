@@ -85,3 +85,5 @@ Integrated Telegram Stars (XTR) payments for premium subscriptions: invoice crea
 - **Production webhook**: pre_checkout_query must be answered with the bot token that created the invoice; use payload.b and getBotTokenByBotId().
 - **UX**: Premium badge on ThemeCard only when isThemeLocked; no post-purchase stub modal.
 - **Tests**: premiumSignature.test.ts, telegramStarsPaymentService.test.ts, PaymentsScreen.test.tsx added; all passing with lint/type-check.
+
+**Detailed session log**: See `memory-bank/reflection/reflection-telegram-stars-production-ux-20260203.md` for full context, lessons, and multi-bot/10s limit notes.
