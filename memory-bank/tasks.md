@@ -117,7 +117,7 @@
 
 ---
 
-### Phase 4: Premium Status Synchronization (1-2 days) ✅ **PARTIALLY COMPLETE**
+### Phase 4: Premium Status Synchronization (1-2 days) ✅ **COMPLETE**
 
 #### 4.1 Update Supabase Sync ✅
 - [x] Update `get-user-data` Edge Function: возвращать `has_premium` с учётом окружения
@@ -125,23 +125,26 @@
   - [x] Определение окружения (test/production)
   - [x] Продакшен: возврат `users.has_premium`
   - [x] Тест: возврат премиум только если есть активная подписка с `is_test_payment = true`
-- [ ] Add premium status sync to `supabaseSyncService.ts` (опционально, можно добавить позже)
-- [ ] Update `sync-user-data` Edge Function (опционально)
+- [x] Add premium status sync to `supabaseSyncService.ts` (реализовано через `fetchUserData` и `mergeAndSave`)
+- [x] Update `sync-user-data` Edge Function (не требуется - используется `get-user-data`)
 
-#### 4.2 Update Local State Management ⏭️ **PENDING**
-- [ ] Update `userStateManager.ts` for premium status
-- [ ] Add premium status check on app load
+#### 4.2 Update Local State Management ✅
+- [x] Update `App.tsx` for premium status (реализовано через `userHasPremium` state и Ed25519 проверку)
+- [x] Add premium status check on app load (реализовано в `useEffect` с проверкой подписи)
 - [x] Implement auto-update after successful payment (через событие `premium:activated`)
 
-#### 4.3 Update Components ⏭️ **PENDING**
-- [ ] Update `HomeScreen.tsx` for premium status display (использует существующий механизм)
-- [ ] Update `ThemeHomeScreen.tsx` for premium gating (использует существующий механизм)
+#### 4.3 Update Components ✅
+- [x] Update `HomeScreen.tsx` for premium status display (использует `userHasPremium` пропс)
+- [x] Update `ThemeHomeScreen.tsx` for premium gating (использует `userHasPremium` и `isThemeLocked`)
 - [x] Update `PaymentsScreen.tsx` for current plan display (базовая интеграция готова)
+- [x] Update `ThemeCard.tsx` for premium gating (использует `userHasPremium` и `isPremium`)
+- [x] Update `ThemeWelcomeScreen.tsx` for premium gating (использует `userHasPremium`)
 
-**Phase 4 Success Criteria**: ⚠️ **PARTIALLY COMPLETE**
+**Phase 4 Success Criteria**: ✅ **COMPLETE**
 - ✅ Premium status определяется с учётом окружения в get-user-data
-- ⏭️ Компоненты используют существующий механизм (требуется проверка интеграции)
-- ✅ Status updates after payment (через событие)
+- ✅ Компоненты используют `userHasPremium` пропс и правильно проверяют премиум статус
+- ✅ Status updates after payment (через событие `premium:activated`)
+- ✅ Ed25519 подпись интегрирована для безопасной проверки премиум статуса
 
 ---
 
@@ -360,7 +363,7 @@
 ---
 
 **Last Updated**: 2026-01-30  
-**Status**: ✅ **Phases 1-3 Complete** | ⏭️ Phase 4 Partially Complete | ⏭️ Phase 5 Planned (Ed25519) | ⏭️ Phases 6-7 Pending  
+**Status**: ✅ **Phases 1-5 Complete** (Ed25519 implemented) | ⏭️ Phases 6-7 Pending (Testing & Production Prep)  
 **Next Steps**: 
 1. ✅ ~~Set up Telegram Bot for payments~~ - DONE
 2. ✅ ~~Create invoice creation Edge Function~~ - DONE
@@ -372,7 +375,7 @@
 8. ✅ ~~**Настроить webhook**~~ - **DONE** ✅
 9. ✅ ~~**Настроить TELEGRAM_TEST_BOT_IDS**~~ - **DONE** ✅
 10. ⏭️ **Тестирование** - см. `docs/test-payment-flow.md` и `docs/test-payment-quick-start.md`
-11. ⏭️ **Реализация Ed25519 подписи премиум-статуса** (Phase 5) - см. `docs/premium-status-encryption-options.md` (Вариант 8.1)
+11. ✅ **Реализация Ed25519 подписи премиум-статуса** (Phase 5) - ✅ **COMPLETE** - см. `docs/premium-status-encryption-options.md` (Вариант 8.1)
 
 ---
 

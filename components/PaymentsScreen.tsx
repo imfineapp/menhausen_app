@@ -639,12 +639,9 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
         // Успешная оплата
         console.log('Premium purchase completed successfully');
         
-        // Показываем успешное сообщение
-        if (window.Telegram?.WebApp?.showAlert) {
-          window.Telegram.WebApp.showAlert(content.payments.messages.successWithPlan);
-        } else {
-          alert(content.payments.messages.successWithPlan);
-        }
+        // Premium активирован автоматически через webhook и событие premium:activated
+        // Не показываем модалку - пользователь уже видит результат в Telegram
+        // UI обновится автоматически через событие premium:activated
 
         // Вызываем callback для обновления UI
         _onPurchaseComplete();
