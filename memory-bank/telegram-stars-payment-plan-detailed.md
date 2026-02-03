@@ -183,8 +183,18 @@ POST https://api.telegram.org/bot<TOKEN>/answerPreCheckoutQuery
 # Telegram Bot Token (уже существует)
 TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
 
-# Webhook Secret Token (новый)
-TELEGRAM_WEBHOOK_SECRET=your-secret-token-here-min-32-chars
+# Webhook Secret Token (новый) - ГЕНЕРИРУЕМ САМИ!
+# Это НЕ токен от Telegram - это секретный ключ, который мы сами придумываем
+# Telegram будет отправлять его в заголовке X-Telegram-Bot-Api-Secret-Token
+# 
+# Как сгенерировать:
+# 1. Используйте криптографически стойкий генератор случайных строк (минимум 32 символа)
+# 2. Пример генерации в Node.js: require('crypto').randomBytes(32).toString('hex')
+# 3. Пример генерации в bash: openssl rand -hex 32
+# 4. Или используйте онлайн генератор: https://randomkeygen.com/
+#
+# Пример сгенерированного токена:
+TELEGRAM_WEBHOOK_SECRET=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6
 
 # Supabase (уже существует)
 SUPABASE_URL=https://xxx.supabase.co
@@ -436,11 +446,117 @@ test('user can purchase premium subscription', async ({ page }) => {
    - Все активации подписок
    - Все ошибки валидации
 
+### Генерация и настройка Webhook Secret Token
+
+**Webhook Secret Token** — это секретный ключ, который **вы сами генерируете** (не от Telegram). Он используется для проверки, что webhook запросы действительно приходят от Telegram.
+
+#### Шаг 1: Генерация токена
+
+Выберите один из способов:
+
+**Вариант A: Node.js/JavaScript**
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+**Вариант B: OpenSSL (bash)**
+```bash
+openssl rand -hex 32
+```
+
+**Вариант C: Python**
+```bash
+python3 -c "import secrets; print(secrets.token_hex(32))"
+```
+
+**Вариант D: Онлайн генератор**
+- https://randomkeygen.com/ (выберите "CodeIgniter Encryption Keys" или "Fort Knox Password")
+- Минимум 32 символа, рекомендуется 64+
+
+**Пример сгенерированного токена:**
+```
+a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+```
+
+#### Шаг 2: Сохранение токена в Supabase Secrets
+
+```bash
+# Локальная разработка (опционально, для тестирования)
+# Добавить в supabase/functions/.env:
+TELEGRAM_WEBHOOK_SECRET=ваш-сгенерированный-токен-здесь
+
+# Production (обязательно!)
+supabase secrets set TELEGRAM_WEBHOOK_SECRET=ваш-сгенерированный-токен-здесь
+```
+
+#### Шаг 3: Настройка webhook в Telegram Bot API
+
+После деплоя Edge Function `handle-payment-webhook`, настройте webhook для каждого бота:
+
+```bash
+# Для каждого бота (primary, staging, production и т.д.)
+curl -X POST "https://api.telegram.org/bot<BOT_TOKEN>/setWebhook" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://<your-project>.supabase.co/functions/v1/handle-payment-webhook",
+    "secret_token": "ваш-сгенерированный-токен-здесь",
+    "allowed_updates": ["pre_checkout_query", "message"]
+  }'
+```
+
+**Важно:**
+- Используйте **один и тот же** `secret_token` для всех ботов (или разные, но тогда нужно хранить маппинг)
+- URL должен быть HTTPS (обязательно!)
+- `allowed_updates` ограничивает типы обновлений (оптимизация)
+
+#### Шаг 4: Проверка токена в Edge Function
+
+В `handle-payment-webhook/index.ts`:
+
+```typescript
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+
+serve(async (req) => {
+  // ВАЖНО: Проверка secret token ПЕРВЫМ делом!
+  const secretToken = req.headers.get('X-Telegram-Bot-Api-Secret-Token');
+  const expectedToken = Deno.env.get('TELEGRAM_WEBHOOK_SECRET');
+  
+  if (!secretToken || secretToken !== expectedToken) {
+    console.error('[Webhook] Invalid or missing secret token');
+    return new Response('Unauthorized', { 
+      status: 403,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
+  
+  // Продолжаем обработку webhook только после успешной проверки токена
+  const update = await req.json();
+  
+  // Обработка pre_checkout_query и successful_payment...
+});
+```
+
+**Важно:**
+- Проверка токена должна быть **первой операцией** в функции
+- Если токен не совпадает, возвращаем 403 и **не обрабатываем** запрос
+- Это защищает от поддельных webhook запросов
+
+#### Шаг 5: Проверка настройки webhook
+
+```bash
+# Проверить текущий webhook
+curl "https://api.telegram.org/bot<BOT_TOKEN>/getWebhookInfo"
+
+# Удалить webhook (если нужно)
+curl -X POST "https://api.telegram.org/bot<BOT_TOKEN>/deleteWebhook"
+```
+
 ### Чеклист перед продакшеном
 
 - [ ] Все миграции применены к production БД
 - [ ] Edge Functions развернуты в production
-- [ ] Webhook настроен в Telegram Bot API
+- [ ] **Webhook Secret Token сгенерирован и сохранён в Supabase Secrets**
+- [ ] **Webhook настроен в Telegram Bot API для каждого бота с secret_token**
 - [ ] Переменные окружения настроены в Supabase Dashboard
 - [ ] Цены в Stars согласованы с бизнесом
 - [ ] Тесты пройдены (unit, integration, E2E)

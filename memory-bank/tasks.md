@@ -16,8 +16,18 @@
 
 #### 1.1 Telegram Bot Setup for Payments
 - [ ] Verify bot has payment permissions
-- [ ] Configure webhook for payment updates
+- [ ] **Сгенерировать Webhook Secret Token** (см. инструкцию ниже)
+- [ ] Сохранить `TELEGRAM_WEBHOOK_SECRET` в Supabase Secrets
+- [ ] Настроить webhook для каждого бота через `setWebhook` с `secret_token`
 - [ ] Store Bot Token in environment variables
+
+**Инструкция по генерации Webhook Secret Token:**
+- Это секретный ключ, который **вы сами генерируете** (не от Telegram)
+- Генерация: `openssl rand -hex 32` или `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- Минимум 32 символа, рекомендуется 64+
+- Сохранить в Supabase Secrets: `supabase secrets set TELEGRAM_WEBHOOK_SECRET=<ваш-токен>`
+- При настройке webhook через `setWebhook` передать этот токен в параметре `secret_token`
+- Telegram будет отправлять его в заголовке `X-Telegram-Bot-Api-Secret-Token` при каждом webhook запросе
 
 #### 1.2 Create Supabase Edge Function for Invoice Creation
 - [ ] Create `create-premium-invoice` function
