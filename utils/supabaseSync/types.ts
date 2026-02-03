@@ -73,6 +73,19 @@ export interface SyncResult {
 /**
  * Full user data structure from API
  */
+export interface PremiumSignature {
+  data: {
+    premium: boolean;
+    plan?: string;
+    expiresAt?: string;
+    purchasedAt?: string;
+    timestamp: number;
+  };
+  signature: string; // Base64 Ed25519 signature
+  publicKey: string; // Base64 public key
+  version: number; // Key version
+}
+
 export interface UserDataFromAPI {
   surveyResults?: any;
   dailyCheckins?: Record<string, any>;
@@ -89,6 +102,8 @@ export interface UserDataFromAPI {
   referralData?: any;
   language?: string;
   hasShownFirstAchievement?: boolean;
+  hasPremium?: boolean; // Premium subscription status
+  premiumSignature?: PremiumSignature; // Signed premium status data
 }
 
 /**

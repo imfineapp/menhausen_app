@@ -688,6 +688,8 @@ export class SupabaseSyncService {
       const result = await response.json();
       console.log('[SyncService] fetchFromSupabase - Response success:', result.success);
       console.log('[SyncService] fetchFromSupabase - Response data keys:', result.data ? Object.keys(result.data) : 'no data');
+      console.log('[SyncService] fetchFromSupabase - hasPremium:', result.hasPremium);
+      console.log('[SyncService] fetchFromSupabase - premiumSignature:', result.premiumSignature ? 'present' : 'missing');
       
       // Debug: Check dailyCheckins data
       if (result.data && result.data.dailyCheckins) {
@@ -700,7 +702,13 @@ export class SupabaseSyncService {
       }
       
       if (result.success && result.data) {
-        return result.data;
+        // Include hasPremium and premiumSignature in returned data
+        const userData: UserDataFromAPI = {
+          ...result.data,
+          hasPremium: result.hasPremium,
+          premiumSignature: result.premiumSignature
+        };
+        return userData;
       }
 
       return null;
@@ -939,6 +947,25 @@ export class SupabaseSyncService {
     if (remoteData.hasShownFirstAchievement !== undefined) {
       const merged = resolveConflict('hasShownFirstAchievement', localData.hasShownFirstAchievement, remoteData.hasShownFirstAchievement);
       localStorage.setItem('has-shown-first-achievement', String(merged));
+    }
+
+    // Handle premium status
+    if (remoteData.hasPremium !== undefined) {
+      console.log('[SyncService] mergeAndSave - Updating premium status:', remoteData.hasPremium);
+      // Save legacy format for backward compatibility
+      localStorage.setItem('user-premium-status', remoteData.hasPremium ? 'true' : 'false');
+    }
+
+    // Handle premium signature (Ed25519 signed data)
+    if (remoteData.premiumSignature) {
+      console.log('[SyncService] mergeAndSave - Saving premium signature');
+      // Save signature synchronously to localStorage (no async needed)
+      try {
+        localStorage.setItem('premium-signature', JSON.stringify(remoteData.premiumSignature));
+      } catch (error) {
+        console.warn('[SyncService] Error saving premium signature:', error);
+        // Continue without signature - will use legacy format
+      }
     }
     } finally {
       // Re-enable interceptor notifications
@@ -1266,6 +1293,39 @@ export class SupabaseSyncService {
   public clearQueue(): void {
     this.offlineQueue = [];
     this.saveOfflineQueue();
+  }
+
+  /**
+   * Fetch user data from Supabase (including premium status)
+   * Returns user data with hasPremium and premiumSignature fields
+   */
+  public async fetchUserData(): Promise<{ hasPremium?: boolean; premiumSignature?: any } | null> {
+    // Wait for initialization
+    await this.initializationPromise;
+
+    const telegramUserIdStr = getTelegramUserId();
+    if (!telegramUserIdStr) {
+      return null;
+    }
+
+    const telegramUserId = parseInt(telegramUserIdStr, 10);
+    if (isNaN(telegramUserId)) {
+      return null;
+    }
+
+    try {
+      const userData = await this.fetchFromSupabase(telegramUserId);
+      if (userData) {
+        return {
+          hasPremium: userData.hasPremium,
+          premiumSignature: userData.premiumSignature
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('[SyncService] Error fetching user data:', error);
+      return null;
+    }
   }
 }
 

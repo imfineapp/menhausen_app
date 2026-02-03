@@ -174,19 +174,19 @@ export function ThemeCard({
         </div>
       </div>
       
-      {/* Футер: процент соответствия, статус премиум и прогресс */}
+      {/* Футер: процент соответствия, статус премиум (только для заблокированных) и прогресс */}
       <div className="relative z-10 w-full mt-auto">
-        {/* Информация о соответствии темы и статус премиум */}
-        {(matchText || isPremium) && (
+        {/* Информация о соответствии темы; значок премиум только если тема заблокирована */}
+        {(matchText || isThemeLocked) && (
           <div className="box-border content-stretch flex flex-row items-center p-0 mb-2">
             {matchText && (
               <div className="typography-button text-[var(--theme-card-text-secondary)] text-left flex-1">
                 <p className="block">{matchText}</p>
               </div>
             )}
-            {isPremium && (
+            {isThemeLocked && (
               <div className={cn(matchText ? "" : "ml-auto")}>
-                <UserAccountStatus isPremium={isPremium} />
+                <UserAccountStatus isPremium={true} />
               </div>
             )}
           </div>

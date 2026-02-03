@@ -419,3 +419,15 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/migrate-existing-users/deno.json"
 entrypoint = "./functions/migrate-existing-users/index.ts"
+
+[functions.create-premium-invoice]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-premium-invoice/deno.json"
+entrypoint = "./functions/create-premium-invoice/index.ts"
+
+[functions.handle-payment-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/handle-payment-webhook/deno.json"
+entrypoint = "./functions/handle-payment-webhook/index.ts"

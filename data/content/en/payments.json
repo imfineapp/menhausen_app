@@ -41,7 +41,7 @@
     "processing": "Processing..."
   },
   "messages": {
-    "successWithPlan": "Thank you for your interest in Premium! The purchase functionality will be added in upcoming updates.",
+    "successWithPlan": "Premium successfully activated!",
     "error": "An error occurred while processing your purchase. Please try again."
   },
   "legal": {

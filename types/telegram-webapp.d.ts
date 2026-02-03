@@ -217,7 +217,9 @@ declare global {
         openTelegramLink: (url: string) => void;
 
         /**
-         * Открыть счет
+         * Открыть счет для оплаты Telegram Stars
+         * @param url - URL инвойса от createInvoiceLink
+         * @param callback - Callback с результатом оплаты
          */
         openInvoice: (url: string, callback?: (status: 'paid' | 'cancelled' | 'failed' | 'pending') => void) => void;
 
