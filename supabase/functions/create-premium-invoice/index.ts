@@ -94,23 +94,27 @@ async function determineBotInfo(initData: string): Promise<{ id: number; usernam
 
 /**
  * Get plan configuration (price in Stars)
+ * 
+ * Note: Telegram Stars does not support test mode - all payments are real.
+ * For test bots (via TELEGRAM_TEST_BOT_IDS), prices are set to 1 Star.
+ * Test payments don't grant premium in production (is_test_payment = true).
  */
-function getPlanConfig(planType: 'monthly' | 'annually' | 'lifetime') {
+function getPlanConfig(planType: 'monthly' | 'annually' | 'lifetime', isTestBot: boolean) {
   const plans = {
     monthly: {
-      price: 150,
+      price: isTestBot ? 1 : 150, // 1 Star for test bots, 150 for production
       label: 'Premium Monthly',
       title: 'Premium Monthly Subscription',
       description: 'Unlock all themes and premium features for 1 month'
     },
     annually: {
-      price: 1500,
+      price: isTestBot ? 1 : 1500, // 1 Star for test bots, 1500 for production
       label: 'Premium Annual',
       title: 'Premium Annual Subscription',
       description: 'Unlock all themes and premium features for 1 year. Save 16%!'
     },
     lifetime: {
-      price: 2500,
+      price: isTestBot ? 1 : 2500, // 1 Star for test bots, 2500 for production
       label: 'Premium Lifetime',
       title: 'Premium Lifetime Subscription',
       description: 'Unlock all themes and premium features forever'
@@ -231,39 +235,35 @@ serve(async (req) => {
       );
     }
 
-    // Determine bot information
-    // Если используем initData, можем определить бота
-    // Если используем JWT, нужно получить initData из запроса или определить по другому способу
-    let botId: number | null = null;
-    let botToken: string | null = null;
-    let isTestPayment = false;
-
+    // Determine bot information from initData
+    // initData is required to determine which bot is being used
     const initData = req.headers.get('X-Telegram-Init-Data');
-    if (initData) {
-      const botInfo = await determineBotInfo(initData);
-      if (botInfo) {
-        botId = botInfo.id;
-        botToken = botInfo.token;
-        isTestPayment = await isTestEnvironmentBot(botId);
-      }
-    } else {
-      // Если нет initData (только JWT), используем первый токен как fallback
-      // В этом случае bot_id будет null, но инвойс всё равно создастся
-      const botTokens = getTelegramBotTokens();
-      if (botTokens.length > 0) {
-        botToken = botTokens[0];
-        const botInfo = await getBotInfo(botToken);
-        botId = botInfo.id;
-        isTestPayment = await isTestEnvironmentBot(botId);
-      }
-    }
-
-    if (!botToken) {
+    
+    if (!initData) {
+      console.log('[create-premium-invoice] No initData provided - payment requires Telegram WebApp');
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Unable to determine bot token',
-          code: 'BOT_TOKEN_ERROR',
+          error: 'Please use app via Telegram only',
+          code: 'TELEGRAM_WEBAPP_REQUIRED',
+        } as CreateInvoiceResponse),
+        {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Determine bot information from initData
+    const botInfo = await determineBotInfo(initData);
+    
+    if (!botInfo) {
+      console.error('[create-premium-invoice] Unable to determine bot from initData');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Unable to determine bot. Please try again.',
+          code: 'BOT_DETERMINATION_ERROR',
         } as CreateInvoiceResponse),
         {
           status: 500,
@@ -272,8 +272,27 @@ serve(async (req) => {
       );
     }
 
-    // Get plan configuration
-    const planConfig = getPlanConfig(planType);
+    const botId = botInfo.id;
+    const botToken = botInfo.token;
+    const isTestPayment = await isTestEnvironmentBot(botId);
+    
+    console.log('[create-premium-invoice] Bot determined:', {
+      botId,
+      botUsername: botInfo.username || 'no username',
+      isTestPayment,
+      tokenPreview: `${botToken.substring(0, 10)}...${botToken.substring(botToken.length - 4)}`
+    });
+
+    // Get plan configuration (1 Star for test bots, real prices for production)
+    const planConfig = getPlanConfig(planType, isTestPayment);
+    
+    console.log('[create-premium-invoice] Plan configuration:', {
+      planType,
+      isTestBot: isTestPayment,
+      price: planConfig.price,
+      priceLabel: planConfig.label,
+      title: planConfig.title
+    });
 
     // Create invoice payload (must be <= 128 bytes)
     // Using compact format to stay within Telegram's limit
@@ -314,12 +333,16 @@ serve(async (req) => {
       prices: [{ label: planConfig.label, amount: planConfig.price }]
     });
 
-    console.log('[create-premium-invoice] Invoice created:', {
+    console.log('[create-premium-invoice] Invoice created successfully:', {
       telegramUserId,
       planType,
       botId,
+      botUsername: botInfo.username || 'no username',
       isTestPayment,
-      invoiceUrl: invoiceUrl.substring(0, 50) + '...'
+      price: planConfig.price,
+      priceLabel: planConfig.label,
+      payloadSize: payloadBytes,
+      invoiceUrlPreview: invoiceUrl.substring(0, 50) + '...'
     });
 
     return new Response(
@@ -334,7 +357,11 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('[create-premium-invoice] Error:', error);
+    console.error('[create-premium-invoice] Unexpected error:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
     return new Response(
       JSON.stringify({
         success: false,
