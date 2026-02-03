@@ -6,7 +6,8 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { validateTelegramAuthWithMultipleTokens } from '../_shared/telegram-auth.ts';
+import { validateTelegramAuthWithMultipleTokens, getTelegramBotTokens, validateTelegramAuth } from '../_shared/telegram-auth.ts';
+import { getBotInfo } from '../_shared/telegram-bot-api.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -55,6 +56,7 @@ interface GetUserDataResponse {
     lastSyncAt: string | null;
     syncVersion: number;
   };
+  hasPremium?: boolean; // Premium status (with environment awareness)
 }
 
 /**
@@ -277,6 +279,83 @@ async function getSyncMetadata(supabase: any, telegramUserId: number): Promise<{
   };
 }
 
+/**
+ * Get test bot IDs from environment variable
+ */
+function getTestBotIds(): number[] {
+  const raw = Deno.env.get('TELEGRAM_TEST_BOT_IDS') ?? '';
+  if (!raw) return [];
+  
+  return raw
+    .split(',')
+    .map(s => parseInt(s.trim(), 10))
+    .filter(n => !isNaN(n) && n > 0);
+}
+
+/**
+ * Determine bot information from initData validation
+ */
+async function determineBotInfo(initData: string): Promise<{ id: number; username?: string } | null> {
+  const botTokens = getTelegramBotTokens();
+  
+  for (const botToken of botTokens) {
+    const validationResult = await validateTelegramAuth(initData, botToken);
+    
+    if (validationResult.valid) {
+      const botInfo = await getBotInfo(botToken);
+      return {
+        id: botInfo.id,
+        username: botInfo.username
+      };
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Get premium status with environment awareness
+ * Returns has_premium based on whether request is from test or production bot
+ */
+async function getPremiumStatus(
+  supabase: any,
+  telegramUserId: number,
+  initData: string | null
+): Promise<boolean> {
+  // Determine bot and environment from initData
+  let isTestEnvironment = false;
+  
+  if (initData) {
+    const botInfo = await determineBotInfo(initData);
+    if (botInfo) {
+      const testBotIds = getTestBotIds();
+      isTestEnvironment = testBotIds.includes(botInfo.id);
+    }
+  }
+  
+  if (isTestEnvironment) {
+    // For test/staging: check if user has active test subscription
+    const { data: testSubscriptions } = await supabase
+      .from('premium_subscriptions')
+      .select('id')
+      .eq('telegram_user_id', telegramUserId)
+      .eq('status', 'active')
+      .eq('is_test_payment', true)
+      .limit(1);
+    
+    return (testSubscriptions && testSubscriptions.length > 0);
+  } else {
+    // For production: use users.has_premium (updated only by production subscriptions)
+    const { data: user } = await supabase
+      .from('users')
+      .select('has_premium')
+      .eq('telegram_user_id', telegramUserId)
+      .maybeSingle();
+    
+    return user?.has_premium === true;
+  }
+}
+
 serve(async (req) => {
   try {
     // Handle CORS preflight - MUST be absolute first, before any other code
@@ -403,11 +482,18 @@ serve(async (req) => {
     // If user doesn't exist, all queries will return null/empty, which is fine
     // This eliminates one round-trip to the database (~400ms saved)
     
+    // Get initData for premium status determination (if available)
+    const initData = req.headers.get('X-Telegram-Init-Data');
+    
     // Fetch all user data in parallel (faster than sequential)
-    const [userData, metadata] = await Promise.all([
+    const [userData, metadata, hasPremium] = await Promise.all([
       fetchAllUserData(supabase, telegramUserId),
       getSyncMetadata(supabase, telegramUserId),
+      getPremiumStatus(supabase, telegramUserId, initData),
     ]);
+    
+    // Add premium status to user data
+    userData.hasPremium = hasPremium;
 
     // If no data exists at all, user probably doesn't exist
     // But this is just an optimization - we still return empty data structure
@@ -417,6 +503,7 @@ serve(async (req) => {
         success: true,
         data: userData,
         metadata,
+        hasPremium, // Premium status with environment awareness
       } as GetUserDataResponse),
       {
         status: 200,

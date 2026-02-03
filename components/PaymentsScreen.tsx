@@ -4,6 +4,7 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useContent } from './ContentContext';
+import { telegramStarsPaymentService } from '../utils/telegramStarsPaymentService';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -573,6 +574,20 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
   const [logoOpacity, setLogoOpacity] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  // Listen for premium activation events
+  useEffect(() => {
+    const handlePremiumActivated = (event: CustomEvent) => {
+      console.log('[PaymentsScreen] Premium activated:', event.detail);
+      // Premium status will be updated via localStorage and sync
+      // UI will update automatically when premium status changes
+    };
+    
+    window.addEventListener('premium:activated', handlePremiumActivated as EventListener);
+    return () => {
+      window.removeEventListener('premium:activated', handlePremiumActivated as EventListener);
+    };
+  }, []);
+
   // Отслеживание скролла для изменения прозрачности логотипа
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
@@ -607,25 +622,57 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
       console.log('Starting Premium purchase process...', { plan: selectedPlan });
       setIsLoading(true);
 
-      // Добавляем тактильную обратную связь если доступна
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+      // Проверяем доступность Telegram WebApp API
+      if (!window.Telegram?.WebApp?.openInvoice) {
+        throw new Error('Telegram WebApp API not available. Please open this app in Telegram.');
+      }
+
+      // Тактильная обратная связь
+      if (window.Telegram?.WebApp?.HapticFeedback) {
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
       }
 
-      // Имитация API запроса на покупку подписки
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Создаём инвойс и открываем его в Telegram
+      const paymentStatus = await telegramStarsPaymentService.purchasePremium(selectedPlan);
 
-      console.log('Premium purchase completed');
-      
-      // Показываем уведомление об успешной покупке
-      alert(content.payments.messages.successWithPlan);
+      if (paymentStatus === 'paid') {
+        // Успешная оплата
+        console.log('Premium purchase completed successfully');
+        
+        // Показываем успешное сообщение
+        if (window.Telegram?.WebApp?.showAlert) {
+          window.Telegram.WebApp.showAlert(content.payments.messages.successWithPlan);
+        } else {
+          alert(content.payments.messages.successWithPlan);
+        }
 
-      // Вызываем callback для завершения покупки
-      // onPurchaseComplete(); // Временно отключено до настройки транзакций
+        // Вызываем callback для обновления UI
+        _onPurchaseComplete();
+      } else if (paymentStatus === 'cancelled') {
+        // Пользователь отменил оплату - ничего не делаем
+        console.log('Payment cancelled by user');
+      } else {
+        // Ошибка оплаты
+        console.error('Payment failed:', paymentStatus);
+        const errorMessage = content.payments.messages.error;
+        if (window.Telegram?.WebApp?.showAlert) {
+          window.Telegram.WebApp.showAlert(errorMessage);
+        } else {
+          alert(errorMessage);
+        }
+      }
 
     } catch (error) {
       console.error('Error purchasing Premium:', error);
-      alert(content.payments.messages.error);
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : content.payments.messages.error;
+      
+      if (window.Telegram?.WebApp?.showAlert) {
+        window.Telegram.WebApp.showAlert(errorMessage);
+      } else {
+        alert(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
