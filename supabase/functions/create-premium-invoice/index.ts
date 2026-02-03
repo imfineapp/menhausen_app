@@ -235,7 +235,6 @@ serve(async (req) => {
     // Если используем initData, можем определить бота
     // Если используем JWT, нужно получить initData из запроса или определить по другому способу
     let botId: number | null = null;
-    let botUsername: string | null = null;
     let botToken: string | null = null;
     let isTestPayment = false;
 
@@ -244,7 +243,6 @@ serve(async (req) => {
       const botInfo = await determineBotInfo(initData);
       if (botInfo) {
         botId = botInfo.id;
-        botUsername = botInfo.username || null;
         botToken = botInfo.token;
         isTestPayment = await isTestEnvironmentBot(botId);
       }
@@ -256,7 +254,6 @@ serve(async (req) => {
         botToken = botTokens[0];
         const botInfo = await getBotInfo(botToken);
         botId = botInfo.id;
-        botUsername = botInfo.username || null;
         isTestPayment = await isTestEnvironmentBot(botId);
       }
     }
