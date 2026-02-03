@@ -89,6 +89,7 @@ export interface UserDataFromAPI {
   referralData?: any;
   language?: string;
   hasShownFirstAchievement?: boolean;
+  hasPremium?: boolean; // Premium subscription status
 }
 
 /**

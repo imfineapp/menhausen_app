@@ -13,6 +13,8 @@ interface ThemeHomeScreenProps {
   onCardClick: (cardId: string) => void; // Функция для обработки клика по карточке
   onOpenNextLevel: () => void; // Функция для открытия следующего уровня
   themeId: string; // ID темы для загрузки
+  userHasPremium?: boolean; // Статус Premium подписки пользователя
+  onUnlock?: () => void; // Функция для разблокировки премиум темы
 }
 
 // Типы для карточек
@@ -325,7 +327,14 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
  * Главный компонент домашней страницы темы
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
-export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel, themeId }: ThemeHomeScreenProps) {
+export function ThemeHomeScreen({ 
+  onBack: _onBack, 
+  onCardClick, 
+  onOpenNextLevel, 
+  themeId,
+  userHasPremium = false,
+  onUnlock
+}: ThemeHomeScreenProps) {
   const { content, currentLanguage } = useContent();
   
   // Состояние для загрузки темы
@@ -493,6 +502,10 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
 
 
   
+  // Проверяем, является ли тема премиум и заблокирована ли она
+  const isPremiumTheme = theme?.isPremium || false;
+  const isThemeLocked = isPremiumTheme && !userHasPremium;
+  
   // Создаем карточки с реальными данными прогресса и состоянием блокировки
   const cards: Card[] = theme.cards.map((cardData, index) => {
     try {
@@ -502,7 +515,12 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       const progress = ThemeCardManager.getCardProgress(cardId);
       const attempts = progress ? progress.totalCompletedAttempts : 0;
       const completionStatus = ThemeCardManager.getCardCompletionStatus(cardId);
-      const isAvailable = ThemeCardManager.isCardAvailable(cardId, allCardIds);
+      const isAvailableByProgress = ThemeCardManager.isCardAvailable(cardId, allCardIds);
+      
+      // Карточка доступна только если:
+      // 1. Тема не премиум ИЛИ пользователь имеет премиум
+      // 2. И карточка доступна по прогрессу
+      const isAvailable = !isThemeLocked && isAvailableByProgress;
       
       // Используем данные из JSON файла
       const title = cardData.id;
@@ -521,14 +539,16 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
       };
     } catch {
       // Возвращаем fallback карточку
+      // Если тема заблокирована, все карточки заблокированы
+      const isAvailable = !isThemeLocked && index === 0;
       return {
         id: cardData.id,
         title: cardData.introduction || `Card ${index + 1}`,
         level: `Level ${cardData.level}`,
         description: 'Card description',
         attempts: 0,
-        isActive: index === 0, // Первая карточка всегда доступна
-        isLocked: index !== 0,
+        isActive: isAvailable,
+        isLocked: !isAvailable,
         completionStatus: CardCompletionStatus.NOT_STARTED
       };
     }
@@ -589,9 +609,28 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
             </div>
             
             {/* Прогресс темы */}
-            <div className="mb-8">
-              <ProgressTheme theme={theme} allCardIds={allCardIds} />
-            </div>
+            {!isThemeLocked && (
+              <div className="mb-8">
+                <ProgressTheme theme={theme} allCardIds={allCardIds} />
+              </div>
+            )}
+            
+            {/* Сообщение о блокировке премиум темы */}
+            {isThemeLocked && (
+              <div className="mb-8 p-6 rounded-xl bg-[rgba(225,255,0,0.1)] border border-[#e1ff00]">
+                <p className="typography-body text-white text-center mb-4">
+                  This is a Premium theme. Unlock it to access all cards and features.
+                </p>
+                {onUnlock && (
+                  <button
+                    onClick={onUnlock}
+                    className="w-full py-3 px-4 bg-[#e1ff00] text-[#111111] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
+                  >
+                    Unlock Premium
+                  </button>
+                )}
+              </div>
+            )}
             
             {/* Карточки */}
             <div className="space-y-4">
@@ -599,7 +638,7 @@ export function ThemeHomeScreen({ onBack: _onBack, onCardClick, onOpenNextLevel,
                 <ThemeCard 
                   key={card.id}
                   card={card}
-                  onClick={handleCardClick}
+                  onClick={isThemeLocked ? () => {} : handleCardClick}
                 />
               ))}
             </div>

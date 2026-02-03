@@ -550,6 +550,61 @@ function AppContent() {
 
     // Start initialization
     initializeApp();
+    
+    // Load premium status from Supabase after sync
+    // Falls back to localStorage if Supabase is unavailable (offline mode)
+    const loadPremiumStatus = async () => {
+      try {
+        const { getSyncService } = await import('./utils/supabaseSync');
+        const syncService = getSyncService();
+        // Get premium status from get-user-data
+        const result = await syncService.fetchUserData();
+        if (result?.hasPremium !== undefined) {
+          console.log('[App] Premium status loaded from Supabase:', result.hasPremium);
+          setUserHasPremium(result.hasPremium);
+          // Also update localStorage
+          localStorage.setItem('user-premium-status', result.hasPremium ? 'true' : 'false');
+        } else {
+          // No data from Supabase - use localStorage value (already set in initial state)
+          const localPremiumStatus = localStorage.getItem('user-premium-status') === 'true';
+          console.log('[App] Premium status not available from Supabase, using localStorage value:', localPremiumStatus);
+          // Ensure state matches localStorage (in case it was changed elsewhere)
+          setUserHasPremium(localPremiumStatus);
+        }
+      } catch (error) {
+        // Network error or Supabase unavailable - use localStorage value
+        const localPremiumStatus = localStorage.getItem('user-premium-status') === 'true';
+        console.warn('[App] Failed to load premium status from Supabase (offline mode), using localStorage:', localPremiumStatus, error);
+        // Ensure state matches localStorage
+        setUserHasPremium(localPremiumStatus);
+      }
+    };
+    
+    // Load premium status after sync completes (in performBackgroundSync)
+    // Also load immediately if sync already completed
+    const checkPremiumAfterSync = async () => {
+      // Wait a bit for sync to potentially complete
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      await loadPremiumStatus();
+    };
+    checkPremiumAfterSync();
+    
+    // Listen for premium activation events
+    const handlePremiumActivated = (event: CustomEvent) => {
+      console.log('[App] Premium activated event received:', event.detail);
+      setUserHasPremium(true);
+      localStorage.setItem('user-premium-status', 'true');
+      if (event.detail?.planType) {
+        localStorage.setItem('user-premium-plan', event.detail.planType);
+      }
+      localStorage.setItem('user-premium-purchased-at', new Date().toISOString());
+    };
+    
+    window.addEventListener('premium:activated', handlePremiumActivated as EventListener);
+    
+    return () => {
+      window.removeEventListener('premium:activated', handlePremiumActivated as EventListener);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
 
@@ -679,7 +734,16 @@ function AppContent() {
   const [_cardRating, setCardRating] = useState<number>(0);
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
   const [_cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
-  const [userHasPremium, setUserHasPremium] = useState<boolean>(false);
+  // Load premium status from localStorage on initialization
+  const [userHasPremium, setUserHasPremium] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem('user-premium-status');
+      return saved === 'true';
+    } catch (error) {
+      console.error('Failed to load premium status from localStorage:', error);
+      return false;
+    }
+  });
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
   const [_hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
     try {
@@ -2716,12 +2780,16 @@ function AppContent() {
         );
       }
       case 'theme-home': {
+        const themeData = getTheme(currentTheme);
+        const isPremiumTheme = themeData?.isPremium || false;
         return wrapScreen(
           <ThemeHomeScreen
             onBack={handleBackToHomeFromTheme}
             onCardClick={handleThemeCardClick}
             onOpenNextLevel={handleOpenNextLevel}
             themeId={currentTheme}
+            userHasPremium={userHasPremium}
+            onUnlock={isPremiumTheme && !userHasPremium ? handleShowPayments : undefined}
           />
         );
       }
