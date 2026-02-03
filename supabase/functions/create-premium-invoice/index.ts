@@ -278,15 +278,35 @@ serve(async (req) => {
     // Get plan configuration
     const planConfig = getPlanConfig(planType);
 
-    // Create invoice payload
+    // Create invoice payload (must be <= 128 bytes)
+    // Using compact format to stay within Telegram's limit
     const payload = JSON.stringify({
-      planType,
-      telegramUserId,
-      botId,
-      botUsername,
-      isTestPayment,
-      timestamp: Date.now()
+      p: planType, // planType: 'monthly' | 'annually' | 'lifetime'
+      u: telegramUserId, // user ID
+      b: botId, // bot ID
+      t: isTestPayment ? 1 : 0, // test payment flag (0 or 1)
+      ts: Date.now() // timestamp
+      // botUsername removed to save space - can be retrieved via botId if needed
     });
+    
+    // Validate payload size (Telegram limit: 128 bytes)
+    const payloadBytes = new TextEncoder().encode(payload).length;
+    if (payloadBytes > 128) {
+      console.error('[create-premium-invoice] Payload too large:', payloadBytes, 'bytes');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Payload size exceeds Telegram limit',
+          code: 'PAYLOAD_TOO_LARGE',
+        } as CreateInvoiceResponse),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+    
+    console.log('[create-premium-invoice] Payload size:', payloadBytes, 'bytes, payload:', payload);
 
     // Create invoice link via Telegram Bot API
     const invoiceUrl = await createInvoiceLink(botToken, {

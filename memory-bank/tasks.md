@@ -254,11 +254,11 @@
 3. ✅ ~~Update database schema~~ - DONE
 4. ✅ ~~Define Stars prices~~ - DONE
 5. ✅ ~~**Применить миграцию БД**~~ - **DONE** ✅ (2026-01-30: `20260130120000_premium_subscriptions.sql` применена в production)
-6. ⏭️ **Сгенерировать и сохранить Webhook Secret Token** в Supabase Secrets
-7. ⏭️ **Деплой Edge Functions** в production
-8. ⏭️ **Настроить webhook** для каждого бота через `setWebhook`
-9. ⏭️ **Настроить TELEGRAM_TEST_BOT_IDS** (если используются тестовые боты)
-10. ⏭️ **Тестирование** в тестовой среде Telegram
+6. ✅ ~~**Сгенерировать и сохранить Webhook Secret Token**~~ - **DONE** ✅
+7. ✅ ~~**Деплой Edge Functions**~~ - **DONE** ✅
+8. ✅ ~~**Настроить webhook**~~ - **DONE** ✅
+9. ✅ ~~**Настроить TELEGRAM_TEST_BOT_IDS**~~ - **DONE** ✅
+10. ⏭️ **Тестирование** - см. `docs/test-payment-flow.md` и `docs/test-payment-quick-start.md`
 
 ---
 

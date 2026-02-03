@@ -53,12 +53,18 @@ interface TelegramUpdate {
 }
 
 interface InvoicePayload {
-  planType: 'monthly' | 'annually' | 'lifetime';
-  telegramUserId: number;
+  p: string; // planType: 'monthly' | 'annually' | 'lifetime'
+  u: number; // telegramUserId
+  b?: number; // botId
+  t?: number; // isTestPayment (0 or 1)
+  ts: number; // timestamp
+  // Legacy fields for backward compatibility (if present)
+  planType?: 'monthly' | 'annually' | 'lifetime';
+  telegramUserId?: number;
   botId?: number;
   botUsername?: string;
   isTestPayment?: boolean;
-  timestamp: number;
+  timestamp?: number;
 }
 
 /**
@@ -175,11 +181,14 @@ serve(async (req) => {
       const query = update.pre_checkout_query;
       
       try {
-        // Parse payload
+        // Parse payload (supports both compact and legacy formats)
         const payload: InvoicePayload = JSON.parse(query.invoice_payload);
         
+        // Extract planType (support both compact and legacy formats)
+        const planType = payload.p || payload.planType || 'monthly';
+        
         // Fast check - must be quick!
-        const canProcess = await checkPlanAvailability(payload.planType);
+        const canProcess = await checkPlanAvailability(planType);
         
         // Get bot token to answer the query
         // We need to find which bot token to use
@@ -198,7 +207,7 @@ serve(async (req) => {
         console.log('[handle-payment-webhook] Pre-checkout query answered:', {
           queryId: query.id,
           canProcess,
-          planType: payload.planType
+          planType
         });
         
         return new Response('OK', {
@@ -234,28 +243,30 @@ serve(async (req) => {
       const userId = update.message.from.id;
       
       try {
-        // Parse payload
+        // Parse payload (supports both compact and legacy formats)
         const payload: InvoicePayload = JSON.parse(payment.invoice_payload);
         
-        // Extract bot information from payload
-        const botId = payload.botId || null;
-        const botUsername = payload.botUsername || null;
-        const isTestPayment = payload.isTestPayment === true;
+        // Extract data from payload (support both compact and legacy formats)
+        const planType = payload.p || payload.planType || 'monthly';
+        const telegramUserId = payload.u || payload.telegramUserId || userId;
+        const botId = payload.b !== undefined ? payload.b : (payload.botId || null);
+        const botUsername = payload.botUsername || null; // Not in compact format, can be retrieved via botId if needed
+        const isTestPayment = payload.t === 1 || payload.isTestPayment === true;
         
         // Activate premium subscription
         await activatePremiumSubscription(supabase, {
-          telegramUserId: userId,
+          telegramUserId: telegramUserId,
           botId,
           botUsername,
           isTestPayment,
-          planType: payload.planType,
+          planType: planType as 'monthly' | 'annually' | 'lifetime',
           paymentChargeId: payment.telegram_payment_charge_id,
           invoiceMessageId: update.message.message_id
         });
         
         console.log('[handle-payment-webhook] Payment processed successfully:', {
-          userId,
-          planType: payload.planType,
+          userId: telegramUserId,
+          planType,
           paymentChargeId: payment.telegram_payment_charge_id
         });
         
