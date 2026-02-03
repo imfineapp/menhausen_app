@@ -7,6 +7,22 @@
 import { getTelegramUserId } from './telegramUserUtils';
 import { getValidJWTToken } from './supabaseSync/authService';
 
+/**
+ * Get Telegram initData for authentication
+ */
+function getTelegramInitData(): string | null {
+  try {
+    // Check if we're in Telegram WebApp environment
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initData) {
+      return window.Telegram.WebApp.initData;
+    }
+    return null;
+  } catch (error) {
+    console.error('[TelegramStarsPaymentService] Error getting Telegram initData:', error);
+    return null;
+  }
+}
+
 interface CreateInvoiceRequest {
   planType: 'monthly' | 'annually' | 'lifetime';
 }
@@ -37,18 +53,28 @@ class TelegramStarsPaymentService {
       throw new Error('Telegram user ID not available');
     }
     
+    // Get Telegram initData (required for bot determination)
+    const initData = getTelegramInitData();
+    if (!initData) {
+      throw new Error('Telegram WebApp initData not available. Please use app via Telegram only.');
+    }
+    
     // Get JWT token for authentication
     const jwtToken = await getValidJWTToken();
     if (!jwtToken) {
       throw new Error('JWT token not available. Please authenticate first.');
     }
     
+    // Prepare headers
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwtToken}`,
+      'X-Telegram-Init-Data': initData, // Required for bot determination
+    };
+    
     const response = await fetch(`${this.supabaseUrl}/functions/v1/create-premium-invoice`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`,
-      },
+      headers,
       body: JSON.stringify({ planType } as CreateInvoiceRequest)
     });
     
