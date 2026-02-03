@@ -264,6 +264,10 @@ serve(async (req) => {
           invoiceMessageId: update.message.message_id
         });
         
+        // Note: Premium signature will be generated on next get-user-data call
+        // This ensures signature is always fresh and includes latest subscription data
+        // No need to sign here - signature generation happens in get-user-data
+        
         console.log('[handle-payment-webhook] Payment processed successfully:', {
           userId: telegramUserId,
           planType,

@@ -8,6 +8,12 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { validateTelegramAuthWithMultipleTokens, getTelegramBotTokens, validateTelegramAuth } from '../_shared/telegram-auth.ts';
 import { getBotInfo } from '../_shared/telegram-bot-api.ts';
+import {
+  generateEd25519KeyPair,
+  exportEd25519KeyPairBase64,
+  importEd25519KeyPairBase64,
+  signPremiumData,
+} from '../_shared/ed25519-utils.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -57,6 +63,18 @@ interface GetUserDataResponse {
     syncVersion: number;
   };
   hasPremium?: boolean; // Premium status (with environment awareness)
+  premiumSignature?: {
+    data: {
+      premium: boolean;
+      plan?: string;
+      expiresAt?: string;
+      purchasedAt?: string;
+      timestamp: number;
+    };
+    signature: string; // Base64 Ed25519 signature
+    publicKey: string; // Base64 public key
+    version: number; // Key version
+  };
 }
 
 /**
@@ -356,6 +374,132 @@ async function getPremiumStatus(
   }
 }
 
+/**
+ * Get or generate Ed25519 key pair for user
+ * Returns key pair in base64 format
+ */
+async function getOrGenerateEd25519Keys(
+  supabase: any,
+  telegramUserId: number
+): Promise<{ publicKey: string; privateKey: string; version: number }> {
+  // Check if user already has keys
+  const { data: user } = await supabase
+    .from('users')
+    .select('ed25519_public_key, ed25519_private_key, ed25519_key_version')
+    .eq('telegram_user_id', telegramUserId)
+    .maybeSingle();
+
+  if (user?.ed25519_public_key && user?.ed25519_private_key) {
+    // User already has keys, return them
+    return {
+      publicKey: user.ed25519_public_key,
+      privateKey: user.ed25519_private_key,
+      version: user.ed25519_key_version || 1,
+    };
+  }
+
+  // Generate new key pair
+  console.log(`[get-user-data] Generating Ed25519 keys for user ${telegramUserId}`);
+  const keyPair = await generateEd25519KeyPair();
+  const keyPairBase64 = await exportEd25519KeyPairBase64(keyPair);
+
+  // Save keys to database
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({
+      ed25519_public_key: keyPairBase64.publicKey,
+      ed25519_private_key: keyPairBase64.privateKey,
+      ed25519_key_version: 1,
+    })
+    .eq('telegram_user_id', telegramUserId);
+
+  if (updateError) {
+    console.error('[get-user-data] Error saving Ed25519 keys:', updateError);
+    throw new Error('Failed to save Ed25519 keys');
+  }
+
+  return {
+    publicKey: keyPairBase64.publicKey,
+    privateKey: keyPairBase64.privateKey,
+    version: 1,
+  };
+}
+
+/**
+ * Sign premium status data with Ed25519
+ * Returns signed premium data with signature and public key
+ */
+async function signPremiumStatus(
+  supabase: any,
+  telegramUserId: number,
+  hasPremium: boolean
+): Promise<{
+  data: {
+    premium: boolean;
+    plan?: string;
+    expiresAt?: string;
+    purchasedAt?: string;
+    timestamp: number;
+  };
+  signature: string;
+  publicKey: string;
+  version: number;
+} | null> {
+  try {
+    // Get or generate Ed25519 keys
+    const keys = await getOrGenerateEd25519Keys(supabase, telegramUserId);
+
+    // Get premium subscription details if premium is active
+    let plan: string | undefined;
+    let expiresAt: string | undefined;
+    let purchasedAt: string | undefined;
+
+    if (hasPremium) {
+      const { data: subscription } = await supabase
+        .from('premium_subscriptions')
+        .select('plan_type, expires_at, created_at')
+        .eq('telegram_user_id', telegramUserId)
+        .eq('status', 'active')
+        .eq('is_test_payment', false)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (subscription) {
+        plan = subscription.plan_type;
+        expiresAt = subscription.expires_at;
+        purchasedAt = subscription.created_at;
+      }
+    }
+
+    // Create premium data object
+    const premiumData = {
+      premium: hasPremium,
+      plan,
+      expiresAt,
+      purchasedAt,
+      timestamp: Date.now(),
+    };
+
+    // Import private key for signing
+    const keyPair = await importEd25519KeyPairBase64(keys.publicKey, keys.privateKey);
+
+    // Sign the data
+    const signature = await signPremiumData(keyPair.privateKey, premiumData);
+
+    return {
+      data: premiumData,
+      signature,
+      publicKey: keys.publicKey,
+      version: keys.version,
+    };
+  } catch (error) {
+    console.error('[get-user-data] Error signing premium status:', error);
+    // Return null if signing fails (client will use unsigned data)
+    return null;
+  }
+}
+
 serve(async (req) => {
   try {
     // Handle CORS preflight - MUST be absolute first, before any other code
@@ -495,16 +639,26 @@ serve(async (req) => {
     // Add premium status to user data
     userData.hasPremium = hasPremium;
 
+    // Sign premium status with Ed25519
+    const premiumSignature = await signPremiumStatus(supabase, telegramUserId, hasPremium);
+
     // If no data exists at all, user probably doesn't exist
     // But this is just an optimization - we still return empty data structure
 
+    const response: GetUserDataResponse = {
+      success: true,
+      data: userData,
+      metadata,
+      hasPremium, // Premium status with environment awareness
+    };
+
+    // Add premium signature if available
+    if (premiumSignature) {
+      response.premiumSignature = premiumSignature;
+    }
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        data: userData,
-        metadata,
-        hasPremium, // Premium status with environment awareness
-      } as GetUserDataResponse),
+      JSON.stringify(response),
       {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
