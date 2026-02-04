@@ -78,7 +78,38 @@ interface GetUserDataResponse {
 }
 
 /**
- * Fetch all user data from all tables
+ * Fetch all user data using PostgreSQL RPC function (optimized single query)
+ */
+async function fetchAllUserDataViaRPC(supabase: any, telegramUserId: number): Promise<any> {
+  const startTime = Date.now();
+  try {
+    const { data, error } = await supabase.rpc('get_user_complete_data', {
+      p_telegram_user_id: telegramUserId
+    });
+    
+    if (error) {
+      console.error('[get-user-data] RPC function error:', error);
+      throw error;
+    }
+    
+    const duration = Date.now() - startTime;
+    console.log(`[get-user-data] RPC function completed in ${duration}ms`);
+    
+    // Function returns JSON directly, parse if needed
+    if (typeof data === 'string') {
+      return JSON.parse(data);
+    }
+    
+    return data || {};
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`[get-user-data] RPC function failed after ${duration}ms:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch all user data from all tables (legacy method - used as fallback)
  */
 async function fetchAllUserData(supabase: any, telegramUserId: number): Promise<any> {
   const data: any = {};
@@ -629,9 +660,26 @@ serve(async (req) => {
     // Get initData for premium status determination (if available)
     const initData = req.headers.get('X-Telegram-Init-Data');
     
-    // Fetch all user data in parallel (faster than sequential)
-    const [userData, metadata, hasPremium] = await Promise.all([
-      fetchAllUserData(supabase, telegramUserId),
+    // Try optimized RPC function first, fallback to legacy method if it fails
+    let userData: any;
+    let usingFallback = false;
+    
+    try {
+      const rpcStartTime = Date.now();
+      userData = await fetchAllUserDataViaRPC(supabase, telegramUserId);
+      const rpcDuration = Date.now() - rpcStartTime;
+      console.log(`[get-user-data] Using RPC function: ${rpcDuration}ms`);
+    } catch (rpcError) {
+      console.warn('[get-user-data] RPC function failed, falling back to legacy method:', rpcError);
+      usingFallback = true;
+      const legacyStartTime = Date.now();
+      userData = await fetchAllUserData(supabase, telegramUserId);
+      const legacyDuration = Date.now() - legacyStartTime;
+      console.log(`[get-user-data] Using legacy method: ${legacyDuration}ms`);
+    }
+    
+    // Fetch metadata and premium status in parallel (these are separate from user data)
+    const [metadata, hasPremium] = await Promise.all([
       getSyncMetadata(supabase, telegramUserId),
       getPremiumStatus(supabase, telegramUserId, initData),
     ]);
