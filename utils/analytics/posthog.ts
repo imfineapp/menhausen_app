@@ -204,6 +204,7 @@ export const AnalyticsEvent = {
   CARD_RATED: 'card_rated',
   ONBOARDING_ANSWERED: 'onboarding_answered',
   ONBOARDING_COMPLETED: 'onboarding_completed',
+  FIRST_SCREEN_LOADED: 'first_screen_loaded',
 } as const
 
 export type AnalyticsEventName = typeof AnalyticsEvent[keyof typeof AnalyticsEvent]

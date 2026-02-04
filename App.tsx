@@ -473,9 +473,19 @@ function AppContent() {
         console.log(`[App] Local data found, showing app after ${initDuration}ms with screen:`, initialScreen);
         setCurrentScreen(initialScreen);
         setNavigationHistory([initialScreen]);
+        
+        // Track first screen load time
+        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+          load_time_ms: initDuration,
+          screen: initialScreen,
+          data_source: 'local',
+          has_local_data: true,
+        });
       } else {
         // No local data, load ALL data from Supabase before showing interface
+        const dataLoadStartTime = Date.now();
         await loadAllUserData();
+        const dataLoadDuration = Date.now() - dataLoadStartTime;
         
         // Determine screen after loading all data
         const progress = loadProgress();
@@ -485,6 +495,15 @@ function AppContent() {
         console.log(`[App] All user data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
         setCurrentScreen(initialScreen);
         setNavigationHistory([initialScreen]);
+        
+        // Track first screen load time
+        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+          load_time_ms: initDuration,
+          data_load_time_ms: dataLoadDuration,
+          screen: initialScreen,
+          data_source: 'remote',
+          has_local_data: false,
+        });
       }
     };
 
