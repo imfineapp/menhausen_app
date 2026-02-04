@@ -371,7 +371,11 @@
 
   /* Secondary Button стили */
   .secondary-button {
-    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225, 255, 0, 0.1)] hover:text-[#2d2b2b] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer;
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:text-[#2d2b2b] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer;
+  }
+
+  .secondary-button:hover {
+    background-color: rgba(225, 255, 0, 0.1);
   }
 
   /* Адаптивные утилиты для контейнеров */
