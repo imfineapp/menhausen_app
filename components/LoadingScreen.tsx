@@ -13,7 +13,7 @@ export const LoadingScreen: React.FC = () => {
         <img
           src="/android-chrome-512x512.png"
           alt={getUI().common.loading || 'Loading...'}
-          className="w-32 h-32 animate-breathe"
+          className="w-32 h-32 animate-breathe rounded-full"
         />
       </div>
     </div>
