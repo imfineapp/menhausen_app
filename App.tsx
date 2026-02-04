@@ -366,7 +366,7 @@ function AppContent() {
   }, []); // Вызывается только при монтировании компонента
 
   // =====================================================================================
-  // INITIAL SYNC WITH SUPABASE (runs in background, app shows immediately)
+  // INITIAL SYNC WITH SUPABASE (blocks UI until all data is loaded)
   // =====================================================================================
 
   useEffect(() => {
@@ -393,121 +393,67 @@ function AppContent() {
       }
     };
 
-    // Check if we have critical data in localStorage
-    // Critical data = onboarding completion OR survey completion OR psychological test completion
-    // We don't need to check checkin status here because it's not critical for initial screen determination
-    const checkLocalCriticalData = (): boolean => {
+    // Check if we have all user data in localStorage
+    // All data is critical - we need everything before showing the interface
+    const checkLocalData = (): boolean => {
       const progress = loadProgress();
       const hasProgress = progress.onboardingCompleted || progress.surveyCompleted;
       const hasTest = hasTestBeenCompleted();
       
-      const hasCriticalData = hasProgress || hasTest;
-      console.log('[App] checkLocalCriticalData:', {
+      // Check if we have any meaningful data (not just empty defaults)
+      // If user has completed onboarding or survey, they likely have other data too
+      const hasData = hasProgress || hasTest;
+      
+      console.log('[App] checkLocalData:', {
         hasProgress,
         hasTest,
-        hasCriticalData,
+        hasData,
         onboardingCompleted: progress.onboardingCompleted,
         surveyCompleted: progress.surveyCompleted,
       });
       
-      return hasCriticalData;
+      return hasData;
     };
 
-    // Load critical data from Supabase if localStorage is empty
-    const loadCriticalData = async (): Promise<void> => {
+    // Load all user data from Supabase before showing interface
+    // All data is critical - interface waits until all data is loaded
+    const loadAllUserData = async (): Promise<void> => {
       try {
-        console.log('[App] Loading critical data from Supabase...');
+        console.log('[App] Loading all user data from Supabase...');
         const { getSyncService } = await import('./utils/supabaseSync');
         const syncService = getSyncService();
-        const result = await syncService.fastSyncCriticalData();
+        const syncStartTime = Date.now();
         
-        if (result) {
-          console.log('[App] Critical data loaded successfully');
-          
-          // Update language if preferences were loaded from Supabase
-          // Optimization: Only update if language actually changed to prevent unnecessary content reloading
-          if (result.preferences && result.preferences.language) {
-            try {
-              const loadedLanguage = result.preferences.language;
-              if ((loadedLanguage === 'en' || loadedLanguage === 'ru')) {
-                // Check if language changed (compare with current language from context)
-                if (loadedLanguage !== currentLanguageFromContext) {
-                  console.log(`[App] Language changed after fast sync: ${currentLanguageFromContext} -> ${loadedLanguage}`);
-                  updateLanguage(loadedLanguage as 'en' | 'ru');
-                } else {
-                  console.log(`[App] Language loaded from Supabase: ${loadedLanguage} (already set, skipping update)`);
-                }
-              }
-            } catch (error) {
-              console.warn('[App] Error updating language after fast sync:', error);
-            }
-          } else {
-            // Fallback: try to get language from localStorage (if it was set during sync)
-            try {
-              const savedLanguage = localStorage.getItem('menhausen-language');
-              if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
-                // Check if language changed (compare with current language from context)
-                if (savedLanguage !== currentLanguageFromContext) {
-                  console.log(`[App] Language changed after fast sync (from localStorage): ${currentLanguageFromContext} -> ${savedLanguage}`);
-                  updateLanguage(savedLanguage as 'en' | 'ru');
-                }
-              }
-            } catch (error) {
-              console.warn('[App] Error updating language after fast sync (fallback):', error);
-            }
-          }
-        } else {
-          console.log('[App] No critical data found in Supabase (new user)');
-        }
-      } catch (error) {
-        console.warn('[App] Failed to load critical data:', error);
-        // Continue anyway - will show onboarding for new users
-      }
-    };
-
-    // Load all remaining data in background (non-blocking)
-    const performBackgroundSync = async () => {
-      const syncStartTime = Date.now();
-      try {
-        console.log('[App] Starting background sync (non-blocking)...');
-        const { getSyncService } = await import('./utils/supabaseSync');
-        const syncService = getSyncService();
+        // Load all data using initialSync (includes all user data)
         const result = await syncService.initialSync();
         const syncDuration = Date.now() - syncStartTime;
-        console.log(`[App] Background sync completed in ${syncDuration}ms:`, result.success);
         
-        // After sync, update flow state from localStorage (may have been updated by mergeAndSave)
-        const updatedProgress = loadProgress();
-        setFlow(updatedProgress);
+        console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success);
         
-        // Update language if it was loaded from Supabase and is different from current
-        try {
-          const savedLanguage = localStorage.getItem('menhausen-language');
-          if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
-            // Check if language changed (compare with current language from context)
-            if (savedLanguage !== currentLanguageFromContext) {
-              console.log(`[App] Language changed after sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
-              updateLanguage(savedLanguage as 'en' | 'ru');
+        if (result.success) {
+          // Update flow state from localStorage (may have been updated by mergeAndSave)
+          const updatedProgress = loadProgress();
+          setFlow(updatedProgress);
+          
+          // Update language if it was loaded from Supabase
+          try {
+            const savedLanguage = localStorage.getItem('menhausen-language');
+            if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+              // Check if language changed (compare with current language from context)
+              if (savedLanguage !== currentLanguageFromContext) {
+                console.log(`[App] Language changed after sync: ${currentLanguageFromContext} -> ${savedLanguage}`);
+                updateLanguage(savedLanguage as 'en' | 'ru');
+              }
             }
+          } catch (error) {
+            console.warn('[App] Error updating language after sync:', error);
           }
-        } catch (error) {
-          console.warn('[App] Error updating language after sync:', error);
-        }
-        
-        // Recalculate screen after sync completes (in case data changed)
-        const currentProgress = loadProgress();
-        const correctScreen = determineInitialScreen(currentProgress);
-        
-        // Only switch screen if it's different (to avoid flickering)
-        if (correctScreen !== currentScreen) {
-          console.log(`[App] Screen changed after background sync: ${currentScreen} -> ${correctScreen}`);
-          setCurrentScreen(correctScreen);
-          setNavigationHistory([correctScreen]);
+        } else {
+          console.warn('[App] Sync completed with errors:', result.errors);
         }
       } catch (error) {
-        const syncDuration = Date.now() - syncStartTime;
-        console.warn(`[App] Background sync failed after ${syncDuration}ms:`, error);
-        // Don't change screen on error - user is already using the app
+        console.warn('[App] Failed to load user data:', error);
+        // Continue anyway - will show onboarding for new users
       }
     };
 
@@ -515,36 +461,30 @@ function AppContent() {
     const initializeApp = async () => {
       const initStartTime = Date.now();
       
-      // Check if we have critical data locally
-      const hasLocalCriticalData = checkLocalCriticalData();
+      // Check if we have user data locally
+      const hasLocalData = checkLocalData();
       
-      if (hasLocalCriticalData) {
+      if (hasLocalData) {
         // We have local data, determine screen immediately
         const progress = loadProgress();
         const initialScreen = determineInitialScreen(progress);
         const initDuration = Date.now() - initStartTime;
         
-        console.log(`[App] Local critical data found, showing app after ${initDuration}ms with screen:`, initialScreen);
+        console.log(`[App] Local data found, showing app after ${initDuration}ms with screen:`, initialScreen);
         setCurrentScreen(initialScreen);
         setNavigationHistory([initialScreen]);
-        
-        // Start background sync for remaining data
-        performBackgroundSync();
       } else {
-        // No local data, load critical data from Supabase first
-        await loadCriticalData();
+        // No local data, load ALL data from Supabase before showing interface
+        await loadAllUserData();
         
-        // Determine screen after loading critical data
+        // Determine screen after loading all data
         const progress = loadProgress();
         const initialScreen = determineInitialScreen(progress);
         const initDuration = Date.now() - initStartTime;
         
-        console.log(`[App] Critical data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
+        console.log(`[App] All user data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
         setCurrentScreen(initialScreen);
         setNavigationHistory([initialScreen]);
-        
-        // Start background sync for remaining data
-        performBackgroundSync();
       }
     };
 
