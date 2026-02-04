@@ -675,7 +675,7 @@ serve(async (req) => {
       const legacyStartTime = Date.now();
       userData = await fetchAllUserData(supabase, telegramUserId);
       const legacyDuration = Date.now() - legacyStartTime;
-      console.log(`[get-user-data] Using legacy method: ${legacyDuration}ms`);
+      console.log(`[get-user-data] Using legacy method: ${legacyDuration}ms (fallback: ${usingFallback})`);
     }
     
     // Fetch metadata and premium status in parallel (these are separate from user data)
