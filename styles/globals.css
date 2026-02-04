@@ -1010,3 +1010,20 @@ body, #root {
   font-size: clamp(12px, 2vw, 14px);
   line-height: 1.4;
 }
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(225, 255, 0, 0.4));
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 35px rgba(225, 255, 0, 0.7));
+    opacity: 0.9;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
