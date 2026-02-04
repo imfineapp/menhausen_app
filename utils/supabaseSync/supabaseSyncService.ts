@@ -976,7 +976,7 @@ export class SupabaseSyncService {
   /**
    * Fast sync of critical data only (flowProgress + psychologicalTest + today's checkin)
    * Used for initial screen determination when local data is missing
-   * Uses direct Supabase REST API calls for speed (bypasses Edge Function overhead)
+   * Uses optimized get-user-data Edge Function (which uses PostgreSQL RPC function for single-query optimization)
    */
   public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } | null> {
     // Check if sync is mocked (e2e tests)
@@ -999,147 +999,77 @@ export class SupabaseSyncService {
     }
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      const syncStartTime = Date.now();
       
-      if (!supabaseUrl || !anonKey) {
+      // Use optimized get-user-data Edge Function instead of multiple REST calls
+      // This now uses PostgreSQL RPC function for single-query optimization
+      const userData = await this.fetchFromSupabase(telegramUserId);
+      
+      const syncDuration = Date.now() - syncStartTime;
+      console.log(`[SyncService] Fast critical data sync completed in ${syncDuration}ms`);
+      
+      if (!userData) {
         return null;
       }
 
-      // Get JWT token (refresh if expired)
-      const jwtToken = await getValidJWTToken();
-
-      // Get today's date key (YYYY-MM-DD format)
+      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } = {};
       const todayDateKey = DailyCheckinManager.getCurrentDayKey();
 
-      // Prepare headers with JWT token if available
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'apikey': anonKey,
-        'Prefer': 'return=representation',
-      };
-      
-      if (jwtToken) {
-        headers['Authorization'] = `Bearer ${jwtToken}`;
+      // Extract critical data from userData
+      if (userData.flowProgress) {
+        result.flowProgress = userData.flowProgress;
+        // Save to localStorage immediately
+        localStorage.setItem('app-flow-progress', JSON.stringify(result.flowProgress));
       }
 
-      // Fetch only critical data in parallel using direct REST API (faster than Edge Function)
-      // Using RPC would be ideal but requires custom function, REST is simpler
-      // Adding preferences to load language before UI renders
-      const [flowProgressRes, psychologicalTestRes, todayCheckinRes, preferencesRes] = await Promise.all([
-        fetch(`${supabaseUrl}/rest/v1/app_flow_progress?telegram_user_id=eq.${telegramUserId}&select=*`, {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'omit',
-          headers,
-        }),
-        fetch(`${supabaseUrl}/rest/v1/psychological_test_results?telegram_user_id=eq.${telegramUserId}&select=last_completed_at`, {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'omit',
-          headers,
-        }),
-        fetch(`${supabaseUrl}/rest/v1/daily_checkins?telegram_user_id=eq.${telegramUserId}&date_key=eq.${todayDateKey}&select=*`, {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'omit',
-          headers,
-        }),
-        fetch(`${supabaseUrl}/rest/v1/user_preferences?telegram_user_id=eq.${telegramUserId}&select=*`, {
-          method: 'GET',
-          mode: 'cors',
-          credentials: 'omit',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${anonKey}`,
-            'apikey': anonKey,
-            'Prefer': 'return=representation',
-          },
-        }),
-      ]);
-
-      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } = {};
-
-      if (flowProgressRes.ok) {
-        const flowData = await flowProgressRes.json();
-        if (flowData && flowData.length > 0) {
-          const fp = flowData[0];
-          result.flowProgress = {
-            onboardingCompleted: fp.onboarding_completed || false,
-            surveyCompleted: fp.survey_completed || false,
-            psychologicalTestCompleted: fp.psychological_test_completed || false,
-            pinEnabled: fp.pin_enabled || false,
-            pinCompleted: fp.pin_completed || false,
-            firstCheckinDone: fp.first_checkin_done || false,
-            firstRewardShown: fp.first_reward_shown || false,
-          };
-          // Save to localStorage immediately
-          localStorage.setItem('app-flow-progress', JSON.stringify(result.flowProgress));
+      if (userData.preferences) {
+        result.preferences = userData.preferences;
+        // Save preferences to localStorage immediately
+        localStorage.setItem('menhausen_user_preferences', JSON.stringify(result.preferences));
+        
+        // Also save language separately for compatibility with existing code
+        if (result.preferences.language) {
+          localStorage.setItem('menhausen-language', result.preferences.language);
         }
       }
 
-      if (psychologicalTestRes.ok) {
-        const testData = await psychologicalTestRes.json();
-        if (testData && testData.length > 0 && testData[0].last_completed_at) {
-          result.psychologicalTest = {
-            lastCompletedAt: testData[0].last_completed_at,
-          };
-          // Save minimal test data to indicate test was completed
-          const existingTest = localStorage.getItem('psychological-test-results');
-          if (!existingTest) {
-            localStorage.setItem('psychological-test-results', JSON.stringify({
-              lastCompletedAt: result.psychologicalTest.lastCompletedAt,
-              scores: {},
-              percentages: {},
-              history: [],
-            }));
-          }
+      if (userData.psychologicalTest?.lastCompletedAt) {
+        result.psychologicalTest = {
+          lastCompletedAt: userData.psychologicalTest.lastCompletedAt,
+        };
+        // Save minimal test data to indicate test was completed
+        const existingTest = localStorage.getItem('psychological-test-results');
+        if (!existingTest) {
+          localStorage.setItem('psychological-test-results', JSON.stringify({
+            lastCompletedAt: result.psychologicalTest.lastCompletedAt,
+            scores: userData.psychologicalTest.scores || {},
+            percentages: userData.psychologicalTest.percentages || {},
+            history: userData.psychologicalTest.history || [],
+          }));
         }
       }
 
-      if (todayCheckinRes.ok) {
-        const checkinData = await todayCheckinRes.json();
-        if (checkinData && checkinData.length > 0) {
-          const checkin = checkinData[0];
-          result.todayCheckin = {
-            mood: checkin.mood,
-            value: checkin.value,
-            color: checkin.color,
-            completed: checkin.completed !== undefined ? checkin.completed : true,
-          };
-          // Save today's checkin to localStorage immediately
-          const storageKey = DailyCheckinManager.getStorageKey(todayDateKey);
-          const fullCheckinData = {
-            id: `checkin_${todayDateKey}_${Date.now()}`,
-            date: todayDateKey,
-            timestamp: Date.now(),
-            mood: checkin.mood,
-            value: checkin.value,
-            color: checkin.color,
-            completed: checkin.completed !== undefined ? checkin.completed : true,
-          };
-          localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
-        }
-      }
-
-      if (preferencesRes.ok) {
-        const preferencesData = await preferencesRes.json();
-        if (preferencesData && preferencesData.length > 0) {
-          const prefs = preferencesData[0];
-          result.preferences = {
-            language: prefs.language || 'en',
-            theme: prefs.theme || 'light',
-            notifications: prefs.notifications !== undefined ? prefs.notifications : true,
-            analytics: prefs.analytics !== undefined ? prefs.analytics : false,
-          };
-          // Save preferences to localStorage immediately
-          localStorage.setItem('menhausen_user_preferences', JSON.stringify(result.preferences));
-          
-          // Also save language separately for compatibility with existing code
-          if (result.preferences.language) {
-            localStorage.setItem('menhausen-language', result.preferences.language);
-          }
-        }
+      // Extract today's checkin from dailyCheckins object
+      if (userData.dailyCheckins?.[todayDateKey]) {
+        const checkin = userData.dailyCheckins[todayDateKey];
+        result.todayCheckin = {
+          mood: checkin.mood,
+          value: checkin.value,
+          color: checkin.color,
+          completed: checkin.completed !== undefined ? checkin.completed : true,
+        };
+        // Save today's checkin to localStorage immediately
+        const storageKey = DailyCheckinManager.getStorageKey(todayDateKey);
+        const fullCheckinData = {
+          id: `checkin_${todayDateKey}_${Date.now()}`,
+          date: todayDateKey,
+          timestamp: Date.now(),
+          mood: checkin.mood,
+          value: checkin.value,
+          color: checkin.color,
+          completed: checkin.completed !== undefined ? checkin.completed : true,
+        };
+        localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
       }
 
       return Object.keys(result).length > 0 ? result : null;

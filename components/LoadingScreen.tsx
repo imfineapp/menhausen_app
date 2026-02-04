@@ -9,10 +9,12 @@ export const LoadingScreen: React.FC = () => {
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-      <div className="text-white text-center">
-        <div className="text-lg animate-pulse">
-          {getUI().common.loading || 'Loading...'}
-        </div>
+      <div className="relative flex flex-col items-center justify-center">
+        <img
+          src="/android-chrome-512x512.png"
+          alt={getUI().common.loading || 'Loading...'}
+          className="w-32 h-32 animate-breathe rounded-full"
+        />
       </div>
     </div>
   );

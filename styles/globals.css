@@ -80,7 +80,7 @@
   --font-size-2xl: 24px;
   --font-size-3xl: 28px;
   --font-size-4xl: 32px;
-  
+
   /* Адаптивные отступы */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -88,14 +88,14 @@
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
+
   /* Responsive breakpoints */
   --breakpoint-xs: 320px;
   --breakpoint-sm: 375px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
-  
+
   /* Bottom Fixed Button стандарты */
   --bottom-button-width: 350px;
   --bottom-button-height: 46px;
@@ -103,8 +103,9 @@
   --bottom-button-padding-x: 126px;
   --bottom-button-padding-y: 15px;
   --bottom-button-radius: 12px;
-  --bottom-button-center: center; /* Кнопка центрирована по горизонтали */
-  
+  --bottom-button-center: center;
+  /* Кнопка центрирована по горизонтали */
+
   /* Secondary Button стандарты */
   --secondary-button-width: 350px;
   --secondary-button-height: 46px;
@@ -113,10 +114,10 @@
   --secondary-button-border-color: #e1ff00;
   --secondary-button-text-color: #e1ff00;
   --secondary-button-hover-bg-opacity: 0.1;
-  
+
   /* Content padding для предотвращения перекрытия кнопкой */
   --content-bottom-padding: 200px;
-  
+
   --background: #ffffff;
   --foreground: oklch(0.145 0 0);
   --card: #ffffff;
@@ -154,7 +155,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  
+
   /* CSS Variable mappings for Tailwind color system */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -194,7 +195,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  
+
   /* ThemeCard colors */
   --theme-card-bg: rgba(217, 217, 217, 0.04);
   --theme-card-border: #212121;
@@ -202,30 +203,30 @@
   --theme-card-text: #ffffff;
   --theme-card-text-secondary: #696969;
   --theme-card-hover: rgba(217, 217, 217, 0.06);
-  
+
   /* ThemeCard spacing */
   --theme-card-padding-xs: 16px;
   --theme-card-padding-sm: 18px;
   --theme-card-padding-md: 20px;
   --theme-card-gap-xs: 8px;
   --theme-card-gap-sm: 10px;
-  
+
   /* ThemeCard heights */
   --theme-card-height-xs: 140px;
   --theme-card-height-sm: 147px;
   --theme-card-height-md: 154px;
-  
+
   /* Brand Colors - Design Tokens */
   --color-brand-primary: #e1ff00;
   --color-brand-primary-hover: #d1ef00;
   --color-brand-primary-muted: #b8b800;
-  
+
   /* Background Colors - Design Tokens */
   --color-bg-primary: #111111;
   --color-bg-card: rgba(217, 217, 217, 0.04);
   --color-bg-card-hover: rgba(217, 217, 217, 0.06);
   --color-bg-card-active: rgba(217, 217, 217, 0.08);
-  
+
   /* Text Colors - Design Tokens */
   --color-text-primary: #ffffff;
   --color-text-secondary: #cfcfcf;
@@ -233,17 +234,17 @@
   --color-text-disabled: #9a9a9a;
   --color-text-disabled-light: #8a8a8a;
   --color-text-dark: #2d2b2b;
-  
+
   /* Border Colors - Design Tokens */
   --color-border-primary: #212121;
   --color-border-secondary: #505050;
   --color-border-accent: #e1ff00;
-  
+
   /* Status Colors - Design Tokens */
   --color-status-amber: #fbbf24;
   --color-status-green: #22c55e;
   --color-status-gray: rgba(128, 128, 128, 0.1);
-  
+
   /* Activity Colors - Design Tokens */
   --color-activity-active: #e1ff00;
   --color-activity-active-glow: rgba(225, 255, 0, 0.5);
@@ -287,7 +288,7 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.439 0 0);
-  
+
   /* ThemeCard colors for dark theme */
   --theme-card-bg: rgba(217, 217, 217, 0.04);
   --theme-card-border: #212121;
@@ -295,18 +296,18 @@
   --theme-card-text: #ffffff;
   --theme-card-text-secondary: #696969;
   --theme-card-hover: rgba(217, 217, 217, 0.08);
-  
+
   /* Brand Colors - Design Tokens (dark theme) */
   --color-brand-primary: #e1ff00;
   --color-brand-primary-hover: #d1ef00;
   --color-brand-primary-muted: #b8b800;
-  
+
   /* Background Colors - Design Tokens (dark theme) */
   --color-bg-primary: oklch(0.145 0 0);
   --color-bg-card: rgba(217, 217, 217, 0.04);
   --color-bg-card-hover: rgba(217, 217, 217, 0.06);
   --color-bg-card-active: rgba(217, 217, 217, 0.08);
-  
+
   /* Text Colors - Design Tokens (dark theme) */
   --color-text-primary: oklch(0.985 0 0);
   --color-text-secondary: #cfcfcf;
@@ -314,17 +315,17 @@
   --color-text-disabled: #9a9a9a;
   --color-text-disabled-light: #8a8a8a;
   --color-text-dark: oklch(0.205 0 0);
-  
+
   /* Border Colors - Design Tokens (dark theme) */
   --color-border-primary: #212121;
   --color-border-secondary: #505050;
   --color-border-accent: #e1ff00;
-  
+
   /* Status Colors - Design Tokens (dark theme) */
   --color-status-amber: #fbbf24;
   --color-status-green: #22c55e;
   --color-status-gray: rgba(128, 128, 128, 0.1);
-  
+
   /* Activity Colors - Design Tokens (dark theme) */
   --color-activity-active: #e1ff00;
   --color-activity-active-glow: rgba(225, 255, 0, 0.5);
@@ -370,13 +371,11 @@
 
   /* Secondary Button стили */
   .secondary-button {
-    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] 
-           bg-transparent border border-[#e1ff00] rounded-xl 
-           font-sans font-bold text-[15px] 
-           text-[#e1ff00] text-center
-           hover:bg-[rgba(225,255,0,0.1)] hover:text-[#2d2b2b]
-           active:scale-[0.98] transition-all duration-200
-           min-h-[44px] min-w-[44px] cursor-pointer;
+    @apply absolute left-1/2 transform -translate-x-1/2 bottom-[35px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:text-[#2d2b2b] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer;
+  }
+
+  .secondary-button:hover {
+    background-color: rgba(225, 255, 0, 0.1);
   }
 
   /* Адаптивные утилиты для контейнеров */
@@ -451,36 +450,105 @@
   }
 
   @media (min-width: 640px) {
-    .text-responsive-xs { font-size: 11px; }
-    .text-responsive-sm { font-size: 13px; }
-    .text-responsive-base { font-size: 15px; }
-    .text-responsive-lg { font-size: 17px; }
-    .text-responsive-xl { font-size: 19px; }
-    .text-responsive-2xl { font-size: 22px; }
-    .text-responsive-3xl { font-size: 26px; }
-    .text-responsive-4xl { font-size: 30px; }
+    .text-responsive-xs {
+      font-size: 11px;
+    }
+
+    .text-responsive-sm {
+      font-size: 13px;
+    }
+
+    .text-responsive-base {
+      font-size: 15px;
+    }
+
+    .text-responsive-lg {
+      font-size: 17px;
+    }
+
+    .text-responsive-xl {
+      font-size: 19px;
+    }
+
+    .text-responsive-2xl {
+      font-size: 22px;
+    }
+
+    .text-responsive-3xl {
+      font-size: 26px;
+    }
+
+    .text-responsive-4xl {
+      font-size: 30px;
+    }
   }
 
   @media (min-width: 768px) {
-    .text-responsive-xs { font-size: 12px; }
-    .text-responsive-sm { font-size: 14px; }
-    .text-responsive-base { font-size: 16px; }
-    .text-responsive-lg { font-size: 18px; }
-    .text-responsive-xl { font-size: 20px; }
-    .text-responsive-2xl { font-size: 24px; }
-    .text-responsive-3xl { font-size: 28px; }
-    .text-responsive-4xl { font-size: 32px; }
+    .text-responsive-xs {
+      font-size: 12px;
+    }
+
+    .text-responsive-sm {
+      font-size: 14px;
+    }
+
+    .text-responsive-base {
+      font-size: 16px;
+    }
+
+    .text-responsive-lg {
+      font-size: 18px;
+    }
+
+    .text-responsive-xl {
+      font-size: 20px;
+    }
+
+    .text-responsive-2xl {
+      font-size: 24px;
+    }
+
+    .text-responsive-3xl {
+      font-size: 28px;
+    }
+
+    .text-responsive-4xl {
+      font-size: 32px;
+    }
   }
 
   @media (min-width: 1024px) {
-    .text-responsive-xs { font-size: 12px; }
-    .text-responsive-sm { font-size: 14px; }
-    .text-responsive-base { font-size: 16px; }
-    .text-responsive-lg { font-size: 18px; }
-    .text-responsive-xl { font-size: 20px; }
-    .text-responsive-2xl { font-size: 24px; }
-    .text-responsive-3xl { font-size: 30px; }
-    .text-responsive-4xl { font-size: 36px; }
+    .text-responsive-xs {
+      font-size: 12px;
+    }
+
+    .text-responsive-sm {
+      font-size: 14px;
+    }
+
+    .text-responsive-base {
+      font-size: 16px;
+    }
+
+    .text-responsive-lg {
+      font-size: 18px;
+    }
+
+    .text-responsive-xl {
+      font-size: 20px;
+    }
+
+    .text-responsive-2xl {
+      font-size: 24px;
+    }
+
+    .text-responsive-3xl {
+      font-size: 30px;
+    }
+
+    .text-responsive-4xl {
+      font-size: 36px;
+    }
   }
 
   /* Глобальные стили для скрытия полос прокрутки */
@@ -520,8 +588,18 @@
  * Base typography with responsive scaling - iOS Safari optimized
  */
 @layer base {
-  h1, h2, h3, h4, h5, h6,
-  h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  h1 *,
+  h2 *,
+  h3 *,
+  h4 *,
+  h5 *,
+  h6 * {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
     font-weight: 400 !important;
     -webkit-font-smoothing: antialiased;
@@ -534,22 +612,25 @@
     line-height: 1.1;
   }
 
-  h2 { 
-    font-size: clamp(20px, 4vw, 28px); 
-    line-height: 1.3; 
+  h2 {
+    font-size: clamp(20px, 4vw, 28px);
+    line-height: 1.3;
   }
 
-  h3 { 
-    font-size: clamp(18px, 3.5vw, 24px); 
-    line-height: 1.4; 
+  h3 {
+    font-size: clamp(18px, 3.5vw, 24px);
+    line-height: 1.4;
   }
 
-  h4 { 
-    font-size: clamp(16px, 3vw, 20px); 
-    line-height: 1.4; 
+  h4 {
+    font-size: clamp(16px, 3vw, 20px);
+    line-height: 1.4;
   }
 
-  p, span, div, label {
+  p,
+  span,
+  div,
+  label {
     font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: clamp(14px, 2.5vw, 18px);
     font-weight: var(--font-weight-normal);
@@ -583,30 +664,31 @@ html {
   html {
     height: -webkit-fill-available;
   }
-  
+
   body {
     height: -webkit-fill-available;
   }
-  
+
   /* iOS Safari font loading optimization */
   * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizelegibility;
   }
-  
+
   /* Force font loading on iOS */
   .font-heading {
     font-family: 'Roboto Slab', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, serif !important;
   }
-  
+
   .font-sans {
     font-family: 'PT Sans', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   }
 }
 
 /* Prevent horizontal scrolling */
-html, body {
+html,
+body {
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -617,7 +699,8 @@ html, body {
 }
 
 /* Ensure no element can cause horizontal overflow */
-body, #root {
+body,
+#root {
   overflow-x: hidden;
   max-width: 100vw;
 }
@@ -627,7 +710,7 @@ body, #root {
   .safe-top {
     padding-top: constant(safe-area-inset-top);
   }
-  
+
   .safe-bottom {
     padding-bottom: constant(safe-area-inset-bottom);
   }
@@ -637,7 +720,7 @@ body, #root {
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
-  
+
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
@@ -645,20 +728,41 @@ body, #root {
 
 /* Responsive utilities */
 @media (max-width: 374px) {
-  .xs-hidden { display: none; }
-  .xs-text-xs { font-size: 10px; }
-  .xs-text-sm { font-size: 12px; }
-  .xs-text-base { font-size: 14px; }
+  .xs-hidden {
+    display: none;
+  }
+
+  .xs-text-xs {
+    font-size: 10px;
+  }
+
+  .xs-text-sm {
+    font-size: 12px;
+  }
+
+  .xs-text-base {
+    font-size: 14px;
+  }
 }
 
 @media (min-width: 375px) and (max-width: 639px) {
-  .sm-only-block { display: block; }
-  .sm-only-hidden { display: none; }
+  .sm-only-block {
+    display: block;
+  }
+
+  .sm-only-hidden {
+    display: none;
+  }
 }
 
 @media (min-width: 640px) and (max-width: 767px) {
-  .md-only-block { display: block; }
-  .md-only-hidden { display: none; }
+  .md-only-block {
+    display: block;
+  }
+
+  .md-only-hidden {
+    display: none;
+  }
 }
 
 /* ========================================================================================
@@ -667,6 +771,7 @@ body, #root {
 
 /* Основные типографические классы согласно Guidelines.md */
 @layer base {
+
   /* H1 Заголовки - clamp(24px, 5vw, 32px) с leading-[0.8] */
   .typography-h1,
   .typography-h1 * {
@@ -808,7 +913,8 @@ body, #root {
 .striped-progress-bar {
   position: relative;
   overflow: hidden;
-  border-radius: 0.75rem; /* rounded-xl */
+  border-radius: 0.75rem;
+  /* rounded-xl */
 }
 
 /* Фон прогресс-бара */
@@ -824,31 +930,33 @@ body, #root {
   position: absolute;
   height: 100%;
   border-radius: 0.75rem;
-  background: repeating-linear-gradient(
-    -45deg,
-    #e1ff00 0px,
-    #e1ff00 16px,
-    #d1ef00 16px,
-    #d1ef00 32px
-  );
+  background: repeating-linear-gradient(-45deg,
+      #e1ff00 0px,
+      #e1ff00 16px,
+      #d1ef00 16px,
+      #d1ef00 32px);
   transition: width 0.3s ease-in-out;
 }
 
 /* Варианты размеров */
 .striped-progress-bar-sm {
-  height: 0.625rem; /* h-2.5 */
+  height: 0.625rem;
+  /* h-2.5 */
 }
 
 .striped-progress-bar-md {
-  height: 1rem; /* h-4 */
+  height: 1rem;
+  /* h-4 */
 }
 
 .striped-progress-bar-lg {
-  height: 1.5rem; /* h-6 */
+  height: 1.5rem;
+  /* h-6 */
 }
 
 .striped-progress-bar-xl {
-  height: 2rem; /* h-8 */
+  height: 2rem;
+  /* h-8 */
 }
 
 /* Варианты фона */
@@ -1009,4 +1117,23 @@ body, #root {
   color: var(--color-text-dark);
   font-size: clamp(12px, 2vw, 14px);
   line-height: 1.4;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 15px rgba(225, 255, 0, 0.4));
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 35px rgba(225, 255, 0, 0.7));
+    opacity: 0.9;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 3s ease-in-out infinite;
 }
