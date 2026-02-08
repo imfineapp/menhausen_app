@@ -423,6 +423,15 @@ PostHog analytics is **disabled by default** and can be enabled via environment 
 // 3. Not in test mode
 ```
 
+#### Error tracking (production)
+When PostHog is enabled, the app captures exceptions via:
+- **Exception autocapture** (SDK): `window.onerror` and `unhandledrejection` → `$exception` events
+- **PostHogErrorBoundary**: React render errors with a user-facing fallback
+
+To enable exception autocapture in PostHog, turn it on in [Project settings → Error tracking](https://app.posthog.com/settings/project-error-tracking#exception-autocapture). For readable stack traces with minified bundles, upload source maps (see [PostHog docs](https://posthog.com/docs/error-tracking/upload-source-maps/react)).
+
+Manual capture: `import { captureException } from './utils/analytics/posthog'` then `captureException(error, { context: 'my_feature' })`.
+
 ### Monitoring Setup
 ```typescript
 // Error tracking

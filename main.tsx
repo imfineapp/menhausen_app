@@ -50,16 +50,18 @@ const app = (
         apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} 
         options={{
           api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+          defaults: '2025-05-24',
           capture_exceptions: true,
         }}
       >
         <PostHogErrorBoundary
           fallback={({ error, componentStack }) => {
+            // error is unknown; boundary already sent it via client.captureException in componentDidCatch
             const errorObj = error instanceof Error ? error : new Error(String(error))
             return (
-              <ErrorFallback 
-                error={errorObj} 
-                componentStack={componentStack}
+              <ErrorFallback
+                error={errorObj}
+                componentStack={componentStack ?? undefined}
                 resetError={() => window.location.reload()}
               />
             )
@@ -93,42 +95,9 @@ fontLoader.initialize().catch((error) => {
   }
 })
 
-// Global error handlers for unhandled errors
-if (typeof window !== 'undefined') {
-  // Handle unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
-    const error = event.reason instanceof Error 
-      ? event.reason 
-      : new Error(String(event.reason))
-    
-    console.error('Unhandled promise rejection:', error)
-    
-    if (isAnalyticsEnabled()) {
-      captureException(error, { 
-        context: 'unhandled_promise_rejection',
-        promise_rejection: true 
-      })
-    }
-  })
-
-  // Handle unhandled errors (fallback for errors not caught by React Error Boundary)
-  window.addEventListener('error', (event) => {
-    const error = event.error instanceof Error 
-      ? event.error 
-      : new Error(event.message || 'Unknown error')
-    
-    console.error('Unhandled error:', error)
-    
-    if (isAnalyticsEnabled()) {
-      captureException(error, { 
-        context: 'unhandled_error',
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno
-      })
-    }
-  })
-}
+// Unhandled errors and promise rejections are captured by PostHog SDK
+// when capture_exceptions: true (window.onerror / unhandledrejection).
+// No duplicate global listeners here to avoid double $exception events.
 
 // Remove loading indicator after React mounts
 setTimeout(() => {
