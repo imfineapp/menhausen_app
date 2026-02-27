@@ -202,6 +202,10 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
     if (!isDragging) return;
     if (activePointerIdRef.current !== e.pointerId) return;
 
+    if (e.pointerType === 'mouse') {
+      e.preventDefault();
+    }
+
     const dx = e.pageX - pointerStartXRef.current;
     const dy = e.pageY - pointerStartYRef.current;
     const absDx = Math.abs(dx);
@@ -234,7 +238,11 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
     if (activePointerIdRef.current !== e.pointerId) return;
     activePointerIdRef.current = null;
-    finishDragAndSnap();
+    if (!sliderRef.current) return;
+
+    setIsDragging(false);
+    wasSwipedRef.current = false;
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
   };
 
   const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {

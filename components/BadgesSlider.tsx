@@ -24,7 +24,6 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const wasSwipedRef = useRef(false);
   const activePointerIdRef = useRef<number | null>(null);
   const pointerStartXRef = useRef(0);
   const pointerStartYRef = useRef(0);
@@ -84,10 +83,6 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
       left: targetScroll,
       behavior: 'smooth'
     });
-
-    setTimeout(() => {
-      wasSwipedRef.current = false;
-    }, 100);
   };
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -96,7 +91,6 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
     if (activePointerIdRef.current !== null) return;
 
     activePointerIdRef.current = e.pointerId;
-    wasSwipedRef.current = false;
     pointerStartXRef.current = e.pageX;
     pointerStartYRef.current = e.pageY;
     pointerStartScrollLeftRef.current = sliderRef.current.scrollLeft;
@@ -110,16 +104,14 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
     if (!isDragging) return;
     if (activePointerIdRef.current !== e.pointerId) return;
 
+    if (e.pointerType === 'mouse') {
+      e.preventDefault();
+    }
+
     const dx = e.pageX - pointerStartXRef.current;
     const dy = e.pageY - pointerStartYRef.current;
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
-
-    const movedEnough = absDx > SWIPE_THRESHOLD || absDy > SWIPE_THRESHOLD;
-
-    if (movedEnough) {
-      wasSwipedRef.current = true;
-    }
 
     if (absDy > absDx && absDy > SWIPE_THRESHOLD) {
       activePointerIdRef.current = null;
@@ -140,7 +132,10 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
   const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
     if (activePointerIdRef.current !== e.pointerId) return;
     activePointerIdRef.current = null;
-    finishDragAndSnap();
+    if (!sliderRef.current) return;
+
+    setIsDragging(false);
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
   };
 
   const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
