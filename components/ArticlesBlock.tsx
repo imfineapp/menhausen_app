@@ -58,12 +58,6 @@ function ArticleCard({
   return (
     <button
       onClick={handleClick}
-      onPointerUp={(e) => {
-        if (checkIfSwiped && checkIfSwiped()) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }}
       disabled={locked}
       style={{ touchAction: 'manipulation' }}
       className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-bg-card' : 'cursor-pointer hover:bg-bg-card-hover'}`}
@@ -122,12 +116,6 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
   return (
     <button
       onClick={handleClick}
-      onPointerUp={(e) => {
-        if (checkIfSwiped && checkIfSwiped()) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }}
       style={{ touchAction: 'manipulation' }}
       className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-bg-card-hover transition-all duration-300 flex-1"
       data-name="View all articles card"
@@ -302,8 +290,8 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
+        onPointerUpCapture={handlePointerUp}
+        onPointerCancelCapture={handlePointerCancel}
         onPointerLeave={handlePointerLeave}
         data-name="Articles Slider"
       >
@@ -333,10 +321,6 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         <div
           className="flex-shrink-0 snap-center flex"
           style={{ width: '256px', touchAction: 'pan-x pan-y' }}
-          onTouchStart={(_e) => {
-            // Позволяем событиям всплывать к слайдеру для обработки свайпа
-            // Событие будет обработано слайдером через handleTouchStart
-          }}
         >
           <ViewAllCard onClick={onViewAll} checkIfSwiped={checkIfSwiped} />
         </div>
