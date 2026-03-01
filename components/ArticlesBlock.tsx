@@ -45,7 +45,7 @@ function ArticleCard({
   badgeText: string;
   checkIfSwiped?: () => boolean;
 }) {
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = (e: React.MouseEvent | React.PointerEvent | React.TouchEvent) => {
     // Если был свайп, не вызываем onClick
     if (checkIfSwiped && checkIfSwiped()) {
       e.preventDefault();
@@ -55,24 +55,9 @@ function ArticleCard({
     onClick();
   };
   
-  const handleTouchStart = (_e: React.TouchEvent) => {
-    // Не блокируем событие, чтобы слайдер мог обработать свайп
-    // Событие будет обработано слайдером
-  };
-  
   return (
     <button
       onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={(e) => {
-        // Для touch событий также проверяем свайп
-        if (checkIfSwiped && checkIfSwiped()) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        handleClick(e);
-      }}
       disabled={locked}
       style={{ touchAction: 'manipulation' }}
       className={`box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-start justify-start p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full min-h-[44px] min-w-[44px] transition-all duration-300 flex-1 ${locked ? 'cursor-not-allowed hover:bg-bg-card' : 'cursor-pointer hover:bg-bg-card-hover'}`}
@@ -118,7 +103,7 @@ function ArticleCard({
 function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfSwiped?: () => boolean }) {
   const { content } = useContent();
   
-  const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleClick = (e: React.MouseEvent | React.PointerEvent | React.TouchEvent) => {
     // Если был свайп, не вызываем onClick
     if (checkIfSwiped && checkIfSwiped()) {
       e.preventDefault();
@@ -128,24 +113,9 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
     onClick();
   };
   
-  const handleTouchStart = (_e: React.TouchEvent) => {
-    // Не блокируем событие, чтобы слайдер мог обработать свайп
-    // Событие будет обработано слайдером
-  };
-  
   return (
     <button
       onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={(e) => {
-        // Для touch событий также проверяем свайп
-        if (checkIfSwiped && checkIfSwiped()) {
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        handleClick(e);
-      }}
       style={{ touchAction: 'manipulation' }}
       className="box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-[16px] sm:p-[18px] md:p-[20px] relative shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-bg-card-hover transition-all duration-300 flex-1"
       data-name="View all articles card"
@@ -179,111 +149,106 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const lockedBadgeText = getLocalizedText(((content.ui as any)?.articles?.lockedBadge) || 'Opens at {points}');
   const [_currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   // Отслеживание, был ли свайп (движение пальца), чтобы предотвратить onClick при свайпе
   const wasSwipedRef = useRef(false);
-  const touchStartXRef = useRef(0);
-  const touchStartYRef = useRef(0);
+  const activePointerIdRef = useRef<number | null>(null);
+  const pointerStartXRef = useRef(0);
+  const pointerStartYRef = useRef(0);
+  const pointerStartScrollLeftRef = useRef(0);
   const SWIPE_THRESHOLD = 10; // Порог в пикселях для определения свайпа
 
   // Общее количество карточек (статьи + ViewAll)
   const _totalCards = articles.length + 1;
 
-  // Обработка свайпа мышью
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-    sliderRef.current.style.scrollSnapType = 'none';
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
+  const finishDragAndSnap = () => {
     if (!sliderRef.current) return;
     setIsDragging(false);
     sliderRef.current.style.scrollSnapType = 'x mandatory';
-    
+
     const cardWidth = getCardWidth();
     const currentScroll = sliderRef.current.scrollLeft;
     const targetIndex = Math.round(currentScroll / cardWidth);
     const targetScroll = targetIndex * cardWidth;
-    
+
     sliderRef.current.scrollTo({
       left: targetScroll,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
-  };
 
-  // Обработка касаний для мобильных устройств
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!sliderRef.current) return;
-    setIsDragging(true);
-    wasSwipedRef.current = false;
-    touchStartXRef.current = e.touches[0].pageX;
-    touchStartYRef.current = e.touches[0].pageY;
-    sliderRef.current.style.scrollSnapType = 'none';
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    
-    // Вычисляем смещения по обеим осям
-    const deltaX = Math.abs(e.touches[0].pageX - touchStartXRef.current);
-    const deltaY = Math.abs(e.touches[0].pageY - touchStartYRef.current);
-    
-    // Определяем направление жеста
-    // Если вертикальное движение больше горизонтального и превышает порог - это вертикальный жест
-    if (deltaY > deltaX && deltaY > SWIPE_THRESHOLD) {
-      // Вертикальный жест - разрешаем скролл страницы, отключаем обработку слайдера
-      setIsDragging(false);
-      wasSwipedRef.current = false;
-      sliderRef.current.style.scrollSnapType = 'x mandatory';
-      return;
-    }
-    
-    // Горизонтальный жест - продолжаем обработку слайдера
-    // Проверяем, было ли движение (свайп) для предотвращения onClick на карточках
-    if (deltaX > SWIPE_THRESHOLD) {
-      wasSwipedRef.current = true;
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (!sliderRef.current) return;
-    setIsDragging(false);
-    sliderRef.current.style.scrollSnapType = 'x mandatory';
-    
-    const cardWidth = getCardWidth();
-    const currentScroll = sliderRef.current.scrollLeft;
-    const targetIndex = Math.round(currentScroll / cardWidth);
-    const targetScroll = targetIndex * cardWidth;
-    
-    sliderRef.current.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth'
-    });
-    
-    // Сбрасываем флаг свайпа через небольшую задержку, чтобы кнопки успели проверить его
     setTimeout(() => {
       wasSwipedRef.current = false;
     }, 100);
   };
 
-  const handleTouchCancel = () => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!sliderRef.current) return;
+
+    // Игнорируем дополнительные указатели, обрабатываем только первый активный
+    if (activePointerIdRef.current !== null) return;
+
+    activePointerIdRef.current = e.pointerId;
+    wasSwipedRef.current = false;
+    pointerStartXRef.current = e.pageX;
+    pointerStartYRef.current = e.pageY;
+    pointerStartScrollLeftRef.current = sliderRef.current.scrollLeft;
+
+    setIsDragging(true);
+    sliderRef.current.style.scrollSnapType = 'none';
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!sliderRef.current) return;
+    if (!isDragging) return;
+    if (activePointerIdRef.current !== e.pointerId) return;
+
+    if (e.pointerType === 'mouse') {
+      e.preventDefault();
+    }
+
+    const dx = e.pageX - pointerStartXRef.current;
+    const dy = e.pageY - pointerStartYRef.current;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    const movedEnough = absDx > SWIPE_THRESHOLD || absDy > SWIPE_THRESHOLD;
+
+    if (movedEnough) {
+      wasSwipedRef.current = true;
+    }
+
+    // Вертикальный жест — отдаём управление странице
+    if (absDy > absDx && absDy > SWIPE_THRESHOLD) {
+      activePointerIdRef.current = null;
+      finishDragAndSnap();
+      return;
+    }
+
+    // Горизонтальный жест — двигаем слайдер, имитируя drag
+    const walk = dx * 1.5;
+    sliderRef.current.scrollLeft = pointerStartScrollLeftRef.current - walk;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    finishDragAndSnap();
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    if (!sliderRef.current) return;
+
     setIsDragging(false);
     wasSwipedRef.current = false;
     sliderRef.current.style.scrollSnapType = 'x mandatory';
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    finishDragAndSnap();
   };
   
   // Функция для проверки, был ли свайп (используется в кнопках)
@@ -331,14 +296,11 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         ref={sliderRef}
         className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 items-stretch"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchCancel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUpCapture={handlePointerUp}
+        onPointerCancelCapture={handlePointerCancel}
+        onPointerLeave={handlePointerLeave}
         data-name="Articles Slider"
       >
         {articles.map((article, index) => {
@@ -350,10 +312,6 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
       key={article.id}
       className="flex-shrink-0 snap-center flex"
       style={{ width: '256px', touchAction: 'pan-x pan-y' }}
-      onTouchStart={(_e) => {
-        // Позволяем событиям всплывать к слайдеру для обработки свайпа
-        // Событие будет обработано слайдером через handleTouchStart
-      }}
     >
       <ArticleCard
         article={article}
@@ -371,10 +329,6 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         <div
           className="flex-shrink-0 snap-center flex"
           style={{ width: '256px', touchAction: 'pan-x pan-y' }}
-          onTouchStart={(_e) => {
-            // Позволяем событиям всплывать к слайдеру для обработки свайпа
-            // Событие будет обработано слайдером через handleTouchStart
-          }}
         >
           <ViewAllCard onClick={onViewAll} checkIfSwiped={checkIfSwiped} />
         </div>

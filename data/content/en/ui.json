@@ -1,4 +1,4 @@
-﻿{
+{
     "navigation":  {
                        "back":  "Back",
                        "next":  "Next",
@@ -162,11 +162,11 @@
                     "title":  "How are you?",
                     "subtitle":  "Check in with yourself — it\u0027s the first step to self-care! Do it everyday.",
                     "moodOptions":  {
-                                        "down":  "I\u0027m feeling down...",
-                                        "anxious":  "I\u0027m anxious",
-                                        "neutral":  "I\u0027m neutral",
-                                        "energized":  "I\u0027m energized",
-                                        "happy":  "I\u0027m happy!"
+                                        "down":  "It feels really hard",
+                                        "anxious":  "It feels rather hard",
+                                        "neutral":  "Neutral / in between",
+                                        "energized":  "Pretty good",
+                                        "happy":  "Feeling great"
                                     },
                     "send":  "Send",
                     "back":  "Back"

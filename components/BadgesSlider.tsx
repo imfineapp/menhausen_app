@@ -22,82 +22,18 @@ interface BadgesSliderProps {
  */
 export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const activePointerIdRef = useRef<number | null>(null);
+  const pointerStartXRef = useRef(0);
+  const pointerStartYRef = useRef(0);
+  const pointerStartScrollLeftRef = useRef(0);
+  const SWIPE_THRESHOLD = 10;
 
   // Уведомляем родительский компонент об изменении текущего индекса
   useEffect(() => {
     onCurrentIndexChange?.(currentIndex);
   }, [currentIndex, onCurrentIndexChange]);
-
-  // Обработка свайпа
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!sliderRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - sliderRef.current.offsetLeft);
-    setScrollLeft(sliderRef.current.scrollLeft);
-    // Отключаем snap во время перетаскивания
-    sliderRef.current.style.scrollSnapType = 'none';
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - sliderRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Уменьшили множитель для более плавного движения
-    sliderRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    if (!sliderRef.current) return;
-    setIsDragging(false);
-    // Включаем snap обратно
-    sliderRef.current.style.scrollSnapType = 'x mandatory';
-    
-    // Плавно переходим к ближайшей карточке
-    const cardWidth = getCardWidth();
-    const currentScroll = sliderRef.current.scrollLeft;
-    const targetIndex = Math.round(currentScroll / cardWidth);
-    const targetScroll = targetIndex * cardWidth;
-    
-    sliderRef.current.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth'
-    });
-  };
-
-  // Обработка касаний для мобильных устройств
-  const handleTouchStart = (_e: React.TouchEvent) => {
-    if (!sliderRef.current) return;
-    setIsDragging(true);
-    // Отключаем snap во время перетаскивания
-    sliderRef.current.style.scrollSnapType = 'none';
-  };
-
-  const handleTouchMove = (_e: React.TouchEvent) => {
-    if (!isDragging || !sliderRef.current) return;
-    // Нативная прокрутка браузера обрабатывает движение
-  };
-
-  const handleTouchEnd = () => {
-    if (!sliderRef.current) return;
-    setIsDragging(false);
-    // Включаем snap обратно
-    sliderRef.current.style.scrollSnapType = 'x mandatory';
-    
-    // Плавно переходим к ближайшей карточке
-    const cardWidth = getCardWidth();
-    const currentScroll = sliderRef.current.scrollLeft;
-    const targetIndex = Math.round(currentScroll / cardWidth);
-    const targetScroll = targetIndex * cardWidth;
-    
-    sliderRef.current.scrollTo({
-      left: targetScroll,
-      behavior: 'smooth'
-    });
-  };
 
   // Обновление текущего индекса при скролле с debounce
   useEffect(() => {
@@ -131,6 +67,81 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
     if (!sliderRef.current) return 272;
     const firstCard = sliderRef.current.querySelector('.flex-shrink-0') as HTMLElement;
     return firstCard ? firstCard.offsetWidth + 16 : 272; // 16px gap
+  };
+
+  const finishDragAndSnap = () => {
+    if (!sliderRef.current) return;
+    setIsDragging(false);
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+
+    const cardWidth = getCardWidth();
+    const currentScroll = sliderRef.current.scrollLeft;
+    const targetIndex = Math.round(currentScroll / cardWidth);
+    const targetScroll = targetIndex * cardWidth;
+
+    sliderRef.current.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth'
+    });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!sliderRef.current) return;
+
+    if (activePointerIdRef.current !== null) return;
+
+    activePointerIdRef.current = e.pointerId;
+    pointerStartXRef.current = e.pageX;
+    pointerStartYRef.current = e.pageY;
+    pointerStartScrollLeftRef.current = sliderRef.current.scrollLeft;
+
+    setIsDragging(true);
+    sliderRef.current.style.scrollSnapType = 'none';
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!sliderRef.current) return;
+    if (!isDragging) return;
+    if (activePointerIdRef.current !== e.pointerId) return;
+
+    if (e.pointerType === 'mouse') {
+      e.preventDefault();
+    }
+
+    const dx = e.pageX - pointerStartXRef.current;
+    const dy = e.pageY - pointerStartYRef.current;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    if (absDy > absDx && absDy > SWIPE_THRESHOLD) {
+      activePointerIdRef.current = null;
+      finishDragAndSnap();
+      return;
+    }
+
+    const walk = dx * 1.5;
+    sliderRef.current.scrollLeft = pointerStartScrollLeftRef.current - walk;
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    finishDragAndSnap();
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    if (!sliderRef.current) return;
+
+    setIsDragging(false);
+    sliderRef.current.style.scrollSnapType = 'x mandatory';
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activePointerIdRef.current !== e.pointerId) return;
+    activePointerIdRef.current = null;
+    finishDragAndSnap();
   };
 
   // Переход к следующей карточке
@@ -169,14 +180,12 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
       <div
         ref={sliderRef}
         className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-4 px-4 py-8"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pinch-zoom' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUpCapture={handlePointerUp}
+        onPointerCancelCapture={handlePointerCancel}
+        onPointerLeave={handlePointerLeave}
         data-name="Badges Slider"
       >
         {badges.map((badge, index) => (
