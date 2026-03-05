@@ -937,6 +937,33 @@ export class SupabaseSyncService {
       if (localFormat.menhausen_referral_registered !== undefined) {
         localStorage.setItem('menhausen_referral_registered', localFormat.menhausen_referral_registered);
       }
+
+      // Restore referral list for the current user (referrer) from Supabase
+      if (Array.isArray(localFormat.referralList) && localFormat.referralList.length > 0) {
+        try {
+          const telegramUserId = getTelegramUserId();
+          if (telegramUserId) {
+            const key = `menhausen_referral_list_${telegramUserId}`;
+
+            // Build local ReferralStorage structure from simple userId list
+            const referrals = localFormat.referralList.map((id: any) => ({
+              userId: String(id),
+              // We don't have precise timestamps from the backend; use a stable fallback
+              registeredAt: new Date().toISOString(),
+              hasPremium: false,
+            }));
+
+            const referralStorage = {
+              referrerId: String(telegramUserId),
+              referrals,
+            };
+
+            localStorage.setItem(key, JSON.stringify(referralStorage));
+          }
+        } catch (error) {
+          console.warn('[SyncService] mergeAndSave - Error restoring referral list to localStorage:', error);
+        }
+      }
     }
 
     if (remoteData.language) {
