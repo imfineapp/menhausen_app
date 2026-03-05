@@ -309,6 +309,7 @@ async function syncCardProgress(supabase: any, telegramUserId: number, data: any
 async function syncReferralData(supabase: any, telegramUserId: number, data: any): Promise<void> {
   if (!data || typeof data !== 'object') return;
 
+  // First, upsert referral data for the current user (referred user)
   await supabase
     .from('referral_data')
     .upsert({
@@ -320,6 +321,91 @@ async function syncReferralData(supabase: any, telegramUserId: number, data: any
     }, {
       onConflict: 'telegram_user_id',
     });
+
+  // ---------------------------------------------------------------------------
+  // Server-side referral linking:
+  // If this user was referred by someone and has completed registration,
+  // update the referrer's referral_list in the database.
+  // ---------------------------------------------------------------------------
+  try {
+    const referredBy = data.referredBy;
+    const referralRegistered = data.referralRegistered === true;
+
+    if (!referredBy || !referralRegistered) {
+      // Nothing to do if there is no referrer or registration is not completed yet
+      return;
+    }
+
+    const referrerId = Number(referredBy);
+
+    // Validate referrer ID and prevent self-referral
+    if (!Number.isFinite(referrerId) || referrerId <= 0 || referrerId === telegramUserId) {
+      console.warn('[syncReferralData] Invalid referrerId or self-referral detected, skipping referrer update', {
+        telegramUserId,
+        referredBy,
+      });
+      return;
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.warn('[syncReferralData] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY, skipping referrer referral_list update');
+      return;
+    }
+
+    // Use a Service Role client for cross-user updates (bypasses RLS)
+    const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Load existing referral_list for the referrer
+    const { data: referrerData, error: fetchError } = await adminClient
+      .from('referral_data')
+      .select('referral_list')
+      .eq('telegram_user_id', referrerId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('[syncReferralData] Error fetching referrer referral_data:', fetchError);
+      return;
+    }
+
+    const existingListRaw = (referrerData && Array.isArray(referrerData.referral_list))
+      ? referrerData.referral_list
+      : [];
+
+    // Normalize existing list to strings for comparison, but keep original values for storage
+    const existingListAsStrings = existingListRaw.map((id: any) => String(id));
+    const currentUserIdStr = String(telegramUserId);
+
+    if (existingListAsStrings.includes(currentUserIdStr)) {
+      // Already linked, nothing to update
+      return;
+    }
+
+    const updatedList = [...existingListRaw, telegramUserId];
+
+    const { error: upsertError } = await adminClient
+      .from('referral_data')
+      .upsert({
+        telegram_user_id: referrerId,
+        referral_list: updatedList,
+      }, {
+        onConflict: 'telegram_user_id',
+      });
+
+    if (upsertError) {
+      console.error('[syncReferralData] Error updating referrer referral_list:', upsertError);
+    } else {
+      console.log('[syncReferralData] Referrer referral_list updated successfully', {
+        referrerId,
+        telegramUserId,
+        referralCount: updatedList.length,
+      });
+    }
+  } catch (error) {
+    console.error('[syncReferralData] Unexpected error while updating referrer referral_list:', error);
+  }
 }
 
 /**

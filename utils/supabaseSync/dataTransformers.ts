@@ -241,11 +241,25 @@ function transformReferralData(data: any): any {
   // localStorage stores: referred_by, referral_code, referral_registered, referral_list_*
   // API expects: { referredBy, referralCode, referralRegistered, referralList }
   
-  // Extract referral list (can be multiple keys with prefix)
+  // Extract referral list.
+  // Support both:
+  // 1) Direct array on data.referralList (new format from getAllLocalStorageData)
+  // 2) Multiple keys with prefix (legacy format, e.g. referral_list_* / menhausen_referral_list_*)
   const referralList: string[] = [];
+
+  // New format: explicit referralList array
+  if (Array.isArray((data as any).referralList)) {
+    (data as any).referralList.forEach((id: any) => {
+      if (id !== undefined && id !== null) {
+        referralList.push(String(id));
+      }
+    });
+  }
+
+  // Legacy format: scan object keys for stored referral lists
   if (typeof data === 'object') {
     Object.keys(data).forEach(key => {
-      if (key.startsWith('referral_list_')) {
+      if (key.startsWith('referral_list_') || key.startsWith('menhausen_referral_list_')) {
         try {
           const listData = data[key];
           if (listData && listData.referrals) {
@@ -292,7 +306,10 @@ function transformReferralDataFromAPI(data: any): Record<string, any> {
     result.menhausen_referral_registered = data.referralRegistered ? 'true' : 'false';
   }
 
-  // Note: referralList handling is complex (multiple keys), handled separately
+  // Preserve referralList for further processing (e.g. in mergeAndSave)
+  if (Array.isArray(data.referralList)) {
+    result.referralList = data.referralList;
+  }
 
   return result;
 }

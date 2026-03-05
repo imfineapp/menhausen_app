@@ -44,7 +44,7 @@ function isCardProgressKey(key: string): boolean {
  * Check if key is for referral list
  */
 function isReferralListKey(key: string): boolean {
-  return key.startsWith('referral_list_');
+  return key.startsWith('menhausen_referral_list_');
 }
 
 /**

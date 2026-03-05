@@ -1,3 +1,19 @@
+# Referral Program Fix - Implementation Tasks
+
+## Task Overview
+**Task**: Fix referral program so that invited users are correctly linked to referrers in Supabase  
+**Related Plan**: `.cursor/plans/fix_referral_program_92d38841.plan.md`
+
+### Subtasks
+- [ ] Modify `syncReferralData()` in `supabase/functions/sync-user-data/index.ts` to update the referrer's `referral_list` when a new user registers with `referred_by` set and `referralRegistered = true`
+- [ ] Fix `isReferralListKey()` in `utils/supabaseSync/localStorageInterceptor.ts` to use the correct `menhausen_referral_list_` prefix
+- [ ] Fix `transformReferralDataFromAPI()` in `utils/supabaseSync/dataTransformers.ts` to restore `referralList` back into localStorage
+- [ ] Update `mergeAndSave()` in `utils/supabaseSync/supabaseSyncService.ts` to write `referralList` back to localStorage from remote data
+- [ ] Fix `getAllLocalStorageData()` in `utils/supabaseSync/supabaseSyncService.ts` so referral list data is collected and synced correctly
+- [ ] Run end-to-end tests of the referral flow (share link → new user onboarding → Supabase `referral_data` for both users) and ensure no regressions
+
+---
+
 # Telegram User API Sync - Implementation Tasks
 
 ## Task Overview
