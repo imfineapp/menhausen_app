@@ -205,6 +205,7 @@ export const AnalyticsEvent = {
   ONBOARDING_ANSWERED: 'onboarding_answered',
   ONBOARDING_COMPLETED: 'onboarding_completed',
   FIRST_SCREEN_LOADED: 'first_screen_loaded',
+  REFERRAL_REGISTERED: 'referral_registered',
 } as const
 
 export type AnalyticsEventName = typeof AnalyticsEvent[keyof typeof AnalyticsEvent]

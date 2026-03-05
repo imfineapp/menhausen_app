@@ -1629,11 +1629,19 @@ function AppContent() {
         // Пользователь пришел по реферальной ссылке
         console.log('Registering referral:', { referrerId, currentUserId });
         
-        // Добавить реферала в список реферера
+        // Добавить реферала в список реферера (локальный кэш для UI/статистики)
         addReferralToList(referrerId, currentUserId);
         
         // Отметить, что реферал зарегистрирован
         markReferralAsRegistered();
+
+        // Отправить событие в PostHog для статистики реферальной регистрации
+        capture(AnalyticsEvent.REFERRAL_REGISTERED, {
+          referrer_id: String(referrerId),
+          referred_user_id: String(currentUserId),
+          language: currentLanguage,
+          referral_source: 'telegram_referral',
+        });
         
         // Обновление статистики реферера произойдет при следующем открытии приложения реферером
         // через функцию updateReferrerStatsFromList, которая должна вызываться при инициализации
