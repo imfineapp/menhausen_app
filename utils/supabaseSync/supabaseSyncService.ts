@@ -590,23 +590,13 @@ export class SupabaseSyncService {
           // Ignore if referral list doesn't exist
         }
         data.referralData = transformToAPIFormat('referralData', referralData);
-        // #region agent log
-        console.log('[DEBUG-REF] getAllLocalStorageData referralData:', { raw: referralData, transformed: data.referralData, lsReferredBy: localStorage.getItem('menhausen_referred_by'), lsRefRegistered: localStorage.getItem('menhausen_referral_registered') });
-        // #endregion
       }
     } catch (e) {
       console.warn('Error loading referral data:', e);
     }
 
-    // Has shown first achievement
-    try {
-      const hasShown = localStorage.getItem('has-shown-first-achievement');
-      if (hasShown) {
-        data.hasShownFirstAchievement = transformToAPIFormat('hasShownFirstAchievement', hasShown === 'true');
-      }
-    } catch (e) {
-      console.warn('Error loading has-shown-first-achievement:', e);
-    }
+    // Note: hasShownFirstAchievement is stored locally only.
+    // The Edge Function does not support this dataType, so we skip syncing it.
 
     console.log('[SyncService] getAllLocalStorageData - Collected data keys:', Object.keys(data));
     console.log('[SyncService] getAllLocalStorageData - Data summary:', Object.keys(data).reduce((acc, key) => {

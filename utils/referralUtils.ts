@@ -21,9 +21,6 @@ const REFERRAL_PREFIX = 'REF_';
 export function getReferralCodeFromStartParam(): string | null {
   try {
     const isTg = isTelegramEnvironment();
-    // #region agent log
-    console.log('[DEBUG-REF] getReferralCodeFromStartParam:', { isTg, hasTelegramObj: typeof window !== 'undefined' && !!window.Telegram, hasWebApp: typeof window !== 'undefined' && !!window.Telegram?.WebApp, startParam: typeof window !== 'undefined' ? window.Telegram?.WebApp?.initDataUnsafe?.start_param : undefined, urlSearch: typeof window !== 'undefined' ? window.location.search : '' });
-    // #endregion
     if (!isTg) {
       return null;
     }
@@ -150,9 +147,6 @@ export function processReferralCode(): void {
     // Получить реферальный код из start_param
     const referralCode = getReferralCodeFromStartParam();
     
-    // #region agent log
-    console.log('[DEBUG-REF] processReferralCode:', { referralCode, flowProgress: localStorage.getItem('app-flow-progress'), existingReferredBy: localStorage.getItem('menhausen_referred_by') });
-    // #endregion
     
     if (!referralCode) {
       return; // Нет реферального кода
@@ -170,9 +164,6 @@ export function processReferralCode(): void {
 
     // Проверить, является ли пользователь новым
     const newUser = isNewUser();
-    // #region agent log
-    console.log('[DEBUG-REF] isNewUser check:', { referralCode, referrerId, isNewUser: newUser, flowProgress: localStorage.getItem('app-flow-progress') });
-    // #endregion
     if (!newUser) {
       console.log('User is not new, skipping referral processing');
       return;
@@ -180,9 +171,6 @@ export function processReferralCode(): void {
 
     // Сохранить информацию о реферере
     saveReferrerInfo(referrerId);
-    // #region agent log
-    console.log('[DEBUG-REF] after saveReferrerInfo:', { referrerId, savedReferredBy: localStorage.getItem('menhausen_referred_by'), savedReferralCode: localStorage.getItem('menhausen_referral_code') });
-    // #endregion
 
   } catch (error) {
     console.error('Error processing referral code:', error);
