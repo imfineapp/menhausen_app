@@ -1624,9 +1624,7 @@ function AppContent() {
       // =====================================================================================
       const referrerId = getReferrerId();
       const currentUserId = getTelegramUserId();
-      // #region agent log
-      console.log('[DEBUG-REF] handleSurvey06Next referral check:', { referrerId, currentUserId, lsReferredBy: localStorage.getItem('menhausen_referred_by'), lsRefCode: localStorage.getItem('menhausen_referral_code'), lsRefRegistered: localStorage.getItem('menhausen_referral_registered') });
-      // #endregion
+
       
       if (referrerId && currentUserId) {
         // Пользователь пришел по реферальной ссылке
