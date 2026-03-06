@@ -590,6 +590,9 @@ export class SupabaseSyncService {
           // Ignore if referral list doesn't exist
         }
         data.referralData = transformToAPIFormat('referralData', referralData);
+        // #region agent log
+        console.log('[DEBUG-REF] getAllLocalStorageData referralData:', { raw: referralData, transformed: data.referralData, lsReferredBy: localStorage.getItem('menhausen_referred_by'), lsRefRegistered: localStorage.getItem('menhausen_referral_registered') });
+        // #endregion
       }
     } catch (e) {
       console.warn('Error loading referral data:', e);
