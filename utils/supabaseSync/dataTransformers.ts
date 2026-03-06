@@ -276,10 +276,18 @@ function transformReferralData(data: any): any {
     });
   }
 
+  const referredBy = data.referredBy || data.referred_by || data.menhausen_referred_by || null;
+  const referralCode = data.referralCode || data.referral_code || data.menhausen_referral_code || null;
+  const referralRegistered =
+    data.referralRegistered === true ||
+    data.referral_registered === 'true' ||
+    data.referral_registered === true ||
+    false;
+
   return {
-    referredBy: data.referred_by || data.menhausen_referred_by || null,
-    referralCode: data.referral_code || data.menhausen_referral_code || null,
-    referralRegistered: data.referral_registered === 'true' || data.referral_registered === true || false,
+    referredBy,
+    referralCode,
+    referralRegistered,
     referralList,
   };
 }
