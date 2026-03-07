@@ -283,6 +283,15 @@ export function ContentProvider({ children }: ContentProviderProps) {
             title: 'Grounding techniques',
             description: 'Ground yourself in the present moment with proven techniques.'
           }
+        },
+        tour: {
+          step1: { title: 'Your profile', description: 'This is your profile. Tap here to open your level, subscription and settings.' },
+          step2: { title: 'Points and check-ins', description: 'Here are your points and check-ins. You earn points for check-ins and exercises.' },
+          step3: { title: 'Articles', description: 'These are articles — short reads for your mind and mood.' },
+          step4: { title: 'Themes and cards', description: 'Below are themes. Scroll down to see them. Each theme has cards with exercises.' },
+          next: 'Next',
+          skip: 'Skip',
+          finish: 'Done'
         }
       },
       profile: {

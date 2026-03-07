@@ -14,6 +14,7 @@ import { PointsManager } from '../utils/PointsManager';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
+import { HomeTour } from './HomeTour';
 
 
 // Типы для пропсов компонента
@@ -23,6 +24,9 @@ interface HomeScreenProps {
   onArticleClick?: (articleId: string) => void; // Функция для открытия статьи
   onViewAllArticles?: () => void; // Функция для просмотра всех статей
   userHasPremium: boolean; // Статус Premium подписки пользователя
+  showHomeTour?: boolean;
+  onTourComplete?: () => void;
+  onTourSkip?: () => void;
 }
 
 // Типы для пропсов основного блока контента
@@ -183,6 +187,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
         onClick={onClick}
         className="relative z-10 box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-between w-full cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80 transition-opacity"
         data-name="User frame info block"
+        data-tour="profile"
         aria-label={content.ui.profile.openProfile || 'Open user profile'}
       >
         <div className="flex flex-row gap-4 sm:gap-5 items-center justify-start">
@@ -391,6 +396,7 @@ function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (theme
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
+      data-tour="themes"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
         <h2 className="block">{content.ui.home.whatWorriesYou}</h2>
@@ -435,7 +441,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium, showHomeTour, onTourComplete, onTourSkip }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { content: _content } = useContent(); // Content system ready for future use
   
@@ -508,6 +514,11 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         title={_content.ui.home.checkInInfo.title}
         content={_content.ui.home.checkInInfo.content}
       />
+
+      {/* Пошаговый тур по главной странице */}
+      {showHomeTour && onTourComplete && onTourSkip && (
+        <HomeTour onComplete={onTourComplete} onSkip={onTourSkip} />
+      )}
     </div>
   );
 }

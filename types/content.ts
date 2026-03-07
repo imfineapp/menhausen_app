@@ -211,6 +211,15 @@ export interface UITexts {
         description: LocalizedContent;
       };
     };
+    tour: {
+      step1: { title: LocalizedContent; description: LocalizedContent };
+      step2: { title: LocalizedContent; description: LocalizedContent };
+      step3: { title: LocalizedContent; description: LocalizedContent };
+      step4: { title: LocalizedContent; description: LocalizedContent };
+      next: LocalizedContent;
+      skip: LocalizedContent;
+      finish: LocalizedContent;
+    };
   };
   profile: {
     title: LocalizedContent;
