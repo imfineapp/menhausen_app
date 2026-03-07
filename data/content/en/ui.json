@@ -204,7 +204,7 @@
                                    "encryption":  "Your answers are fully protected with AES-256 encryption"
                                },
                   "final":  {
-                                "why":  "Why:"
+                                "why":  "Mechanism:"
                             },
                   "rating":  {
                                  "title":  "Please rate the card",

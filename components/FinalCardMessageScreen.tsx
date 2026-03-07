@@ -40,14 +40,14 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
       data-name="Container"
     >
       {/* Заголовок с итоговым сообщением */}
-      <div className="typography-h2 text-[#e1ff00] w-full text-center">
+      <div className="typography-h2 text-[#e1ff00] w-full text-left">
         <h2 className="block">
           {finalMessage}
         </h2>
       </div>
       
       {/* Блок с задачами и объяснением */}
-      <div className="typography-body text-[#ffffff] w-full text-center">
+      <div className="typography-body text-[#ffffff] w-full text-left">
         {/* Практическое задание */}
         <p className="block mb-0 typography-body">
           {practiceTask}
