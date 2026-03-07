@@ -19,6 +19,7 @@ export interface CardData {
   id: string;
   level: number;
   introduction: string;
+  shortDescription?: string;
   questions: string[];
   recommendation: string;
   mechanism: string;

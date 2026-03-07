@@ -9,6 +9,7 @@
       "id": "BURN-01",
       "level": 1,
       "introduction": "Burnout often starts with 'not wanting anything'. Let's try to see — when did this begin.",
+      "shortDescription": "Burnout often starts with 'not wanting anything'. Let's try to see — when did this begin.",
       "questions": [
         "When did you last feel that 'everything is annoying'?",
         "What changed in your life during that period?"
@@ -21,6 +22,7 @@
       "id": "BURN-02",
       "level": 1,
       "introduction": "Burnout feels like: 'I should, but I can't'.",
+      "shortDescription": "Burnout feels like: 'I should, but I can't'.",
       "questions": [
         "What phrases do you most often say to yourself when you're 'stuck'?",
         "What do these phrases make you feel?"
@@ -33,6 +35,7 @@
       "id": "BURN-03",
       "level": 2,
       "introduction": "In burnout state, you might forget about your boundaries.",
+      "shortDescription": "In burnout state, you might forget about your boundaries.",
       "questions": [
         "In what situations do you most often say 'yes' when you want to say 'no'?",
         "What are you afraid of losing if you start defending boundaries?"
@@ -45,6 +48,7 @@
       "id": "BURN-04",
       "level": 2,
       "introduction": "In burnout, you seem to have given yourself away 'for later'. Let's return a piece.",
+      "shortDescription": "In burnout, you seem to have given yourself away 'for later'. Let's return a piece.",
       "questions": [
         "When did you last do something exclusively for yourself?",
         "What was it? Why did you stop?"
@@ -57,6 +61,7 @@
       "id": "BURN-05",
       "level": 3,
       "introduction": "In burnout, every day is like the previous one. And this pulls down.",
+      "shortDescription": "In burnout, every day is like the previous one. And this pulls down.",
       "questions": [
         "What 3 actions do you do 'on autopilot' and don't notice?",
         "How could you bring awareness to one of them?"
@@ -81,6 +86,7 @@
       "id": "BURN-07",
       "level": 4,
       "introduction": "Behavior is our anchor. Even in chaos, you can choose one action.",
+      "shortDescription": "Behavior is our anchor. Even in chaos, you can choose one action.",
       "questions": [
         "What everyday activity calms you (even slightly)?",
         "When did you last do this? Why did you stop?"
@@ -93,6 +99,7 @@
       "id": "BURN-08",
       "level": 4,
       "introduction": "Self-worth isn't a reward, but a setting. Especially in burnout.",
+      "shortDescription": "Self-worth isn't a reward, but a setting. Especially in burnout.",
       "questions": [
         "In what situations do you forget you have the right to rest?",
         "How can you remind yourself of the right to pause?"
@@ -117,6 +124,7 @@
       "id": "BURN-10",
       "level": 5,
       "introduction": "Sometimes, to get out, you need to see yourself — not as a performer, but as a person.",
+      "shortDescription": "Sometimes, to get out, you need to see yourself — not as a performer, but as a person.",
       "questions": [
         "Who are you beyond your role (work, function)?",
         "What actions can remind you of this?"

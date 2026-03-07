@@ -9,6 +9,7 @@
       "id": "ANGR-01",
       "level": 1,
       "introduction": "Anger doesn't arise out of nowhere. It's a signal. Let's figure out what it's telling us.",
+      "shortDescription": "Anger doesn't arise out of nowhere. It's a signal. Let's figure out what it's telling us.",
       "questions": [
         "In what situations do you most often get angry — at home, at work, on the road?",
         "What's common between these situations?"
@@ -33,6 +34,7 @@
       "id": "ANGR-03",
       "level": 2,
       "introduction": "Our body speaks before we do. Especially in anger.",
+      "shortDescription": "Our body speaks before we do. Especially in anger.",
       "questions": [
         "How do you feel anger in your body? Where does it live: in your chest, jaw, fists?",
         "What physical signals appear before outbursts?"
@@ -57,6 +59,7 @@
       "id": "ANGR-05",
       "level": 3,
       "introduction": "Often we're not angry at the real person, but at our interpretation of their words.",
+      "shortDescription": "Often we're not angry at the real person, but at our interpretation of their words.",
       "questions": [
         "What did you think about the person or situation in the moment of anger?",
         "What other explanations could there be for their behavior?"
@@ -69,6 +72,7 @@
       "id": "ANGR-06",
       "level": 3,
       "introduction": "Sometimes anger arises from mismatch between expectations and reality.",
+      "shortDescription": "Sometimes anger arises from mismatch between expectations and reality.",
       "questions": [
         "What expectation was violated in your last case of irritation?",
         "How realistic was it?"
@@ -81,6 +85,7 @@
       "id": "ANGR-07",
       "level": 4,
       "introduction": "Being angry doesn't mean being bad. What matters is what you do with it.",
+      "shortDescription": "Being angry doesn't mean being bad. What matters is what you do with it.",
       "questions": [
         "How do you usually express anger: with words, actions, silence?",
         "What of this helps you, and what destroys relationships or yourself?"
@@ -105,6 +110,7 @@
       "id": "ANGR-09",
       "level": 5,
       "introduction": "Better one experiment than a thousand theories. Time to test.",
+      "shortDescription": "Better one experiment than a thousand theories. Time to test.",
       "questions": [
         "In what situation do you most often lose control — and would like to react differently?",
         "How can you test a new behavioral strategy in the next 3 days?"
@@ -117,6 +123,7 @@
       "id": "ANGR-10",
       "level": 5,
       "introduction": "Sometimes anger is a signal that you need to protect, not destroy.",
+      "shortDescription": "Sometimes anger is a signal that you need to protect, not destroy.",
       "questions": [
         "What or whom would you like to protect when you're angry?",
         "How can you express this protection more constructively?"
