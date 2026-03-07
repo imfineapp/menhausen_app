@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -171,7 +172,7 @@ function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
 function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; userHasPremium: boolean }) {
   const { content } = useContent();
   return (
-    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
+    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full" data-tour="profile">
       {/* Фон блока */}
       <div className="absolute inset-0" data-name="user_frame_info_block_background">
         <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
@@ -187,7 +188,6 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
         onClick={onClick}
         className="relative z-10 box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-between w-full cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80 transition-opacity"
         data-name="User frame info block"
-        data-tour="profile"
         aria-label={content.ui.profile.openProfile || 'Open user profile'}
       >
         <div className="flex flex-row gap-4 sm:gap-5 items-center justify-start">
@@ -515,10 +515,12 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         content={_content.ui.home.checkInInfo.content}
       />
 
-      {/* Пошаговый тур по главной странице */}
-      {showHomeTour && onTourComplete && onTourSkip && (
-        <HomeTour onComplete={onTourComplete} onSkip={onTourSkip} />
-      )}
+      {/* Пошаговый тур: портал в body, чтобы fixed не скроллился вместе с контентом */}
+      {showHomeTour && onTourComplete && onTourSkip && typeof document !== 'undefined' &&
+        createPortal(
+          <HomeTour onComplete={onTourComplete} onSkip={onTourSkip} />,
+          document.body
+        )}
     </div>
   );
 }
