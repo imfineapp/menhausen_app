@@ -17,34 +17,27 @@ interface HomeTourProps {
   onSkip: () => void;
 }
 
+const STEP_COUNT = 4;
+
 export function HomeTour({ onComplete, onSkip }: HomeTourProps) {
   const { content } = useContent();
   const [stepIndex, setStepIndex] = useState(0);
   const [spotlightRect, setSpotlightRect] = useState<DOMRect | null>(null);
   const [step4Ready, setStep4Ready] = useState(false);
 
-  const tour = content.ui?.home?.tour;
-  if (!tour) return null;
-
-  const steps: HomeTourStepConfig[] = [
-    { selector: TOUR_STEP_SELECTORS[0], title: tour.step1.title, description: tour.step1.description },
-    { selector: TOUR_STEP_SELECTORS[1], title: tour.step2.title, description: tour.step2.description },
-    { selector: TOUR_STEP_SELECTORS[2], title: tour.step3.title, description: tour.step3.description },
-    { selector: TOUR_STEP_SELECTORS[3], title: tour.step4.title, description: tour.step4.description },
-  ];
-
-  const currentStep = steps[stepIndex];
-  const isLastStep = stepIndex === steps.length - 1;
-
   const measureTarget = useCallback(() => {
-    const el = document.querySelector(currentStep.selector) as HTMLElement | null;
+    const selector = stepIndex < STEP_COUNT ? TOUR_STEP_SELECTORS[stepIndex] : null;
+    if (!selector) {
+      setSpotlightRect(null);
+      return;
+    }
+    const el = document.querySelector(selector) as HTMLElement | null;
     if (el) {
-      const rect = el.getBoundingClientRect();
-      setSpotlightRect(rect);
+      setSpotlightRect(el.getBoundingClientRect());
     } else {
       setSpotlightRect(null);
     }
-  }, [currentStep.selector]);
+  }, [stepIndex]);
 
   // Перед показом шага 4 прокручиваем блок тем в зону видимости
   useEffect(() => {
@@ -78,7 +71,7 @@ export function HomeTour({ onComplete, onSkip }: HomeTourProps) {
   }, [stepIndex, step4Ready, measureTarget]);
 
   const handleNext = () => {
-    if (isLastStep) {
+    if (stepIndex === STEP_COUNT - 1) {
       onComplete();
     } else {
       setStepIndex((i) => i + 1);
@@ -88,6 +81,19 @@ export function HomeTour({ onComplete, onSkip }: HomeTourProps) {
   const handleSkip = () => {
     onSkip();
   };
+
+  const tour = content.ui?.home?.tour;
+  if (!tour) return null;
+
+  const steps: HomeTourStepConfig[] = [
+    { selector: TOUR_STEP_SELECTORS[0], title: tour.step1.title, description: tour.step1.description },
+    { selector: TOUR_STEP_SELECTORS[1], title: tour.step2.title, description: tour.step2.description },
+    { selector: TOUR_STEP_SELECTORS[2], title: tour.step3.title, description: tour.step3.description },
+    { selector: TOUR_STEP_SELECTORS[3], title: tour.step4.title, description: tour.step4.description },
+  ];
+
+  const currentStep = steps[stepIndex];
+  const isLastStep = stepIndex === STEP_COUNT - 1;
 
   if (!currentStep) return null;
 
