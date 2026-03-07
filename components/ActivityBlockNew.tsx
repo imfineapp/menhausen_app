@@ -212,7 +212,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   }, [language]);
 
   return (
-    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
+    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full" data-tour="activity" data-name="Activity block">
       <div className="absolute inset-0" data-name="activity_block_background">  
         <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">                                                             
           <div

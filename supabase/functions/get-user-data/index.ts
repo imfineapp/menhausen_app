@@ -254,6 +254,7 @@ async function fetchAllUserData(supabase: any, telegramUserId: number): Promise<
       pinCompleted: flowProgress.pin_completed || false,
       firstCheckinDone: flowProgress.first_checkin_done || false,
       firstRewardShown: flowProgress.first_reward_shown || false,
+      homeTourCompleted: flowProgress.home_tour_completed ?? false,
     };
   }
 

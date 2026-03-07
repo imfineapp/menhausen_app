@@ -250,6 +250,7 @@ async function syncFlowProgress(supabase: any, telegramUserId: number, data: any
       pin_completed: data.pinCompleted || false,
       first_checkin_done: data.firstCheckinDone || false,
       first_reward_shown: data.firstRewardShown || false,
+      home_tour_completed: data.homeTourCompleted ?? false,
     }, {
       onConflict: 'telegram_user_id',
     });

@@ -1,5 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -14,6 +15,7 @@ import { PointsManager } from '../utils/PointsManager';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
+import { HomeTour } from './HomeTour';
 
 
 // Типы для пропсов компонента
@@ -23,6 +25,9 @@ interface HomeScreenProps {
   onArticleClick?: (articleId: string) => void; // Функция для открытия статьи
   onViewAllArticles?: () => void; // Функция для просмотра всех статей
   userHasPremium: boolean; // Статус Premium подписки пользователя
+  showHomeTour?: boolean;
+  onTourComplete?: () => void;
+  onTourSkip?: () => void;
 }
 
 // Типы для пропсов основного блока контента
@@ -167,7 +172,7 @@ function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
 function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; userHasPremium: boolean }) {
   const { content } = useContent();
   return (
-    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
+    <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full" data-tour="profile">
       {/* Фон блока */}
       <div className="absolute inset-0" data-name="user_frame_info_block_background">
         <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
@@ -391,6 +396,7 @@ function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (theme
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
+      data-tour="themes"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
         <h2 className="block">{content.ui.home.whatWorriesYou}</h2>
@@ -435,7 +441,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium, showHomeTour, onTourComplete, onTourSkip }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const { content: _content } = useContent(); // Content system ready for future use
   
@@ -508,6 +514,13 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         title={_content.ui.home.checkInInfo.title}
         content={_content.ui.home.checkInInfo.content}
       />
+
+      {/* Пошаговый тур: портал в body, чтобы fixed не скроллился вместе с контентом */}
+      {showHomeTour && onTourComplete && onTourSkip && typeof document !== 'undefined' &&
+        createPortal(
+          <HomeTour onComplete={onTourComplete} onSkip={onTourSkip} />,
+          document.body
+        )}
     </div>
   );
 }

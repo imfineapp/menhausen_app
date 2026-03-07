@@ -355,6 +355,7 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
       <div
         className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
         data-name="Articles container"
+        data-tour="articles"
       >
         <div className="typography-body text-tertiary text-center w-full py-8">
           <p className="block">{content.ui.articles?.noArticles || 'Статьи скоро появятся'}</p>
@@ -367,6 +368,7 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
     <div
       className="box-border content-stretch flex flex-col gap-0 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Articles container"
+      data-tour="articles"
     >
       
       {/* Articles Slider */}
