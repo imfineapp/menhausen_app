@@ -294,6 +294,14 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
   allCardIds: string[];
 }) {
   const { content, getLocalizedText } = useContent();
+
+  const attemptedCards = allCardIds.filter(cardId => {
+    const progress = ThemeCardManager.getCardProgress(cardId);
+    return progress && progress.completedAttempts.length > 0;
+  });
+  if (allCardIds.length > 0 && attemptedCards.length === allCardIds.length) {
+    return null;
+  }
   
   // Определяем текст кнопки на основе состояния темы
   const getButtonText = () => {
@@ -310,7 +318,8 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
       return getLocalizedText(txt);
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;
-      return `Start Card #${nextCardIndex}`;
+      const template = content.ui.themes?.home?.startCard ?? 'Start Card #{number}';
+      return getLocalizedText(template).replace('{number}', String(nextCardIndex));
     } else {
       return getLocalizedText(content.ui.themes.home.nextLevel);
     }
@@ -335,7 +344,7 @@ export function ThemeHomeScreen({
   userHasPremium = false,
   onUnlock
 }: ThemeHomeScreenProps) {
-  const { content, currentLanguage } = useContent();
+  const { content, currentLanguage, getLocalizedText } = useContent();
   
   // Состояние для загрузки темы
   const [theme, setTheme] = useState<ThemeData | null>(null);
@@ -522,9 +531,11 @@ export function ThemeHomeScreen({
       // 2. И карточка доступна по прогрессу
       const isAvailable = !isThemeLocked && isAvailableByProgress;
       
-      // Используем данные из JSON файла
+      // Используем данные из JSON файла; подпись уровня — из локали (themeHome.level1 … level5)
       const title = cardData.id;
-      const level = `Level ${cardData.level}`;
+      const levelNum = Math.min(5, Math.max(1, cardData.level));
+      const levelKey = `level${levelNum}` as 'level1' | 'level2' | 'level3' | 'level4' | 'level5';
+      const level = getLocalizedText(content.ui.cards.themeHome[levelKey]);
       const description = cardData.shortDescription ?? cardData.introduction;
       
       return {
@@ -541,10 +552,12 @@ export function ThemeHomeScreen({
       // Возвращаем fallback карточку
       // Если тема заблокирована, все карточки заблокированы
       const isAvailable = !isThemeLocked && index === 0;
+      const fallbackLevelNum = Math.min(5, Math.max(1, cardData.level));
+      const fallbackLevelKey = `level${fallbackLevelNum}` as 'level1' | 'level2' | 'level3' | 'level4' | 'level5';
       return {
         id: cardData.id,
         title: cardData.introduction || `Card ${index + 1}`,
-        level: `Level ${cardData.level}`,
+        level: getLocalizedText(content.ui.cards.themeHome[fallbackLevelKey]),
         description: 'Card description',
         attempts: 0,
         isActive: isAvailable,

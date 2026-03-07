@@ -188,7 +188,8 @@
                                 "attemptsCounter":  "attempts",
                                 "level":  "Level",
                                 "nextLevel":  "Next Level",
-                                "allCardsAttempted":  "All cards attempted!"
+                                "allCardsAttempted":  "All cards attempted!",
+                                "startCard":  "Start Card #{number}"
                             }
                },
     "cards":  {
