@@ -9,6 +9,7 @@
       "id": "IDNT-01",
       "level": 1,
       "introduction": "Sometimes you judge yourself more harshly than anyone else. Let's figure out where this comes from.",
+      "shortDescription": "Sometimes you judge yourself more harshly than anyone else. Let's figure out where this comes from.",
       "questions": [
         "What phrase do you most often say to yourself when something goes wrong?",
         "Whose voice or experience stands behind this phrase?"
@@ -21,6 +22,7 @@
       "id": "IDNT-02",
       "level": 1,
       "introduction": "The inner critic loves to generalize. But you're more than one mistake.",
+      "shortDescription": "The inner critic loves to generalize. But you're more than one mistake.",
       "questions": [
         "What 'labels' do you most often attach to yourself?",
         "In what situations does this especially manifest?"
@@ -45,6 +47,7 @@
       "id": "IDNT-04",
       "level": 2,
       "introduction": "Self-esteem isn't a constant, but a process that can be directed.",
+      "shortDescription": "Self-esteem isn't a constant, but a process that can be directed.",
       "questions": [
         "When did you feel confident in yourself in recent months?",
         "What actions or traits of yours were involved then?"
@@ -57,6 +60,7 @@
       "id": "IDNT-05",
       "level": 3,
       "introduction": "Often you live in others' scripts, forgetting your own.",
+      "shortDescription": "Often you live in others' scripts, forgetting your own.",
       "questions": [
         "Whose expectations do you most often try to meet — parental, social, partner?",
         "What personally matters to you in these areas — regardless of others' opinions?"
@@ -69,6 +73,7 @@
       "id": "IDNT-06",
       "level": 3,
       "introduction": "We tend to ignore successes and focus on failures.",
+      "shortDescription": "We tend to ignore successes and focus on failures.",
       "questions": [
         "What did you do well in the last 3 weeks but didn't acknowledge?",
         "What prevents you from recognizing this as valuable?"
@@ -81,6 +86,7 @@
       "id": "IDNT-07",
       "level": 4,
       "introduction": "Being yourself doesn't mean being perfect.",
+      "shortDescription": "Being yourself doesn't mean being perfect.",
       "questions": [
         "What traits do you hide or consider 'flaws'?",
         "What good might be hidden behind these traits?"
@@ -93,6 +99,7 @@
       "id": "IDNT-08",
       "level": 4,
       "introduction": "How you talk to yourself shapes your inner space.",
+      "shortDescription": "How you talk to yourself shapes your inner space.",
       "questions": [
         "What tone and style do you use in self-talk — strict, contemptuous, anxious?",
         "How would your state change if you changed your communication style with yourself?"
@@ -105,6 +112,7 @@
       "id": "IDNT-09",
       "level": 5,
       "introduction": "Often true confidence comes after action.",
+      "shortDescription": "Often true confidence comes after action.",
       "questions": [
         "What have you long wanted to do but put off from fear of 'not coping'?",
         "How can you test this through a small 15-minute step?"
@@ -117,6 +125,7 @@
       "id": "IDNT-10",
       "level": 5,
       "introduction": "Values aren't about 'who I am', but about 'who I want to be'.",
+      "shortDescription": "Values aren't about 'who I am', but about 'who I want to be'.",
       "questions": [
         "Name 3 qualities you'd like to develop in yourself as part of your identity.",
         "How can you manifest at least one of them in practice every day?"

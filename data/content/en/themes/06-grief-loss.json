@@ -9,6 +9,7 @@
       "id": "LOSS-01",
       "level": 1,
       "introduction": "Loss doesn't disappear, but it can transform. Let's start with an honest look.",
+      "shortDescription": "Loss doesn't disappear, but it can transform. Let's start with an honest look.",
       "questions": [
         "What emotion arises in you when you remember this person?",
         "What thoughts come after this emotion?"
@@ -21,6 +22,7 @@
       "id": "LOSS-02",
       "level": 1,
       "introduction": "Loss can cause guilt. Even if you did nothing wrong.",
+      "shortDescription": "Loss can cause guilt. Even if you did nothing wrong.",
       "questions": [
         "Do you have thoughts like 'I could have...', 'I didn't have time...'?",
         "What would you say to a friend in this situation?"
@@ -33,6 +35,7 @@
       "id": "LOSS-03",
       "level": 2,
       "introduction": "We often avoid memories because we fear pain. But warmth is also in them.",
+      "shortDescription": "We often avoid memories because we fear pain. But warmth is also in them.",
       "questions": [
         "What memories simultaneously cause pain and gratitude?",
         "What of these memories would you like to preserve in yourself?"
@@ -45,6 +48,7 @@
       "id": "LOSS-04",
       "level": 2,
       "introduction": "Sometimes pain doesn't release because dialogue with the departed is unfinished.",
+      "shortDescription": "Sometimes pain doesn't release because dialogue with the departed is unfinished.",
       "questions": [
         "What would you like to say to this person — but didn't have time?",
         "What words would you like to hear from them now?"
@@ -57,6 +61,7 @@
       "id": "LOSS-05",
       "level": 3,
       "introduction": "Grieving doesn't equal weakness. It's an act of love and restoration.",
+      "shortDescription": "Grieving doesn't equal weakness. It's an act of love and restoration.",
       "questions": [
         "What are you afraid of when you start feeling loss pain?",
         "What would change if you allowed yourself to grieve?"
@@ -69,6 +74,7 @@
       "id": "LOSS-06",
       "level": 3,
       "introduction": "After loss, life often seems meaningless. This isn't the end. It's a transition.",
+      "shortDescription": "After loss, life often seems meaningless. This isn't the end. It's a transition.",
       "questions": [
         "What started seeming 'unimportant' to you after the loss?",
         "What small actions bring you at least some sense of life?"
@@ -81,6 +87,7 @@
       "id": "LOSS-07",
       "level": 4,
       "introduction": "Relationship doesn't end with death. It just changes.",
+      "shortDescription": "Relationship doesn't end with death. It just changes.",
       "questions": [
         "What qualities of the departed person did you especially value?",
         "How can you embody these qualities in your life?"
@@ -93,6 +100,7 @@
       "id": "LOSS-08",
       "level": 4,
       "introduction": "Life after loss isn't betrayal. It's a way to preserve meaning.",
+      "shortDescription": "Life after loss isn't betrayal. It's a way to preserve meaning.",
       "questions": [
         "If this person could see you now, what would they wish for you?",
         "How can you honor this message through your behavior?"
@@ -105,6 +113,7 @@
       "id": "LOSS-09",
       "level": 5,
       "introduction": "Loss changes not only your life — but you. This is normal.",
+      "shortDescription": "Loss changes not only your life — but you. This is normal.",
       "questions": [
         "What changed in you as a person after this experience?",
         "What of this would you like to preserve and develop further?"
@@ -117,6 +126,7 @@
       "id": "LOSS-10",
       "level": 5,
       "introduction": "Sometimes we feel we don't have the right to be happy after loss. But that's not true.",
+      "shortDescription": "Sometimes we feel we don't have the right to be happy after loss. But that's not true.",
       "questions": [
         "What fears do you have related to returning to joy?",
         "What could be the first small step toward life?"

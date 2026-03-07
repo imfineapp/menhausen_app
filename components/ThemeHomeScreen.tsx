@@ -525,7 +525,7 @@ export function ThemeHomeScreen({
       // Используем данные из JSON файла
       const title = cardData.id;
       const level = `Level ${cardData.level}`;
-      const description = cardData.introduction;
+      const description = cardData.shortDescription ?? cardData.introduction;
       
       return {
         id: cardId,
