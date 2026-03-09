@@ -173,9 +173,12 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
   const { content } = useContent();
   return (
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full" data-tour="profile">
-      {/* Фон блока */}
+      {/* Фон блока — закруглённый серый квадрат */}
       <div className="absolute inset-0" data-name="user_frame_info_block_background">
-        <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+        <div
+          className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl"
+          data-name="Block"
+        >
           <div
             aria-hidden="true"
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
@@ -371,18 +374,28 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
       className="box-border content-stretch flex flex-col gap-8 sm:gap-10 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries list"
     >
-      {worries.map((worry: any) => (
-        <ThemeCard 
-          key={worry.themeId}
-          title={worry.title}
-          description={worry.description}
-          progress={worry.progress}
-          isPremium={worry.isPremium}
-          userHasPremium={userHasPremium}
-          onClick={() => handleThemeClick(worry.themeId, worry.isAvailable)}
-          themeId={worry.themeId}
-        />
-      ))}
+      {worries.map((worry: any, index: number) => {
+        const card = (
+          <ThemeCard
+            key={worry.themeId}
+            title={worry.title}
+            description={worry.description}
+            progress={worry.progress}
+            isPremium={worry.isPremium}
+            userHasPremium={userHasPremium}
+            onClick={() => handleThemeClick(worry.themeId, worry.isAvailable)}
+            themeId={worry.themeId}
+          />
+        );
+        if (index === 0) {
+          return (
+            <div key={worry.themeId} className="w-full" data-tour="themes">
+              {card}
+            </div>
+          );
+        }
+        return card;
+      })}
     </div>
   );
 }
@@ -396,7 +409,6 @@ function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (theme
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
-      data-tour="themes"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
         <h2 className="block">{content.ui.home.whatWorriesYou}</h2>

@@ -7,6 +7,7 @@ const TOUR_STEP_SELECTORS = ['[data-tour="profile"]', '[data-tour="activity"]', 
 const SCROLL_DELAY_MS = 450;
 const TOOLTIP_MIN_SPACE_BELOW = 240;
 const OVERLAY_OPACITY = 0.94;
+const TOOLTIP_MIN_TOP = 220;
 
 export interface HomeTourStepConfig {
   selector: string;
@@ -104,17 +105,50 @@ export function HomeTour({ onComplete, onSkip }: HomeTourProps) {
     spotlightRect &&
     (stepIndex >= 2 || spaceBelow < TOOLTIP_MIN_SPACE_BELOW);
 
+  const win = typeof window !== 'undefined' ? window : null;
+  const vw = win?.innerWidth ?? 400;
+  const vh = win?.innerHeight ?? 600;
+
+  const displayRect = spotlightRect
+    ? (() => {
+        if (stepIndex === 3) {
+          const left = Math.max(0, spotlightRect.left);
+          const top = Math.max(0, spotlightRect.top);
+          const right = Math.min(vw, spotlightRect.right);
+          const bottom = Math.min(vh, spotlightRect.bottom);
+          const width = Math.max(0, right - left);
+          const height = Math.max(0, bottom - top);
+          return { left, top, width, height };
+        }
+        return {
+          left: spotlightRect.left,
+          top: spotlightRect.top,
+          width: spotlightRect.width,
+          height: spotlightRect.height,
+        };
+      })()
+    : null;
+
+  const tooltipTopEnough = displayRect && displayRect.top >= TOOLTIP_MIN_TOP;
+  const tooltipStyle = displayRect
+    ? placeTooltipAbove
+      ? tooltipTopEnough
+        ? { bottom: vh - displayRect.top + 16, top: 'auto' as const }
+        : { top: 16, bottom: 'auto' as const }
+      : { top: displayRect.top + displayRect.height + 16 }
+    : { top: '50%', transform: 'translateY(-50%)' as const };
+
   return (
     <div className="fixed inset-0 z-[100] pointer-events-auto" aria-modal="true" role="dialog" aria-label="Обучение по главной странице">
       {/* Затемнение: слой с «вырезом» через box-shadow у элемента по размеру цели */}
-      {spotlightRect && (
+      {displayRect && (
         <div
           className="absolute pointer-events-none"
           style={{
-            left: spotlightRect.left,
-            top: spotlightRect.top,
-            width: spotlightRect.width,
-            height: spotlightRect.height,
+            left: displayRect.left,
+            top: displayRect.top,
+            width: displayRect.width,
+            height: displayRect.height,
             boxShadow: `0 0 0 9999px rgba(0, 0, 0, ${OVERLAY_OPACITY})`,
             borderRadius: 12,
           }}
@@ -127,30 +161,12 @@ export function HomeTour({ onComplete, onSkip }: HomeTourProps) {
       {/* Нотация: над блоком, если внизу не хватает места (шаги 3–4 и низ экрана) */}
       <div
         className="absolute left-4 right-4 z-[101] pointer-events-auto rounded-xl border border-[#212121] bg-[#1a1a1a] p-4 sm:p-5 shadow-xl"
-        style={
-          spotlightRect
-            ? placeTooltipAbove
-              ? {
-                  bottom: typeof window !== 'undefined' ? window.innerHeight - spotlightRect.top + 16 : undefined,
-                  top: 'auto',
-                  maxWidth: 343,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }
-              : {
-                  top: spotlightRect.bottom + 16,
-                  maxWidth: 343,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }
-            : {
-                top: '50%',
-                transform: 'translateY(-50%)',
-                maxWidth: 343,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-              }
-        }
+        style={{
+          ...tooltipStyle,
+          maxWidth: 343,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       >
         <h3 className="typography-h2 text-[#e1ff00] mb-2">{currentStep.title}</h3>
         <p className="typography-body text-[#e5e5e5] mb-5 whitespace-pre-line">{currentStep.description}</p>
