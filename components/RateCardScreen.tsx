@@ -1,8 +1,8 @@
 // Импортируем необходимые хуки и SVG пути
 import React, { useState, useRef, useEffect } from 'react';
-import { BottomFixedButton } from "./BottomFixedButton";
-import { FormScreenLayout } from "./FormScreenLayout";
 import { useContent } from './ContentContext';
+import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { Light } from './Light';
 
 // Типы для пропсов компонента
 interface RateCardScreenProps {
@@ -304,29 +304,46 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
   };
 
   return (
-    <FormScreenLayout
-      dataName="Rate card page"
-      bottomActions={
-        <>
-          <SkipRatingButton onClick={handleSkipRating}>
-            {content.ui.cards.rating.skipRating}
-          </SkipRatingButton>
-          <BottomFixedButton 
-            onClick={handleNext}
-            disabled={false}
-          >
-            {content.ui.cards.rating.submit}
-          </BottomFixedButton>
-        </>
-      }
+    <div 
+      className="w-full min-h-screen bg-[#111111] flex flex-col"
+      data-name="Rate card page"
     >
-      <RatingCardContainer 
-        selectedRating={selectedRating}
-        onRatingChange={handleRatingChange}
-        showThankYou={showThankYou}
-        textMessage={textMessage}
-        onTextMessageChange={handleTextMessageChange}
-      />
-    </FormScreenLayout>
+      <Light />
+
+      <div className="relative" style={{ zIndex: 1 }}>
+        <MiniStripeLogo />
+      </div>
+
+      <div className="flex-1">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[140px] pb-[40px]">
+          <div className="max-w-[351px] mx-auto flex flex-col gap-8 items-center">
+            <RatingCardContainer 
+              selectedRating={selectedRating}
+              onRatingChange={handleRatingChange}
+              showThankYou={showThankYou}
+              textMessage={textMessage}
+              onTextMessageChange={handleTextMessageChange}
+            />
+
+            <div className="w-full flex flex-col gap-4 items-center justify-start">
+              <SkipRatingButton onClick={handleSkipRating}>
+                {content.ui.cards.rating.skipRating}
+              </SkipRatingButton>
+              <button
+                onClick={handleNext}
+                className="w-[350px] h-[46px] bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px] rounded-xl min-h-[44px] min-w-[44px] cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200"
+                data-name="Bottom Rating Submit Button"
+              >
+                <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
+                  <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
+                    {content.ui.cards.rating.submit}
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
