@@ -96,12 +96,10 @@ function InputTextMessageBlock({
   value, 
   onChange, 
   placeholder,
-  onFocusChange,
 }: { 
   value: string; 
   onChange: (value: string) => void; 
   placeholder: string;
-  onFocusChange?: (isFocused: boolean) => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -136,8 +134,6 @@ function InputTextMessageBlock({
         className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
-        onFocus={() => onFocusChange?.(true)}
-        onBlur={() => onFocusChange?.(false)}
       />
     </div>
   );
@@ -149,11 +145,9 @@ function InputTextMessageBlock({
 function TextMessageBlock({ 
   textMessage, 
   onTextMessageChange,
-  onInputFocusChange,
 }: { 
   textMessage: string; 
   onTextMessageChange: (value: string) => void;
-  onInputFocusChange?: (isFocused: boolean) => void;
 }) {
   const { content } = useContent();
   
@@ -166,7 +160,6 @@ function TextMessageBlock({
         value={textMessage}
         onChange={onTextMessageChange}
         placeholder={content.ui.cards.rating.placeholder}
-        onFocusChange={onInputFocusChange}
       />
       <EncryptInfoBlock />
     </div>
@@ -234,11 +227,11 @@ function RatingOptions({ selectedRating, onRatingChange }: {
 /**
  * Кнопка "Не хочу отвечать" - прозрачная с желтой обводкой
  */
-function SkipRatingButton({ onClick, children, className = '' }: { onClick: () => void; children: React.ReactNode; className?: string }) {
+function SkipRatingButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       onClick={onClick}
-      className={`absolute left-1/2 transform -translate-x-1/2 bottom-[95px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225,255,0,0.1)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px] ${className}`}
+      className="absolute left-1/2 transform -translate-x-1/2 bottom-[95px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225,255,0,0.1)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px]"
       data-name="Skip Rating Button"
     >
       <div className="typography-button text-[#e1ff00] text-center text-nowrap tracking-[-0.43px]">
@@ -257,14 +250,12 @@ function RatingCardContainer({
   showThankYou,
   textMessage,
   onTextMessageChange,
-  onInputFocusChange,
 }: { 
   selectedRating: number; 
   onRatingChange: (rating: number) => void; 
   showThankYou: boolean;
   textMessage: string;
   onTextMessageChange: (value: string) => void;
-  onInputFocusChange?: (isFocused: boolean) => void;
 }) {
   const { content } = useContent();
   return (
@@ -286,7 +277,6 @@ function RatingCardContainer({
         <TextMessageBlock 
           textMessage={textMessage} 
           onTextMessageChange={onTextMessageChange}
-          onInputFocusChange={onInputFocusChange}
         />
       </div>
     </div>
@@ -309,7 +299,6 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
   
   // Состояние для хранения текстового сообщения к отзыву
   const [textMessage, setTextMessage] = useState('');
-  const [isInputFocused, setIsInputFocused] = useState(false);
   
   /**
    * Функция для обработки изменения рейтинга
@@ -360,16 +349,12 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
       dataName="Rate card page"
       bottomActions={
         <>
-          <SkipRatingButton
-            onClick={handleSkipRating}
-            className={isInputFocused ? 'opacity-0 pointer-events-none' : ''}
-          >
+          <SkipRatingButton onClick={handleSkipRating}>
             {content.ui.cards.rating.skipRating}
           </SkipRatingButton>
           <BottomFixedButton 
             onClick={handleNext}
             disabled={false}
-            className={isInputFocused ? 'opacity-0 pointer-events-none' : ''}
           >
             {content.ui.cards.rating.submit}
           </BottomFixedButton>
@@ -382,7 +367,6 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
         showThankYou={showThankYou}
         textMessage={textMessage}
         onTextMessageChange={handleTextMessageChange}
-        onInputFocusChange={setIsInputFocused}
       />
     </FormScreenLayout>
   );
