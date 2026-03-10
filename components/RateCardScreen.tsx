@@ -51,45 +51,6 @@ function RatingTextContainer() {
 }
 
 /**
- * Адаптивная иконка замка для блока шифрования
- */
-function LockShieldFilled() {
-  return (
-    <div className="relative shrink-0 size-7" data-name="Lock Shield Filled">
-      <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
-        <g id="Lock Shield Filled">
-          <path 
-            d="M21 11H19V9C19 5.686 16.314 3 13 3C9.686 3 7 5.686 7 9V11H5C3.895 11 3 11.895 3 13V21C3 22.105 3.895 23 5 23H21C22.105 23 23 22.105 23 21V13C23 11.895 22.105 11 21 11ZM9 9C9 6.794 10.794 5 13 5C15.206 5 17 6.794 17 9V11H9V9Z" 
-            fill="#696969" 
-            id="Shape" 
-            transform="scale(1.077) translate(-1, -1)"
-          />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/**
- * Адаптивный блок информации о шифровании
- */
-function EncryptInfoBlock() {
-  const { content } = useContent();
-  
-  return (
-    <div
-      className="box-border content-stretch flex flex-row gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
-      data-name="Encrypt_info_block"
-    >
-      <LockShieldFilled />
-      <div className="typography-caption text-[#696969] text-left flex-1">
-        <p className="block">{content?.ui?.cards?.question?.encryption || 'Ваши ответы полностью защищены шифрованием AES-256'}</p>
-      </div>
-    </div>
-  );
-}
-
-/**
  * Адаптивный блок текстового поля для ввода сообщения к отзыву
  */
 function InputTextMessageBlock({ 
@@ -118,7 +79,7 @@ function InputTextMessageBlock({
 
   return (
     <div
-      className="bg-[rgba(217,217,217,0.04)] box-border content-stretch flex flex-col gap-2.5 min-h-[120px] sm:min-h-[130px] md:min-h-[140px] items-start justify-start p-[20px] relative rounded-xl shrink-0 w-full max-w-[351px]"
+      className="bg-[rgba(217,217,217,0.04)] box-border content-stretch flex flex-col gap-2.5 min-h-[120px] sm:min-h-[130px] md:min-h-[140px] items-start justify-start p-[20px] relative rounded-xl shrink-0 w-full"
       data-name="Input text message block"
     >
       <div
@@ -153,7 +114,7 @@ function TextMessageBlock({
   
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-2.5 items-center justify-start p-0 relative shrink-0 w-full max-w-[351px]"
+      className="box-border content-stretch flex flex-col gap-2.5 items-stretch justify-start p-0 relative shrink-0 w-full max-w-[351px]"
       data-name="Text message block"
     >
       <InputTextMessageBlock 
@@ -161,7 +122,6 @@ function TextMessageBlock({
         onChange={onTextMessageChange}
         placeholder={content.ui.cards.rating.placeholder}
       />
-      <EncryptInfoBlock />
     </div>
   );
 }
@@ -260,15 +220,14 @@ function RatingCardContainer({
   const { content } = useContent();
   return (
     <div
-      className="box-border content-stretch flex flex-col gap-5 items-center justify-start w-full"
+      className="box-border content-stretch flex flex-col gap-5 items-stretch justify-start w-full"
       data-name="Rating card container"
     >
       <RatingTextContainer />
       <RatingOptions selectedRating={selectedRating} onRatingChange={onRatingChange} />
       {showThankYou && (
         <div
-          className="typography-body min-w-full text-[#ffffff] text-center"
-          style={{ width: "min-content" }}
+          className="typography-body w-full text-[#ffffff] text-center"
         >
           <p className="block">{content?.ui?.cards?.rating?.thankYou || 'Спасибо!'}</p>
         </div>
