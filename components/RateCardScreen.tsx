@@ -191,7 +191,7 @@ function SkipRatingButton({ onClick, children }: { onClick: () => void; children
   return (
     <button
       onClick={onClick}
-      className="absolute left-1/2 transform -translate-x-1/2 bottom-[95px] w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225,255,0,0.1)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px]"
+      className="w-[350px] h-[46px] bg-transparent border border-[#e1ff00] rounded-xl font-sans font-bold text-[15px] text-[#e1ff00] text-center hover:bg-[rgba(225,255,0,0.1)] active:scale-[0.98] transition-all duration-200 min-h-[44px] min-w-[44px] cursor-pointer box-border content-stretch flex flex-row gap-2.5 items-center justify-center px-[126px] py-[15px]"
       data-name="Skip Rating Button"
     >
       <div className="typography-button text-[#e1ff00] text-center text-nowrap tracking-[-0.43px]">
