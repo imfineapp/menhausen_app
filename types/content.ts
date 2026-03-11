@@ -714,6 +714,7 @@ export interface PaymentsContent {
   benefitsTitle: LocalizedContent;
   keyBenefits?: LocalizedContent[];
   premiumThemes?: LocalizedContent[];
+  starsInfo?: LocalizedContent;
   benefits: {
     angry: LocalizedContent;
     sadness: LocalizedContent;

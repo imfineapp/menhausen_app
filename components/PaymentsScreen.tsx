@@ -116,8 +116,11 @@ function PremiumContainer() {
         <p className="block mb-0">{content.payments.benefitsTitle}</p>
         {Array.isArray(content.payments.premiumThemes) && content.payments.premiumThemes.length > 0 ? (
           <ul className="css-ed5n1g list-disc">
-            {content.payments.premiumThemes.slice(0, 5).map((theme, idx) => (
-              <li key={idx} className={idx < (content.payments.premiumThemes?.length || 0) - 1 ? 'mb-0 ms-[30px]' : 'ms-[30px]'}>
+            {content.payments.premiumThemes.map((theme, idx) => (
+              <li
+                key={idx}
+                className={idx < (content.payments.premiumThemes?.length || 0) - 1 ? 'mb-0 ms-[30px]' : 'ms-[30px]'}
+              >
                 <span className="leading-none">{theme}</span>
               </li>
             ))}
@@ -335,7 +338,11 @@ function PlanOption({
     >
       <div className="flex flex-col gap-1">
         {!!badge && (
-          <div className="self-start text-[#111] bg-[#e1ff00] rounded-[999px] px-2 py-[2px] text-[12px] font-medium">
+          <div
+            className={`self-start rounded-[999px] px-2 py-[2px] text-[12px] font-medium ${
+              isHighlighted ? 'bg-[#111111] text-[#ffffff]' : 'bg-[#e1ff00] text-[#111111]'
+            }`}
+          >
             {badge}
           </div>
         )}
@@ -362,12 +369,16 @@ function MonthlyPlanContainer({ isSelected, onSelect }: { isSelected: boolean; o
       <div className="flex flex-col items-center justify-center relative">
         <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-[15px] relative w-full min-h-[82px]">
           <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
-            <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
-              <div
-                aria-hidden="true"
-                className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
-              />
-            </div>
+            {isSelected ? (
+              <ThemeBlockBackground2 />
+            ) : (
+              <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+                <div
+                  aria-hidden="true"
+                  className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+                />
+              </div>
+            )}
           </div>
           <PlanOption 
             id="plan-monthly"
@@ -437,12 +448,16 @@ function LifetimePlanContainer({ isSelected, onSelect }: { isSelected: boolean; 
       <div className="flex flex-col items-center justify-center relative">
         <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-[15px] relative w-full min-h-[82px]">
           <div className="absolute inset-0 w-[351px]" data-name="theme_block_background">
-            <div className={`absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl ${isSelected ? 'border border-[#e1ff00]' : ''}`} data-name="Block">
-              <div
-                aria-hidden="true"
-                className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
-              />
-            </div>
+            {isSelected ? (
+              <ThemeBlockBackground2 />
+            ) : (
+              <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+                <div
+                  aria-hidden="true"
+                  className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
+                />
+              </div>
+            )}
           </div>
           <PlanOption 
             id="plan-lifetime"
@@ -450,7 +465,7 @@ function LifetimePlanContainer({ isSelected, onSelect }: { isSelected: boolean; 
             price={PLAN_PRICES_STARS.lifetime.toString()} 
             period={content.payments.plans.perLifetime} 
             isSelected={isSelected}
-            isHighlighted={false}
+            isHighlighted={isSelected}
             badge={content.payments.plans.mostPopularBadge}
           />
         </div>
@@ -523,16 +538,7 @@ function MainContainer({
           {content.payments.starsInfo}
         </div>
       )}
-      {content.payments.keyBenefits && content.payments.keyBenefits.length > 0 && (
-        <div className="mt-2 text-[#ffffff]">
-          <ul className="list-disc ms-[18px]">
-            {content.payments.keyBenefits.slice(0, 5).map((item, idx) => (
-              <li key={idx} className="mb-1">{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      
+     
       {/* Промокод */}
       {content.payments.promo && (
         <div className="mt-4 flex items-center gap-2 w-full">
@@ -650,7 +656,7 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
     }
   };
 
-  const getCtaLabel = () => {
+  const _getCtaLabel = () => {
     if (isLoading) {
       return content.payments.cta.processing;
     }
