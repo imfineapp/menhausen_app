@@ -382,7 +382,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
           encryption: 'Your answer is encrypted'
         },
         final: {
-          why: 'Why:'
+          why: 'Mechanism:'
         },
         rating: {
           title: 'Rate Card',

@@ -2,9 +2,8 @@
 import { useState, useRef, useEffect } from 'react';
 import svgPaths from "../imports/svg-c5dzwxr04w";
 import { BottomFixedButton } from "./BottomFixedButton";
-import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { Light } from './Light';
 import { useContent } from './ContentContext';
+import { FormScreenLayout } from './FormScreenLayout';
 
 // Типы для пропсов компонента
 interface QuestionScreen01Props {
@@ -133,10 +132,10 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
 }) {
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-start justify-start left-1/2 transform -translate-x-1/2 p-0 top-[130px] sm:top-[140px] md:top-[151px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="box-border content-stretch flex flex-col gap-5 items-start justify-start w-full"
       data-name="Content block"
     >
-      <div className="typography-body min-h-[40px] sm:min-h-[44px] text-[#e1ff00] text-center w-full">
+      <div className="typography-body min-h-[40px] sm:min-h-[44px] text-[#ffffff] text-left w-full">
         <p className="block">{questionText}</p>
       </div>
       <AnswerBlock answer={answer} onAnswerChange={onAnswerChange} />
@@ -187,30 +186,21 @@ export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle
   };
 
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Question Answer 01"
+    <FormScreenLayout dataName="Question Answer 01"
+      bottomActions={
+        <BottomFixedButton 
+          onClick={handleNext}
+          disabled={!answer.trim()}
+        >
+          {content?.ui?.navigation?.next || 'Далее'}
+        </BottomFixedButton>
+      }
     >
-      {/* Световые эффекты фона */}
-      <Light />
-      
-      {/* Мини-логотип */}
-      <MiniStripeLogo />
-      
-      {/* Контентный блок с вопросом и полем ввода */}
       <ContentBlock 
         questionText={questionText || defaultQuestionText}
         answer={answer}
         onAnswerChange={handleAnswerChange}
       />
-      
-      {/* Bottom Fixed CTA Button согласно Guidelines.md */}
-      <BottomFixedButton 
-        onClick={handleNext}
-        disabled={!answer.trim()}
-      >
-        {content?.ui?.navigation?.next || 'Далее'}
-      </BottomFixedButton>
-    </div>
+    </FormScreenLayout>
   );
 }

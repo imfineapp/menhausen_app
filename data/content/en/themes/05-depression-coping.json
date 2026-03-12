@@ -9,6 +9,7 @@
       "id": "DEPR-01",
       "level": 1,
       "introduction": "When it seems there's no strength, it's important to first simply see: 'what's wrong with me?'",
+      "shortDescription": "When it seems there's no strength, it's important to first simply see: 'what's wrong with me?'",
       "questions": [
         "What do you most often say to yourself when you feel apathy or helplessness?",
         "How does this affect your desire to do anything?"
@@ -21,6 +22,7 @@
       "id": "DEPR-02",
       "level": 1,
       "introduction": "Sometimes 'not wanting anything' is a way to avoid pain, not laziness.",
+      "shortDescription": "Sometimes 'not wanting anything' is a way to avoid pain, not laziness.",
       "questions": [
         "What tasks do you most often postpone when you're feeling bad?",
         "What do you feel when you look at this list?"
@@ -33,6 +35,7 @@
       "id": "DEPR-03",
       "level": 2,
       "introduction": "Thoughts in a state of melancholy often sound like truth, though they're not facts.",
+      "shortDescription": "Thoughts in a state of melancholy often sound like truth, though they're not facts.",
       "questions": [
         "What do you think about yourself in moments when you're 'overwhelmed'?",
         "Are there examples that directly contradict these thoughts?"
@@ -45,6 +48,7 @@
       "id": "DEPR-04",
       "level": 2,
       "introduction": "We often devalue what we do — even if it's important.",
+      "shortDescription": "We often devalue what we do — even if it's important.",
       "questions": [
         "What did you accomplish this week despite fatigue or resistance?",
         "How do you usually react to such efforts — acknowledge or ignore?"
@@ -57,6 +61,7 @@
       "id": "DEPR-05",
       "level": 3,
       "introduction": "Feelings of hopelessness often arise when focus is on everything at once.",
+      "shortDescription": "Feelings of hopelessness often arise when focus is on everything at once.",
       "questions": [
         "What three areas in life currently seem 'stuck' to you?",
         "What can you change in each by at least 1%?"
@@ -69,6 +74,7 @@
       "id": "DEPR-06",
       "level": 3,
       "introduction": "The brain in depression constantly 'filters out' positive things. But this can be trained.",
+      "shortDescription": "The brain in depression constantly 'filters out' positive things. But this can be trained.",
       "questions": [
         "What good or neutral things happened to you in the last 3 days?",
         "What actions of yours contributed to this?"
@@ -81,6 +87,7 @@
       "id": "DEPR-07",
       "level": 4,
       "introduction": "Isolation is one of the main factors that intensifies depressive state.",
+      "shortDescription": "Isolation is one of the main factors that intensifies depressive state.",
       "questions": [
         "Who in your circle gives you a sense of acceptance and warmth?",
         "How can you reach out to this person in the next 2 days?"
@@ -93,6 +100,7 @@
       "id": "DEPR-08",
       "level": 4,
       "introduction": "Sometimes you lose contact with who you are. But it can be restored.",
+      "shortDescription": "Sometimes you lose contact with who you are. But it can be restored.",
       "questions": [
         "What 3 things were important to you before — but you stopped paying attention to them?",
         "What of this would you like to return?"
@@ -117,6 +125,7 @@
       "id": "DEPR-10",
       "level": 5,
       "introduction": "Depression narrows perspective. But you're not just today's state.",
+      "shortDescription": "Depression narrows perspective. But you're not just today's state.",
       "questions": [
         "Who do you want to be — despite fatigue, doubts, fears?",
         "What can you do every day to move toward this image?"

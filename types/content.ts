@@ -324,6 +324,7 @@ export interface UITexts {
       level: LocalizedContent;
       nextLevel: LocalizedContent;
       allCardsAttempted?: LocalizedContent;
+      startCard?: LocalizedContent;
     };
   };
     cards: {
