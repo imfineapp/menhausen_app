@@ -114,7 +114,7 @@ export function ThemeWelcomeScreen({
               </h1>
               <p className="typography-body text-white">
                 {isThemeLocked 
-                  ? getLocalizedText(content.ui.themes.welcome.lockedSubtitle) 
+                  ? getLocalizedText(content.ui.themes.welcome.lockedSubtitle ?? content.ui.themes.welcome.subtitle) 
                   : welcomeMessage}
               </p>
             </div>

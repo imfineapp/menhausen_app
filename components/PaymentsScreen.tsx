@@ -35,7 +35,7 @@ const PLAN_PRICES_STARS: Record<PlanId, number> = {
  */
 function ThemeBlockBackground() {
   return (
-    <div className="absolute h-[95px] left-0 top-0 w-[351px]" data-name="theme_block_background">
+    <div className="absolute inset-0 w-full h-full" data-name="theme_block_background">
       <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
         <div
           aria-hidden="true"
@@ -51,9 +51,10 @@ function ThemeBlockBackground() {
  */
 function PlanInfo() {
   const { content } = useContent();
+  const freePlanDetails = content.payments.freePlanDetails;
   return (
     <div
-      className="flex flex-col items-center justify-center text-center"
+      className="flex flex-col items-center justify-center text-center w-full"
       data-name="Plan Info"
     >
       <div className="typography-body text-[#ffffff] mb-2">
@@ -62,6 +63,21 @@ function PlanInfo() {
       <div className="typography-h2 text-[#e1ff00]">
         <h2 className="block">{content.payments.freePlan}</h2>
       </div>
+      {Array.isArray(freePlanDetails) &&
+        freePlanDetails.length > 0 && (
+          <div className="mt-2.5 text-[12px] text-[#ffffff] w-full">
+            <ul className="list-disc css-ed5n1g text-left">
+              {freePlanDetails.map((item, idx) => (
+                <li
+                  key={idx}
+                  className={idx < freePlanDetails.length - 1 ? 'mb-0 ms-5' : 'ms-5'}
+                >
+                  <span className="leading-none">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
     </div>
   );
 }
@@ -71,9 +87,9 @@ function PlanInfo() {
  */
 function CurrentPlanContainer() {
   return (
-    <div className="h-[95px] relative shrink-0 w-full" data-name="Container">
+    <div className="relative shrink-0 w-full min-h-[95px]" data-name="Container">
       <div className="flex flex-col items-center justify-center relative size-full">
-        <div className="box-border content-stretch flex flex-col gap-2.5 h-[95px] items-center justify-center px-[97px] py-5 relative w-full">
+        <div className="box-border content-stretch flex flex-col gap-2.5 items-center justify-center px-5 py-5 relative w-full max-w-[351px]">
           <ThemeBlockBackground />
           <PlanInfo />
         </div>
@@ -113,7 +129,7 @@ function PremiumContainer() {
         <h2 className="block whitespace-pre">{content.payments.premiumTitle}</h2>
       </div>
       <div className="typography-body text-[#ffffff] text-left w-[310px]">
-        <p className="block mb-0">{content.payments.benefitsTitle}</p>
+        <p className="block mb-1">{content.payments.premiumIntro || content.payments.benefitsTitle}</p>
         {Array.isArray(content.payments.premiumThemes) && content.payments.premiumThemes.length > 0 ? (
           <ul className="css-ed5n1g list-disc">
             {content.payments.premiumThemes.map((theme, idx) => (
@@ -143,6 +159,11 @@ function PremiumContainer() {
               <span className="leading-none">{content.payments.benefits.relationships}</span>
             </li>
           </ul>
+        )}
+        {content.payments.premiumProgress && (
+          <p className="block mt-2 text-[#ffffff]">
+            {content.payments.premiumProgress}
+          </p>
         )}
       </div>
     </div>
@@ -526,6 +547,7 @@ function MainContainer({
   applyPromo: () => void;
 }) {
   const { content } = useContent();
+  const [isPromoVisible, setIsPromoVisible] = useState(false);
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-start justify-start p-0 w-full"
@@ -541,26 +563,37 @@ function MainContainer({
      
       {/* Промокод */}
       {content.payments.promo && (
-        <div className="mt-4 flex items-center gap-2 w-full">
-          <input
-            type="text"
-            value={promo}
-            onChange={(e) => { setPromo(e.target.value); setPromoStatus('idle'); }}
-            placeholder={content.payments.promo.placeholder}
-            onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                applyPromo();
-              }
-            }}
-            className="flex-1 bg-[#1a1a1a] border border-[#212121] rounded-lg px-3 py-2 text-[#fff] placeholder-[#8a8a8a] focus:outline-none focus:ring-2 focus:ring-[#e1ff00]"
-          />
+        <div className="mt-4 w-full">
           <button
-            onClick={applyPromo}
-            className="px-3 py-2 bg-[#e1ff00] text-[#111] rounded-lg hover:opacity-90"
+            type="button"
+            className="text-[#e1ff00] text-[13px] underline"
+            onClick={() => setIsPromoVisible((prev) => !prev)}
           >
-            {content.payments.promo.apply}
+            {content.payments.promo.havePromoLink}
           </button>
+          {isPromoVisible && (
+            <div className="mt-2 flex items-center gap-2 w-full">
+              <input
+                type="text"
+                value={promo}
+                onChange={(e) => { setPromo(e.target.value); setPromoStatus('idle'); }}
+                placeholder={content.payments.promo.placeholder}
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyPromo();
+                  }
+                }}
+                className="flex-1 bg-[#1a1a1a] border border-[#212121] rounded-lg px-3 py-2 text-[#fff] placeholder-[#8a8a8a] focus:outline-none focus:ring-2 focus:ring-[#e1ff00]"
+              />
+              <button
+                onClick={applyPromo}
+                className="px-3 py-2 bg-[#e1ff00] text-[#111] rounded-lg hover:opacity-90"
+              >
+                {content.payments.promo.apply}
+              </button>
+            </div>
+          )}
         </div>
       )}
       {promoStatus !== 'idle' && (
@@ -672,7 +705,7 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
 
       // Проверяем доступность Telegram WebApp API
       if (!window.Telegram?.WebApp?.openInvoice) {
-        throw new Error('Telegram WebApp API not available. Please open this app in Telegram.');
+        throw new Error(content.payments.messages.telegramNotAvailable || 'Telegram WebApp API not available. Please open this app in Telegram.');
       }
 
       // Тактильная обратная связь

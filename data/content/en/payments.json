@@ -53,6 +53,7 @@
     "privacyHref": "/privacy"
   },
   "promo": {
+    "havePromoLink": "I have a promo code",
     "placeholder": "Promo code",
     "apply": "Apply",
     "applied": "Promo applied",
