@@ -661,6 +661,7 @@ function AppContent() {
     pinCompleted: boolean;
     firstCheckinDone: boolean;
     firstRewardShown: boolean;
+    homeTourCompleted: boolean;
   };
 
   const FLOW_KEY = 'app-flow-progress';
@@ -672,7 +673,8 @@ function AppContent() {
     pinEnabled: false, // skip PIN in the main flow for now
     pinCompleted: false,
     firstCheckinDone: false,
-    firstRewardShown: false
+    firstRewardShown: false,
+    homeTourCompleted: false
   };
 
   const loadProgress = (): AppFlowProgress => {
@@ -701,6 +703,8 @@ function AppContent() {
       return next;
     });
   };
+
+  const [showHomeTour, setShowHomeTour] = useState(false);
   
   // Smart Navigation: Dynamic screen determination based on user state
   // Note: Logic is inlined in useEffect to avoid dependency issues
@@ -1113,6 +1117,21 @@ function AppContent() {
       return () => clearTimeout(timeoutId);
     }
   }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds]);
+
+  // Запуск тура по home только после проверки достижений (задержка 400 ms > 200 ms у достижений)
+  useEffect(() => {
+    if (currentScreen !== 'home' || flow.homeTourCompleted || earnedAchievementIds.length > 0) {
+      setShowHomeTour(false);
+      return;
+    }
+    const timeoutId = setTimeout(() => {
+      setShowHomeTour(prev => {
+        if (prev) return prev;
+        return true;
+      });
+    }, 400);
+    return () => clearTimeout(timeoutId);
+  }, [currentScreen, flow.homeTourCompleted, earnedAchievementIds.length]);
   
   // Проверка referral достижений при переходе на profile
   useEffect(() => {
@@ -2816,6 +2835,15 @@ function AppContent() {
             onArticleClick={handleOpenArticle}
             onViewAllArticles={handleGoToAllArticles}
             userHasPremium={userHasPremium}
+            showHomeTour={showHomeTour}
+            onTourComplete={() => {
+              updateFlow(p => ({ ...p, homeTourCompleted: true }));
+              setShowHomeTour(false);
+            }}
+            onTourSkip={() => {
+              updateFlow(p => ({ ...p, homeTourCompleted: true }));
+              setShowHomeTour(false);
+            }}
           />
         );
       case 'theme-welcome': {
