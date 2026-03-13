@@ -113,7 +113,9 @@ export function ThemeWelcomeScreen({
                 {themeData ? themeData.title : themeTitle}
               </h1>
               <p className="typography-body text-white">
-                {isThemeLocked ? 'Unlock this theme to get started' : welcomeMessage}
+                {isThemeLocked 
+                  ? getLocalizedText(content.ui.themes.welcome.lockedSubtitle ?? content.ui.themes.welcome.subtitle) 
+                  : welcomeMessage}
               </p>
             </div>
 

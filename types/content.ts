@@ -310,6 +310,7 @@ export interface UITexts {
     welcome: {
       title: LocalizedContent;
       subtitle: LocalizedContent;
+      lockedSubtitle?: LocalizedContent;
       start: LocalizedContent;
       unlock: LocalizedContent;
       freeWarning: {
@@ -711,10 +712,14 @@ export interface DonationsContent {
 export interface PaymentsContent {
   currentPlan: LocalizedContent;
   freePlan: LocalizedContent;
+  freePlanDetails?: LocalizedContent[];
   premiumTitle: LocalizedContent;
   benefitsTitle: LocalizedContent;
   keyBenefits?: LocalizedContent[];
   premiumThemes?: LocalizedContent[];
+  premiumIntro?: LocalizedContent;
+  premiumProgress?: LocalizedContent;
+  starsInfo?: LocalizedContent;
   benefits: {
     angry: LocalizedContent;
     sadness: LocalizedContent;
@@ -739,6 +744,7 @@ export interface PaymentsContent {
   messages: {
     successWithPlan: LocalizedContent; // содержит {plan}
     error: LocalizedContent;
+    telegramNotAvailable?: LocalizedContent;
   };
   legal?: {
     disclaimer: LocalizedContent;
@@ -748,6 +754,7 @@ export interface PaymentsContent {
     privacyHref?: LocalizedContent;
   };
   promo?: {
+    havePromoLink?: LocalizedContent;
     placeholder: LocalizedContent;
     apply: LocalizedContent;
     applied: LocalizedContent;
