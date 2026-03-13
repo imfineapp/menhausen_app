@@ -8,15 +8,15 @@
     {
       "id": "ANX-01",
       "level": 1,
-      "introduction": "You're not the first to be overwhelmed by anxiety. But it needs to be given form — then it becomes manageable.",
-      "shortDescription": "You're not the first to be overwhelmed by anxiety. But it needs to be given form — then it becomes manageable.",
+      "introduction": "Anxiety often feels like fog: you’re tense, but it’s unclear what exactly you’re afraid of. Many men try to “take control”, but control doesn’t work when the threat is vague—your brain starts spinning scenarios and your body stays on alert. The first step is to give anxiety a shape: name one specific fear and one specific prediction. That brings your thinking brain back online. In this card you’ll turn anxiety into one clear sentence you can work with.",
+      "shortDescription": "Vague anxiety fuels tension. We’ll define one specific fear and prediction to regain manageability.",
       "questions": [
         "What specific fear from the 'most likely' list is relevant today?",
         "What do you feel in your body when you think about this fear?"
       ],
-      "recommendation": "Clear threat definition activates frontal lobes, not the limbic system.\n\nWrite this fear as 'If X, then Y' (1 prediction). Formulating specific concerns helps reduce anxiety vagueness.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "One concrete prediction stops the endless “what if” loop and creates a point for planning.\n\nDo this (3 minutes):\n1) Write: “If X, then Y.”\n2) Add probability (0–100%).\n3) Add one 10‑minute action that reduces risk.\n\nKeep it to one prediction. Anxiety loves infinity; you’re training limits.",
+      "mechanism": "Threat clarification reduces vague anxiety and increases control.",
+      "technique": "Cognitive specificity (CBT)"
     },
     {
       "id": "ANX-02",
@@ -27,9 +27,9 @@
         "Describe current anxiety level on a 1-10 scale and location of sensations.",
         "What signs start 'triggering' anxiety?"
       ],
-      "recommendation": "Increased awareness of bodily signals activates parasympathetic system.\n\nSpend 2 minutes on conscious body scan (focus on breathing and sensations). Developing body awareness allows interrupting automatic anxiety reactions.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "A short body scan + longer exhale lowers arousal and gives your system a safety signal.\n\nDo this (2 minutes):\n1) Sit grounded (feet on the floor).\n2) Scan body top to bottom.\n3) 6 cycles: inhale 4, exhale 6.\n4) Re-rate anxiety 1–10.\n\nEven a 1‑point drop counts.",
+      "mechanism": "Longer exhales reduce physiological arousal and anxiety intensity.",
+      "technique": "Breathing regulation (ACT)"
     },
     {
       "id": "ANX-03",
@@ -40,21 +40,22 @@
         "When did you first feel anxiety today?",
         "What thought or situation might have triggered it?"
       ],
-      "recommendation": "Monitoring automatic thoughts reduces their strength.\n\nKeep an anxiety thoughts diary (record 1-2 times per day). Awareness of triggers makes reactions more manageable.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Tracking patterns shifts your brain from panic to data. Anxiety becomes more predictable.\n\nDo this (5 days, 1–2 notes/day):\n1) Time + situation.\n2) Prediction thought.\n3) Body (2 sensations).\n4) Behaviour (checking/avoiding/controlling).\n\nAfter 5 days, look for the repeated trigger—your best intervention point.",
+      "mechanism": "Self-monitoring reduces automatic anxiety reactions and increases trigger awareness.",
+      "technique": "Self-monitoring (CBT)"
     },
     {
       "id": "ANX-04",
       "level": 3,
       "introduction": "Behind every anxious thought hides a deep fear. Let's get to the bottom of it.",
+      "shortDescription": "Anxiety often hides a core fear. We’ll identify the deeper belief so you can respond more precisely.",
       "questions": [
         "What's most frightening in the anxious situation?",
         "What deep thought or belief stands behind this fear?"
       ],
-      "recommendation": "'Vertical arrow' helps identify deep fears behind surface anxiety.\n\nUse 'vertical arrow' technique to reach core beliefs. Clarifying basic attitudes reduces reaction irrationality.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Naming the core fear makes anxiety more specific and workable.\n\nDo this (7 minutes):\n1) Write the situation and the anxious thought.\n2) Ask 3 times: “And if that’s true, what’s the worst part?”\n3) When you reach the core belief, rewrite it into a more realistic statement.\n\nCore fears often carry shame. Naming it already softens it.",
+      "mechanism": "Identifying core beliefs reduces uncertainty and irrational threat appraisal.",
+      "technique": "Downward arrow (CBT)"
     },
     {
       "id": "ANX-05",
@@ -65,9 +66,9 @@
         "What do you usually do to avoid anxious situations?",
         "What consequences of this avoidance have you already noticed?"
       ],
-      "recommendation": "Confronting avoidance reduces its power over behavior.\n\nTry one day not using your usual form of avoidance. Conscious work with avoidance develops psychological flexibility.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Avoidance gives short relief but trains bigger fear. Small exposure restores freedom.\n\nDo this (one day):\n1) Pick one avoidance habit and one low‑risk situation.\n2) Do a 3–10 minute step.\n3) Rate anxiety before/after (1–10).\n\nMake it smaller if needed. Movement matters more than bravery.",
+      "mechanism": "Reducing avoidance increases flexibility and weakens anxiety maintenance.",
+      "technique": "Exposure (CBT)"
     },
     {
       "id": "ANX-06",
@@ -78,9 +79,9 @@
         "What do you know for certain about the anxious situation (facts)?",
         "Which of your thoughts are assumptions, not facts?"
       ],
-      "recommendation": "Cognitive restructuring reduces irrational threat assessments.\n\nConduct 'thought investigation': separate facts from interpretations. Reducing cognitive distortions decreases anxiety.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Thought investigation returns reality: you don’t debate anxiety—you check it.\n\nDo this (7 minutes):\n1) Write the anxious thought.\n2) List 3 facts.\n3) List 3 assumptions.\n4) Write a more accurate thought.\n5) Do one 10‑minute action step.",
+      "mechanism": "Facts vs. assumptions reduces catastrophising and anxiety intensity.",
+      "technique": "Cognitive restructuring (CBT)"
     },
     {
       "id": "ANX-07",
@@ -91,9 +92,9 @@
         "What's the worst that could happen in the anxious situation?",
         "What real experience contradicts this outcome?"
       ],
-      "recommendation": "Countering catastrophic thinking reduces anxiety intensity. Make a list of situations where fear didn't materialize. This gradually dissolves catastrophizing.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Evidence + an if‑then plan weakens catastrophising.\n\nDo this:\n1) Write the worst-case.\n2) List 3 times you expected disaster but managed.\n3) Write a simple plan: “If it happens, I’ll do A, B, C.”\n\nWe’re not promising perfection—just options.",
+      "mechanism": "Countering catastrophising reduces perceived threat and increases control.",
+      "technique": "Catastrophising work (CBT)"
     },
     {
       "id": "ANX-08",
@@ -104,9 +105,9 @@
         "What anxious prediction are you ready to test in practice?",
         "What could you do today to test it safely?"
       ],
-      "recommendation": "Conduct a behavioral experiment for 1 day. Testing predictions develops trust in reality, not thoughts.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Experiments give your brain data instead of movies.\n\nDo this:\n1) Write the prediction + probability.\n2) Design a safe test for today/tomorrow.\n3) Do it.\n4) Record: what happened, what you learned, next step.",
+      "mechanism": "Behavioural experiments correct anxious predictions and reduce avoidance.",
+      "technique": "Behavioural experiment (CBT)"
     },
     {
       "id": "ANX-09",
@@ -117,9 +118,9 @@
         "In what situation do you usually avoid acting due to fear?",
         "What minimal step can you take to meet this fear?"
       ],
-      "recommendation": "Complete a mini-action despite anxiety (≤ 3 min). This reinforces new behavioral patterns.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "A mini action breaks the loop “fear → avoidance → bigger fear”.\n\nDo this:\n1) Timer 3 minutes.\n2) Do the first step.\n3) Rate anxiety before/after.\n4) Decide: another 3 minutes today or tomorrow.\n\nSmall is what makes it doable—and repeatable.",
+      "mechanism": "Small action reduces avoidance and strengthens agency.",
+      "technique": "Behavioural activation (CBT)"
     }
   ]
 }
