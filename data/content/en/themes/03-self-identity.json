@@ -8,131 +8,132 @@
     {
       "id": "IDNT-01",
       "level": 1,
-      "introduction": "Sometimes you judge yourself more harshly than anyone else. Let's figure out where this comes from.",
-      "shortDescription": "Sometimes you judge yourself more harshly than anyone else. Let's figure out where this comes from.",
+      "introduction": "A lot of men talk to themselves in a way they wouldn’t talk to anyone else: harsh, zeroing-out, no room for mistakes. On the outside you can look successful, while inside you constantly hear “not enough”. That’s not discipline—it’s an inner critic trying to keep you moving through pressure. The cost is lost energy and confidence. In this card you’ll start with a simple skill: notice the critic’s voice and when it turns on.",
+      "shortDescription": "The inner critic can masquerade as “discipline” but drains you. We’ll learn to spot its voice and triggers.",
       "questions": [
-        "What phrase do you most often say to yourself when something goes wrong?",
-        "Whose voice or experience stands behind this phrase?"
+        "In the last 7 days, when did you talk to yourself harshly? Write 2–3 episodes and what happened.",
+        "What was the phrase—word for word? Whose voice does it resemble (parent/coach/boss/society), and what is it trying to “force” you to do?"
       ],
-      "recommendation": "Awareness reduces fusion with the inner critic.\n\nNotice when this 'voice' activates during the day. Just record it. Recognizing triggers is the first step to weakening them.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "When you can see the critic as a part of your mind—not the truth—you regain choice. That reduces fusion and builds steadier self-respect.\n\nDo this (7 days, 1 minute/day):\n1) Catch one moment of self-criticism and write the line.\n2) Write the trigger: what happened right before.\n3) Rate 1–10 how much you believed it.\n4) Add: “My inner critic is online right now.”\n\nIf it feels pointless, treat it as diagnostics: you can’t change what you don’t notice.",
+      "mechanism": "Recognising the inner critic reduces its control over behaviour.",
+      "technique": "Cognitive defusion (ACT)"
     },
     {
       "id": "IDNT-02",
       "level": 1,
-      "introduction": "The inner critic loves to generalize. But you're more than one mistake.",
-      "shortDescription": "The inner critic loves to generalize. But you're more than one mistake.",
+      "introduction": "The critic loves labels: “I’m a failure”, “I’m weak”, “I’m useless”. Labels feel like a verdict because they describe you as a whole person, not one moment. For men, labels hit dignity and kill action fast. But a mistake is behaviour, not identity. In this card you’ll practise turning “I am…” labels into accurate descriptions of what happened—and what you can do next.",
+      "shortDescription": "Labels turn a mistake into a verdict. We’ll replace “I am…” with an action-based description and reduce pressure.",
       "questions": [
-        "What 'labels' do you most often attach to yourself?",
-        "In what situations does this especially manifest?"
+        "What 2–3 labels do you attach to yourself most often? Write them word for word.",
+        "Where do they show up most (work, money, relationships, body)? Give 2 examples from the last week and rate shame/anger at yourself 1–10."
       ],
-      "recommendation": "Cognitive restructuring of 'self-identity'.\n\nFor a week, every time a label appears, replace it with an action description. Transition from 'I am a failure' to 'I made a mistake' reduces pressure.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Action-language stops your brain from turning one event into a life sentence. It creates space for learning and repair.\n\nDo this (1 week):\n1) Write the label.\n2) Ask: “What did I do / not do exactly?”\n3) Rewrite: “I did… / I missed… / I made a mistake in…”\n4) Add one 5‑minute next step.\n\nExample: “I’m a failure” → “I missed one deadline because I underestimated the scope. Next step: send an update + propose a new plan.”",
+      "mechanism": "Action-focused framing reduces shame and increases self-efficacy.",
+      "technique": "Cognitive restructuring (CBT)"
     },
     {
       "id": "IDNT-03",
       "level": 2,
-      "introduction": "Low self-esteem often masquerades as striving to 'be better'.",
+      "introduction": "Wanting to improve is healthy. The problem starts when “be better” becomes chasing an ideal you can’t win. Many men live in comparison: stronger, richer, calmer, more productive—only then you “deserve” respect. Any deviation feels like failure. In this card you’ll identify your pressure-ideal and separate what’s truly yours from what’s imposed. That brings freedom and reduces the constant “not enough”.",
+      "shortDescription": "An ideal can guide growth—or crush you. We’ll separate your values from imposed standards and reduce perfectionist pressure.",
       "questions": [
         "Where lately have you felt 'not good enough'?",
         "What ideal idea is hidden behind this — and where did it come from?"
       ],
-      "recommendation": "Liberation from external normativity.\n\nWrite how this 'ideal' would look without judgment — and what of it you actually choose. Return to your values, not imposed ones.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Separating values from rigid rules stops the endless “I’m behind” feeling. You keep direction without burning yourself.\n\nDo this (10 minutes):\n1) Write your “ideal rules” (5–7 points).\n2) For each: Is it realistic? Is it mine? What’s the cost?\n3) Choose 2–3 values to keep.\n4) Turn them into one 10‑minute action each.\n\nThis is not excuses—it’s sustainable self-leadership.",
+      "mechanism": "Values vs. rigid rules increases psychological flexibility and reduces pressure.",
+      "technique": "Values work (ACT)"
     },
     {
       "id": "IDNT-04",
       "level": 2,
-      "introduction": "Self-esteem isn't a constant, but a process that can be directed.",
-      "shortDescription": "Self-esteem isn't a constant, but a process that can be directed.",
+      "introduction": "For many men, self-esteem is tied to results: succeed—feel okay; slip—feel like zero. Then fatigue or a mistake turns into “I’m bad”. But self-esteem is a skill: the way you relate to yourself. One way to strengthen it is to remember real resources—evidence of how you’ve coped before. In this card you’ll collect those resources into a short list you can lean on when your mind starts erasing you.",
+      "shortDescription": "Self-esteem is a skill, not a medal. We’ll build a resource list based on real evidence from your life.",
       "questions": [
         "When did you feel confident in yourself in recent months?",
         "What actions or traits of yours were involved then?"
       ],
-      "recommendation": "Positive re-identification.\n\nCreate a 'resource list': 5 qualities that help you cope. Hang it in a visible place. Reminding yourself of strengths reduces inner uncertainty.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "When you record resources, your brain stops seeing you only through mistakes. That lowers anxiety and builds steadier confidence.\n\nDo this (7 minutes):\n1) Write 5 qualities/skills that have helped you cope.\n2) Add one real example for each.\n3) Add: “How can I use 10% of this today?”",
+      "mechanism": "Resource recall reduces negative filtering and supports self-efficacy.",
+      "technique": "Strengths inventory (CBT)"
     },
     {
       "id": "IDNT-05",
       "level": 3,
-      "introduction": "Often you live in others' scripts, forgetting your own.",
-      "shortDescription": "Often you live in others' scripts, forgetting your own.",
+      "introduction": "“Should” can quietly become someone else’s script: prove, match, don’t disappoint. For men it often looks like responsibility—but sometimes it’s just living under external expectations. Then you do the “right” things and feel empty or angry inside. Your script starts with: “What matters to me even if no one applauds?” In this card you’ll practise spotting pressure-driven choices and returning to your values—without turning it into selfishness.",
+      "shortDescription": "External expectations can masquerade as responsibility. We’ll practise returning to your own values and choices.",
       "questions": [
         "Whose expectations do you most often try to meet — parental, social, partner?",
         "What personally matters to you in these areas — regardless of others' opinions?"
       ],
-      "recommendation": "Moving from heteronomy to your own values.\n\nFor a week, before important decisions, ask yourself: 'Is this my choice or a reaction to others' expectations?' Develop autonomy and self-determination.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Values-based choices feel steadier and reduce burnout. You stop constantly proving and start choosing.\n\nDo this (1 week, 5 times):\n1) Ask: “Is this my choice or a performance?”\n2) Name the value you want to support.\n3) Do a 10‑minute step aligned with it.",
+      "mechanism": "Values-based choices reduce inner conflict and increase autonomy.",
+      "technique": "Values-based action (ACT)"
     },
     {
       "id": "IDNT-06",
       "level": 3,
-      "introduction": "We tend to ignore successes and focus on failures.",
-      "shortDescription": "We tend to ignore successes and focus on failures.",
+      "introduction": "Your brain notices mistakes faster—it’s built that way. But if that becomes constant, you start seeing yourself through “not enough”. Men often downplay wins: “luck”, “nothing special”, “that’s expected”. Then self-esteem runs on fear and pressure. In this card you’ll record achievements as facts and link them to your effort. No hype—just accuracy.",
+      "shortDescription": "If wins don’t register, self-esteem runs on fear. We’ll record achievements and connect them to effort.",
       "questions": [
         "What did you do well in the last 3 weeks but didn't acknowledge?",
         "What prevents you from recognizing this as valuable?"
       ],
-      "recommendation": "Refocusing attention on success.\n\nKeep an 'achievement diary': 1 entry per day for 5 days. Regular noticing of efforts forms healthy self-esteem.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Recording achievements restores balance: you see real supports, not only failures.\n\nDo this (5 days):\n1) Each evening write 1 achievement.\n2) Add what it cost (effort/discipline/patience).\n3) Add one line: “This mattered, and I did it.”",
+      "mechanism": "Attention refocus reduces negative bias and strengthens self-efficacy.",
+      "technique": "Achievement log (CBT)"
     },
     {
       "id": "IDNT-07",
       "level": 4,
-      "introduction": "Being yourself doesn't mean being perfect.",
-      "shortDescription": "Being yourself doesn't mean being perfect.",
+      "introduction": "Some parts of you get hidden because you were taught they’re “not manly”: sensitivity, softness, fear, need for rest, need for support. But what you hide often contains a resource—just unused. Wholeness isn’t perfection; it’s being able to be different and still be yourself. In this card you’ll pick one “flaw” and find where it can work for you instead of against you.",
+      "shortDescription": "What you call a “flaw” often hides a resource. We’ll find one trait and use it in the right context.",
       "questions": [
         "What traits do you hide or consider 'flaws'?",
         "What good might be hidden behind these traits?"
       ],
-      "recommendation": "Transforming 'shadow' into resource.\n\nFind at least one context where this trait could be a strength, and consciously apply it. This returns wholeness and self-acceptance.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "When you stop fighting a part of yourself, you get energy back. You start choosing where to use the trait.\n\nDo this:\n1) Pick one trait.\n2) Write 2 contexts where it hurts and 2 where it helps.\n3) Choose one small action in the “help” context for the next 3 days.",
+      "mechanism": "Integrating “shadow” traits reduces inner conflict and increases flexibility.",
+      "technique": "Acceptance & reframe (ACT)"
     },
     {
       "id": "IDNT-08",
       "level": 4,
-      "introduction": "How you talk to yourself shapes your inner space.",
-      "shortDescription": "How you talk to yourself shapes your inner space.",
+      "introduction": "Your inner tone is constant background: it either supports you or keeps hitting you. Many men choose a harsh tone because they believe pressure is the only way to stay disciplined. Over time, that becomes chronic tension and burnout. A supportive tone doesn’t mean “go easy”. It means leading yourself like someone you want to protect and develop. In this card you’ll practise switching tone in one concrete situation.",
+      "shortDescription": "A harsh inner tone burns you out. We’ll practise a more supportive style without losing discipline.",
       "questions": [
         "What tone and style do you use in self-talk — strict, contemptuous, anxious?",
         "How would your state change if you changed your communication style with yourself?"
       ],
-      "recommendation": "Changing inner dialogue reduces self-criticism.\n\nTry talking to yourself as you would to a close friend — 1 time per day in difficult situations. Train self-compassion.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Supportive self-talk reduces self-attack and keeps you functional.\n\nDo this (5 days):\n1) Catch a harsh line.\n2) Rewrite it in “coach tone”: respectful + one next step.\n3) Do one 5‑minute step.",
+      "mechanism": "Supportive self-talk reduces self-criticism and stress load.",
+      "technique": "Self-compassion + reframe (CBT/ACT)"
     },
     {
       "id": "IDNT-09",
       "level": 5,
-      "introduction": "Often true confidence comes after action.",
-      "shortDescription": "Often true confidence comes after action.",
+      "introduction": "Confidence rarely appears first. It often comes after you act despite doubt. For men, starting can feel risky because “failing” hits self-respect. If you wait for 100% confidence, you stay stuck. The alternative is a small test that gives real data. In this card you’ll turn one fear into a 15‑minute experiment.",
+      "shortDescription": "Confidence grows from action, not waiting. We’ll run a 15‑minute experiment and collect real evidence.",
       "questions": [
         "What have you long wanted to do but put off from fear of 'not coping'?",
         "How can you test this through a small 15-minute step?"
       ],
-      "recommendation": "Behavioral activation increases self-efficacy.\n\nFor 3 days, take this mini-step and record what happened. Action reduces fear's influence.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Experiments build self-efficacy: you learn you can move with fear present.\n\nDo this:\n1) Define a 15‑minute test.\n2) Schedule it within 48 hours.\n3) Do it and stop.\n4) Write: what I did, what I learned, next small step.",
+      "mechanism": "Small actions increase self-efficacy and reduce avoidance.",
+      "technique": "Behavioural experiment (CBT)"
     },
     {
       "id": "IDNT-10",
       "level": 5,
-      "introduction": "Values aren't about 'who I am', but about 'who I want to be'.",
-      "shortDescription": "Values aren't about 'who I am', but about 'who I want to be'.",
+      "introduction": "Identity isn’t a test of who you are today; it’s a direction you choose. Moods change, circumstances change—values can stay a compass. Many men build themselves through roles (“provider”, “strong”, “no emotions”), but roles without values burn out. In this card you’ll choose 3 qualities/values and turn them into small actions for 5 days so the compass becomes practice.",
+      "shortDescription": "Values are an identity compass. We’ll choose 3 qualities and practise them through small actions for 5 days.",
       "questions": [
         "Name 3 qualities you'd like to develop in yourself as part of your identity.",
         "How can you manifest at least one of them in practice every day?"
       ],
-      "recommendation": "Identification through value-based actions.\n\nFor 5 days, do one action that strengthens the chosen quality. You're forming not an 'ideal', but a stable self-image.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Values-based action builds identity independent of outside ratings.\n\nDo this (5 days):\n1) Write 3 values.\n2) Attach one 5–10 minute action to each.\n3) Each day do one action.\n4) End with: “Who was I today?”",
+      "mechanism": "Values-based action strengthens identity and reduces dependence on external evaluation.",
+      "technique": "Values work (ACT)"
     }
   ]
 }

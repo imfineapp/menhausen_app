@@ -8,15 +8,15 @@
     {
       "id": "BURN-01",
       "level": 1,
-      "introduction": "Burnout often starts with 'not wanting anything'. Let's try to see — when did this begin.",
-      "shortDescription": "Burnout often starts with 'not wanting anything'. Let's try to see — when did this begin.",
+      "introduction": "Burnout rarely starts in one day. Usually you carry load for weeks—work, responsibility, keeping it together—then you notice “I don’t care” and “I don’t want anything.” Many men push through because being the reliable one is the default. The key is not to shame yourself, but to find where the overload began. When you can see the turning point, you can change the conditions—not only endure symptoms. In this card you’ll locate the phase where it started to dry you out.",
+      "shortDescription": "Burnout builds up over time. We’ll find the turning point so you can address causes, not only symptoms.",
       "questions": [
         "When did you last feel that 'everything is annoying'?",
         "What changed in your life during that period?"
       ],
-      "recommendation": "Identify 1 event or phase after which burnout began. This gives understanding of what's the cause, not just the consequence.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Finding the turning point makes burnout less mysterious and more manageable.\n\nDo this (7 minutes):\n1) Draw a timeline of the last 8–12 weeks.\n2) Mark: “okay”, “hard”, “numb/empty”.\n3) For each point, write: sleep, workload, conflicts, health (1–2 words).\n4) Pick one factor you can change by 10% this week.\n\nSmall adjustments beat hero mode.",
+      "mechanism": "Identifying burnout drivers increases agency and reduces helplessness.",
+      "technique": "Functional analysis (CBT)"
     },
     {
       "id": "BURN-02",
@@ -27,9 +27,9 @@
         "What phrases do you most often say to yourself when you're 'stuck'?",
         "What do these phrases make you feel?"
       ],
-      "recommendation": "Replace one of these phrases with a gentle one: 'Right now it's hard for me, but I'm doing what I can'. Repeat for 3 days straight. Restructuring inner dialogue reduces tension.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Supportive self-talk reduces stress and helps your brain plan again. It’s not softness—it’s effective self-leadership.\n\nDo this (3 days):\n1) Pick one pressure phrase.\n2) Rewrite it into “coach tone”: respect + one next step.\n3) Each day, say it and do a 5‑minute step.\n\nPressure on an empty tank doesn’t work. Dosing does.",
+      "mechanism": "Supportive self-talk reduces stress load and restores action capacity.",
+      "technique": "Cognitive restructuring (CBT)"
     },
     {
       "id": "BURN-03",
@@ -40,9 +40,9 @@
         "In what situations do you most often say 'yes' when you want to say 'no'?",
         "What are you afraid of losing if you start defending boundaries?"
       ],
-      "recommendation": "Start small: in one situation per day, consciously choose refusal or break. Why: this trains resource preservation skills.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "One boundary a day trains “I can choose” and reduces overload.\n\nDo this (5 days):\n1) Pick a low‑risk situation.\n2) Say “no” or “not now” in one sentence.\n3) Offer an alternative if needed.\n4) Note what actually happened (often nothing catastrophic).\n\nBoundaries are not conflict—they’re resource protection.",
+      "mechanism": "Assertive boundaries reduce overload and support recovery.",
+      "technique": "Assertive communication (CBT/ACT)"
     },
     {
       "id": "BURN-04",
@@ -53,9 +53,9 @@
         "When did you last do something exclusively for yourself?",
         "What was it? Why did you stop?"
       ],
-      "recommendation": "Schedule yourself a 'personal hour' during the week. Without benefit. Just for pleasure. This restores the sense of 'I exist'.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Personal time tells your nervous system: you’re not only a function. It reduces emotional exhaustion.\n\nDo this this week:\n1) Schedule 30–60 minutes as a calendar event.\n2) Choose something with no “usefulness” goal.\n3) Spend at least half of it without your phone.\n4) Rate relief 1–10 afterwards.",
+      "mechanism": "Rest–load balance supports recovery and reduces exhaustion.",
+      "technique": "Behavioural activation (CBT)"
     },
     {
       "id": "BURN-05",
@@ -67,20 +67,21 @@
         "How could you bring awareness to one of them?"
       ],
       "recommendation": "Awareness interrupts monotony and returns interest.\n\nFor 3 days — do 1 action per day with full attention (eating, walking, showering). Returning to the moment reduces the effect of 'empty days'.",
-      "mechanism": "",
-      "technique": ""
+      "mechanism": "Present-moment attention reduces autopilot and the “empty days” effect.",
+      "technique": "Mindfulness (ACT)"
     },
     {
       "id": "BURN-06",
       "level": 3,
-      "introduction": "Often burnout isn't just fatigue. It's loss of meaning.",
+      "introduction": "Sometimes burnout isn’t just fatigue—it’s a loss of meaning. You do a lot, but inside it’s “what for?”. Many men try to outwork it, but meaning doesn’t return from overload. Often it comes back through a small dose of mastery, contribution, or control. In this card you’ll identify what used to feel meaningful and bring 10% of it back into your week.",
+      "shortDescription": "Burnout can be a loss of meaning, not only tiredness. We’ll bring back a small dose of what used to matter.",
       "questions": [
         "What parts of your work or responsibilities were important to you before?",
         "What changed — why don't they bring joy anymore?"
       ],
-      "recommendation": "Find 1 task in the week that can still give satisfaction. Do it consciously. This way you reboot your meaning.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "A small return of meaning feeds your brain and reduces cynicism.\n\nDo this:\n1) Pick one task that still has mastery/meaning.\n2) Do it for 20–40 minutes with no distractions.\n3) Write 1–2 lines: what felt valuable.\n\nStart with control if meaning feels absent: one area you do by your rules.",
+      "mechanism": "Restoring meaning and control reduces emotional exhaustion and cynicism.",
+      "technique": "Values-based action (ACT)"
     },
     {
       "id": "BURN-07",
@@ -91,9 +92,9 @@
         "What everyday activity calms you (even slightly)?",
         "When did you last do this? Why did you stop?"
       ],
-      "recommendation": "Take 1 ritual and do it every evening for 5 days straight. Why: repetitive actions create sense of stability.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "A simple ritual lowers chaos and signals stability.\n\nDo this (5 days):\n1) Pick a 5–15 minute ritual.\n2) Attach it to a trigger (“after dinner / before bed”).\n3) Do it at roughly the same time.\n4) Track with a checkmark—no self-judgment.",
+      "mechanism": "Repeatable rituals reduce anxiety and increase felt stability.",
+      "technique": "Behavioural activation (CBT)"
     },
     {
       "id": "BURN-08",
@@ -105,20 +106,21 @@
         "How can you remind yourself of the right to pause?"
       ],
       "recommendation": "Micro-breaks contribute to nervous system recovery.\n\nIntroduce 1 micro-pause per day (2-3 minutes without screens, noise, and tasks). Regular reboots support cognitive resources.",
-      "mechanism": "",
-      "technique": ""
+      "mechanism": "Short breaks reduce stress load and support cognitive resources.",
+      "technique": "Micro-pause + breathing regulation (ACT)"
     },
     {
       "id": "BURN-09",
       "level": 5,
-      "introduction": "To burn out, you first have to 'burn' for something. Time to return focus.",
+      "introduction": "Burnout often happens when you’ve been burning for goals that stopped being yours—or you lost connection to your values. Many men feel this is “too philosophical”, but values are fuel. Without them you become a machine running without maintenance. In this card you’ll pick what matters and do one mini action for a week to regain direction.",
+      "shortDescription": "Values restore direction in burnout. We’ll choose what matters and do one mini action for 7 days.",
       "questions": [
         "What's truly important to you — even if you're tired?",
         "What can you do tomorrow to get a little closer to this?"
       ],
       "recommendation": "Every day for 1 week, do 1 mini-action related to your values. Values return meaning to actions.",
-      "mechanism": "",
-      "technique": ""
+      "mechanism": "Values-based actions restore meaning and reduce emotional exhaustion.",
+      "technique": "Values work (ACT)"
     },
     {
       "id": "BURN-10",
@@ -129,9 +131,9 @@
         "Who are you beyond your role (work, function)?",
         "What actions can remind you of this?"
       ],
-      "recommendation": "Role decompression restores energy and meaning.\n\nOnce a week, do 1 action unrelated to work or benefit. This is an act of restoring yourself. This returns personal autonomy.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Decompressing from roles restores energy and reduces emptiness.\n\nDo this (4 weeks):\n1) Pick one “I’m a person” activity for 30–60 minutes.\n2) Put it in your calendar.\n3) Do it without a usefulness goal.\n4) Rate relief 1–10.\n\nThis is maintenance for the system that carries responsibility.",
+      "mechanism": "Restoring personal identity reduces depersonalisation and supports recovery.",
+      "technique": "Behavioural activation (CBT)"
     }
   ]
 }

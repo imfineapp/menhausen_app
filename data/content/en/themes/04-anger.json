@@ -8,129 +8,132 @@
     {
       "id": "ANGR-01",
       "level": 1,
-      "introduction": "Anger doesn't arise out of nowhere. It's a signal. Let's figure out what it's telling us.",
-      "shortDescription": "Anger doesn't arise out of nowhere. It's a signal. Let's figure out what it's telling us.",
+      "introduction": "Anger rarely comes “out of nowhere”. Most of the time it’s a signal: a boundary got crossed, something felt unfair, you lost control, you’re exhausted. Many men hold it in to look strong—then it comes out as a blow‑up. Anger itself doesn’t make you a bad person. The key is to understand what triggers it and where it builds. In this card you’ll map your triggers so you can manage the impulse instead of living on autopilot.",
+      "shortDescription": "Anger is a signal, not a verdict. We’ll identify your triggers and patterns to regain control.",
       "questions": [
-        "In what situations do you most often get angry — at home, at work, on the road?",
-        "What's common between these situations?"
+        "Over the last 7 days, what 2–3 situations made you angriest (home/work/road/online)? Write them and rate anger 1–10.",
+        "What’s the common thread: boundaries, disrespect, unfairness, chaos, helplessness, exhaustion? What meaning does your brain attach (e.g., “I’m not respected”)?"
       ],
-      "recommendation": "Identifying triggers is the first step to managing impulses.\n\nFor a week, note anger triggers and what's common between them. You'll see what triggers the reaction — and can work with it.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "When you can see triggers, anger stops being “a storm”. You catch it earlier and choose a response.\n\nDo this (1 week, 5 notes):\n1) Situation (where/with whom/what happened).\n2) Anger 1–10.\n3) What was crossed: boundary / respect / fairness / control.\n4) First impulse (say, slam, punish, prove, leave).\n\nAt the end, look for the main repeating trigger—that’s your “primary button”.",
+      "mechanism": "Trigger identification reduces impulsivity and supports early regulation.",
+      "technique": "Self-monitoring (CBT)"
     },
     {
       "id": "ANGR-02",
       "level": 1,
-      "introduction": "Anger often covers something more vulnerable.",
+      "introduction": "Anger often looks like strength, but underneath it can be vulnerability: shame, hurt, fear, helplessness. Many men were taught it’s safer to be angry than to admit “that hurt”. When you can spot what’s underneath, your reaction becomes more precise: you protect what matters instead of burning everything down. In this card you’ll practise rewinding one minute back and naming the primary feeling before the spike.",
+      "shortDescription": "Anger often covers a more vulnerable feeling. We’ll identify what was there a minute before the spike to respond more accurately.",
       "questions": [
         "What did you feel a minute before your last anger outburst?",
         "What fear, pain, or helplessness might have been behind this anger?"
       ],
-      "recommendation": "Unpacking emotions reduces destructive charge.\n\nAfter each strong reaction, write 2 assumptions: 'What did I feel before anger?' This reveals deep causes, not just consequences.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Naming the primary feeling makes anger a signal—not a commander.\n\nDo this after a spike (3–5 minutes):\n1) Fact: what happened.\n2) Anger 1–10.\n3) One minute earlier: what did I feel (hurt/shame/fear/exhaustion)? Rate 1–10.\n4) Need: respect, safety, being heard, rest.\n5) One sentence you could say next time instead of exploding.\n\nYou don’t have to show vulnerability to everyone—just stop hiding it from yourself.",
+      "mechanism": "Recognising primary emotions reduces anger intensity and improves self-control.",
+      "technique": "Emotion labelling (ACT)"
     },
     {
       "id": "ANGR-03",
       "level": 2,
-      "introduction": "Our body speaks before we do. Especially in anger.",
-      "shortDescription": "Our body speaks before we do. Especially in anger.",
+      "introduction": "Your body signals anger before you can think: jaw tight, shoulders up, fists tense, breathing short. If you catch those signals early, you get a 10–30 second window to choose what you do next. Many men miss that window because “no time to feel”. But the body is your early warning system. In this card you’ll identify your physical markers and build a quick pause protocol.",
+      "shortDescription": "The body warns you before the outburst. We’ll identify your early physical markers and use a short pause to regain choice.",
       "questions": [
         "How do you feel anger in your body? Where does it live: in your chest, jaw, fists?",
         "What physical signals appear before outbursts?"
       ],
-      "recommendation": "Physical reaction and emotion are connected.\n\nNotice physical signals as 'first warning' — and take a breathing pause. Early recognition gives a chance to stop the reaction.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "A body-based pause lowers arousal and gives your “thinking brain” control again.\n\nDo this when you notice early signs:\n1) Label: “anger is rising”.\n2) Drop shoulders, unclench jaw.\n3) 3 breathing cycles: inhale 4, exhale 6.\n4) Choose one action: clarify, set a boundary, or take a break.\n\nThis isn’t weakness. It’s self-management.",
+      "mechanism": "Longer exhales reduce arousal and interrupt escalation.",
+      "technique": "Somatic regulation (ACT)"
     },
     {
       "id": "ANGR-04",
       "level": 2,
-      "introduction": "Not every irritation is worth turning into conflict.",
+      "introduction": "Irritation is fuel. Sometimes a conflict is needed—to set a boundary, protect something important. Other times irritation is just exhaustion, hunger, overload, lack of sleep, and fighting will only make it worse. Many men go into battle out of habit instead of checking their capacity. In this card you’ll learn to distinguish “this needs a conversation” from “my system is overheated” and rehearse an alternative script.",
+      "shortDescription": "Not every irritation needs a fight. We’ll practise distinguishing “needs solving” from “I’m overheated” and choose a better script.",
       "questions": [
         "When did you last regret your outburst?",
         "What could you have done differently in that moment?"
       ],
-      "recommendation": "Visualizing alternatives reduces impulsiveness.\n\nImagine a similar situation and create an alternative scenario with pause and choice. This trains emotional flexibility.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Rehearsal gives your brain a plan instead of improvising under anger.\n\nDo this (5 minutes):\n1) Write the trigger situation.\n2) Note early body signs/thoughts.\n3) Write a 3‑step script: pause → sentence → action.\n4) Say it out loud once.\n\nExample: Pause + “I’m getting heated; I need 10 minutes” + step away, then return.\n\nThe goal isn’t “never angry”—it’s “no regret afterwards”.",
+      "mechanism": "Rehearsal reduces impulsivity and increases behavioural choice.",
+      "technique": "Behavioural rehearsal (CBT)"
     },
     {
       "id": "ANGR-05",
       "level": 3,
-      "introduction": "Often we're not angry at the real person, but at our interpretation of their words.",
-      "shortDescription": "Often we're not angry at the real person, but at our interpretation of their words.",
+      "introduction": "Anger often flares because of the meaning you assigned: “they’re disrespecting me”, “they’re trying to push me”, “they don’t care”. Sometimes that’s true—sometimes it’s an automatic interpretation. Many men are especially sensitive to respect/status, so the meaning lights up fast. In this card you’ll practise cognitive flexibility: find other plausible explanations so you can respond strongly but cleanly.",
+      "shortDescription": "Interpretation can fuel anger more than the fact. We’ll practise alternative meanings to reduce automatic accusations.",
       "questions": [
         "What did you think about the person or situation in the moment of anger?",
         "What other explanations could there be for their behavior?"
       ],
-      "recommendation": "Cognitive flexibility reduces emotional reaction strength.\n\nIn moments of irritation, ask yourself: 'What else could this mean?' This reduces tendency toward automatic accusations.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Alternatives don’t cancel boundaries—they reduce reactivity.\n\nIn the moment:\n1) Notice the blaming thought.\n2) Ask: “What else could this mean?” (2 alternatives).\n3) Choose: clarify, set a boundary, or postpone.\n\nThis is not “excusing”. It’s not swinging blind.",
+      "mechanism": "Cognitive flexibility reduces anger intensity and escalation risk.",
+      "technique": "Cognitive restructuring (CBT)"
     },
     {
       "id": "ANGR-06",
       "level": 3,
-      "introduction": "Sometimes anger arises from mismatch between expectations and reality.",
-      "shortDescription": "Sometimes anger arises from mismatch between expectations and reality.",
+      "introduction": "Anger often grows where expectations are rigid: “they must”, “they should”, “normally you would”. The more rigid the rule, the faster the flare—especially when you’re tired. For many men it’s tied to control: if the world doesn’t comply, you want to force it. You can make expectations more flexible without becoming a doormat. In this card you’ll rewrite one rigid “must” into a preference plus a boundary.",
+      "shortDescription": "Rigid expectations fuel anger. We’ll rewrite one “must” into a flexible preference + boundary.",
       "questions": [
         "What expectation was violated in your last case of irritation?",
         "How realistic was it?"
       ],
-      "recommendation": "Rationalizing emotional attitudes.\n\nAfter each outburst, analyze whether your expectation was flexible or rigid. Adjusting expectations reduces anger triggers.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Flexibility reduces triggers. You stay firm on what matters, but stop exploding over the inevitable.\n\nDo this:\n1) Write the rigid rule.\n2) Rewrite: “It matters to me that X. If it’s not met, I will do Y.”\n3) Write one calm sentence you can say out loud.\n\nThis is strategy, not surrender.",
+      "mechanism": "Reframing rigid rules reduces reactivity and supports self-control.",
+      "technique": "Cognitive restructuring (CBT)"
     },
     {
       "id": "ANGR-07",
       "level": 4,
-      "introduction": "Being angry doesn't mean being bad. What matters is what you do with it.",
-      "shortDescription": "Being angry doesn't mean being bad. What matters is what you do with it.",
+      "introduction": "Being angry is normal. The question is where the energy goes—destruction or protection of values. If you’ve learned to “hold it”, it can come out as blow‑ups or cold silence. Either way it damages you and relationships. You need a safe release channel that doesn’t hurt anyone. In this card you’ll pick one ecological release method and schedule it so anger doesn’t pile up to an explosion.",
+      "shortDescription": "Anger is energy. We’ll choose a safe way to release it so it doesn’t accumulate into blow-ups.",
       "questions": [
         "How do you usually express anger: with words, actions, silence?",
         "What of this helps you, and what destroys relationships or yourself?"
       ],
-      "recommendation": "Find one safe release method (sports, writing, screaming into a pillow) and use it 2 times per week. Anger energy should be released ecologically.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Safe release lowers buildup and reduces the chance of an outburst.\n\nDo this (1 week):\n1) Choose one method for 10–20 minutes.\n2) Schedule it twice (before you’re at the limit).\n3) Rate anger 1–10 before/after.\n\nIf you ever feel like you might hurt someone, prioritise safety and seek help immediately.",
+      "mechanism": "Releasing arousal safely reduces impulsive behaviour risk.",
+      "technique": "Somatic regulation (ACT)"
     },
     {
       "id": "ANGR-08",
       "level": 4,
-      "introduction": "Irritation can be a hint that something's wrong with boundaries.",
+      "introduction": "A common reason for irritation is unspoken boundaries. You tolerate, act like it’s fine, and inside it builds: “I’m being used / ignored / disrespected”. Then anger fires in the wrong place—at loved ones or small things. Many men tolerate “like a man” until the lid blows. In this card you’ll pick one spot where you tolerate too long and set a preventive boundary: early, calm, clear.",
+      "shortDescription": "If you tolerate too long, anger will build. We’ll set one preventive boundary early and calmly.",
       "questions": [
         "Where do you most often endure until the last moment — then explode?",
         "How could you gently mark your boundary beforehand?"
       ],
-      "recommendation": "Preventive boundary expression reduces tension buildup.\n\nPractice the phrase: 'This doesn't work for me' — 1 time per day in safe situations. This strengthens assertiveness skills.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Preventive boundaries reduce buildup.\n\nDo this:\n1) Pick one repeating situation.\n2) Write a short boundary sentence (max ~12 words).\n3) Say it out loud 3 times.\n4) Use it once within 3 days.\n\nExample: “I’m not discussing this in that tone. Calm down or I’ll pause.”",
+      "mechanism": "Assertive boundaries reduce buildup and reactivity.",
+      "technique": "Assertive communication (CBT/ACT)"
     },
     {
       "id": "ANGR-09",
       "level": 5,
-      "introduction": "Better one experiment than a thousand theories. Time to test.",
-      "shortDescription": "Better one experiment than a thousand theories. Time to test.",
+      "introduction": "Understanding “why I’m angry” helps, but change happens when you practise a new behaviour in a familiar trigger situation. Many men respect proof over talk—good. In this card you’ll pick one common blow‑up scenario and test a new strategy for 3 days. The goal is not “never angry”. The goal is “strong without damage”.",
+      "shortDescription": "Change requires practice. We’ll run a 3‑day behavioural experiment in a common anger trigger situation.",
       "questions": [
         "In what situation do you most often lose control — and would like to react differently?",
         "How can you test a new behavioral strategy in the next 3 days?"
       ],
-      "recommendation": "Behavior changes how you interact with the world.\n\nConduct a behavioral experiment: test a new reaction in a known situation. New behavior forms new neural connections.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Experiments create new experience and new options.\n\nDo this (3 days):\n1) Define the trigger.\n2) Pick one new response.\n3) Use it at least twice.\n4) Note the result each time.\n\nUse an if‑then: “If X starts, I do Y.”",
+      "mechanism": "Behavioural experiments build new responses and reduce automatic escalation.",
+      "technique": "Behavioural experiment (CBT)"
     },
     {
       "id": "ANGR-10",
       "level": 5,
-      "introduction": "Sometimes anger is a signal that you need to protect, not destroy.",
-      "shortDescription": "Sometimes anger is a signal that you need to protect, not destroy.",
+      "introduction": "Sometimes anger is protective energy: for your boundaries, dignity, family, fairness. The problem starts when protection becomes destruction—shouting, humiliation, threats, hitting. That doesn’t mean you’re “bad”; it means you need a clear code for how you protect what matters. In this card you’ll write a simple “protection code”: what you stand for, what you do when angry, and what you don’t do—so your strength stays safe.",
+      "shortDescription": "Anger can protect values or destroy relationships. We’ll write your “protection code” so strength stays safe.",
       "questions": [
         "What or whom would you like to protect when you're angry?",
         "How can you express this protection more constructively?"
       ],
-      "recommendation": "Write a short manifesto — what you stand for and how you want to express it. Anger can become a tool of value, not destruction.",
-      "mechanism": "",
-      "technique": ""
+      "recommendation": "Rules reduce impulsivity. You know what you do when you’re heated.\n\nDo this (7 minutes):\n1) Write 3 values you protect.\n2) Write 3 actions you do when angry (constructive).\n3) Write 3 actions you don’t do (what you regret later).\n4) Practise one point this week.",
+      "mechanism": "Clear behavioural rules reduce impulsivity and increase self-control.",
+      "technique": "Values-based action (ACT)"
     }
   ]
 }
