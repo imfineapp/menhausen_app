@@ -70,6 +70,7 @@ export function ArticleScreen({
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [logoOpacity, setLogoOpacity] = useState(1);
+  const [overlayOpacity, setOverlayOpacity] = useState(0);
   const didMarkRef = useRef(false);
   const achievementCheckTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
@@ -138,12 +139,18 @@ export function ArticleScreen({
       
       if (scrollTop <= fadeStart) {
         setLogoOpacity(1);
+        setOverlayOpacity(0);
       } else if (scrollTop >= fadeEnd) {
         setLogoOpacity(0);
+        setOverlayOpacity(1);
       } else {
         // Плавное изменение прозрачности
         const opacity = 1 - (scrollTop - fadeStart) / (fadeEnd - fadeStart);
         setLogoOpacity(Math.max(0, Math.min(1, opacity)));
+
+        // Инвертированная прозрачность для верхней плашки
+        const overlay = (scrollTop - fadeStart) / (fadeEnd - fadeStart);
+        setOverlayOpacity(Math.max(0, Math.min(1, overlay)));
       }
     };
     
@@ -160,6 +167,7 @@ export function ArticleScreen({
     return (
       <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
         <BackButton onBack={handleBack} />
+        
         <div style={{ opacity: logoOpacity, transition: 'opacity 0.2s ease-out' }}>
           <MiniStripeLogo />
         </div>
@@ -187,6 +195,23 @@ export function ArticleScreen({
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
       {/* Telegram Back Button */}
       <BackButton onBack={handleBack} />
+      
+      {/* Верхняя градиентная плашка для отделения системной шторки */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '100px',
+          zIndex: 20,
+          pointerEvents: 'none',
+          opacity: overlayOpacity,
+          transition: 'opacity 0.2s ease-out',
+          backgroundImage:
+            'linear-gradient(to bottom, #111111 0%, #111111 40%, rgba(17,17,17,0.8) 70%, rgba(17,17,17,0) 100%)'
+        }}
+      />
       
       {/* Logo with dynamic opacity */}
       <div style={{ opacity: logoOpacity, transition: 'opacity 0.2s ease-out' }}>
