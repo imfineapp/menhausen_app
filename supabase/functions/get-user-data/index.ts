@@ -235,6 +235,7 @@ async function fetchAllUserData(supabase: any, telegramUserId: number): Promise<
       theme: preferences.theme || 'light',
       notifications: preferences.notifications ?? true,
       analytics: preferences.analytics ?? false,
+      articleFontSizeStep: preferences.article_font_size ?? 0,
     };
   }
 

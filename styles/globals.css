@@ -852,6 +852,50 @@ body,
     text-rendering: optimizelegibility;
   }
 
+  /* Article content: размер текста от кнопок A−/A+ (--article-body-font-size задаётся inline) */
+  .article-content,
+  .article-content p,
+  .article-content li,
+  .article-content ul,
+  .article-content h1,
+  .article-content h2,
+  .article-content h3,
+  .article-content .typography-h1,
+  .article-content .typography-h2,
+  .article-content .typography-h3 {
+    font-size: var(--article-body-font-size, 18px) !important;
+  }
+
+  /* Отступы в em, чтобы масштабировались вместе с размером текста */
+  .article-content p {
+    margin-bottom: 1em !important;
+  }
+  .article-content p:last-child {
+    margin-bottom: 0 !important;
+  }
+  .article-content .typography-h1,
+  .article-content .typography-h2 {
+    margin-top: 1.25em !important;
+    margin-bottom: 0.5em !important;
+  }
+  .article-content .typography-h1:first-child,
+  .article-content .typography-h2:first-child {
+    margin-top: 0 !important;
+  }
+  .article-content .typography-h3 {
+    margin-top: 0.75em !important;
+    margin-bottom: 0.4em !important;
+  }
+  .article-content ul {
+    margin-bottom: 1em !important;
+  }
+  .article-content li {
+    margin-bottom: 0.35em !important;
+  }
+  .article-content li:last-child {
+    margin-bottom: 0 !important;
+  }
+
   /* Утилитарные классы для специальных случаев */
   .typography-responsive {
     font-size: clamp(14px, 2.5vw, 18px);

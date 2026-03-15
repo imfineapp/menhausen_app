@@ -94,7 +94,8 @@ describe('CriticalDataManager', () => {
         language: 'en',
         theme: 'light',
         notifications: true,
-        analytics: false
+        analytics: false,
+        articleFontSizeStep: 0
       });
     });
 
