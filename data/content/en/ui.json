@@ -66,7 +66,28 @@
                                                          "title":  "Grounding techniques",
                                                          "description":  "Ground yourself in the present moment with proven techniques."
                                                      }
-                                   }
+                                   },
+                 "tour":  {
+                                  "step1":  {
+                                                    "title":  "Your profile",
+                                                    "description":  "This is your profile. Tap here to open your level, subscription and settings. Come back whenever you want to change something or check your progress."
+                                                },
+                                  "step2":  {
+                                                    "title":  "Points and check-ins",
+                                                    "description":  "Here are your points and check-ins. You earn points for check-ins and exercises; they help you level up. The grid shows which days you checked in. Consistency helps you track how you're doing."
+                                                },
+                                  "step3":  {
+                                                    "title":  "Articles",
+                                                    "description":  "These are articles — short reads for your mind and mood. Open any one: you'll find simple ideas and practices you can try right away."
+                                                },
+                                  "step4":  {
+                                                    "title":  "Themes and cards",
+                                                    "description":  "Below are themes like stress, relationships and more. Scroll down to see them. Each theme has cards with exercises: open one and follow the steps."
+                                                },
+                                  "next":  "Next",
+                                  "skip":  "Skip",
+                                  "finish":  "Done"
+                                }
              },
     "profile":  {
                     "title":  "Profile",
