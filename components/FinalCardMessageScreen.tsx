@@ -2,9 +2,8 @@
 // import { useState } from 'react';
 import { useTranslation } from './LanguageContext';
 import { BottomFixedButton } from "./BottomFixedButton";
-import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { Light } from './Light';
 import { useContent } from './ContentContext';
+import { FormScreenLayout } from './FormScreenLayout';
 
 // Типы для пропсов компонента
 interface FinalCardMessageScreenProps {
@@ -36,18 +35,18 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
   
   return (
     <div
-      className="absolute box-border content-stretch flex flex-col gap-5 items-center justify-center leading-[0] left-1/2 transform -translate-x-1/2 p-0 top-[210px] sm:top-[230px] md:top-[241px] w-full max-w-[351px] px-4 sm:px-6 md:px-0"
+      className="box-border content-stretch flex flex-col gap-5 items-start justify-start w-full mt-[70px]"
       data-name="Container"
     >
       {/* Заголовок с итоговым сообщением */}
-      <div className="typography-h2 text-[#e1ff00] w-full text-left">
+      <div className="typography-h2 text-[#e1ff00] w-full text-left break-words">
         <h2 className="block">
           {finalMessage}
         </h2>
       </div>
       
       {/* Блок с задачами и объяснением */}
-      <div className="typography-body text-[#ffffff] w-full text-left">
+      <div className="typography-body text-[#ffffff] w-full text-left break-words whitespace-pre-wrap">
         {/* Практическое задание */}
         <p className="block mb-0 typography-body">
           {practiceTask}
@@ -105,27 +104,19 @@ export function FinalCardMessageScreen({
   };
 
   return (
-    <div 
-      className="bg-[#111111] relative size-full min-h-screen" 
-      data-name="Final card message"
+    <FormScreenLayout
+      dataName="Final card message"
+      bottomActions={
+        <BottomFixedButton onClick={handleNext}>
+          {t('next')}
+        </BottomFixedButton>
+      }
     >
-      {/* Световые эффекты фона */}
-      <Light />
-      
-      {/* Мини-логотип */}
-      <MiniStripeLogo />
-      
-      {/* Контентный блок с итоговым сообщением */}
       <Container 
         finalMessage={finalMessage || defaultFinalMessage}
         practiceTask={practiceTask || defaultPracticeTask}
         whyExplanation={whyExplanation || defaultWhyExplanation}
       />
-      
-      {/* Bottom Fixed CTA Button согласно Guidelines.md */}
-      <BottomFixedButton onClick={handleNext}>
-        {t('next')}
-      </BottomFixedButton>
-    </div>
+    </FormScreenLayout>
   );
 }
