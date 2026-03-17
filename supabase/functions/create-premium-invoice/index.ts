@@ -102,19 +102,19 @@ async function determineBotInfo(initData: string): Promise<{ id: number; usernam
 function getPlanConfig(planType: 'monthly' | 'annually' | 'lifetime', isTestBot: boolean) {
   const plans = {
     monthly: {
-      price: isTestBot ? 1 : 150, // 1 Star for test bots, 150 for production
+      price: isTestBot ? 1 : 449, // 1 Star for test bots, 449 for production
       label: 'Premium Monthly',
       title: 'Premium Monthly Subscription',
       description: 'Unlock all themes and premium features for 1 month'
     },
     annually: {
-      price: isTestBot ? 1 : 1500, // 1 Star for test bots, 1500 for production
+      price: isTestBot ? 1 : 2999, // 1 Star for test bots, 2999 for production
       label: 'Premium Annual',
       title: 'Premium Annual Subscription',
-      description: 'Unlock all themes and premium features for 1 year. Save 16%!'
+      description: 'Unlock all themes and premium features for 1 year. Save 44%!'
     },
     lifetime: {
-      price: isTestBot ? 1 : 2500, // 1 Star for test bots, 2500 for production
+      price: isTestBot ? 1 : 11999, // 1 Star for test bots, 11999 for production
       label: 'Premium Lifetime',
       title: 'Premium Lifetime Subscription',
       description: 'Unlock all themes and premium features forever'

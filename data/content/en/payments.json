@@ -26,6 +26,7 @@
     "confidence": "Lack and self-confidence",
     "relationships": "Relationships and family"
   },
+  "starsInfo": "Payments are made in Telegram Stars (⭐). This is a one-time payment with no auto-renewal.",
   "plans": {
     "monthly": "Monthly",
     "annually": "Annually",
@@ -45,13 +46,14 @@
     "error": "An error occurred while processing your purchase. Please try again."
   },
   "legal": {
-    "disclaimer": "Payments renew automatically. You can cancel anytime in settings.",
+    "disclaimer": "Payments are made in Telegram Stars. This is a one-time payment with no automatic renewals. See Terms and Privacy Policy for details.",
     "termsText": "Terms of Use",
     "privacyText": "Privacy Policy",
     "termsHref": "/terms",
     "privacyHref": "/privacy"
   },
   "promo": {
+    "havePromoLink": "I have a promo code",
     "placeholder": "Promo code",
     "apply": "Apply",
     "applied": "Promo applied",
