@@ -10,6 +10,12 @@ import { ThemeCard } from './ThemeCard';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { getAchievementsToShow, markAchievementsAsShown } from '../services/achievementDisplayService';
 import { AppScreen } from '../types/userState';
+import { criticalDataManager } from '../utils/dataManager';
+
+/** Article body font size (px) by step: -1 = small, 0 = medium, 1 = large */
+const ARTICLE_FONT_SIZES: Record<number, number> = { [-1]: 14, 0: 18, 1: 22 };
+const ARTICLE_FONT_STEP_MIN = -1;
+const ARTICLE_FONT_STEP_MAX = 1;
 
 interface ArticleScreenProps {
   articleId: string;
@@ -70,6 +76,7 @@ export function ArticleScreen({
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [logoOpacity, setLogoOpacity] = useState(1);
+  const [articleFontStep, setArticleFontStep] = useState(0);
   const [overlayOpacity, setOverlayOpacity] = useState(0);
   const didMarkRef = useRef(false);
   const achievementCheckTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -96,6 +103,26 @@ export function ArticleScreen({
       }
     };
   }, [article, checkAndShowAchievements]);
+
+  // Load and persist article font size from preferences
+  useEffect(() => {
+    criticalDataManager.loadUserPreferences().then((prefs) => {
+      const step = prefs.articleFontSizeStep ?? 0;
+      const clamped = Math.max(ARTICLE_FONT_STEP_MIN, Math.min(ARTICLE_FONT_STEP_MAX, step));
+      setArticleFontStep(clamped);
+    });
+  }, []);
+
+  const handleArticleFontSizeChange = (delta: number) => {
+    setArticleFontStep((prev) => {
+      const next = Math.max(ARTICLE_FONT_STEP_MIN, Math.min(ARTICLE_FONT_STEP_MAX, prev + delta));
+      if (next === prev) return prev;
+      criticalDataManager.loadUserPreferences().then((prefs) => {
+        criticalDataManager.saveUserPreferences({ ...prefs, articleFontSizeStep: next });
+      });
+      return next;
+    });
+  };
   
   // Обработчик кнопки "назад" с проверкой достижений
   const handleBack = () => {
@@ -231,11 +258,37 @@ export function ArticleScreen({
               <p className="typography-body text-[#696969] mb-6">
                 {articlePreview}
               </p>
+              {/* Article text size controls */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  aria-label="Уменьшить размер текста"
+                  onClick={() => handleArticleFontSizeChange(-1)}
+                  disabled={articleFontStep <= ARTICLE_FONT_STEP_MIN}
+                  className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
+                >
+                  A−
+                </button>
+                <button
+                  type="button"
+                  aria-label="Увеличить размер текста"
+                  onClick={() => handleArticleFontSizeChange(1)}
+                  disabled={articleFontStep >= ARTICLE_FONT_STEP_MAX}
+                  className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
+                >
+                  A+
+                </button>
+              </div>
             </div>
             
-            {/* Article Content */}
-            <div 
-              className="typography-body text-[#ffffff] prose prose-invert max-w-none"
+            {/* Article Content — размер задаётся через CSS-переменную, чтобы переопределить .typography-body и .prose у потомков */}
+            <div
+              className="article-content typography-body text-[#ffffff] prose prose-invert max-w-none"
+              style={
+                {
+                  ['--article-body-font-size' as string]: `${ARTICLE_FONT_SIZES[articleFontStep] ?? 18}px`,
+                } as React.CSSProperties
+              }
               dangerouslySetInnerHTML={{ __html: formattedContent }}
             />
             

@@ -228,6 +228,7 @@ async function syncPreferences(supabase: any, telegramUserId: number, data: any)
       theme: data.theme || 'light',
       notifications: data.notifications !== undefined ? data.notifications : true,
       analytics: data.analytics !== undefined ? data.analytics : false,
+      article_font_size: data.articleFontSizeStep ?? 0,
     }, {
       onConflict: 'telegram_user_id',
     });

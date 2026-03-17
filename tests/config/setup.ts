@@ -435,6 +435,7 @@ export const createMockUserPreferences = () => ({
   theme: 'light',
   notifications: true,
   analytics: false,
+  articleFontSizeStep: 0,
 });
 
 export const createMockProgressData = () => ({

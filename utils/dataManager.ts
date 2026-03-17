@@ -39,6 +39,8 @@ interface UserPreferences {
   theme: string;
   notifications: boolean;
   analytics: boolean;
+  /** Article body text size step: -1 (small), 0 (medium), 1 (large). Default 0. */
+  articleFontSizeStep?: number;
 }
 
 interface ProgressData {
@@ -242,11 +244,15 @@ export class CriticalDataManager {
 
   async loadUserPreferences(): Promise<UserPreferences> {
     const preferences = await this.loadCriticalData<UserPreferences>('user_preferences');
-    return preferences || {
+    const base = preferences || {
       language: 'en',
       theme: 'light',
       notifications: true,
       analytics: false
+    };
+    return {
+      ...base,
+      articleFontSizeStep: base.articleFontSizeStep ?? 0
     };
   }
 
