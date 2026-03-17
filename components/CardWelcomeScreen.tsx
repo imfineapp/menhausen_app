@@ -43,7 +43,7 @@ function CardDescription({ description }: { description: string }) {
       data-name="Card Description"
     >
       <div className="typography-body h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] text-[#ffffff] text-center">
-        <p className="block">{description}</p>
+        <p className="block whitespace-pre-line">{description}</p>
       </div>
     </div>
   );

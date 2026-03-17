@@ -49,13 +49,13 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
       {/* Блок с задачами и объяснением */}
       <div className="typography-body text-[#ffffff] w-full text-left">
         {/* Практическое задание */}
-        <p className="block mb-0 typography-body">
+        <p className="block mb-0 typography-body whitespace-pre-line">
           {practiceTask}
         </p>
         <p className="block mb-0 typography-body">&nbsp;</p>
         
         {/* Объяснение "Почему" */}
-        <p className="typography-body">
+        <p className="typography-body whitespace-pre-line">
           <span className="text-[#e1ff00]">{content.ui.cards.final.why}</span>
           <span> {whyExplanation}</span>
         </p>

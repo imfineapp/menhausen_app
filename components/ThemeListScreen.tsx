@@ -109,7 +109,7 @@ function ThemeCard({ theme, onClick }: { theme: ThemeData; onClick: () => void }
           {theme.title}
         </h2>
         
-        <p className="text-gray-300 mb-4 text-sm">
+        <p className="text-gray-300 mb-4 text-sm whitespace-pre-line">
           {theme.description}
         </p>
         

@@ -616,7 +616,7 @@ export function ThemeHomeScreen({
             
             {/* Описание темы */}
             <div className="mb-6">
-              <p className="typography-body text-white text-center">
+              <p className="typography-body text-white text-center whitespace-pre-line">
                 {theme.description}
               </p>
             </div>

@@ -35,7 +35,7 @@ function CardInfo({ cardTitle, cardDescription }: { cardTitle: string; cardDescr
       </div>
       {cardDescription && (
         <div className="typography-body text-[#cfcfcf] text-left w-full">
-          <p className="block">{cardDescription}</p>
+          <p className="block whitespace-pre-line">{cardDescription}</p>
         </div>
       )}
       <div className="bg-[#ffffff] relative shrink-0 w-full" data-name="Separation Line">

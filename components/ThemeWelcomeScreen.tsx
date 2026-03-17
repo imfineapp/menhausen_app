@@ -112,7 +112,7 @@ export function ThemeWelcomeScreen({
               <h1 className="typography-h1 text-brand-primary mb-6">
                 {themeData ? themeData.title : themeTitle}
               </h1>
-              <p className="typography-body text-white">
+              <p className="typography-body text-white whitespace-pre-line">
                 {isThemeLocked ? 'Unlock this theme to get started' : welcomeMessage}
               </p>
             </div>
