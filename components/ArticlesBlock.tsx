@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useContent, useArticles } from './ContentContext';
 import { useAchievements } from '../contexts/AchievementsContext';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
+import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 	
 interface ArticlesBlockProps {
   onArticleClick: (articleId: string) => void;
@@ -303,10 +304,11 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
         onPointerLeave={handlePointerLeave}
         data-name="Articles Slider"
       >
-        {articles.map((article, index) => {
-  const order = article.order ?? (index + 1);
-  const required = getRequiredPointsForArticle(order);
-  const locked = isArticleLocked(order, totalXP);
+        {articles.map((article) => {
+  const order = article.order;
+  const isPinned = (PINNED_ARTICLE_IDS as unknown as string[]).includes(article.id);
+  const required = isPinned ? 0 : getRequiredPointsForArticle(order);
+  const locked = isPinned ? false : isArticleLocked(order, totalXP);
   return (
     <div
       key={article.id}

@@ -3,6 +3,7 @@
  */
 
 import { UserStats } from '../types/achievements';
+import { NON_ACHIEVEMENT_ARTICLE_IDS } from '../utils/articlesList';
 
 const STORAGE_KEY = 'menhausen_user_stats';
 const STORAGE_VERSION = 1;
@@ -200,19 +201,37 @@ export function addTopicRepeated(topicId: string): UserStats {
  * Идемпотентная отметка статьи как прочитанной (с учётом уникальности)
  */
 export function markArticleRead(articleId: string): UserStats {
-  return updateUserStats((current) => {
+  const next = updateUserStats((current) => {
     const readIds = Array.isArray(current.readArticleIds) ? current.readArticleIds : [];
     if (readIds.includes(articleId)) {
       return current;
     }
     const nextReadIds = [...new Set([...readIds, articleId])];
+    const eligibleReadCount = nextReadIds.filter(
+      (id) => !NON_ACHIEVEMENT_ARTICLE_IDS.includes(id as any)
+    ).length;
     return {
       ...current,
       readArticleIds: nextReadIds,
-      // держим счетчик в соответствии с источником истины — массивом id
-      articlesRead: nextReadIds.length
+      // счетчик для достижений: исключаем служебные статьи
+      articlesRead: eligibleReadCount
     };
   });
+  
+  // Триггерим событие обновления статистики для реактивного UI в этой же вкладке.
+  // storage event обычно срабатывает только между вкладками, поэтому диспатчим вручную.
+  try {
+    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'menhausen_user_stats',
+        newValue: JSON.stringify(next),
+      }));
+    }
+  } catch {
+    // ignore — event dispatch is best-effort
+  }
+
+  return next;
 }
 
 /**

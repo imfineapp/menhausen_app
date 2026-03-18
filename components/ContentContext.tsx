@@ -6,6 +6,9 @@ import React, { createContext, useContext, useState, useCallback, useEffect, Rea
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
 import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
+import { loadUserStats } from '../services/userStatsService';
+import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
+import { sortArticlesForDisplay } from '../utils/articleOrdering';
 // Моки больше не используются - все тесты используют реальный контент
 
 /**
@@ -914,10 +917,33 @@ export function useMentalTechniquesMenu() {
  */
 export function useArticles() {
   const { getAllArticles, getLocalizedText } = useContent();
-  
+
+  const [readArticleIdsSnapshot, setReadArticleIdsSnapshot] = useState<string[]>(() => {
+    const stats = loadUserStats();
+    return Array.isArray(stats.readArticleIds) ? stats.readArticleIds : [];
+  });
+
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key !== 'menhausen_user_stats') return;
+      const stats = loadUserStats();
+      setReadArticleIdsSnapshot(Array.isArray(stats.readArticleIds) ? stats.readArticleIds : []);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   const articles = getAllArticles();
-  
-  return articles.map(article => ({
+  const sorted = sortArticlesForDisplay({
+    articles,
+    readArticleIds: readArticleIdsSnapshot,
+    pinnedArticleIds: PINNED_ARTICLE_IDS,
+  });
+
+  return sorted.map(article => ({
     id: article.id,
     title: getLocalizedText(article.title),
     preview: getLocalizedText(article.preview),
