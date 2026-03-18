@@ -3,8 +3,10 @@ import {
   loadUserStats, 
   resetUserStats,
   markCardAsOpened,
+  markArticleRead,
   incrementCardsOpened
 } from '../../services/userStatsService';
+import { NON_ACHIEVEMENT_ARTICLE_IDS } from '../../utils/articlesList';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -81,6 +83,44 @@ describe('userStatsService - markCardAsOpened', () => {
     const stats = loadUserStats();
     expect(stats.openedCardIds).toContain(cardId);
     expect(stats.cardsOpened[themeId]).toBe(1);
+  });
+});
+
+describe('userStatsService - markArticleRead', () => {
+  beforeEach(() => {
+    localStorageMock.clear();
+    resetUserStats();
+  });
+
+  it('should add article id to readArticleIds idempotently', () => {
+    markArticleRead('stress-management');
+    markArticleRead('stress-management');
+
+    const stats = loadUserStats();
+    expect(stats.readArticleIds).toContain('stress-management');
+    expect(stats.readArticleIds?.length).toBe(1);
+  });
+
+  it('should NOT increase articlesRead for non-achievement (pinned) articles', () => {
+    const pinnedId = NON_ACHIEVEMENT_ARTICLE_IDS[0];
+
+    markArticleRead(pinnedId);
+
+    const stats = loadUserStats();
+    expect(stats.readArticleIds).toContain(pinnedId);
+    expect(stats.articlesRead).toBe(0);
+  });
+
+  it('should increase articlesRead only for eligible articles', () => {
+    // read 1 pinned + 2 eligible
+    markArticleRead(NON_ACHIEVEMENT_ARTICLE_IDS[0]);
+    markArticleRead('stress-management');
+    markArticleRead('anxiety-coping');
+
+    const stats = loadUserStats();
+    expect(stats.readArticleIds).toContain('stress-management');
+    expect(stats.readArticleIds).toContain('anxiety-coping');
+    expect(stats.articlesRead).toBe(2);
   });
 });
 

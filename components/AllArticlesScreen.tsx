@@ -7,6 +7,7 @@ import { BackButton } from './ui/back-button';
 import { useContent, useArticles } from './ContentContext';
 import { useAchievements } from '../contexts/AchievementsContext';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
+import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 	
 interface AllArticlesScreenProps {
   onBack: () => void;
@@ -164,10 +165,11 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
               </div>
             ) : (
               <div className="space-y-4">
-                {articles.map((article, idx) => {
-  const order = article.order ?? (idx + 1);
-  const required = getRequiredPointsForArticle(order);
-  const locked = isArticleLocked(order, totalXP);
+                {articles.map((article) => {
+  const order = article.order;
+  const isPinned = (PINNED_ARTICLE_IDS as unknown as string[]).includes(article.id);
+  const required = isPinned ? 0 : getRequiredPointsForArticle(order);
+  const locked = isPinned ? false : isArticleLocked(order, totalXP);
   return (
     <ArticleListItem 
       key={article.id}
