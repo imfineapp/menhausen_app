@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './styles/globals.css'
 import { fontLoader } from './utils/fontLoader'
+import TelegramAnalytics from '@telegram-apps/analytics'
 import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react'
 import { isAnalyticsEnabled } from './utils/analytics/posthog'
 import { ErrorFallback } from './components/ErrorFallback'
@@ -13,6 +14,23 @@ const root = document.getElementById('root')
 
 if (!root) {
   throw new Error('Root element not found')
+}
+
+// Initialize Telegram Mini Apps Analytics SDK before first render.
+// Must be executed before ReactDOM.createRoot(...).render(...) so that
+// auto-tracked events (e.g. app open) are captured correctly.
+try {
+  const tgAnalyticsToken = (import.meta as any).env?.VITE_TG_ANALYTICS_TOKEN as string | undefined
+  if (tgAnalyticsToken && typeof window !== 'undefined' && !(window as any).__TG_ANALYTICS_INIT) {
+    ;(window as any).__TG_ANALYTICS_INIT = true
+    TelegramAnalytics.init({
+      token: tgAnalyticsToken,
+      appName: 'menhausen',
+    })
+  }
+} catch (e) {
+  // Swallow analytics init errors to avoid breaking UX.
+  console.warn('TelegramAnalytics init error:', e)
 }
 
 // Simple Error Boundary for when PostHog is not enabled
