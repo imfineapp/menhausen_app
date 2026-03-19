@@ -54,7 +54,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/supabase-js": "^2.87.1",
     "@tailwindcss/vite": "^4.1.12",
-    "@telegram-apps/analytics": "^1.6.4",
+    "@telegram-apps/analytics": "^1.4.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^1.1.1",
