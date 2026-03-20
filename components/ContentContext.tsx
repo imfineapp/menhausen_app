@@ -2,10 +2,11 @@
 // REACT КОНТЕКСТ ДЛЯ УПРАВЛЕНИЯ КОНТЕНТОМ И ЯЗЫКОМ
 // ========================================================================================
 
-import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useCallback, useEffect, useState, ReactNode } from 'react';
+import { useStore } from '@nanostores/react';
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
-import { loadContentWithCache } from '../utils/contentLoader';
 import { useLanguage } from './LanguageContext';
+import { $content, $contentError, $isContentLoading, loadContentForLanguage } from '@/src/stores/content.store';
 import { loadUserStats } from '../services/userStatsService';
 import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 import { sortArticlesForDisplay } from '../utils/articleOrdering';
@@ -29,53 +30,10 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const currentLanguage = language as SupportedLanguage;
   console.log('ContentProvider: Current language from LanguageContext:', currentLanguage);
   
-  // Состояние загруженного контента
-  const [content, setContent] = useState<AppContent | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Ref для отслеживания монтирования компонента
-  const isMountedRef = React.useRef(true);
-
-  // Устанавливаем isMountedRef в false при размонтировании
-  React.useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  // Used to ignore stale async loads when the language changes quickly.
-  const latestLoadIdRef = React.useRef(0)
-
-  /**
-   * Загрузка контента для текущего языка
-   */
-  const loadContentForLanguage = useCallback(async (language: SupportedLanguage, loadId: number) => {
-    try {
-      console.log(`ContentContext: loadContentForLanguage called with language: ${language}`);
-      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
-        setIsLoading(true);
-        setError(null);
-      }
-      const loadedContent = await loadContentWithCache(language);
-      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
-        setContent(loadedContent);
-        console.log(`ContentContext: Content loaded successfully for language: ${language}`);
-        console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
-      }
-    } catch (err) {
-      const errorMessage = `Failed to load content for language: ${language}`;
-      console.error('ContentContext:', errorMessage, err);
-      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
-        setError(errorMessage);
-      }
-    } finally {
-      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
-        setIsLoading(false);
-      }
-    }
-  }, []);
+  // Nanostores as the single source of truth for content loading state.
+  const content = useStore($content);
+  const isLoading = useStore($isContentLoading);
+  const error = useStore($contentError);
 
   /**
    * Изменение языка приложения
@@ -84,29 +42,6 @@ export function ContentProvider({ children }: ContentProviderProps) {
     // Используем функцию из LanguageContext
     setLanguageFromContext(language as 'en' | 'ru');
   }, [setLanguageFromContext]);
-
-  // Загружаем контент при изменении языка
-  const loadedLanguageRef = React.useRef<SupportedLanguage | null>(null);
-  
-  useEffect(() => {
-    // Check if content for this language is already loaded
-    if (loadedLanguageRef.current === currentLanguage && content) {
-      console.log('ContentContext: Content already loaded for language:', currentLanguage);
-      return;
-    }
-    
-    console.log('ContentContext: useEffect triggered, language:', currentLanguage);
-    const loadId = ++latestLoadIdRef.current;
-
-    // Note: loader itself guards against stale loads via `latestLoadIdRef`.
-    loadContentForLanguage(currentLanguage, loadId).then(() => {
-      if (loadedLanguageRef.current !== currentLanguage && latestLoadIdRef.current === loadId) {
-        loadedLanguageRef.current = currentLanguage;
-      }
-    }).catch(() => {
-      // Errors are handled inside `loadContentForLanguage`.
-    });
-  }, [currentLanguage, loadContentForLanguage, content]);
 
   /**
    * Получение локализованного текста для текущего языка
@@ -643,7 +578,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         <div className="text-center">
           <div className="text-lg text-red-600">Error loading content: {error}</div>
           <button 
-            onClick={() => loadContentForLanguage(currentLanguage, ++latestLoadIdRef.current)}
+            onClick={() => loadContentForLanguage(currentLanguage)}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Retry
