@@ -78,6 +78,8 @@ import {
   goBack,
 } from './src/stores/navigation.store'
 
+import { $isPremium, setPremium } from './src/stores/premium.store'
+
 import {
   $flowProgress,
   refreshFlowProgress,
@@ -454,12 +456,11 @@ function AppContent() {
     const loadAllUserData = async (): Promise<void> => {
       try {
         console.log('[App] Loading all user data from Supabase...');
-        const { getSyncService } = await import('./utils/supabaseSync');
-        const syncService = getSyncService();
         const syncStartTime = Date.now();
         
         // Load all data using initialSync (includes all user data)
-        const result = await syncService.initialSync();
+        const { initSync } = await import('./src/stores/sync.store')
+        const result = await initSync()
         const syncDuration = Date.now() - syncStartTime;
         
         console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success);
@@ -540,126 +541,17 @@ function AppContent() {
 
     // Start initialization
     initializeApp();
-    
-    // Load premium status from Supabase after sync
-    // Falls back to localStorage if Supabase is unavailable (offline mode)
-    const loadPremiumStatus = async () => {
-      try {
-        const { getSyncService } = await import('./utils/supabaseSync');
-        const syncService = getSyncService();
-        // Get premium status from get-user-data (includes signature)
-        const result = await syncService.fetchUserData();
-        
-        if (result?.premiumSignature) {
-          // Verify signature and use signed data
-          const { verifyPremiumSignature, savePremiumSignatureToStorage } = await import('./utils/premiumSignature');
-          const isValid = await verifyPremiumSignature(result.premiumSignature);
-          
-          if (isValid) {
-            console.log('[App] Premium status loaded from Supabase with valid signature:', result.premiumSignature.data.premium);
-            setUserHasPremium(result.premiumSignature.data.premium);
-            // Save signed data
-            savePremiumSignatureToStorage(result.premiumSignature);
-            // Also update legacy format for backward compatibility
-            localStorage.setItem('user-premium-status', result.premiumSignature.data.premium ? 'true' : 'false');
-          } else {
-            console.warn('[App] Premium signature verification failed, using unsigned data');
-            // Signature invalid - use unsigned data but log warning
-            if (result?.hasPremium !== undefined) {
-              setUserHasPremium(result.hasPremium);
-              localStorage.setItem('user-premium-status', result.hasPremium ? 'true' : 'false');
-            }
-          }
-        } else if (result?.hasPremium !== undefined) {
-          // No signature - use unsigned data (backward compatibility)
-          console.log('[App] Premium status loaded from Supabase (unsigned):', result.hasPremium);
-          setUserHasPremium(result.hasPremium);
-          localStorage.setItem('user-premium-status', result.hasPremium ? 'true' : 'false');
-        } else {
-          // No data from Supabase - try verified localStorage, then fallback to legacy
-          const { getVerifiedPremiumStatus } = await import('./utils/premiumSignature');
-          const verified = await getVerifiedPremiumStatus();
-          
-          if (verified) {
-            console.log('[App] Premium status loaded from verified localStorage:', verified.premium);
-            setUserHasPremium(verified.premium);
-          } else {
-            // Fallback to legacy format
-            const localPremiumStatus = localStorage.getItem('user-premium-status') === 'true';
-            console.log('[App] Premium status not available from Supabase, using localStorage value:', localPremiumStatus);
-            setUserHasPremium(localPremiumStatus);
-          }
-        }
-      } catch (error) {
-        // Network error or Supabase unavailable - try verified localStorage, then fallback
-        try {
-          const { getVerifiedPremiumStatus } = await import('./utils/premiumSignature');
-          const verified = await getVerifiedPremiumStatus();
-          if (verified) {
-            console.log('[App] Premium status loaded from verified localStorage (offline):', verified.premium);
-            setUserHasPremium(verified.premium);
-          } else {
-            // Fallback to legacy format
-            const localPremiumStatus = localStorage.getItem('user-premium-status') === 'true';
-            console.warn('[App] Failed to load premium status from Supabase (offline mode), using localStorage:', localPremiumStatus, error);
-            setUserHasPremium(localPremiumStatus);
-          }
-        } catch (verifyError) {
-          // Verification failed - use legacy format
-          const localPremiumStatus = localStorage.getItem('user-premium-status') === 'true';
-          console.warn('[App] Failed to verify premium status, using legacy localStorage:', localPremiumStatus, verifyError);
-          setUserHasPremium(localPremiumStatus);
-        }
-      }
-    };
-    
-    // Load premium status after sync completes (in performBackgroundSync)
-    // Also load immediately if sync already completed
+
+    // Load premium status after sync completes.
+    // The premium store listens for `premium:activated` and keeps local state in sync.
     const checkPremiumAfterSync = async () => {
-      // Wait a bit for sync to potentially complete
       await new Promise(resolve => setTimeout(resolve, 2000));
-      await loadPremiumStatus();
-    };
-    checkPremiumAfterSync();
-    
-    // Listen for premium activation events
-    const handlePremiumActivated = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      console.log('[App] Premium activated event received:', customEvent.detail);
-      setUserHasPremium(true);
-      // Save legacy format for backward compatibility
-      localStorage.setItem('user-premium-status', 'true');
-      if (customEvent.detail?.planType) {
-        localStorage.setItem('user-premium-plan', customEvent.detail.planType);
-      }
-      localStorage.setItem('user-premium-purchased-at', new Date().toISOString());
-      
-      // Reload premium status with signature from Supabase
-      // This will get the signed data from get-user-data
-      setTimeout(async () => {
-        try {
-          const { getSyncService } = await import('./utils/supabaseSync');
-          const syncService = getSyncService();
-          const result = await syncService.fetchUserData();
-          if (result?.premiumSignature) {
-            const { verifyPremiumSignature, savePremiumSignatureToStorage } = await import('./utils/premiumSignature');
-            const isValid = await verifyPremiumSignature(result.premiumSignature);
-            if (isValid) {
-              savePremiumSignatureToStorage(result.premiumSignature);
-              console.log('[App] Premium signature saved after activation');
-            }
-          }
-        } catch (error) {
-          console.warn('[App] Failed to load premium signature after activation:', error);
-        }
-      }, 1000);
-    };
-    
-    window.addEventListener('premium:activated', handlePremiumActivated);
-    
-    return () => {
-      window.removeEventListener('premium:activated', handlePremiumActivated);
-    };
+      const { loadPremiumFromSupabase } = await import('./src/stores/premium.store')
+      await loadPremiumFromSupabase()
+    }
+    checkPremiumAfterSync()
+
+    return () => {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Вызывается только при монтировании компонента
 
@@ -762,6 +654,7 @@ function AppContent() {
   const currentScreen = useStore($currentScreen)
   const navigationHistory = useStore($navigationHistory)
   const isNavigatingForward = useStore($isNavigatingForward)
+  const userHasPremium = useStore($isPremium)
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
@@ -773,36 +666,6 @@ function AppContent() {
   const [_cardRating, setCardRating] = useState<number>(0);
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set());
   const [_cardCompletionCounts, setCardCompletionCounts] = useState<Record<string, number>>({});
-  // Load premium status from localStorage on initialization
-  // Try to load verified premium status from signature, fallback to legacy format
-  const [userHasPremium, setUserHasPremium] = useState<boolean>(() => {
-    try {
-      // Initial load from legacy format (will be updated by verification in useEffect)
-      const saved = localStorage.getItem('user-premium-status');
-      return saved === 'true';
-    } catch (error) {
-      console.error('Failed to load premium status from localStorage:', error);
-      return false;
-    }
-  });
-
-  // Verify premium signature on mount (if available)
-  useEffect(() => {
-    const verifyStoredSignature = async () => {
-      try {
-        const { getVerifiedPremiumStatus } = await import('./utils/premiumSignature');
-        const verified = await getVerifiedPremiumStatus();
-        if (verified) {
-          console.log('[App] Verified premium status from signature:', verified.premium);
-          setUserHasPremium(verified.premium);
-        }
-      } catch {
-        // Verification failed or not available - use legacy format
-        console.log('[App] Premium signature verification not available, using legacy format');
-      }
-    };
-    verifyStoredSignature();
-  }, []);
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<string[]>([]);
   const [_hasShownFirstAchievement, setHasShownFirstAchievement] = useState<boolean>(() => {
     try {
@@ -2266,7 +2129,7 @@ function AppContent() {
     setCardRating(0);
     setCurrentCard({id: ''});
     setCurrentCheckin({id: ''});
-    setUserHasPremium(false);
+    setPremium(false, { source: 'unknown' });
     
     // Очищаем данные психологического теста
     clearTestResults();
@@ -2341,7 +2204,7 @@ function AppContent() {
 
   const handlePurchaseComplete = () => {
     console.log('Premium purchase completed, updating user subscription status');
-    setUserHasPremium(true);
+    setPremium(true, { source: 'telegramEvent' });
     // Если пользователь покупал премиум из контекста темы, возвращаем его в текущую тему
     if (currentTheme) {
       navigateTo('theme-home');
