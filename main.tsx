@@ -5,9 +5,9 @@ import './styles/globals.css'
 import { fontLoader } from './utils/fontLoader'
 import TelegramAnalytics from '@telegram-apps/analytics'
 import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react'
-import { isAnalyticsEnabled } from './utils/analytics/posthog'
+import { isAnalyticsEnabled } from './src/effects/analytics.effects'
 import { ErrorFallback } from './components/ErrorFallback'
-import { captureException } from './utils/analytics/posthog'
+import { captureException } from './src/effects/analytics.effects'
 
 // Ensure DOM is ready
 const root = document.getElementById('root')

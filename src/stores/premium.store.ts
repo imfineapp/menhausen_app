@@ -6,9 +6,9 @@ import {
   savePremiumSignatureToStorage,
   verifyPremiumSignature
 } from '@/utils/premiumSignature'
-import { getSyncService } from '@/utils/supabaseSync'
 import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects'
 import { onPremiumActivated } from '@/src/effects/premium.effects'
+import { fetchUserData } from '@/src/effects/supabase.effects'
 
 export type PremiumStatusSource =
   | 'legacyLocalStorage'
@@ -93,8 +93,7 @@ export function initPremiumFromLocalStorage() {
 
 export async function loadPremiumFromSupabase() {
   try {
-    const syncService = getSyncService()
-    const result = await syncService.fetchUserData()
+    const result = await fetchUserData()
     if (!result) return
 
     if (result.premiumSignature) {

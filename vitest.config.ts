@@ -15,6 +15,26 @@ export default defineConfig({
       'tests/e2e/**',
       '**/*.config.*',
     ],
+    coverage: {
+      provider: 'v8',
+      all: false,
+      include: [
+        'src/stores/**/*.{ts,tsx,js,jsx}',
+        'src/domain/**/*.{ts,tsx,js,jsx}',
+        'src/effects/**/*.{ts,tsx,js,jsx}',
+        'components/**/*.{ts,tsx,js,jsx}',
+      ],
+      exclude: ['components/ui/**', '**/*.d.ts', 'data/**', 'tests/**'],
+      reporter: ['text', 'lcov'],
+      thresholds: {
+        global: {
+          statements: 40,
+          branches: 35,
+          functions: 40,
+          lines: 40,
+        },
+      },
+    },
   },
   resolve: {
     alias: {

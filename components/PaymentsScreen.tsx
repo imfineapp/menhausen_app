@@ -4,7 +4,7 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useContent } from './ContentContext';
-import { telegramStarsPaymentService } from '../utils/telegramStarsPaymentService';
+import { purchasePremium } from '@/src/effects/payment.effects';
 import { hapticNotificationOccurred, isTelegramOpenInvoiceAvailable, isTelegramShowAlertAvailable, showTelegramAlert } from '@/src/effects/telegram.effects';
 
 /**
@@ -713,7 +713,7 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
       hapticNotificationOccurred('success');
 
       // Создаём инвойс и открываем его в Telegram
-      const paymentStatus = await telegramStarsPaymentService.purchasePremium(selectedPlan);
+      const paymentStatus = await purchasePremium(selectedPlan);
 
       if (paymentStatus === 'paid') {
         // Успешная оплата

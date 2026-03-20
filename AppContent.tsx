@@ -104,7 +104,7 @@ import {
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
-import { capture, AnalyticsEvent } from './utils/analytics/posthog';
+import { capture, AnalyticsEvent } from './src/effects/analytics.effects';
 
 // Achievements system imports
 import { useAchievements } from './contexts/AchievementsContext';

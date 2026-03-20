@@ -1,6 +1,6 @@
 import { atom } from 'nanostores'
 import type { SyncResult } from '@/utils/supabaseSync/types'
-import { getSyncService } from '@/utils/supabaseSync'
+import { initialSync } from '@/src/effects/supabase.effects'
 
 export type SyncStatus = 'idle' | 'syncing' | 'error'
 
@@ -13,8 +13,7 @@ export async function initSync(): Promise<SyncResult> {
   $syncStatus.set('syncing')
 
   try {
-    const syncService = getSyncService()
-    const result = await syncService.initialSync()
+    const result = await initialSync()
 
     if (result?.success) {
       $syncStatus.set('idle')
