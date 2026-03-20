@@ -72,7 +72,7 @@ describe('premium.store', () => {
 
   it('initPremiumFromLocalStorage uses verified signature when available', async () => {
     localStorageMock.setItem('user-premium-status', 'false')
-    getVerifiedPremiumStatus.mockResolvedValue({
+    vi.mocked(getVerifiedPremiumStatus).mockResolvedValue({
       premium: true,
       plan: 'annually',
       expiresAt: '2030-01-01T00:00:00.000Z',
@@ -105,14 +105,14 @@ describe('premium.store', () => {
       premiumSignature: premiumSignatureData
     })
 
-    getSyncService.mockReturnValue({
+    vi.mocked(getSyncService).mockReturnValue({
       fetchUserData
-    })
+    } as any)
 
-    verifyPremiumSignature.mockResolvedValue(true)
-    savePremiumSignatureToStorage.mockImplementation(() => {})
-    loadPremiumSignatureFromStorage.mockReturnValue(null)
-    getVerifiedPremiumStatus.mockResolvedValue(null)
+    vi.mocked(verifyPremiumSignature).mockResolvedValue(true)
+    vi.mocked(savePremiumSignatureToStorage).mockImplementation(() => {})
+    vi.mocked(loadPremiumSignatureFromStorage).mockReturnValue(null)
+    vi.mocked(getVerifiedPremiumStatus).mockResolvedValue(null)
 
     await loadPremiumFromSupabase()
 

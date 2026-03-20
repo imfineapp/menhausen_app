@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
@@ -20,17 +20,15 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
   const { getUI } = useContent();
   const ui = getUI();
 
-  const pointsBalance = useStore($pointsBalance);
-  const totalCheckins = useStore($totalCheckins); // triggers updates when checkins change
-  const totalCompletedAttempts = useStore($totalCompletedAttempts); // triggers updates when card progress changes
+  useStore($pointsBalance)
+  useStore($totalCheckins) // triggers updates when checkins change
+  useStore($totalCompletedAttempts) // triggers updates when card progress changes
 
-  const activityData = useMemo(() => {
-    // 3 месяца назад + текущий для покрытия 14 недель
-    return getActivityDataForLastMonths(3)
-  }, [pointsBalance, totalCheckins, totalCompletedAttempts, weeksCount])
+  // Recompute on each render; store subscriptions above trigger renders when activity inputs change.
+  const activityData = getActivityDataForLastMonths(3)
 
   // Формируем данные для календарной сетки: дни недели по вертикали, недели по горизонтали
-  const calendarData = useMemo(() => {
+  const calendarData = React.useMemo(() => {
     return buildActivityHeatmapDaysOfWeekData({ activityData, weeksCount });
   }, [activityData, weeksCount]);
 

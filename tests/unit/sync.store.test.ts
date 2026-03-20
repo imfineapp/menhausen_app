@@ -16,13 +16,13 @@ describe('sync.store', () => {
   })
 
   it('initSync sets status to idle and records last sync on success', async () => {
-    getSyncService.mockReturnValue({
+    vi.mocked(getSyncService).mockReturnValue({
       initialSync: vi.fn().mockResolvedValue({
         success: true,
         syncedTypes: [],
         errors: []
       })
-    })
+    } as any)
 
     await initSync()
 
@@ -32,13 +32,13 @@ describe('sync.store', () => {
   })
 
   it('initSync sets status to error on failure result', async () => {
-    getSyncService.mockReturnValue({
+    vi.mocked(getSyncService).mockReturnValue({
       initialSync: vi.fn().mockResolvedValue({
         success: false,
         syncedTypes: [],
         errors: [{ type: 'flowProgress', error: 'boom' }]
       })
-    })
+    } as any)
 
     await initSync()
 

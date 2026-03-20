@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -11,7 +11,7 @@ import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { useStore } from '@nanostores/react';
-import { $currentLevel, $pointsBalance } from '@/src/stores/points.store';
+import { $currentLevel } from '@/src/stores/points.store';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
@@ -119,7 +119,6 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
   const { content } = useContent();
-  const totalEarned = useStore($pointsBalance);
   const displayLevel = useStore($currentLevel);
 
   return (

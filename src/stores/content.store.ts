@@ -36,13 +36,14 @@ export async function loadContentForLanguage(language: SupportedLanguage): Promi
 
     $content.set(loadedContent)
     loadedLanguage = language
-  } catch (err) {
+  } catch {
     if (latestLoadId !== loadId) return
 
     $contentError.set(`Failed to load content for language: ${language}`)
   } finally {
-    if (latestLoadId !== loadId) return
-    $isContentLoading.set(false)
+    if (latestLoadId === loadId) {
+      $isContentLoading.set(false)
+    }
   }
 }
 

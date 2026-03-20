@@ -13,16 +13,6 @@ function calculateNextLevelTarget(totalEarned: number, step = 1000): number {
   return totalEarned % step === 0 ? totalEarned + step : Math.ceil(totalEarned / step) * step
 }
 
-function safeParseTransactions(raw: string | null): PointsTransaction[] {
-  if (!raw) return []
-  try {
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? (parsed as PointsTransaction[]) : []
-  } catch {
-    return []
-  }
-}
-
 export const $pointsBalance = atom<number>(0)
 export const $pointsTransactions = atom<PointsTransaction[]>([])
 

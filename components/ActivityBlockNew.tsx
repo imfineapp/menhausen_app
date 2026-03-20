@@ -7,7 +7,7 @@ import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';
 import { useStore } from '@nanostores/react';
 import { $nextLevelTarget, $pointsBalance } from '@/src/stores/points.store';
 import { $checkinStreak, $totalCheckins } from '@/src/stores/checkin.store';
-import { useMemo } from 'react';
+ 
 import { getActivityDataForPeriod, ActivityType } from '../utils/ActivityDataManager';
 import { buildActivityDayCells, buildDaysOfWeekLabels, getCurrentWeekMonday } from '@/src/domain/activityBlockNew.domain';
 
@@ -24,23 +24,18 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
 
   // Derived check-in stats from store.
   const totalCheckins = useStore($totalCheckins);
-  const currentStreak = useStore($checkinStreak);
+  useStore($checkinStreak);
 
-  const weekWindow = useMemo(() => {
-    const today = new Date()
-    today.setHours(23, 59, 59, 999)
-    const monday = getCurrentWeekMonday(today)
+  const today = new Date()
+  today.setHours(23, 59, 59, 999)
+  const monday = getCurrentWeekMonday(today)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  sunday.setHours(23, 59, 59, 999)
 
-    const sunday = new Date(monday)
-    sunday.setDate(monday.getDate() + 6)
-    sunday.setHours(23, 59, 59, 999)
-
-    return { monday, sunday }
-  }, [pointsBalance, totalCheckins, currentStreak])
-
-  const weeklyActivityData = useMemo(() => {
+  const weeklyActivityData = (() => {
     try {
-      const activityForWeek = getActivityDataForPeriod(weekWindow.monday, weekWindow.sunday)
+      const activityForWeek = getActivityDataForPeriod(monday, sunday)
       return activityForWeek.map((item) => ({
         date: item.date,
         activityType: item.activityType,
@@ -50,7 +45,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
       console.warn('ActivityBlockNew: failed to load weekly activity data', error)
       return []
     }
-  }, [weekWindow.monday, weekWindow.sunday])
+  })()
   
   // Данные по умолчанию для демонстрации (fallback)
   const defaultData: ActivityData = {
@@ -74,7 +69,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const progressPercentage = (data.currentPoints / data.targetPoints) * 100;
   
   // Создаем карту активности по датам для быстрого доступа
-  const activityMap = useMemo(() => {
+  const activityMap = React.useMemo(() => {
     const map = new Map<string, ActivityType>();
     weeklyActivityData.forEach(item => {
       map.set(item.dateKey, item.activityType);
@@ -106,15 +101,15 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
     return `0 0 10px 0 ${glowColor}`;
   };
   
-  const daysOfWeek = useMemo(() => buildDaysOfWeekLabels({ language, baseDate: weekWindow.monday }), [language, weekWindow.monday])
-  const dayCells = useMemo(
+  const daysOfWeek = React.useMemo(() => buildDaysOfWeekLabels({ language, baseDate: monday }), [language, monday])
+  const dayCells = React.useMemo(
     () =>
       buildActivityDayCells({
         activityMap,
-        monday: weekWindow.monday,
+        monday,
         daysOfWeek
       }),
-    [activityMap, weekWindow.monday, daysOfWeek]
+    [activityMap, monday, daysOfWeek]
   )
 
   // Функция для получения правильной формы слова "день"

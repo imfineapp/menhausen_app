@@ -1137,7 +1137,7 @@ function AppContent() {
   /**
    * Сохранение результатов опроса в localStorage и подготовка к отправке в базу
    */
-  const saveSurveyResults = (results: SurveyResults) => {
+  const _saveSurveyResults = (results: SurveyResults) => {
     try {
       // Сохраняем в localStorage для оффлайн доступа
       localStorage.setItem('survey-results', JSON.stringify(results));
@@ -2270,7 +2270,7 @@ function AppContent() {
     </motion.div>
   );
 
-  const renderCurrentScreen = () => {
+  const _renderCurrentScreen = () => {
     switch (currentScreen) {
       case 'loading':
         return wrapScreen(<LoadingScreen />);

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { cleanStores } from 'nanostores'
 
 import {
@@ -18,14 +18,14 @@ import {
 const SURVEY_RESULTS_KEY = 'survey-results'
 const FLOW_KEY = 'app-flow-progress'
 
-describe('Store persistence', () => {
+describe('store persistence', () => {
   beforeEach(() => {
     // Ensure atoms reset between tests.
     cleanStores($surveyResults, $psychologicalTestAnswers, $flowProgress)
     window.localStorage.clear()
   })
 
-  it('survey.store: initSurveyState hydrates from localStorage', () => {
+  it('hydrates survey state from storage', () => {
     window.localStorage.setItem(
       SURVEY_RESULTS_KEY,
       JSON.stringify({
@@ -43,7 +43,7 @@ describe('Store persistence', () => {
     expect($psychologicalTestAnswers.get()).toEqual([])
   })
 
-  it('survey.store: completeSurveyResults persists and sets atom', () => {
+  it('persists completed survey results', () => {
     const finalResults = {
       screen01: ['x'],
       screen02: ['y'],
@@ -59,12 +59,12 @@ describe('Store persistence', () => {
     expect(JSON.parse(window.localStorage.getItem(SURVEY_RESULTS_KEY) as string)).toEqual(finalResults)
   })
 
-  it('survey.store: setPsychologicalTestAnswers updates atom', () => {
+  it('updates psychological test answers atom', () => {
     setPsychologicalTestAnswers([{ questionId: 'q1', value: 3 } as any])
     expect($psychologicalTestAnswers.get()).toHaveLength(1)
   })
 
-  it('app-flow.store: refreshFlowProgress hydrates and completeOnboarding persists', () => {
+  it('hydrates and persists app flow progress', () => {
     window.localStorage.setItem(
       FLOW_KEY,
       JSON.stringify({

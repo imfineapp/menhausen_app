@@ -57,43 +57,53 @@ describe('core stores', () => {
     vi.clearAllMocks()
   })
 
-  it('navigation.store navigates and goes back', () => {
-    navigateTo('home')
-    expect($currentScreen.get()).toBe('home')
-    expect($navigationHistory.get()).toContain('home')
+  describe('navigation.store', () => {
+    it('navigates forward and back', () => {
+      navigateTo('home')
+      expect($currentScreen.get()).toBe('home')
+      expect($navigationHistory.get()).toContain('home')
 
-    goBack()
-    expect($currentScreen.get()).toBe('loading')
+      goBack()
+      expect($currentScreen.get()).toBe('loading')
+    })
   })
 
-  it('language.store updates language and modal state', () => {
-    setLanguage('ru')
-    expect($language.get()).toBe('ru')
+  describe('language.store', () => {
+    it('updates language and modal state', () => {
+      setLanguage('ru')
+      expect($language.get()).toBe('ru')
 
-    openLanguageModal()
-    expect($isLanguageModalOpen.get()).toBe(true)
-    closeLanguageModal()
-    expect($isLanguageModalOpen.get()).toBe(false)
+      openLanguageModal()
+      expect($isLanguageModalOpen.get()).toBe(true)
+      closeLanguageModal()
+      expect($isLanguageModalOpen.get()).toBe(false)
+    })
   })
 
-  it('content.store load action resolves without throwing', async () => {
-    await expect(loadContentForLanguage('en')).resolves.toBeUndefined()
-    await expect(loadContentForLanguage('ru')).resolves.toBeUndefined()
+  describe('content.store', () => {
+    it('loads content without throwing', async () => {
+      await expect(loadContentForLanguage('en')).resolves.toBeUndefined()
+      await expect(loadContentForLanguage('ru')).resolves.toBeUndefined()
+    })
   })
 
-  it('points.store refreshes and delegates earn/spend', () => {
-    refreshPoints()
-    expect($pointsBalance.get()).toBe(250)
+  describe('points.store', () => {
+    it('refreshes and delegates earn/spend actions', () => {
+      refreshPoints()
+      expect($pointsBalance.get()).toBe(250)
 
-    earnPoints(10, { note: 'test' })
-    spendPoints(5, { note: 'test' })
-    expect($pointsBalance.get()).toBe(250)
+      earnPoints(10, { note: 'test' })
+      spendPoints(5, { note: 'test' })
+      expect($pointsBalance.get()).toBe(250)
+    })
   })
 
-  it('theme-progress.store exposes derived attempts', () => {
-    refreshThemeProgress()
-    expect($themeProgressVersion.get()).toBeGreaterThan(0)
-    expect($totalCompletedAttempts.get()).toBe(3)
+  describe('theme-progress.store', () => {
+    it('exposes derived attempts', () => {
+      refreshThemeProgress()
+      expect($themeProgressVersion.get()).toBeGreaterThan(0)
+      expect($totalCompletedAttempts.get()).toBe(3)
+    })
   })
 })
 

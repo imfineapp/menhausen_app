@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from './ui/chart';
 import { useContent } from './ContentContext';
@@ -15,15 +15,13 @@ export function MentalLevelBlock() {
   const { getUI } = useContent();
   const ui = getUI();
   const containerRef = useRef<HTMLDivElement>(null);
-  const totalCheckins = useStore($totalCheckins);
+  useStore($totalCheckins)
 
-  const checkins = useMemo<CheckinData[]>(() => {
-    // Recompute when store-derived checkin totals change.
-    return DailyCheckinManager.getAllCheckins();
-  }, [totalCheckins]);
+  // Recompute on each render; store subscription above triggers updates when checkins change.
+  const checkins = DailyCheckinManager.getAllCheckins() as CheckinData[]
 
   // Формируем данные за последние 14 дней
-  const chartData = useMemo(() => {
+  const chartData = React.useMemo(() => {
     return buildMentalLevelChartData({ checkins, daysCount: 14 });
   }, [checkins]);
 
