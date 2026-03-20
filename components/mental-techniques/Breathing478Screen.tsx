@@ -7,6 +7,14 @@ import { useContent } from '../ContentContext';
 import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
+import {
+  computeBreathingProgressPercent,
+  formatTimeMMSS,
+  getBreathingOpacity,
+  getBreathingScale,
+  nextBreathingPhase,
+  type BreathingPhase
+} from '@/src/domain/breathing.domain';
 
 interface Breathing478ScreenProps {
   onBack: () => void;
@@ -19,29 +27,16 @@ function BreathingVisualization({
   phase, 
   progress 
 }: { 
-  phase: 'inhale' | 'hold' | 'exhale'; 
+  phase: BreathingPhase; 
   progress: number; 
 }) {
-  const getScale = () => {
-    switch (phase) {
-      case 'inhale': return 1 + (progress / 100) * 0.5; // 1.0 -> 1.5
-      case 'hold': return 1.5; // статично
-      case 'exhale': return 1.5 - (progress / 100) * 0.5; // 1.5 -> 1.0
-      default: return 1;
-    }
-  };
-
-  const getOpacity = () => {
-    return phase === 'hold' ? 0.8 : 1;
-  };
-
   return (
     <div className="relative w-32 h-32 mx-auto">
       <div 
         className="absolute inset-0 rounded-full border-4 border-[#e1ff00] transition-all duration-1000 ease-in-out"
         style={{ 
-          transform: `scale(${getScale()})`,
-          opacity: getOpacity()
+          transform: `scale(${getBreathingScale(phase, progress)})`,
+          opacity: getBreathingOpacity(phase)
         }}
       />
       <div className="absolute inset-4 rounded-full bg-[#e1ff00] opacity-20" />
@@ -84,7 +79,7 @@ function InteractiveTimer({
       interval = setInterval(() => {
         setTimeLeft(prev => {
           const newTime = prev - 1;
-          setProgress(((duration - newTime) / duration) * 100);
+          setProgress(computeBreathingProgressPercent(duration, newTime));
           return newTime;
         });
       }, 1000);
@@ -94,12 +89,6 @@ function InteractiveTimer({
 
     return () => clearInterval(interval);
   }, [isRunning, timeLeft, duration, onComplete]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const reset = () => {
     setTimeLeft(duration);
@@ -133,7 +122,7 @@ function InteractiveTimer({
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-[#e1ff00] font-bold text-lg">
-            {formatTime(timeLeft)}
+            {formatTimeMMSS(timeLeft)}
           </span>
         </div>
       </div>
@@ -170,7 +159,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
   
   const [currentStep, setCurrentStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [phase, setPhase] = useState<'inhale' | 'hold' | 'exhale'>('inhale');
+  const [phase, setPhase] = useState<BreathingPhase>('inhale');
   const [progress, _setProgress] = useState(0);
 
   // Получаем данные техники из системы контента
@@ -200,10 +189,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
   const handleTimerComplete = () => {
     if (currentStep < technique.steps.length - 1) {
       setCurrentStep(prev => prev + 1);
-      setPhase(prev => 
-        prev === 'inhale' ? 'hold' : 
-        prev === 'hold' ? 'exhale' : 'inhale'
-      );
+      setPhase((prev) => nextBreathingPhase(prev));
     } else {
       // Техника завершена
       setIsRunning(false);

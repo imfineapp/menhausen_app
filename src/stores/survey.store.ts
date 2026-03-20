@@ -2,6 +2,7 @@ import { atom, onMount } from 'nanostores'
 
 import type { SurveyResults } from '@/types/content'
 import type { LikertScaleAnswer } from '@/types/psychologicalTest'
+import { storageReadJson, storageWriteJson } from '@/src/effects/storage.effects'
 
 const SURVEY_RESULTS_KEY = 'survey-results'
 
@@ -14,13 +15,8 @@ const defaultSurveyResults: Partial<SurveyResults> = {
 }
 
 function loadSurveyResults(): Partial<SurveyResults> {
-  try {
-    const saved = localStorage.getItem(SURVEY_RESULTS_KEY)
-    return saved ? (JSON.parse(saved) as Partial<SurveyResults>) : {}
-  } catch (e) {
-    console.error('Failed to load survey results:', e)
-    return {}
-  }
+  const fallback: Partial<SurveyResults> = {}
+  return storageReadJson<Partial<SurveyResults>>(SURVEY_RESULTS_KEY, fallback)
 }
 
 export const $surveyResults = atom<Partial<SurveyResults>>(defaultSurveyResults)
@@ -47,14 +43,9 @@ export function setSurveyResultsForScreen<K extends keyof SurveyResults>(
 }
 
 export function completeSurveyResults(finalResults: SurveyResults): boolean {
-  try {
-    localStorage.setItem(SURVEY_RESULTS_KEY, JSON.stringify(finalResults))
-    $surveyResults.set(finalResults)
-    return true
-  } catch (e) {
-    console.error('Failed to persist survey results:', e)
-    return false
-  }
+  storageWriteJson(SURVEY_RESULTS_KEY, finalResults)
+  $surveyResults.set(finalResults)
+  return true
 }
 
 export function setPsychologicalTestAnswers(nextAnswers: LikertScaleAnswer[]) {

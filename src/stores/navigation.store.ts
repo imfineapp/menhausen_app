@@ -1,18 +1,11 @@
 import { atom } from 'nanostores'
 import type { AppScreen } from '@/types/userState'
 import { isDirectLinkMode } from '@/utils/telegramUserUtils'
+import { browserBack, closeTelegramApp } from '@/src/effects/telegram.effects'
 
 export const $currentScreen = atom<AppScreen>('loading')
 export const $navigationHistory = atom<AppScreen[]>(['loading'])
 export const $isNavigatingForward = atom<boolean>(true)
-
-function closeTelegramApp() {
-  try {
-    window.Telegram?.WebApp?.close()
-  } catch {
-    // ignore (tests / non-telegram environments)
-  }
-}
 
 export function resetNavigation() {
   $isNavigatingForward.set(true)
@@ -58,10 +51,6 @@ export function goBack() {
     return
   }
 
-  try {
-    window.history.back()
-  } catch {
-    // ignore
-  }
+  browserBack()
 }
 

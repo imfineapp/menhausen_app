@@ -7,6 +7,7 @@ import { useContent } from "../ContentContext";
 import { useLanguage } from "../LanguageContext";
 import { MiniStripeLogo } from "../ProfileLayoutComponents";
 import { MentalTechniqueAccordion } from "../ui/accordion-mental-technique";
+import { getNextStepOrComplete, isGroundingStepCompleted } from '@/src/domain/grounding.domain';
 
 interface GroundingAnchorScreenProps {
   onBack: () => void;
@@ -38,7 +39,7 @@ function AnchorVisualization({
       {steps.map((step, index) => (
         <div key={index} className="flex items-center gap-3">
           <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center text-2xl transition-all duration-500 ${
-            index <= currentStep 
+            isGroundingStepCompleted(currentStep, index)
               ? "border-[#e1ff00] bg-[#e1ff00] text-[#2d2b2b]" 
               : "border-[#333] text-[#696969]"
           }`}>
@@ -46,7 +47,7 @@ function AnchorVisualization({
           </div>
           <div className="flex-1">
             <p className={`text-sm font-medium transition-colors duration-500 ${
-              index <= currentStep ? "text-[#e1ff00]" : "text-[#696969]"
+              isGroundingStepCompleted(currentStep, index) ? "text-[#e1ff00]" : "text-[#696969]"
             }`}>
               {step.text}
             </p>
@@ -222,19 +223,15 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
     const newResponses = [...responses, response];
     setResponses(newResponses);
     
-    if (currentStep < technique.steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      setIsCompleted(true);
-    }
+    const { nextStep, isCompleted } = getNextStepOrComplete(currentStep, technique.steps.length);
+    setCurrentStep(nextStep);
+    if (isCompleted) setIsCompleted(true);
   };
 
   const handleCheckboxComplete = () => {
-    if (currentStep < technique.steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      setIsCompleted(true);
-    }
+    const { nextStep, isCompleted } = getNextStepOrComplete(currentStep, technique.steps.length);
+    setCurrentStep(nextStep);
+    if (isCompleted) setIsCompleted(true);
   };
 
   const currentStepData = technique.steps[currentStep];

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Light } from './Light';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { hapticNotificationOccurred } from '@/src/effects/telegram.effects';
 
 interface DonationsScreenProps {
 	onBack: () => void;
@@ -30,9 +31,7 @@ export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 			await navigator.clipboard.writeText(text);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 1500);
-			if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-				window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-			}
+			hapticNotificationOccurred('success');
 		} catch (e) {
 			console.error('Copy failed', e);
 		}

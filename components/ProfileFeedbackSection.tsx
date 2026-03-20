@@ -1,6 +1,7 @@
 // Компонент секции обратной связи для профиля пользователя
 import { FeedbackIcon } from './UserProfileIcons';
 import { useTranslation, useLanguage } from './LanguageContext';
+import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
 /**
  * Адаптивная кнопка обратной связи
@@ -44,17 +45,15 @@ export function FeedbackSection() {
     const telegramChannelUrl = 'https://t.me/menhausen_app';
     
     // Проверяем, запущено ли приложение в Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
+    if (isTelegramWebAppAvailable()) {
       try {
         // Используем Telegram WebApp API для открытия канала
-        window.Telegram.WebApp.openTelegramLink(telegramChannelUrl);
+        openTelegramLink(telegramChannelUrl);
         
         console.log('Telegram channel opened via WebApp API');
         
         // Добавляем тактильную обратную связь если доступна
-        if (window.Telegram.WebApp.HapticFeedback) {
-          window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
+        hapticImpactOccurred('light');
         
       } catch (error) {
         console.error('Error opening Telegram channel via WebApp API:', error);

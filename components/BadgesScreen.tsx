@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BadgesSlider } from './BadgesSlider';
 import { useContent } from './ContentContext';
 import { useAchievements } from '../contexts/AchievementsContext';
@@ -8,6 +8,8 @@ import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
 import { getAchievementIcon } from '../utils/achievementIcons';
 import { generateReferralLink } from '../utils/referralUtils';
 import { getTelegramUserId } from '../utils/telegramUserUtils';
+import { sortByDisplayOrder } from '@/src/domain/sortByDisplayOrder.domain';
+import { isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
 interface Badge {
   id: string;
@@ -68,29 +70,26 @@ const ACHIEVEMENT_DISPLAY_ORDER = [
 export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
   const { getLocalizedBadges } = useContent();
   const { achievements: userAchievements, totalXP, refreshAchievements } = useAchievements();
-  const [badges, setBadges] = useState<Badge[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Загрузка всех достижений из контента и метаданных
-  useEffect(() => {
+  const badges = useMemo<Badge[]>(() => {
     const badgesTexts = getLocalizedBadges();
     const achievementsMetadata = getAllAchievementsMetadata();
 
     const allBadges = achievementsMetadata
-      .map(metadata => {
+      .map((metadata) => {
         const achievementContent = badgesTexts.achievements[metadata.id];
         const userAchievement = userAchievements[metadata.id];
         const icon = getAchievementIcon(metadata.iconName, { className: 'w-20 h-20' });
 
-        // Если контент недоступен, используем fallback на основе ID
+        // If content is missing, fall back to a readable title based on the id.
         if (!achievementContent) {
           console.warn(`Achievement content not found for: ${metadata.id}, using fallback`);
-          // Преобразуем ID в читаемый формат (например: "topic_closer" -> "Topic Closer")
           const fallbackTitle = metadata.id
             .split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
-          
+
           return {
             id: metadata.id,
             title: fallbackTitle,
@@ -115,27 +114,13 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
         };
       })
       .filter((badge): badge is Badge => badge !== null && badge.id !== undefined);
-    
-    // Сортируем по заданному порядку отображения
-    allBadges.sort((a, b) => {
-      const indexA = ACHIEVEMENT_DISPLAY_ORDER.indexOf(a.id as typeof ACHIEVEMENT_DISPLAY_ORDER[number]);
-      const indexB = ACHIEVEMENT_DISPLAY_ORDER.indexOf(b.id as typeof ACHIEVEMENT_DISPLAY_ORDER[number]);
-      
-      // Если оба ID в списке порядка, сортируем по их позициям
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-      
-      // Если только один в списке, он идет первым
-      if (indexA !== -1) return -1;
-      if (indexB !== -1) return 1;
-      
-      // Если ни один не в списке, сохраняем исходный порядок
-      return 0;
-    });
-    
-    setBadges(allBadges);
+
+    return sortByDisplayOrder(allBadges, ACHIEVEMENT_DISPLAY_ORDER as unknown as string[]);
   }, [getLocalizedBadges, userAchievements]);
+
+  useEffect(() => {
+    setCurrentIndex((idx) => Math.min(idx, Math.max(0, badges.length - 1)));
+  }, [badges.length]);
 
   // Автоматическая проверка достижений при монтировании
   useEffect(() => {
@@ -161,7 +146,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
     console.log('  - User ID:', userId);
     console.log('  - Generated referral link:', referralLink);
     console.log('  - App link (fallback):', badgesTexts.appLink);
-    console.log('  - Telegram WebApp available:', !!window.Telegram?.WebApp);
+    console.log('  - Telegram WebApp available:', isTelegramWebAppAvailable());
     
     // Используем реферальную ссылку, если она была сгенерирована (содержит startapp)
     // Иначе используем стандартную ссылку
@@ -169,8 +154,8 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
     
     const shareMessage = `${badgesTexts.shareMessage}\n\n${activeBadge.title}: ${activeBadge.description}\n\n${badgesTexts.shareDescription}\n\n${shareUrl}`;
     
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`);
+    if (isTelegramWebAppAvailable()) {
+      openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`);
     } else {
       const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareMessage)}`;
       window.open(telegramShareUrl, '_blank');

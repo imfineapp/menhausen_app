@@ -7,6 +7,8 @@ import {
   verifyPremiumSignature
 } from '@/utils/premiumSignature'
 import { getSyncService } from '@/utils/supabaseSync'
+import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects'
+import { onPremiumActivated } from '@/src/effects/premium.effects'
 
 export type PremiumStatusSource =
   | 'legacyLocalStorage'
@@ -24,11 +26,7 @@ export type PremiumStatus = {
 }
 
 function loadLegacyPremiumFromStorage(): boolean {
-  try {
-    return localStorage.getItem('user-premium-status') === 'true'
-  } catch {
-    return false
-  }
+  return storageGetItem('user-premium-status') === 'true'
 }
 
 export const $isPremium = atom<boolean>(false)
@@ -40,20 +38,16 @@ export function setPremium(nextPremium: boolean, nextStatus?: Partial<PremiumSta
   $isPremium.set(nextPremium)
 
   // Persist in the legacy format so the rest of the codebase keeps working.
-  try {
-    localStorage.setItem('user-premium-status', nextPremium ? 'true' : 'false')
+  storageSetItem('user-premium-status', nextPremium ? 'true' : 'false')
 
-    if (nextStatus?.plan) {
-      localStorage.setItem('user-premium-plan', nextStatus.plan)
-    }
-    if (nextStatus?.purchasedAt) {
-      localStorage.setItem('user-premium-purchased-at', nextStatus.purchasedAt)
-    }
-    if (nextStatus?.expiresAt) {
-      localStorage.setItem('user-premium-expires-at', nextStatus.expiresAt)
-    }
-  } catch {
-    // ignore storage issues (tests / private mode)
+  if (nextStatus?.plan) {
+    storageSetItem('user-premium-plan', nextStatus.plan)
+  }
+  if (nextStatus?.purchasedAt) {
+    storageSetItem('user-premium-purchased-at', nextStatus.purchasedAt)
+  }
+  if (nextStatus?.expiresAt) {
+    storageSetItem('user-premium-expires-at', nextStatus.expiresAt)
   }
 
   $premiumStatus.set({
@@ -191,10 +185,7 @@ onMount($isPremium, () => {
   initPremiumFromLocalStorage()
 
   if (typeof window !== 'undefined') {
-    window.addEventListener('premium:activated', handlePremiumActivatedEvent as EventListener)
-    return () => {
-      window.removeEventListener('premium:activated', handlePremiumActivatedEvent as EventListener)
-    }
+    return onPremiumActivated(handlePremiumActivatedEvent)
   }
 
   return () => {}

@@ -19,6 +19,7 @@ import { MentalLevelBlock } from './MentalLevelBlock';
 import { ActivityHeatmapBlock } from './ActivityHeatmapBlock';
 import { PremiumUnlockBlock } from './PremiumUnlockBlock';
 import { RegularExerciseNotification } from './RegularExerciseNotification';
+import { formatDateDDMMYYYY, sortByTimestampDesc } from '@/src/domain/pointsHistory.domain';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -48,10 +49,7 @@ export function UserProfileScreen({
   
   const pointsTransactions = useStore($pointsTransactions);
   const pointsHistory = useMemo(
-    () =>
-      (pointsTransactions || [])
-        .slice()
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
+    () => sortByTimestampDesc(pointsTransactions || []),
     [pointsTransactions]
   );
   // Состояние для пагинации
@@ -94,11 +92,7 @@ export function UserProfileScreen({
   };
 
   const formatDate = (isoString: string) => {
-    const d = new Date(isoString);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
+    return formatDateDDMMYYYY(isoString)
   };
 
   /**

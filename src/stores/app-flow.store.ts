@@ -1,4 +1,5 @@
 import { atom, onMount } from 'nanostores'
+import { storageReadJson, storageWriteJson } from '@/src/effects/storage.effects'
 
 export type AppFlowProgress = {
   onboardingCompleted: boolean
@@ -23,21 +24,12 @@ const defaultProgress: AppFlowProgress = {
 }
 
 function loadProgress(): AppFlowProgress {
-  try {
-    const raw = localStorage.getItem(FLOW_KEY)
-    return raw ? ({ ...defaultProgress, ...JSON.parse(raw) } as AppFlowProgress) : defaultProgress
-  } catch (e) {
-    console.error('Failed to load app flow progress:', e)
-    return defaultProgress
-  }
+  const parsed = storageReadJson<Partial<AppFlowProgress>>(FLOW_KEY, {})
+  return { ...defaultProgress, ...parsed } as AppFlowProgress
 }
 
 function saveProgress(p: AppFlowProgress) {
-  try {
-    localStorage.setItem(FLOW_KEY, JSON.stringify(p))
-  } catch (e) {
-    console.error('Failed to save app flow progress:', e)
-  }
+  storageWriteJson(FLOW_KEY, p)
 }
 
 export function loadFlowProgressFromLocalStorage(): AppFlowProgress {

@@ -3,6 +3,7 @@ import { ShareIcon } from './UserProfileIcons';
 import { useTranslation, useLanguage } from './LanguageContext';
 import { generateReferralLink } from '../utils/referralUtils';
 import { getTelegramUserId } from '../utils/telegramUserUtils';
+import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
 /**
  * Кнопка "Поделиться" для реферальной программы
@@ -64,17 +65,15 @@ export function ReferralSection() {
     const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
     
     // Проверяем, доступен ли Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
+    if (isTelegramWebAppAvailable()) {
       try {
         // Используем Telegram WebApp API для открытия ссылки
-        window.Telegram.WebApp.openTelegramLink(telegramShareUrl);
+        openTelegramLink(telegramShareUrl);
         
         console.log('Referral link opened via WebApp API');
         
         // Вибрация для тактильного отклика при открытии ссылки
-        if (window.Telegram.WebApp.HapticFeedback) {
-          window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
+        hapticImpactOccurred('light');
         
       } catch (error) {
         console.error('Error opening referral link via WebApp API:', error);

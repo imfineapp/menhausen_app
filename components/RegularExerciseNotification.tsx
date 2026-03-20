@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
+import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects';
 
 const STORAGE_KEY = 'regularExerciseNotificationDismissed';
 
@@ -17,7 +18,7 @@ export function RegularExerciseNotification() {
 
   // Проверяем localStorage при монтировании
   useEffect(() => {
-    const dismissed = localStorage.getItem(STORAGE_KEY);
+    const dismissed = storageGetItem(STORAGE_KEY);
     if (!dismissed) {
       setIsVisible(true);
     }
@@ -25,7 +26,7 @@ export function RegularExerciseNotification() {
 
   // Обработчик закрытия уведомления
   const handleClose = () => {
-    localStorage.setItem(STORAGE_KEY, 'true');
+    storageSetItem(STORAGE_KEY, 'true');
     setIsVisible(false);
   };
 

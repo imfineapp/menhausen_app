@@ -1,6 +1,7 @@
 // Утилиты для функциональности шаринга в профиле пользователя
 import { useTranslation } from './LanguageContext';
 import { generateReferralLink } from '../utils/referralUtils';
+import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
 /**
  * Хук для функциональности шаринга приложения
@@ -15,7 +16,7 @@ export function useAppShare() {
     console.log('Sharing app through Telegram');
     
     // Проверяем, запущено ли приложение в Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
+    if (isTelegramWebAppAvailable()) {
       try {
         // Генерируем реферальную ссылку (или обычную, если нет User ID)
         const appUrl = generateReferralLink();
@@ -26,14 +27,12 @@ export function useAppShare() {
         const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(appUrl)}&text=${encodeURIComponent(shareText)}`;
         
         // Открываем Telegram share dialog
-        window.Telegram.WebApp.openTelegramLink(telegramShareUrl);
+        openTelegramLink(telegramShareUrl);
         
         console.log('Telegram share dialog opened with referral link:', appUrl);
         
         // Добавляем тактильную обратную связь если доступна
-        if (window.Telegram.WebApp.HapticFeedback) {
-          window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
+        hapticImpactOccurred('light');
         
       } catch (error) {
         console.error('Error sharing through Telegram:', error);

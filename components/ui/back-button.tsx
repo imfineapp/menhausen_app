@@ -1,5 +1,6 @@
 import { useTelegramBackButton } from '../../utils/useTelegramBackButton';
 import { useEffect, useState } from 'react';
+import { isTelegramWebAppAvailable } from '@/src/effects/telegram.effects';
 
 interface BackButtonProps {
   onBack?: () => void;
@@ -15,7 +16,7 @@ export function BackButton({ onBack, fallbackIcon: _fallbackIcon = true, isHomeP
   
   // Инициализация проверки Telegram WebApp
   useEffect(() => {
-    setIsTelegramWebAppAvailable(Boolean(window.Telegram?.WebApp));
+    setIsTelegramWebAppAvailable(isTelegramWebAppAvailable());
   }, []);
   
   // Используем хук для Telegram Back Button только если не на главной странице

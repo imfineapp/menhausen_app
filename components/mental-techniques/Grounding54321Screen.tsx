@@ -8,6 +8,7 @@ import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import { StripedProgressBar } from '../ui/StripedProgressBar';
+import { GROUNDING_54321_STEPS, getNextStepOrComplete, isGroundingStepCompleted } from '@/src/domain/grounding.domain';
 
 interface Grounding54321ScreenProps {
   onBack: () => void;
@@ -21,7 +22,7 @@ function GroundingVisualization({
 }: { 
   currentStep: number; 
 }) {
-  const steps = [5, 4, 3, 2, 1];
+  const steps = GROUNDING_54321_STEPS;
   
   return (
     <div className="flex flex-col gap-4 w-full max-w-sm mx-auto">
@@ -31,7 +32,7 @@ function GroundingVisualization({
             <span className="text-[#e1ff00] font-bold text-sm">{count}</span>
           </div>
           <StripedProgressBar 
-            progress={index <= currentStep ? 100 : 0}
+            progress={isGroundingStepCompleted(currentStep, index) ? 100 : 0}
             size="sm"
             className="flex-1"
             showBackground={true}
@@ -158,11 +159,9 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
     const newResponses = [...responses, response];
     setResponses(newResponses);
     
-    if (currentStep < technique.steps.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    } else {
-      setIsCompleted(true);
-    }
+    const { nextStep, isCompleted } = getNextStepOrComplete(currentStep, technique.steps.length);
+    setCurrentStep(nextStep);
+    if (isCompleted) setIsCompleted(true);
   };
 
   const currentStepData = technique.steps[currentStep];

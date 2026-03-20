@@ -4,6 +4,7 @@ import warningIconPaths from "../imports/svg-iawz1hhk6y";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useContent } from './ContentContext';
+import { hapticNotificationOccurred } from '@/src/effects/telegram.effects';
 
 /**
  * Компонент страницы удаления аккаунта
@@ -183,9 +184,7 @@ export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: Delete
       setIsLoading(true);
 
       // Добавляем тактильную обратную связь если доступна
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
-      }
+      hapticNotificationOccurred('warning');
 
       // Имитация API запроса на удаление аккаунта
       await new Promise(resolve => setTimeout(resolve, 2000));
