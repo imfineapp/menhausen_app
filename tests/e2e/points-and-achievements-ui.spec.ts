@@ -22,7 +22,6 @@ test.describe('Points & Achievements UI', () => {
     await page.evaluate(() => {
       localStorage.setItem('menhausen_points_transactions', JSON.stringify([]));
       localStorage.setItem('menhausen_points_balance', String(1234));
-      window.dispatchEvent(new CustomEvent('points:updated'));
     });
 
     // Ждем, пока страница профиля загрузится полностью

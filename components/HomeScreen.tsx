@@ -10,7 +10,8 @@ import { ActivityBlockNew } from './ActivityBlockNew';
 import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
-import { PointsManager } from '../utils/PointsManager';
+import { useStore } from '@nanostores/react';
+import { $currentLevel, $pointsBalance } from '@/src/stores/points.store';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
@@ -117,21 +118,8 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
   const { content } = useContent();
-  const [totalEarned, setTotalEarned] = useState<number>(0);
-  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
-  const displayLevel = Math.max(1, computedLevel);
-
-  useEffect(() => {
-    const read = () => setTotalEarned(PointsManager.getBalance());
-    read();
-    const onUpdate = () => read();
-    window.addEventListener('storage', onUpdate);
-    window.addEventListener('points:updated', onUpdate as EventListener);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-      window.removeEventListener('points:updated', onUpdate as EventListener);
-    };
-  }, []);
+  const totalEarned = useStore($pointsBalance);
+  const displayLevel = useStore($currentLevel);
 
   return (
     <div

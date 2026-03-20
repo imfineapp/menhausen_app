@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ProgressRow } from './ProgressRow';
 import { LevelIcon } from './UserProfileIcons';
 import { useContent } from './ContentContext';
-import { PointsManager } from '../utils/PointsManager';
+import { useStore } from '@nanostores/react';
+import { $currentLevel, $nextLevelTarget, $pointsBalance } from '@/src/stores/points.store';
 
 interface ProgressBlockProps {
   onBadgesClick?: () => void;
@@ -15,26 +16,9 @@ interface ProgressBlockProps {
 export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockProps) {
   const { getUI } = useContent();
   const ui = getUI();
-  const [totalEarned, setTotalEarned] = useState<number>(0);
-  const [nextTarget, setNextTarget] = useState<number>(1000);
-  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
-  const level = Math.max(1, computedLevel);
-
-  useEffect(() => {
-    const read = () => {
-      const t = PointsManager.getBalance();
-      setTotalEarned(t);
-      setNextTarget(PointsManager.getNextLevelTarget(1000));
-    };
-    read();
-    const onUpdate = () => read();
-    window.addEventListener('storage', onUpdate);
-    window.addEventListener('points:updated', onUpdate as EventListener);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-      window.removeEventListener('points:updated', onUpdate as EventListener);
-    };
-  }, []);
+  const totalEarned = useStore($pointsBalance);
+  const nextTarget = useStore($nextLevelTarget);
+  const level = useStore($currentLevel);
 
   return (
     <div className="w-full">

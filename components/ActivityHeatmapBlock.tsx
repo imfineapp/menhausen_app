@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
+import { $pointsBalance } from '@/src/stores/points.store';
 
 interface ActivityHeatmapBlockProps {
   weeksCount?: number; // Количество недель для отображения (7 или 14)
@@ -16,30 +18,31 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
   const ui = getUI();
   const [activityData, setActivityData] = useState<ReturnType<typeof getActivityDataForLastMonths>>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const pointsBalance = useStore($pointsBalance);
 
-  // Получаем данные активности (берем больше данных, чтобы покрыть 14 недель)
-  useEffect(() => {
+  const updateActivityData = useCallback(() => {
     const data = getActivityDataForLastMonths(3); // 3 месяца назад + текущий для покрытия 14 недель
     setActivityData(data);
   }, []);
 
+  // Получаем данные активности (берем больше данных, чтобы покрыть 14 недель)
+  useEffect(() => {
+    updateActivityData()
+  }, []);
+
   // Обновляем данные при изменении storage (чекины или упражнения)
   useEffect(() => {
-    const handleStorageUpdate = () => {
-      const data = getActivityDataForLastMonths(3);
-      setActivityData(data);
-    };
-
-    window.addEventListener('storage', handleStorageUpdate);
-    window.addEventListener('points:updated', handleStorageUpdate);
-    window.addEventListener('card:completed', handleStorageUpdate);
+    window.addEventListener('storage', updateActivityData as EventListener);
 
     return () => {
-      window.removeEventListener('storage', handleStorageUpdate);
-      window.removeEventListener('points:updated', handleStorageUpdate);
-      window.removeEventListener('card:completed', handleStorageUpdate);
+      window.removeEventListener('storage', updateActivityData as EventListener);
     };
-  }, []);
+  }, [updateActivityData]);
+
+  // Points changes imply check-in/exercise completion -> refresh the heatmap.
+  useEffect(() => {
+    updateActivityData()
+  }, [pointsBalance, updateActivityData]);
 
   // Формируем данные для календарной сетки: дни недели по вертикали, недели по горизонтали
   const calendarData = useMemo(() => {

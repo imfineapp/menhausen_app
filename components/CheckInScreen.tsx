@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
-import { DailyCheckinManager } from '../utils/DailyCheckinManager';
+import { saveCheckin } from '@/src/stores/checkin.store';
 
 interface CheckInScreenProps {
   onSubmit: (mood: string) => void;
@@ -272,8 +272,8 @@ export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps)
     if (selectedMood !== null) {
       const moodData = moodOptions[selectedMood];
       
-      // Save check-in data using DailyCheckinManager
-      const saveSuccess = DailyCheckinManager.saveCheckin({
+      // Save check-in data via store (updates check-in state in nanostores).
+      const saveSuccess = saveCheckin({
         mood: moodData.label,
         value: moodData.value,
         color: moodData.color

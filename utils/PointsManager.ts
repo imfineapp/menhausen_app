@@ -104,10 +104,6 @@ export class PointsManager {
     const next = [...txs, tx];
     writeTransactions(next);
     writeBalance(newBalance);
-    // notify listeners (UI) about points update (browser-only)
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
-      window.dispatchEvent(new CustomEvent('points:updated'));
-    }
     return { balance: newBalance, transaction: tx };
   }
 
@@ -140,10 +136,6 @@ export class PointsManager {
     const next = [...txs, tx];
     writeTransactions(next);
     writeBalance(newBalance);
-    // notify listeners (UI) about points update (browser-only)
-    if (typeof window !== 'undefined' && typeof window.dispatchEvent === 'function') {
-      window.dispatchEvent(new CustomEvent('points:updated'));
-    }
     return { balance: newBalance, transaction: tx };
   }
 

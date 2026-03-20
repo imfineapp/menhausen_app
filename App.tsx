@@ -78,6 +78,27 @@ import {
   goBack,
 } from './src/stores/navigation.store'
 
+import {
+  $flowProgress,
+  refreshFlowProgress,
+  completeOnboarding,
+  completeSurvey,
+  completePsychTest,
+  completePin,
+  markFirstCheckinDone,
+  markFirstRewardShown
+} from './src/stores/app-flow.store'
+
+import {
+  $surveyResults,
+  $psychologicalTestAnswers,
+  initSurveyState,
+  setSurveyResultsForScreen,
+  completeSurveyResults,
+  setPsychologicalTestAnswers,
+  updateSurveyResults
+} from './src/stores/survey.store'
+
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager';
@@ -444,9 +465,8 @@ function AppContent() {
         console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success);
         
         if (result.success) {
-          // Update flow state from localStorage (may have been updated by mergeAndSave)
-          const updatedProgress = loadProgress();
-          setFlow(updatedProgress);
+          // Sync may have updated localStorage; refresh the store state.
+          refreshFlowProgress();
           
           // Update language if it was loaded from Supabase
           try {
@@ -696,22 +716,8 @@ function AppContent() {
     }
   };
 
-  const saveProgress = (p: AppFlowProgress) => {
-    try {
-      localStorage.setItem(FLOW_KEY, JSON.stringify(p));
-    } catch (e) {
-      console.error('Failed to save app flow progress:', e);
-    }
-  };
-
-  const [flow, setFlow] = useState<AppFlowProgress>(loadProgress());
-  const updateFlow = (updater: (prev: AppFlowProgress) => AppFlowProgress) => {
-    setFlow(prev => {
-      const next = updater(prev);
-      saveProgress(next);
-      return next;
-    });
-  };
+  // Flow progress is now centralized in a nanostore.
+  const flow = useStore($flowProgress);
   
   // Smart Navigation: Dynamic screen determination based on user state
   // Note: Logic is inlined in useEffect to avoid dependency issues
@@ -811,18 +817,12 @@ function AppContent() {
   // =====================================================================================
   // НОВОЕ СОСТОЯНИЕ ДЛЯ СИСТЕМЫ ОПРОСА
   // =====================================================================================
-  const [surveyResults, setSurveyResults] = useState<Partial<SurveyResults>>({
-    screen01: [],
-    screen02: [],
-    screen03: [],
-    screen04: [],
-    screen05: []
-  });
+  const surveyResults = useStore($surveyResults)
 
   // =====================================================================================
   // СОСТОЯНИЕ ДЛЯ ПСИХОЛОГИЧЕСКОГО ТЕСТА
   // =====================================================================================
-  const [psychologicalTestAnswers, setPsychologicalTestAnswers] = useState<LikertScaleAnswer[]>([]);
+  const psychologicalTestAnswers = useStore($psychologicalTestAnswers)
 
   // Получение системы контента
   const { getCard: _getCard, getTheme, getLocalizedText: _getLocalizedText, currentLanguage, getUI } = useContent();
@@ -1448,10 +1448,10 @@ function AppContent() {
 
   const handleShowSurvey = () => {
     // Mark onboarding as completed and move to survey
-    updateFlow(p => ({ ...p, onboardingCompleted: true }));
+    completeOnboarding()
     // Загружаем сохраненные результаты если есть
     const savedResults = loadSavedSurveyResults();
-    setSurveyResults(prev => ({ ...prev, ...savedResults }));
+    updateSurveyResults((prev) => ({ ...prev, ...savedResults }))
     navigateTo('survey01');
   };
 
@@ -1469,7 +1469,7 @@ function AppContent() {
 
   const handleCompletePinSetup = () => {
     console.log('PIN setup completed');
-    updateFlow(p => ({ ...p, pinCompleted: true }));
+    completePin()
     navigateTo('checkin');
   };
 
@@ -1486,14 +1486,14 @@ function AppContent() {
     refreshUserState();
 
     // Update flow for first check-in
-    updateFlow(p => ({ ...p, firstCheckinDone: true }));
+    markFirstCheckinDone()
 
     // Показываем достижение только если не показывали раньше
     if (!flow.firstRewardShown) {
       setEarnedAchievementIds(['newcomer']);
       setHasShownFirstAchievement(true);
       localStorage.setItem('has-shown-first-achievement', JSON.stringify(true));
-      updateFlow(p => ({ ...p, firstRewardShown: true }));
+      markFirstRewardShown()
       navigateTo('reward');
       return;
     }
@@ -1544,35 +1544,35 @@ function AppContent() {
 
   const handleSurvey01Next = (answers: string[]) => {
     console.log('Survey 01 answers:', answers);
-    setSurveyResults(prev => ({ ...prev, screen01: answers }));
+    setSurveyResultsForScreen('screen01', answers)
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey01', answers, language: currentLanguage });
     navigateTo('survey02');
   };
 
   const handleSurvey02Next = (answers: string[]) => {
     console.log('Survey 02 answers:', answers);
-    setSurveyResults(prev => ({ ...prev, screen02: answers }));
+    setSurveyResultsForScreen('screen02', answers)
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey02', answers, language: currentLanguage });
     navigateTo('survey03');
   };
 
   const handleSurvey03Next = (answers: string[]) => {
     console.log('Survey 03 answers:', answers);
-    setSurveyResults(prev => ({ ...prev, screen03: answers }));
+    setSurveyResultsForScreen('screen03', answers)
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey03', answers, language: currentLanguage });
     navigateTo('survey04');
   };
 
   const handleSurvey04Next = (answers: string[]) => {
     console.log('Survey 04 answers:', answers);
-    setSurveyResults(prev => ({ ...prev, screen04: answers }));
+    setSurveyResultsForScreen('screen04', answers)
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey04', answers, language: currentLanguage });
     navigateTo('survey05');
   };
 
   const handleSurvey05Next = (answers: string[]) => {
     console.log('Survey 05 answers:', answers);
-    setSurveyResults(prev => ({ ...prev, screen05: answers }));
+    setSurveyResultsForScreen('screen05', answers)
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey05', answers, language: currentLanguage });
     navigateTo('survey06');
   };
@@ -1584,16 +1584,15 @@ function AppContent() {
       screen06: answers,
       completedAt: new Date().toISOString()
     } as SurveyResults;
-    
-    setSurveyResults(finalResults);
+
     capture(AnalyticsEvent.ONBOARDING_ANSWERED, { step: 'survey06', answers, language: currentLanguage });
     capture(AnalyticsEvent.ONBOARDING_COMPLETED, { results: finalResults, language: currentLanguage });
     
     // Сохранение результатов
-    const saveSuccess = saveSurveyResults(finalResults);
+    const saveSuccess = completeSurveyResults(finalResults);
 
       // Mark survey completed in flow
-      updateFlow(p => ({ ...p, surveyCompleted: true }));
+    completeSurvey()
 
       // =====================================================================================
       // REFERRAL REGISTRATION (регистрация реферала после завершения опроса)
@@ -1674,7 +1673,7 @@ function AppContent() {
       saveTestResults(scores, percentages);
       
       // Обновляем flow
-      updateFlow(p => ({ ...p, psychologicalTestCompleted: true }));
+      completePsychTest()
       
       // Переходим к экрану результатов
       navigateTo('psychological-test-results');
@@ -2268,22 +2267,16 @@ function AppContent() {
     setCurrentCard({id: ''});
     setCurrentCheckin({id: ''});
     setUserHasPremium(false);
-    setSurveyResults({
-      screen01: [],
-      screen02: [],
-      screen03: [],
-      screen04: [],
-      screen05: []
-    });
     
     // Очищаем данные психологического теста
-    setPsychologicalTestAnswers([]);
     clearTestResults();
     
     // Очищаем все данные из localStorage
     // 1. Удаляем основные ключи приложения
     localStorage.removeItem('survey-results');
     localStorage.removeItem('app-flow-progress');
+    initSurveyState()
+    refreshFlowProgress()
     localStorage.removeItem('checkin-data');
     localStorage.removeItem('has-shown-first-achievement');
     
