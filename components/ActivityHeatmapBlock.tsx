@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
 import { $pointsBalance } from '@/src/stores/points.store';
+import { $totalCheckins } from '@/src/stores/checkin.store';
+import { $totalCompletedAttempts } from '@/src/stores/theme-progress.store';
 import { buildActivityHeatmapDaysOfWeekData } from '@/src/domain/activityHeatmap.domain';
 
 interface ActivityHeatmapBlockProps {
@@ -17,33 +19,15 @@ interface ActivityHeatmapBlockProps {
 export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockProps) {
   const { getUI } = useContent();
   const ui = getUI();
-  const [activityData, setActivityData] = useState<ReturnType<typeof getActivityDataForLastMonths>>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+
   const pointsBalance = useStore($pointsBalance);
+  const totalCheckins = useStore($totalCheckins); // triggers updates when checkins change
+  const totalCompletedAttempts = useStore($totalCompletedAttempts); // triggers updates when card progress changes
 
-  const updateActivityData = useCallback(() => {
-    const data = getActivityDataForLastMonths(3); // 3 месяца назад + текущий для покрытия 14 недель
-    setActivityData(data);
-  }, []);
-
-  // Получаем данные активности (берем больше данных, чтобы покрыть 14 недель)
-  useEffect(() => {
-    updateActivityData()
-  }, []);
-
-  // Обновляем данные при изменении storage (чекины или упражнения)
-  useEffect(() => {
-    window.addEventListener('storage', updateActivityData as EventListener);
-
-    return () => {
-      window.removeEventListener('storage', updateActivityData as EventListener);
-    };
-  }, [updateActivityData]);
-
-  // Points changes imply check-in/exercise completion -> refresh the heatmap.
-  useEffect(() => {
-    updateActivityData()
-  }, [pointsBalance, updateActivityData]);
+  const activityData = useMemo(() => {
+    // 3 месяца назад + текущий для покрытия 14 недель
+    return getActivityDataForLastMonths(3)
+  }, [pointsBalance, totalCheckins, totalCompletedAttempts, weeksCount])
 
   // Формируем данные для календарной сетки: дни недели по вертикали, недели по горизонтали
   const calendarData = useMemo(() => {
@@ -115,7 +99,6 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
 
   return (
     <div 
-      ref={containerRef}
       className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full h-full min-h-[200px]" 
       data-name="Activity heatmap block"
     >

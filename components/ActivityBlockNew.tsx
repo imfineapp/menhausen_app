@@ -7,8 +7,9 @@ import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';
 import { useStore } from '@nanostores/react';
 import { $nextLevelTarget, $pointsBalance } from '@/src/stores/points.store';
 import { $checkinStreak, $totalCheckins } from '@/src/stores/checkin.store';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useMemo } from 'react';
 import { getActivityDataForPeriod, ActivityType } from '../utils/ActivityDataManager';
+import { buildActivityDayCells, buildDaysOfWeekLabels, getCurrentWeekMonday } from '@/src/domain/activityBlockNew.domain';
 
 interface ActivityBlockNewProps {
   activityData?: ActivityData;
@@ -24,53 +25,38 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   // Derived check-in stats from store.
   const totalCheckins = useStore($totalCheckins);
   const currentStreak = useStore($checkinStreak);
-  const [weeklyActivityData, setWeeklyActivityData] = useState<Array<{ date: string; activityType: ActivityType; dateKey: string }>>([]);
 
-  useEffect(() => {
-    const readWeekly = () => {
-      try {
-        // Вычисляем понедельник текущей недели
-        const today = new Date();
-        today.setHours(23, 59, 59, 999);
-        const dayOfWeek = today.getDay(); // 0 = воскресенье, 1 = понедельник
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        
-        const monday = new Date(today);
-        monday.setDate(today.getDate() - daysToMonday);
-        monday.setHours(0, 0, 0, 0);
-        
-        const sunday = new Date(monday);
-        sunday.setDate(monday.getDate() + 6);
-        sunday.setHours(23, 59, 59, 999);
-        
-        // Получаем данные активности за текущую неделю
-        const activityData = getActivityDataForPeriod(monday, sunday);
-        
-        // Преобразуем в формат с dateKey для удобства
-        const weeklyData = activityData.map(item => ({
-          date: item.date,
-          activityType: item.activityType,
-          dateKey: item.date
-        }));
-        
-        setWeeklyActivityData(weeklyData);
-      } catch (error) {
-        console.warn('ActivityBlockNew: failed to load weekly activity data', error);                                                                               
-      }
-    };
-    readWeekly();
-    const onUpdate = () => readWeekly();
-    window.addEventListener('storage', onUpdate);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-    };
-  }, [pointsBalance]);
+  const weekWindow = useMemo(() => {
+    const today = new Date()
+    today.setHours(23, 59, 59, 999)
+    const monday = getCurrentWeekMonday(today)
+
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
+    sunday.setHours(23, 59, 59, 999)
+
+    return { monday, sunday }
+  }, [pointsBalance, totalCheckins, currentStreak])
+
+  const weeklyActivityData = useMemo(() => {
+    try {
+      const activityForWeek = getActivityDataForPeriod(weekWindow.monday, weekWindow.sunday)
+      return activityForWeek.map((item) => ({
+        date: item.date,
+        activityType: item.activityType,
+        dateKey: item.date
+      }))
+    } catch (error) {
+      console.warn('ActivityBlockNew: failed to load weekly activity data', error)
+      return []
+    }
+  }, [weekWindow.monday, weekWindow.sunday])
   
   // Данные по умолчанию для демонстрации (fallback)
   const defaultData: ActivityData = {
     // Keep the existing behavior (tests expect "days" based on total check-ins),
     // but subscribe to the streak store so check-in streak logic stays exercised.
-    streakDays: (totalCheckins > 0 ? totalCheckins : 0) + (currentStreak - currentStreak),
+    streakDays: totalCheckins > 0 ? totalCheckins : 0,
     currentPoints: pointsBalance,
     targetPoints: nextTarget,
     weeklyCheckins: {
@@ -120,28 +106,16 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
     return `0 0 10px 0 ${glowColor}`;
   };
   
-  // Получаем тип активности для дня недели
-  const getActivityTypeForDay = useMemo(() => {
-    // Вычисляем понедельник текущей недели (та же логика, что и в daysOfWeek)
-    const today = new Date();
-    const dow = today.getDay(); // 0=Sun..6=Sat
-    const monday = new Date(today);
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(today.getDate() - ((dow === 0 ? 7 : dow) - 1));
-    
-    return (dayKey: string): ActivityType => {
-      const dayIndex = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].indexOf(dayKey);
-      if (dayIndex === -1) return ActivityType.NONE;
-      
-      const targetDate = new Date(monday);
-      targetDate.setDate(monday.getDate() + dayIndex);
-      targetDate.setHours(0, 0, 0, 0);
-      
-      const dateKey = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
-      
-      return activityMap.get(dateKey) ?? ActivityType.NONE;
-    };
-  }, [activityMap]);    
+  const daysOfWeek = useMemo(() => buildDaysOfWeekLabels({ language, baseDate: weekWindow.monday }), [language, weekWindow.monday])
+  const dayCells = useMemo(
+    () =>
+      buildActivityDayCells({
+        activityMap,
+        monday: weekWindow.monday,
+        daysOfWeek
+      }),
+    [activityMap, weekWindow.monday, daysOfWeek]
+  )
 
   // Функция для получения правильной формы слова "день"
   const getDayLabel = (count: number) => {
@@ -152,32 +126,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
     }
   };
 
-  const daysOfWeek = useMemo(() => {
-    const locale = language === 'ru' ? 'ru-RU' : 'en-US';
-    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });    
-
-    // Compute Monday of current week to keep order Mon..Sun
-    const today = new Date();
-    const dow = today.getDay(); // 0=Sun..6=Sat
-    const monday = new Date(today);
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(today.getDate() - ((dow === 0 ? 7 : dow) - 1));
-
-    const keys: Array<'mon'|'tue'|'wed'|'thu'|'fri'|'sat'|'sun'> = ['mon','tue','wed','thu','fri','sat','sun'];                                                 
-    const days = [] as Array<{ key: typeof keys[number]; label: string }>;      
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      let label = formatter.format(d);
-      // Normalize: remove trailing dot and trim, capitalize first letter for en
-      label = label.replace(/\.$/, '').trim();
-      if (language !== 'ru' && label) {
-        label = label.charAt(0).toUpperCase() + label.slice(1);
-      }
-      days.push({ key: keys[i], label });
-    }
-    return days;
-  }, [language]);
+  // Note: `daysOfWeek` and `dayCells` are derived above.
 
   return (
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
@@ -243,9 +192,9 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
           <div className="bg-black/50 rounded-lg w-full">
             <div className="flex justify-between items-center w-full p-3">      
               {daysOfWeek.map((day) => {
-                const activityType = getActivityTypeForDay(day.key);
+                const activityType = dayCells.find((c) => c.key === day.key)?.activityType ?? ActivityType.NONE
                 return (
-                  <div key={day.key} className="flex flex-col items-center space-y-1">                                                                            
+                  <div key={day.key} className="flex flex-col items-center space-y-1">
                     <div
                       className="w-4 h-4 rounded-sm flex items-center justify-center transition-all duration-200"
                       style={{
@@ -254,9 +203,9 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
                         boxShadow: activityType !== ActivityType.NONE ? getGlowStyle(activityType) : 'none'
                       }}
                     />
-                    <span className="text-xs text-white">{day.label}</span>       
+                    <span className="text-xs text-white">{day.label}</span>
                   </div>
-                );
+                )
               })}
             </div>
           </div>

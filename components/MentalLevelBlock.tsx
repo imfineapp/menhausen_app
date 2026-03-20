@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from './ui/chart';
 import { useContent } from './ContentContext';
 import { DailyCheckinManager, CheckinData } from '../utils/DailyCheckinManager';
 import { buildMentalLevelChartData } from '@/src/domain/mentalLevel.domain';
+import { useStore } from '@nanostores/react';
+import { $totalCheckins } from '@/src/stores/checkin.store';
 
 /**
  * Блок для отображения истории чекинов за последние 14 дней
@@ -12,14 +14,13 @@ import { buildMentalLevelChartData } from '@/src/domain/mentalLevel.domain';
 export function MentalLevelBlock() {
   const { getUI } = useContent();
   const ui = getUI();
-  const [checkins, setCheckins] = useState<CheckinData[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const totalCheckins = useStore($totalCheckins);
 
-  // Получаем данные чекинов
-  useEffect(() => {
-    const allCheckins = DailyCheckinManager.getAllCheckins();
-    setCheckins(allCheckins);
-  }, []);
+  const checkins = useMemo<CheckinData[]>(() => {
+    // Recompute when store-derived checkin totals change.
+    return DailyCheckinManager.getAllCheckins();
+  }, [totalCheckins]);
 
   // Формируем данные за последние 14 дней
   const chartData = useMemo(() => {
