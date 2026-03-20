@@ -3,6 +3,7 @@ import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
 import { $pointsBalance } from '@/src/stores/points.store';
+import { buildActivityHeatmapDaysOfWeekData } from '@/src/domain/activityHeatmap.domain';
 
 interface ActivityHeatmapBlockProps {
   weeksCount?: number; // Количество недель для отображения (7 или 14)
@@ -46,73 +47,7 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
 
   // Формируем данные для календарной сетки: дни недели по вертикали, недели по горизонтали
   const calendarData = useMemo(() => {
-    // Создаем карту активности по датам
-    const activityMap = new Map<string, { activityType: ActivityType; exerciseCount: number }>();
-    activityData.forEach(item => {
-      activityMap.set(item.date, {
-        activityType: item.activityType,
-        exerciseCount: item.exerciseCount || 0
-      });
-    });
-
-    // Получаем текущую дату
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-
-    // Находим понедельник текущей недели
-    const currentMonday = new Date(today);
-    const dayOfWeek = currentMonday.getDay(); // 0 = воскресенье, 1 = понедельник
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    currentMonday.setDate(currentMonday.getDate() - daysToMonday);
-    currentMonday.setHours(0, 0, 0, 0);
-
-    // Вычисляем понедельник N недель назад ((N-1) недель назад + текущая = N)
-    const startMonday = new Date(currentMonday);
-    startMonday.setDate(startMonday.getDate() - ((weeksCount - 1) * 7));
-
-    // Создаем массив всех дней для отображения (N недель = N * 7 дней)
-    const allDays: Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }> = [];
-    
-    const currentDate = new Date(startMonday);
-    const endDate = new Date(currentMonday);
-    endDate.setDate(endDate.getDate() + 6); // Воскресенье текущей недели
-    endDate.setHours(23, 59, 59, 999);
-    
-    const dateIterator = new Date(currentDate);
-    while (dateIterator <= endDate) {
-      const dateKey = `${dateIterator.getFullYear()}-${String(dateIterator.getMonth() + 1).padStart(2, '0')}-${String(dateIterator.getDate()).padStart(2, '0')}`;
-      
-      const activityInfo = activityMap.get(dateKey);
-      allDays.push({
-        date: new Date(dateIterator),
-        activityType: activityInfo?.activityType ?? ActivityType.NONE,
-        exerciseCount: activityInfo?.exerciseCount ?? 0,
-        dateKey
-      });
-      
-      dateIterator.setDate(dateIterator.getDate() + 1);
-    }
-
-    // Группируем по неделям (N недель по 7 дней)
-    const weeks: Array<Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }>> = [];
-    for (let i = 0; i < allDays.length; i += 7) {
-      weeks.push(allDays.slice(i, i + 7));
-    }
-
-    // Транспонируем: преобразуем из [недели][дни] в [дни недели][недели]
-    // Теперь каждая строка - это один день недели (Пн, Вт, ...), а столбцы - недели
-    const daysOfWeekData: Array<Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }>> = [];
-    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-      const dayRow: Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }> = [];
-      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
-        if (weeks[weekIndex] && weeks[weekIndex][dayIndex]) {
-          dayRow.push(weeks[weekIndex][dayIndex]);
-        }
-      }
-      daysOfWeekData.push(dayRow);
-    }
-
-    return daysOfWeekData;
+    return buildActivityHeatmapDaysOfWeekData({ activityData, weeksCount });
   }, [activityData, weeksCount]);
 
   // Получаем цвет для типа активности
