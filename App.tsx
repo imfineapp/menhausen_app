@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { MutableRefObject } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useStore } from '@nanostores/react'
+
+import ScreenRouter from './src/ScreenRouter'
 
 import { OnboardingScreen01 } from './components/OnboardingScreen01';
 import { OnboardingScreen02 } from './components/OnboardingScreen02';
@@ -45,8 +48,8 @@ import { LoadingScreen } from './components/LoadingScreen'; // Импорт эк
 import { PointsManager } from './utils/PointsManager';
 import { getPointsForLevel } from './utils/pointsLevels';
 
-// Telegram utilities for direct-link support
-import { isTelegramEnvironment, isDirectLinkMode } from './utils/telegramUserUtils';
+// Telegram utilities for app environment
+import { isTelegramEnvironment } from './utils/telegramUserUtils';
 
 // Импорты ментальных техник
 import { Breathing478Screen } from './components/mental-techniques/Breathing478Screen';
@@ -63,6 +66,17 @@ import { SurveyResults } from './types/content';
 import { LikertScaleAnswer, PsychologicalTestPercentages } from './types/psychologicalTest';
 import { calculateTestResults } from './utils/psychologicalTestCalculator';
 import { saveTestResults, hasTestBeenCompleted, loadTestResults, clearTestResults } from './utils/psychologicalTestStorage';
+
+import {
+  $currentScreen,
+  $navigationHistory,
+  $isNavigatingForward,
+  resetNavigation,
+  setCurrentScreenOnly,
+  setNavigationState,
+  navigateTo,
+  goBack,
+} from './src/stores/navigation.store'
 
 // Smart Navigation imports
 import { UserStateManager } from './utils/userStateManager';
@@ -371,8 +385,7 @@ function AppContent() {
 
   useEffect(() => {
     // Start with loading screen
-    setCurrentScreen('loading');
-    setNavigationHistory(['loading']);
+    resetNavigation()
 
     const determineInitialScreen = (progress: AppFlowProgress): AppScreen => {
       if (!progress.onboardingCompleted) {
@@ -471,8 +484,7 @@ function AppContent() {
         const initDuration = Date.now() - initStartTime;
         
         console.log(`[App] Local data found, showing app after ${initDuration}ms with screen:`, initialScreen);
-        setCurrentScreen(initialScreen);
-        setNavigationHistory([initialScreen]);
+        setNavigationState(initialScreen, [initialScreen])
         
         // Track first screen load time
         capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
@@ -493,8 +505,7 @@ function AppContent() {
         const initDuration = Date.now() - initStartTime;
         
         console.log(`[App] All user data loaded, showing app after ${initDuration}ms with screen:`, initialScreen);
-        setCurrentScreen(initialScreen);
-        setNavigationHistory([initialScreen]);
+        setNavigationState(initialScreen, [initialScreen])
         
         // Track first screen load time
         capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
@@ -741,12 +752,10 @@ function AppContent() {
     }
   };
 
-  // Initialize with a default screen - will be updated after sync completes
-  // For new users without data, this will show onboarding which is correct
-  // For users with data, sync will update this to the correct screen
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('loading');
-  const [navigationHistory, setNavigationHistory] = useState<AppScreen[]>(['loading']);
-  const [isNavigatingForward, setIsNavigatingForward] = useState(true);
+  // Navigation state is centralized in nanostores.
+  const currentScreen = useStore($currentScreen)
+  const navigationHistory = useStore($navigationHistory)
+  const isNavigatingForward = useStore($isNavigatingForward)
   const [currentFeatureName, setCurrentFeatureName] = useState<string>('');
   const [currentTheme, setCurrentTheme] = useState<string>('');
   const [currentCard, setCurrentCard] = useState<{id: string; title?: string; description?: string}>({id: ''});
@@ -883,12 +892,7 @@ function AppContent() {
     }
   };
 
-  // Функция для навигации с отслеживанием истории
-  const navigateTo = useCallback((screen: AppScreen) => {
-    setIsNavigatingForward(true);
-    setNavigationHistory(prev => [...prev, screen]);
-    setCurrentScreen(screen);
-  }, []);
+  // Navigation actions (`navigateTo`/`goBack`) are provided by nanostores.
   
   // Вспомогательная функция для проверки и показа новых достижений
   const checkAndShowAchievements = useCallback(async (delay: number = 200, forceCheck: boolean = false) => {
@@ -1054,7 +1058,7 @@ function AppContent() {
     } catch (error) {
       console.error('[Achievements] Error checking achievements:', error);
     }
-  }, [currentScreen, earnedAchievementIds, checkAndUnlockAchievements, blockedScreensForReward, navigateTo, setEarnedAchievementIds]);
+  }, [currentScreen, earnedAchievementIds, checkAndUnlockAchievements, blockedScreensForReward, setEarnedAchievementIds]);
   
   // Автоматическая проверка достижений при изменении статистики (для изменений из других вкладок)
   // В основном окне проверка происходит через вызовы checkAndShowAchievements после действий
@@ -1082,7 +1086,7 @@ function AppContent() {
       // Если мы на home screen и есть достижения для показа, показываем их
       navigateTo('reward');
     }
-  }, [currentScreen, earnedAchievementIds.length, navigateTo]);
+  }, [currentScreen, earnedAchievementIds.length]);
   
   // Проверка streak достижений при переходе на home (после чекина)
   useEffect(() => {
@@ -1112,7 +1116,7 @@ function AppContent() {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds]);
+  }, [currentScreen, earnedAchievementIds, setEarnedAchievementIds]);
   
   // Проверка referral достижений при переходе на profile
   useEffect(() => {
@@ -1142,7 +1146,7 @@ function AppContent() {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds]);
+  }, [currentScreen, earnedAchievementIds, setEarnedAchievementIds]);
   
   // Проверка достижений при переходе на theme-home (в дополнение к проверке после завершения карточки)
   useEffect(() => {
@@ -1234,7 +1238,7 @@ function AppContent() {
       // Сбрасываем флаг при переходе на другой экран
       themeHomeProcessingRef.current = false;
     }
-  }, [currentScreen, earnedAchievementIds, navigateTo, setEarnedAchievementIds, navigationHistory]);
+  }, [currentScreen, earnedAchievementIds, setEarnedAchievementIds, navigationHistory]);
   
   // Общий cleanup для всех таймеров при размонтировании компонента
   useEffect(() => {
@@ -1261,35 +1265,7 @@ function AppContent() {
     };
   }, []);
   
-  // Функция для закрытия приложения через Telegram WebApp
-  const closeApp = () => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.close();
-    } else {
-      // Fallback для тестирования вне Telegram
-      console.log('App would be closed in Telegram WebApp');
-    }
-  };
-
-  // Функция для возврата на предыдущий экран (Enhanced for direct-link mode)
-  const goBack = () => {
-    if (navigationHistory.length > 1) {
-      // Standard navigation back
-      setIsNavigatingForward(false);
-      const newHistory = [...navigationHistory];
-      newHistory.pop(); // Удаляем текущий экран
-      const previousScreen = newHistory[newHistory.length - 1];
-      setNavigationHistory(newHistory);
-      setCurrentScreen(previousScreen);
-    } else if (isDirectLinkMode()) {
-      // For direct-link mode, close app when no navigation history
-      // This addresses the issue where direct-link back button should close the app
-      closeApp();
-    } else {
-      // Fallback for non-Telegram environments
-      window.history.back();
-    }
-  };
+  // Navigation back is provided by nanostores.
 
   // =====================================================================================
   // ФУНКЦИИ СОХРАНЕНИЯ ДАННЫХ ОПРОСА
@@ -1809,8 +1785,7 @@ function AppContent() {
     console.log(`Starting theme: ${currentTheme}`);
     // Очищаем историю навигации, чтобы кнопка Back на theme-home вела сразу к home
     // theme-welcome доступна только при прямом переходе с home, не через кнопку Back
-    setNavigationHistory(['home', 'theme-home']);
-    setCurrentScreen('theme-home');
+    setNavigationState('theme-home', ['home', 'theme-home'])
   };
 
   const _handleBackToThemeWelcome = () => {
@@ -2014,8 +1989,7 @@ function AppContent() {
     
     // Очищаем историю навигации и устанавливаем правильный путь для кнопки Back
     // Кнопка Back на theme-home должна вести сразу к home, минуя theme-welcome
-    setNavigationHistory(['home', 'theme-home']);
-    setCurrentScreen('theme-home');
+    setNavigationState('theme-home', ['home', 'theme-home'])
     
     // Проверяем достижения после завершения карточки (с задержкой, чтобы state обновился)
     // Очищаем предыдущий таймер, если он существует
@@ -2361,8 +2335,7 @@ function AppContent() {
     // localStorage.removeItem('menhausen-language');
     
     // Сбрасываем историю навигации
-    setNavigationHistory(['onboarding1']);
-    setCurrentScreen('onboarding1');
+    setNavigationState('onboarding1', ['onboarding1'])
   };
 
   const handleBackToProfileFromDelete = () => {
@@ -2396,7 +2369,7 @@ function AppContent() {
 
   const handleShowDonations = () => {
     console.log('Opening donations screen');
-    setCurrentScreen('donations');
+    setCurrentScreenOnly('donations')
   };
 
   const handleBackToProfileFromDonations = () => {
@@ -3104,7 +3077,7 @@ function AppContent() {
         
         <div className="relative w-full h-full overflow-hidden">
           <AnimatePresence mode="wait">
-            {renderCurrentScreen()}
+            <ScreenRouter renderCurrentScreen={renderCurrentScreen} />
           </AnimatePresence>
         </div>
       </div>

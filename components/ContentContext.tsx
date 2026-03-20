@@ -45,18 +45,21 @@ export function ContentProvider({ children }: ContentProviderProps) {
     };
   }, []);
 
+  // Used to ignore stale async loads when the language changes quickly.
+  const latestLoadIdRef = React.useRef(0)
+
   /**
    * Загрузка контента для текущего языка
    */
-  const loadContentForLanguage = useCallback(async (language: SupportedLanguage) => {
+  const loadContentForLanguage = useCallback(async (language: SupportedLanguage, loadId: number) => {
     try {
       console.log(`ContentContext: loadContentForLanguage called with language: ${language}`);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
         setIsLoading(true);
         setError(null);
       }
       const loadedContent = await loadContentWithCache(language);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
         setContent(loadedContent);
         console.log(`ContentContext: Content loaded successfully for language: ${language}`);
         console.log(`ContentContext: Loaded content about section:`, loadedContent?.about);
@@ -64,11 +67,11 @@ export function ContentProvider({ children }: ContentProviderProps) {
     } catch (err) {
       const errorMessage = `Failed to load content for language: ${language}`;
       console.error('ContentContext:', errorMessage, err);
-      if (isMountedRef.current) {
+      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
         setError(errorMessage);
       }
     } finally {
-      if (isMountedRef.current) {
+      if (isMountedRef.current && latestLoadIdRef.current === loadId) {
         setIsLoading(false);
       }
     }
@@ -80,21 +83,12 @@ export function ContentProvider({ children }: ContentProviderProps) {
   const setLanguage = useCallback((language: SupportedLanguage) => {
     // Используем функцию из LanguageContext
     setLanguageFromContext(language as 'en' | 'ru');
-    loadContentForLanguage(language);
-  }, [setLanguageFromContext, loadContentForLanguage]);
+  }, [setLanguageFromContext]);
 
   // Загружаем контент при изменении языка
-  // Optimization: Use ref to track loading state and loaded language to prevent duplicate loads
-  const isLoadingRef = React.useRef(false);
   const loadedLanguageRef = React.useRef<SupportedLanguage | null>(null);
   
   useEffect(() => {
-    // Prevent duplicate loads if content is already loading
-    if (isLoadingRef.current) {
-      console.log('ContentContext: Content already loading, skipping duplicate load for language:', currentLanguage);
-      return;
-    }
-    
     // Check if content for this language is already loaded
     if (loadedLanguageRef.current === currentLanguage && content) {
       console.log('ContentContext: Content already loaded for language:', currentLanguage);
@@ -102,10 +96,15 @@ export function ContentProvider({ children }: ContentProviderProps) {
     }
     
     console.log('ContentContext: useEffect triggered, language:', currentLanguage);
-    isLoadingRef.current = true;
-    loadContentForLanguage(currentLanguage).finally(() => {
-      isLoadingRef.current = false;
-      loadedLanguageRef.current = currentLanguage;
+    const loadId = ++latestLoadIdRef.current;
+
+    // Note: loader itself guards against stale loads via `latestLoadIdRef`.
+    loadContentForLanguage(currentLanguage, loadId).then(() => {
+      if (loadedLanguageRef.current !== currentLanguage && latestLoadIdRef.current === loadId) {
+        loadedLanguageRef.current = currentLanguage;
+      }
+    }).catch(() => {
+      // Errors are handled inside `loadContentForLanguage`.
     });
   }, [currentLanguage, loadContentForLanguage, content]);
 
@@ -644,7 +643,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
         <div className="text-center">
           <div className="text-lg text-red-600">Error loading content: {error}</div>
           <button 
-            onClick={() => loadContentForLanguage(currentLanguage)}
+            onClick={() => loadContentForLanguage(currentLanguage, ++latestLoadIdRef.current)}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Retry
