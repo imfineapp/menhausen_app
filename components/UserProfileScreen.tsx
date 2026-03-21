@@ -1,9 +1,10 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
-import { PointsManager } from '../utils/PointsManager';
 import { PointsTransaction } from '../types/points';
+import { useStore } from '@nanostores/react';
+import { $pointsTransactions } from '@/src/stores/points.store';
 
 // Импортируем выделенные компоненты
 import { 
@@ -18,6 +19,7 @@ import { MentalLevelBlock } from './MentalLevelBlock';
 import { ActivityHeatmapBlock } from './ActivityHeatmapBlock';
 import { PremiumUnlockBlock } from './PremiumUnlockBlock';
 import { RegularExerciseNotification } from './RegularExerciseNotification';
+import { formatDateDDMMYYYY, sortByTimestampDesc } from '@/src/domain/pointsHistory.domain';
 
 // Типы для пропсов компонента
 interface UserProfileScreenProps {
@@ -45,36 +47,19 @@ export function UserProfileScreen({
   // Получаем переводы UI
   const ui = getUI();
   
-  // Состояние для истории баллов
-  const [pointsHistory, setPointsHistory] = useState<PointsTransaction[]>([]);
+  const pointsTransactions = useStore($pointsTransactions);
+  const pointsHistory = useMemo(
+    () => sortByTimestampDesc(pointsTransactions || []),
+    [pointsTransactions]
+  );
   // Состояние для пагинации
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Количество элементов на странице
   
-  // Загрузка истории баллов
+  // Reset pagination when the history changes.
   useEffect(() => {
-    const updatePointsData = () => {
-      try {
-        // Get all transactions, sorted newest first
-        const transactions = PointsManager.getTransactions().sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        setPointsHistory(transactions);
-        // Сброс на первую страницу при обновлении данных
-        setCurrentPage(1);
-      } catch (error) {
-        console.warn('UserProfileScreen: failed to load points history', error);
-      }
-    };
-
-    updatePointsData(); // Initial load
-
-    window.addEventListener('storage', updatePointsData);
-    window.addEventListener('points:updated', updatePointsData as EventListener);
-
-    return () => {
-      window.removeEventListener('storage', updatePointsData);
-      window.removeEventListener('points:updated', updatePointsData as EventListener);
-    };
-  }, []);
+    setCurrentPage(1)
+  }, [pointsHistory.length])
   
   // Вычисление данных для пагинации
   const totalPages = Math.ceil(pointsHistory.length / itemsPerPage);
@@ -107,11 +92,7 @@ export function UserProfileScreen({
   };
 
   const formatDate = (isoString: string) => {
-    const d = new Date(isoString);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
+    return formatDateDDMMYYYY(isoString)
   };
 
   /**

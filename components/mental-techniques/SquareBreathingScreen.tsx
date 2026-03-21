@@ -7,6 +7,7 @@ import { useContent } from '../ContentContext';
 import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
+import { getSquareBreathingDotPosition } from '@/src/domain/squareBreathing.domain';
 
 interface SquareBreathingScreenProps {
   onBack: () => void;
@@ -22,37 +23,7 @@ function SquareVisualization({
   position: number; // 0-3 для сторон квадрата
   progress: number; // 0-100 для текущей стороны
 }) {
-  const getPosition = () => {
-    const sideLength = 140;
-    const padding = 20;
-    
-    switch (position) {
-      case 0: // Левая сторона (вверх)
-        return {
-          x: padding,
-          y: padding + (sideLength * progress / 100)
-        };
-      case 1: // Верхняя сторона (вправо)
-        return {
-          x: padding + (sideLength * progress / 100),
-          y: padding
-        };
-      case 2: // Правая сторона (вниз)
-        return {
-          x: padding + sideLength,
-          y: padding + (sideLength * progress / 100)
-        };
-      case 3: // Нижняя сторона (влево)
-        return {
-          x: padding + sideLength - (sideLength * progress / 100),
-          y: padding + sideLength
-        };
-      default:
-        return { x: padding, y: padding };
-    }
-  };
-
-  const pos = getPosition();
+  const pos = getSquareBreathingDotPosition(position, progress);
   
   return (
     <div className="flex justify-center items-center">

@@ -66,12 +66,52 @@ export class CriticalDataManager {
   }
 
   private decrypt(encryptedData: string): string {
+    return decodeURIComponent(escape(atob(encryptedData)));
+  }
+
+  private isDataSchema(value: unknown): value is DataSchema {
+    if (!value || typeof value !== 'object') return false;
+    const candidate = value as Partial<DataSchema>;
+    return (
+      typeof candidate.version === 'number'
+      && typeof candidate.createdAt === 'string'
+      && typeof candidate.updatedAt === 'string'
+      && typeof candidate.checksum === 'string'
+      && Object.prototype.hasOwnProperty.call(candidate, 'data')
+    );
+  }
+
+  private parseStoredPayload(rawValue: string): unknown | null {
     try {
-      return decodeURIComponent(escape(atob(encryptedData)));
-    } catch (error) {
-      console.error('Decryption failed:', error);
-      throw error; // Re-throw to allow parent to handle
+      return JSON.parse(rawValue);
+    } catch {
+      return null;
     }
+  }
+
+  private async parseStoredSchema(key: string, storedValue: string): Promise<DataSchema | null> {
+    try {
+      const decrypted = this.decrypt(storedValue);
+      const parsed = this.parseStoredPayload(decrypted);
+      if (this.isDataSchema(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Not encrypted base64 payload - continue with legacy fallback.
+    }
+
+    const parsedLegacyPayload = this.parseStoredPayload(storedValue);
+    if (!parsedLegacyPayload) {
+      return null;
+    }
+
+    if (this.isDataSchema(parsedLegacyPayload)) {
+      await this.saveCriticalData(key, parsedLegacyPayload.data);
+      return parsedLegacyPayload;
+    }
+
+    await this.saveCriticalData(key, parsedLegacyPayload);
+    return this.createVersionedData(parsedLegacyPayload);
   }
 
   private calculateChecksum(data: string): string {
@@ -131,8 +171,10 @@ export class CriticalDataManager {
       const encrypted = localStorage.getItem(`${this.STORAGE_PREFIX}${key}`);
       if (!encrypted) return null;
 
-      const decrypted = this.decrypt(encrypted);
-      const schema: DataSchema = JSON.parse(decrypted);
+      const schema = await this.parseStoredSchema(key, encrypted);
+      if (!schema) {
+        return this.recoverFromBackup<T>(key);
+      }
 
       // Validate data integrity
       if (!this.validateDataIntegrity(schema)) {
@@ -155,12 +197,12 @@ export class CriticalDataManager {
       const backupEncrypted = localStorage.getItem(`${this.STORAGE_PREFIX}${key}_backup`);
       if (!backupEncrypted) return null;
 
-      const decrypted = this.decrypt(backupEncrypted);
-      const schema: DataSchema = JSON.parse(decrypted);
+      const schema = await this.parseStoredSchema(key, backupEncrypted);
+      if (!schema) return null;
 
       if (this.validateDataIntegrity(schema)) {
-        // Restore main data from backup
-        localStorage.setItem(`${this.STORAGE_PREFIX}${key}`, backupEncrypted);
+        // Restore main data from backup in canonical encrypted format.
+        await this.saveCriticalData(key, schema.data);
         return schema.data as T;
       }
 

@@ -137,10 +137,10 @@ describe('CheckinDetailsScreen', () => {
     expect(await screen.findByText('Test task')).toBeInTheDocument();
   });
 
-  it('should call onBack when continue button is clicked', () => {
+  it('should call onBack when continue button is clicked', async () => {
     render(<CheckinDetailsScreen {...mockProps} />);
 
-    const continueButton = screen.getByTestId('continue-button');
+    const continueButton = await screen.findByTestId('continue-button');
     continueButton.click();
 
     expect(mockProps.onBack).toHaveBeenCalledTimes(1);

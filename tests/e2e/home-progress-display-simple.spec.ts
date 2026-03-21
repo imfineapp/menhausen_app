@@ -23,7 +23,7 @@ test.describe('Home Progress Display', () => {
     await waitForHomeScreen(page, 30000);
 
     // Ищем текст прогресса с учетом разных форматов (1 day, 1 день, 1 days, 1 дня)
-    await expect(page.locator('text=/^1 (day|days|день|дня)/i')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=/^1 (day|days|день|дня)/i')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('text=142 days')).not.toBeVisible();
   });
 
@@ -35,9 +35,9 @@ test.describe('Home Progress Display', () => {
     await waitForHomeScreen(page, 30000);
 
     // Ищем текст прогресса с учетом разных форматов
-    await expect(page.locator('text=/^1 (day|days|день|дня)/i')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="Worries container"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=/^1 (day|days|день|дня)/i')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="Worries container"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should update progress display dynamically', async ({ page }) => {
@@ -48,7 +48,7 @@ test.describe('Home Progress Display', () => {
     await waitForHomeScreen(page, 30000);
 
     // Ищем текст прогресса с учетом разных форматов (2 days, 2 дня)
-    await expect(page.locator('text=/^2 (days|дня)/i')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=/^2 (days|дня)/i')).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle accessibility features', async ({ page }) => {
@@ -60,8 +60,8 @@ test.describe('Home Progress Display', () => {
 
     // Проверяем наличие элементов с увеличенным таймаутом
     // Проверяем home screen через data-testid, так как он более надежен
-    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 5000 });
   });
 });

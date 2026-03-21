@@ -7,8 +7,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HomeScreen } from '../../components/HomeScreen';
 import { DailyCheckinManager } from '../../utils/DailyCheckinManager';
-import { LanguageProvider } from '../../components/LanguageContext';
-import { AchievementsProvider } from '../../contexts/AchievementsContext';
+import { refreshCheckin } from '../../src/stores/checkin.store';
+import { setLanguage } from '../../src/stores/language.store';
 
 // Mock the DailyCheckinManager
 vi.mock('../../utils/DailyCheckinManager', () => ({
@@ -159,15 +159,9 @@ vi.mock('../../components/ContentContext', () => ({
   })
 }));
 
-// Helper function to render HomeScreen with all required providers
+// HomeScreen now reads language/achievements state from stores directly.
 const renderWithLanguageProvider = (props: any) => {
-  return render(
-    <LanguageProvider>
-      <AchievementsProvider>
-        <HomeScreen {...props} />
-      </AchievementsProvider>
-    </LanguageProvider>
-  );
+  return render(<HomeScreen {...props} />);
 };
 
 describe('HomeScreen', () => {
@@ -176,6 +170,7 @@ describe('HomeScreen', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    setLanguage('en');
   });
 
   describe('Progress Display', () => {
@@ -197,6 +192,8 @@ describe('HomeScreen', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(0);
 
+      refreshCheckin()
+
       renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,
         onGoToTheme: mockOnGoToTheme,
@@ -209,6 +206,8 @@ describe('HomeScreen', () => {
     it('should display large numbers correctly', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(365);
+
+      refreshCheckin()
 
       renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,
@@ -224,6 +223,7 @@ describe('HomeScreen', () => {
       
       // Initial count
       mockGetTotalCheckins.mockReturnValue(3);
+      refreshCheckin()
       
       const { rerender } = renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,
@@ -235,17 +235,14 @@ describe('HomeScreen', () => {
 
       // Updated count
       mockGetTotalCheckins.mockReturnValue(4);
+      refreshCheckin()
       
       rerender(
-        <LanguageProvider>
-          <AchievementsProvider>
-            <HomeScreen 
-              onGoToProfile={mockOnGoToProfile} 
-              onGoToTheme={mockOnGoToTheme} 
-              userHasPremium={false} 
-            />
-          </AchievementsProvider>
-        </LanguageProvider>
+        <HomeScreen 
+          onGoToProfile={mockOnGoToProfile} 
+          onGoToTheme={mockOnGoToTheme} 
+          userHasPremium={false} 
+        />
       );
 
       await waitFor(() => {
@@ -362,6 +359,7 @@ describe('HomeScreen', () => {
     it('should render correctly on different screen sizes', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
+      refreshCheckin();
 
       // Test mobile view
       Object.defineProperty(window, 'innerWidth', {
@@ -382,6 +380,7 @@ describe('HomeScreen', () => {
     it('should handle tablet view correctly', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
+      refreshCheckin();
 
       // Test tablet view
       Object.defineProperty(window, 'innerWidth', {
@@ -462,6 +461,7 @@ describe('HomeScreen', () => {
     it('should render efficiently with multiple re-renders', () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
+      refreshCheckin();
 
       const { rerender } = renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,
@@ -472,15 +472,11 @@ describe('HomeScreen', () => {
       // Multiple re-renders should not cause issues
       for (let i = 0; i < 5; i++) {
         rerender(
-          <LanguageProvider>
-            <AchievementsProvider>
-              <HomeScreen 
-                onGoToProfile={mockOnGoToProfile} 
-                onGoToTheme={mockOnGoToTheme} 
-                userHasPremium={false} 
-              />
-            </AchievementsProvider>
-          </LanguageProvider>
+          <HomeScreen 
+            onGoToProfile={mockOnGoToProfile} 
+            onGoToTheme={mockOnGoToTheme} 
+            userHasPremium={false} 
+          />
         );
       }
 
@@ -500,16 +496,13 @@ describe('HomeScreen', () => {
       // Rapid state changes
       for (let i = 0; i < 10; i++) {
         mockGetTotalCheckins.mockReturnValue(i);
+        refreshCheckin()
         rerender(
-          <LanguageProvider>
-            <AchievementsProvider>
-              <HomeScreen 
-                onGoToProfile={mockOnGoToProfile} 
-                onGoToTheme={mockOnGoToTheme} 
-                userHasPremium={false} 
-              />
-            </AchievementsProvider>
-          </LanguageProvider>
+          <HomeScreen 
+            onGoToProfile={mockOnGoToProfile} 
+            onGoToTheme={mockOnGoToTheme} 
+            userHasPremium={false} 
+          />
         );
       }
 
@@ -524,6 +517,8 @@ describe('HomeScreen', () => {
       
       mockGetTotalCheckins.mockReturnValue(10);
       mockGetCheckinStreak.mockReturnValue(5);
+
+      refreshCheckin()
 
       renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,

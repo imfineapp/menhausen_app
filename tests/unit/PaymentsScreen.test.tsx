@@ -3,26 +3,22 @@
  * Tests premium subscription purchase flow, plan selection, and payment handling
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render } from '@testing-library/react';
-import { PaymentsScreen } from '../../components/PaymentsScreen';
-import { telegramStarsPaymentService } from '../../utils/telegramStarsPaymentService';
-import { ContentProvider } from '../../components/ContentContext';
-import { LanguageProvider } from '../../components/LanguageContext';
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { render } from '@testing-library/react'
+import { PaymentsScreen } from '../../components/PaymentsScreen'
+import * as paymentEffects from '../../src/effects/payment.effects'
 
 // Mock dependencies
-vi.mock('../../utils/telegramStarsPaymentService', () => ({
-  telegramStarsPaymentService: {
-    purchasePremium: vi.fn(),
-  },
-}));
+vi.mock('../../src/effects/payment.effects', () => ({
+  purchasePremium: vi.fn(),
+}))
 
 // Mock SVG imports
 vi.mock('../../imports/svg-4zkt7ew0xn', () => ({
   default: {
     p9b81900: 'M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z',
   },
-}));
+}))
 
 // Mock BottomFixedButton
 vi.mock('../../components/BottomFixedButton', () => ({
@@ -31,17 +27,17 @@ vi.mock('../../components/BottomFixedButton', () => ({
       {children}
     </button>
   ),
-}));
+}))
 
 // Mock MiniStripeLogo
 vi.mock('../../components/ProfileLayoutComponents', () => ({
   MiniStripeLogo: () => <div data-testid="mini-stripe-logo">Logo</div>,
-}));
+}))
 
 // Mock Light component
 vi.mock('../../components/Light', () => ({
   Light: () => <div data-testid="light-effect">Light</div>,
-}));
+}))
 
 // Mock Telegram WebApp
 const createTelegramMock = () => ({
@@ -53,7 +49,7 @@ const createTelegramMock = () => ({
       notificationOccurred: vi.fn(),
     },
   },
-});
+})
 
 // Mock localStorage
 const localStorageMock = {
@@ -68,74 +64,67 @@ const localStorageMock = {
   clear: vi.fn(() => {
     localStorageMock.storage = {};
   }),
-};
+}
 
 beforeEach(() => {
   // Reset mocks
-  localStorageMock.storage = {};
-  vi.clearAllMocks();
+  localStorageMock.storage = {}
+  vi.clearAllMocks()
 
   // Setup localStorage
   Object.defineProperty(global, 'localStorage', {
     value: localStorageMock,
     writable: true,
     configurable: true,
-  });
+  })
 
   Object.defineProperty(window, 'localStorage', {
     value: localStorageMock,
     writable: true,
     configurable: true,
-  });
+  })
 
   // Setup Telegram mock
-  (window as any).Telegram = createTelegramMock();
+  ;(window as any).Telegram = createTelegramMock()
 
-  // Reset payment service mock
-  vi.mocked(telegramStarsPaymentService.purchasePremium).mockReset();
-});
+  vi.mocked(paymentEffects.purchasePremium).mockReset()
+})
 
 describe('PaymentsScreen', () => {
-  const mockOnBack = vi.fn();
-  const mockOnPurchaseComplete = vi.fn();
+  const mockOnBack = vi.fn()
+  const mockOnPurchaseComplete = vi.fn()
 
   const renderPaymentsScreen = () => {
-    return render(
-      <LanguageProvider>
-        <ContentProvider>
-          <PaymentsScreen onBack={mockOnBack} onPurchaseComplete={mockOnPurchaseComplete} />
-        </ContentProvider>
-      </LanguageProvider>
-    );
-  };
+    return render(<PaymentsScreen onBack={mockOnBack} onPurchaseComplete={mockOnPurchaseComplete} />)
+  }
 
-  describe('Rendering', () => {
-    it('should render payments screen', () => {
-      const { container } = renderPaymentsScreen();
+  describe('rendering', () => {
+    it('renders without crashing', () => {
+      const { container } = renderPaymentsScreen()
 
       // Component should render without errors
-      expect(container).toBeTruthy();
-    });
-  });
+      expect(container).toBeTruthy()
+    })
+  })
 
-  describe('Purchase Flow', () => {
-    it('should handle purchase flow', () => {
+  describe('purchase flow', () => {
+    it('renders purchase flow entry state', () => {
       // Basic test to ensure component renders
-      const { container } = renderPaymentsScreen();
-      
-      // Component should render without errors
-      expect(container).toBeTruthy();
-    });
-  });
-
-  describe('Premium Activation Event', () => {
-    it('should listen for premium:activated events', () => {
-      const { container } = renderPaymentsScreen();
+      const { container } = renderPaymentsScreen()
 
       // Component should render without errors
-      expect(container).toBeTruthy();
-      
+      expect(container).toBeTruthy()
+    })
+  })
+
+  describe('premium activation event', () => {
+    it('registers premium activation listener on mount', () => {
+      const { container } = renderPaymentsScreen()
+
+      // Component should render without errors
+      expect(container).toBeTruthy()
+
       // Event listener is set up in useEffect, which is tested implicitly by rendering
-    });
-  });
-});
+    })
+  })
+})

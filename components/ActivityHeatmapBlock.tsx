@@ -1,6 +1,11 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React from 'react';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
+import { $pointsBalance } from '@/src/stores/points.store';
+import { $totalCheckins } from '@/src/stores/checkin.store';
+import { $totalCompletedAttempts } from '@/src/stores/theme-progress.store';
+import { buildActivityHeatmapDaysOfWeekData } from '@/src/domain/activityHeatmap.domain';
 
 interface ActivityHeatmapBlockProps {
   weeksCount?: number; // Количество недель для отображения (7 или 14)
@@ -14,102 +19,17 @@ interface ActivityHeatmapBlockProps {
 export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockProps) {
   const { getUI } = useContent();
   const ui = getUI();
-  const [activityData, setActivityData] = useState<ReturnType<typeof getActivityDataForLastMonths>>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Получаем данные активности (берем больше данных, чтобы покрыть 14 недель)
-  useEffect(() => {
-    const data = getActivityDataForLastMonths(3); // 3 месяца назад + текущий для покрытия 14 недель
-    setActivityData(data);
-  }, []);
+  useStore($pointsBalance)
+  useStore($totalCheckins) // triggers updates when checkins change
+  useStore($totalCompletedAttempts) // triggers updates when card progress changes
 
-  // Обновляем данные при изменении storage (чекины или упражнения)
-  useEffect(() => {
-    const handleStorageUpdate = () => {
-      const data = getActivityDataForLastMonths(3);
-      setActivityData(data);
-    };
-
-    window.addEventListener('storage', handleStorageUpdate);
-    window.addEventListener('points:updated', handleStorageUpdate);
-    window.addEventListener('card:completed', handleStorageUpdate);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageUpdate);
-      window.removeEventListener('points:updated', handleStorageUpdate);
-      window.removeEventListener('card:completed', handleStorageUpdate);
-    };
-  }, []);
+  // Recompute on each render; store subscriptions above trigger renders when activity inputs change.
+  const activityData = getActivityDataForLastMonths(3)
 
   // Формируем данные для календарной сетки: дни недели по вертикали, недели по горизонтали
-  const calendarData = useMemo(() => {
-    // Создаем карту активности по датам
-    const activityMap = new Map<string, { activityType: ActivityType; exerciseCount: number }>();
-    activityData.forEach(item => {
-      activityMap.set(item.date, {
-        activityType: item.activityType,
-        exerciseCount: item.exerciseCount || 0
-      });
-    });
-
-    // Получаем текущую дату
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-
-    // Находим понедельник текущей недели
-    const currentMonday = new Date(today);
-    const dayOfWeek = currentMonday.getDay(); // 0 = воскресенье, 1 = понедельник
-    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    currentMonday.setDate(currentMonday.getDate() - daysToMonday);
-    currentMonday.setHours(0, 0, 0, 0);
-
-    // Вычисляем понедельник N недель назад ((N-1) недель назад + текущая = N)
-    const startMonday = new Date(currentMonday);
-    startMonday.setDate(startMonday.getDate() - ((weeksCount - 1) * 7));
-
-    // Создаем массив всех дней для отображения (N недель = N * 7 дней)
-    const allDays: Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }> = [];
-    
-    const currentDate = new Date(startMonday);
-    const endDate = new Date(currentMonday);
-    endDate.setDate(endDate.getDate() + 6); // Воскресенье текущей недели
-    endDate.setHours(23, 59, 59, 999);
-    
-    const dateIterator = new Date(currentDate);
-    while (dateIterator <= endDate) {
-      const dateKey = `${dateIterator.getFullYear()}-${String(dateIterator.getMonth() + 1).padStart(2, '0')}-${String(dateIterator.getDate()).padStart(2, '0')}`;
-      
-      const activityInfo = activityMap.get(dateKey);
-      allDays.push({
-        date: new Date(dateIterator),
-        activityType: activityInfo?.activityType ?? ActivityType.NONE,
-        exerciseCount: activityInfo?.exerciseCount ?? 0,
-        dateKey
-      });
-      
-      dateIterator.setDate(dateIterator.getDate() + 1);
-    }
-
-    // Группируем по неделям (N недель по 7 дней)
-    const weeks: Array<Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }>> = [];
-    for (let i = 0; i < allDays.length; i += 7) {
-      weeks.push(allDays.slice(i, i + 7));
-    }
-
-    // Транспонируем: преобразуем из [недели][дни] в [дни недели][недели]
-    // Теперь каждая строка - это один день недели (Пн, Вт, ...), а столбцы - недели
-    const daysOfWeekData: Array<Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }>> = [];
-    for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
-      const dayRow: Array<{ date: Date; activityType: ActivityType; exerciseCount: number; dateKey: string }> = [];
-      for (let weekIndex = 0; weekIndex < weeks.length; weekIndex++) {
-        if (weeks[weekIndex] && weeks[weekIndex][dayIndex]) {
-          dayRow.push(weeks[weekIndex][dayIndex]);
-        }
-      }
-      daysOfWeekData.push(dayRow);
-    }
-
-    return daysOfWeekData;
+  const calendarData = React.useMemo(() => {
+    return buildActivityHeatmapDaysOfWeekData({ activityData, weeksCount });
   }, [activityData, weeksCount]);
 
   // Получаем цвет для типа активности
@@ -177,7 +97,6 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
 
   return (
     <div 
-      ref={containerRef}
       className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full h-full min-h-[200px]" 
       data-name="Activity heatmap block"
     >
@@ -228,7 +147,7 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
             </div>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-              {ui.common?.loading || 'Нет данных для отображения'}
+              {'Нет данных для отображения'}
             </div>
           )}
         </div>

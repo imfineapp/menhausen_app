@@ -5,8 +5,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { LanguageProvider, useLanguage } from '../../components/LanguageContext';
-import { ContentProvider, useContent } from '../../components/ContentContext';
+import { useLanguage } from '../../components/LanguageContext';
+import { useContent } from '../../components/ContentContext';
+import { setLanguage } from '../../src/stores/language.store';
 
 // Простой компонент для тестирования
 const TestComponent = () => {
@@ -94,16 +95,11 @@ describe('Theme Cards Integration Tests', () => {
   beforeEach(() => {
     // Очищаем DOM перед каждым тестом
     document.body.innerHTML = '';
+    setLanguage('en');
   });
 
   it('should load themes from real JSON content', async () => {
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -120,13 +116,7 @@ describe('Theme Cards Integration Tests', () => {
   });
 
   it('should switch language and load different content', async () => {
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -151,13 +141,7 @@ describe('Theme Cards Integration Tests', () => {
   });
 
   it('should load specific theme and its cards', async () => {
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestCardComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestCardComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -177,13 +161,7 @@ describe('Theme Cards Integration Tests', () => {
   });
 
   it('should load UI texts in English', async () => {
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestUIComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestUIComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -223,13 +201,7 @@ describe('Theme Cards Integration Tests', () => {
       );
     };
 
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestRussianComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestRussianComponent />);
 
     // Ждем загрузки контента и смены языка
     await waitFor(() => {
@@ -254,13 +226,7 @@ describe('Theme Cards Integration Tests', () => {
   it('should handle theme clicks correctly', async () => {
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -285,13 +251,7 @@ describe('Theme Cards Integration Tests', () => {
   });
 
   it('should validate content structure', async () => {
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {
@@ -308,13 +268,7 @@ describe('Theme Cards Integration Tests', () => {
 
   it('should handle content loading errors gracefully', async () => {
     // Тест для проверки обработки ошибок загрузки контента
-    render(
-      <LanguageProvider>
-        <ContentProvider>
-          <TestComponent />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    render(<TestComponent />);
 
     // Ждем загрузки контента
     await waitFor(() => {

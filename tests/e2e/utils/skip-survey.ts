@@ -308,7 +308,7 @@ export async function skipRewardScreen(page: Page): Promise<void> {
     const isHome = await page.locator('[data-name="User frame info block"]').isVisible().catch(() => false);
     if (!isHome) {
       // Ждем навигации на home screen (до 10000ms)
-      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 10000 }).catch(() => {});
+      await page.waitForSelector('[data-name="User frame info block"]', { timeout: 5000 }).catch(() => {});
     }
   }
 }

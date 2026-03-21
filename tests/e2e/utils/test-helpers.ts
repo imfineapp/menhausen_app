@@ -349,14 +349,12 @@ export async function waitForElement(page: Page, selector: string, timeout = 500
  * Ожидание навигации к домашней странице (альтернатива waitForTimeout)
  */
 export async function waitForHomeScreen(page: Page, timeout = 5000): Promise<void> {
-  // Увеличиваем таймаут для учета задержек с reward screen и асинхронных операций
-  const extendedTimeout = Math.max(timeout, 30000);
-  
+  // Не раздуваем ожидания: используем только явно переданный таймаут.
   // Проверяем и пропускаем reward screen, который может появиться с задержкой
   // (особенно при переходе на theme-home или home после получения достижений)
   // Проверяем несколько раз, так как reward screen может появиться с задержкой из-за асинхронных операций
   const startTime = Date.now();
-  const maxWait = extendedTimeout;
+  const maxWait = timeout;
   let checkinScreenCount = 0;
   const maxCheckinScreenChecks = 5; // Максимум 5 проверок check-in screen
   
@@ -461,7 +459,7 @@ export async function waitForCheckinScreen(page: Page, timeout = 30000): Promise
     const isLoadingVisible = await loadingLocator.isVisible({ timeout: 2000 }).catch(() => false);
     if (isLoadingVisible) {
       // Ждем исчезновения loading (максимум 20 секунд)
-      await loadingLocator.waitFor({ state: 'hidden', timeout: 20000 }).catch(() => {});
+      await loadingLocator.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
     }
   } catch {
     // Игнорируем ошибки при проверке loading
@@ -576,7 +574,7 @@ export async function completeCheckin(page: Page): Promise<void> {
       return; // Уже на home screen, ничего не делаем
     }
     // Если ни на check-in, ни на home, ждем check-in screen
-    await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout: 20000 });
+    await expect(page.locator(CHECKIN_HEADING_SELECTOR)).toBeVisible({ timeout: 5000 });
   }
   
   if (page.isClosed()) {
@@ -584,7 +582,7 @@ export async function completeCheckin(page: Page): Promise<void> {
   }
   
   const sendButton = page.getByRole('button', { name: /Send|Отправить/i }).or(page.locator('text=/^(Send|Отправить)$/i'));
-  await expect(sendButton).toBeVisible({ timeout: 10000 });
+  await expect(sendButton).toBeVisible({ timeout: 5000 });
   // Даем время для стабилизации элемента перед кликом
   await page.waitForTimeout(200).catch(() => {});
   await sendButton.click();

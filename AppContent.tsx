@@ -1,0 +1,374 @@
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
+import { AnimatePresence } from 'framer-motion'
+import { useStore } from '@nanostores/react'
+
+import ScreenRouter from './src/ScreenRouter'
+import { BackButton } from './components/ui/back-button'
+import { ContentLoadingGate } from './components/ContentContext'
+import { useLanguage } from './components/LanguageContext'
+import { initLanguage } from './src/stores/language.store'
+
+import { isTelegramEnvironment } from './utils/telegramUserUtils'
+import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager'
+import { capture, AnalyticsEvent } from './src/effects/analytics.effects'
+import { processReferralCode, updateReferrerStatsFromList } from './utils/referralUtils'
+import { hasTestBeenCompleted } from './utils/psychologicalTestStorage'
+import { AppScreen } from './types/userState'
+
+import {
+  $currentScreen,
+  $navigationHistory,
+  resetNavigation,
+  setNavigationState,
+  navigateTo,
+  goBack,
+} from './src/stores/navigation.store'
+
+import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
+import { $screenParams, setEarnedAchievementIds } from './src/stores/screen-params.store'
+import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
+import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService'
+
+function AppContent() {
+  const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage()
+
+  useLayoutEffect(() => {
+    initLanguage()
+  }, [])
+
+  useEffect(() => {
+    if (isTelegramEnvironment()) {
+      try {
+        if (window.Telegram?.WebApp?.ready) {
+          window.Telegram.WebApp.ready()
+        }
+
+        telegramTimeoutRefs.current.expand = setTimeout(() => {
+          try {
+            if (window.Telegram?.WebApp?.expand) {
+              window.Telegram.WebApp.expand()
+            }
+
+            telegramTimeoutRefs.current.fullscreen = setTimeout(() => {
+              try {
+                if (window.Telegram?.WebApp?.requestFullscreen) {
+                  window.Telegram.WebApp.requestFullscreen()
+                }
+              } catch (fullscreenError) {
+                console.warn('Failed to request fullscreen:', fullscreenError)
+              }
+            }, 300)
+          } catch (expandError) {
+            console.warn('Failed to expand WebApp:', expandError)
+          }
+        }, 100)
+      } catch (error) {
+        console.warn('Error initializing Telegram WebApp:', error)
+      }
+    }
+
+    return () => {
+      if (telegramTimeoutRefs.current.expand) {
+        clearTimeout(telegramTimeoutRefs.current.expand)
+      }
+      if (telegramTimeoutRefs.current.fullscreen) {
+        clearTimeout(telegramTimeoutRefs.current.fullscreen)
+      }
+      telegramTimeoutRefs.current = {}
+    }
+  }, [])
+
+  useEffect(() => {
+    processReferralCode()
+    updateReferrerStatsFromList()
+  }, [])
+
+  useEffect(() => {
+    resetNavigation()
+
+    const determineInitialScreen = (progress: ReturnType<typeof loadFlowProgressFromLocalStorage>): AppScreen => {
+      if (!progress.onboardingCompleted) {
+        return 'onboarding1'
+      }
+      if (!progress.surveyCompleted) {
+        return 'survey01'
+      }
+      if (!hasTestBeenCompleted()) {
+        return 'psychological-test-preambula'
+      }
+      const checkinStatus = DailyCheckinManager.getCurrentDayStatus()
+      if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+        return 'checkin'
+      }
+      if (checkinStatus === DailyCheckinStatus.COMPLETED) {
+        return 'home'
+      }
+      return 'checkin'
+    }
+
+    const checkLocalData = (): boolean => {
+      const progress = loadFlowProgressFromLocalStorage()
+      const hasProgress = progress.onboardingCompleted || progress.surveyCompleted
+      const hasTest = hasTestBeenCompleted()
+      const hasData = hasProgress || hasTest
+      console.log('[App] checkLocalData:', {
+        hasProgress,
+        hasTest,
+        hasData,
+        onboardingCompleted: progress.onboardingCompleted,
+        surveyCompleted: progress.surveyCompleted,
+      })
+      return hasData
+    }
+
+    const loadAllUserData = async (): Promise<void> => {
+      try {
+        console.log('[App] Loading all user data from Supabase...')
+        const syncStartTime = Date.now()
+        const { initSync } = await import('./src/stores/sync.store')
+        const result = await initSync()
+        const syncDuration = Date.now() - syncStartTime
+        console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success)
+
+        if (result.success) {
+          refreshFlowProgress()
+          try {
+            const savedLanguage = localStorage.getItem('menhausen-language')
+            if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
+              if (savedLanguage !== currentLanguageFromContext) {
+                console.log(`[App] Language changed after sync: ${currentLanguageFromContext} -> ${savedLanguage}`)
+                updateLanguage(savedLanguage as 'en' | 'ru')
+              }
+            }
+          } catch (error) {
+            console.warn('[App] Error updating language after sync:', error)
+          }
+        } else {
+          console.warn('[App] Sync completed with errors:', result.errors)
+        }
+      } catch (error) {
+        console.warn('[App] Failed to load user data:', error)
+      }
+    }
+
+    const initializeApp = async () => {
+      const initStartTime = Date.now()
+      const hasLocalData = checkLocalData()
+
+      if (hasLocalData) {
+        const progress = loadFlowProgressFromLocalStorage()
+        const initialScreen = determineInitialScreen(progress)
+        const initDuration = Date.now() - initStartTime
+        console.log(`[App] Local data found, showing app after ${initDuration}ms with screen:`, initialScreen)
+        setNavigationState(initialScreen, [initialScreen])
+        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+          load_time_ms: initDuration,
+          screen: initialScreen,
+          data_source: 'local',
+          has_local_data: true,
+        })
+      } else {
+        const dataLoadStartTime = Date.now()
+        await loadAllUserData()
+        const dataLoadDuration = Date.now() - dataLoadStartTime
+        const progress = loadFlowProgressFromLocalStorage()
+        const initialScreen = determineInitialScreen(progress)
+        const initDuration = Date.now() - initStartTime
+        console.log(`[App] All user data loaded, showing app after ${initDuration}ms with screen:`, initialScreen)
+        setNavigationState(initialScreen, [initialScreen])
+        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+          load_time_ms: initDuration,
+          data_load_time_ms: dataLoadDuration,
+          screen: initialScreen,
+          data_source: 'remote',
+          has_local_data: false,
+        })
+      }
+    }
+
+    void initializeApp()
+
+    const checkPremiumAfterSync = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      const { loadPremiumFromSupabase } = await import('./src/stores/premium.store')
+      await loadPremiumFromSupabase()
+    }
+    void checkPremiumAfterSync()
+
+    return () => {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const isE2ETestEnvironment =
+    typeof window !== 'undefined' && (window as unknown as { __PLAYWRIGHT__?: boolean }).__PLAYWRIGHT__ === true
+
+  useEffect(() => {
+    return () => {}
+  }, [])
+
+  if (isE2ETestEnvironment) {
+    console.log('E2E test environment detected, starting with home screen')
+  }
+
+  const currentScreen = useStore($currentScreen)
+  const navigationHistory = useStore($navigationHistory)
+  const earnedAchievementIds = useStore($screenParams).earnedAchievementIds
+
+  const telegramTimeoutRefs = useRef<{
+    expand?: ReturnType<typeof setTimeout>
+    fullscreen?: ReturnType<typeof setTimeout>
+  }>({})
+  const themeHomeProcessingRef = useRef<boolean>(false)
+  const isMountedRef = useRef<boolean>(true)
+
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  const runAchievementCheck = useCallback(
+    async (delay: number = 200, forceCheck: boolean = false) => {
+      await checkAndShowAchievements(delay, forceCheck, { isMounted: () => isMountedRef.current })
+    },
+    []
+  )
+
+  useEffect(() => {
+    const handleStorageChange = async (e: StorageEvent) => {
+      if (e.key === 'menhausen_user_stats') {
+        await runAchievementCheck(300)
+      }
+    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [runAchievementCheck])
+
+  useEffect(() => {
+    if (currentScreen === 'home' && earnedAchievementIds.length > 0) {
+      navigateTo('reward')
+    }
+  }, [currentScreen, earnedAchievementIds.length])
+
+  useEffect(() => {
+    if (currentScreen === 'home') {
+      const timeoutId = setTimeout(() => {
+        const result = getAchievementsToShow({
+          screen: 'home',
+          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+          excludeFromStorageCheck: earnedAchievementIds,
+        })
+        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+          markAchievementsAsShown(result.achievementsToShow, 'home')
+          setEarnedAchievementIds(result.achievementsToShow)
+          navigateTo('reward')
+        }
+      }, 200)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [currentScreen, earnedAchievementIds])
+
+  useEffect(() => {
+    if (currentScreen === 'profile') {
+      const timeoutId = setTimeout(() => {
+        const result = getAchievementsToShow({
+          screen: 'profile',
+          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+          excludeFromStorageCheck: earnedAchievementIds,
+        })
+        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+          markAchievementsAsShown(result.achievementsToShow, 'profile')
+          setEarnedAchievementIds(result.achievementsToShow)
+          navigateTo('reward')
+        }
+      }, 200)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [currentScreen, earnedAchievementIds])
+
+  useEffect(() => {
+    if (currentScreen === 'theme-home') {
+      const previousScreen =
+        navigationHistory.length >= 2 ? navigationHistory[navigationHistory.length - 2] : null
+
+      if (earnedAchievementIds.length === 0 && previousScreen === 'reward') {
+        return
+      }
+
+      if (earnedAchievementIds.length === 0 && themeHomeProcessingRef.current) {
+        return
+      }
+
+      if (earnedAchievementIds.length === 0) {
+        themeHomeProcessingRef.current = true
+      }
+
+      if (earnedAchievementIds.length > 0) {
+        themeHomeProcessingRef.current = false
+      }
+
+      const delay = earnedAchievementIds.length > 0 ? 200 : 800
+
+      const timeoutId = setTimeout(() => {
+        try {
+          const result = getAchievementsToShow({
+            screen: 'theme-home',
+            earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
+            excludeFromStorageCheck: earnedAchievementIds,
+          })
+          if (result.shouldNavigate && result.achievementsToShow.length > 0) {
+            markAchievementsAsShown(result.achievementsToShow, 'theme-home')
+            setEarnedAchievementIds(result.achievementsToShow)
+            setTimeout(() => navigateTo('reward'), 0)
+          } else {
+            themeHomeProcessingRef.current = false
+          }
+        } catch (error) {
+          console.error('[Achievements] Error processing achievements on theme-home:', error)
+          themeHomeProcessingRef.current = false
+        }
+      }, delay)
+
+      return () => clearTimeout(timeoutId)
+    }
+    themeHomeProcessingRef.current = false
+  }, [currentScreen, earnedAchievementIds, navigationHistory])
+
+  useEffect(() => {
+    const telegramTimeouts = telegramTimeoutRefs.current
+    return () => {
+      if (telegramTimeouts.expand) {
+        clearTimeout(telegramTimeouts.expand)
+        telegramTimeouts.expand = undefined
+      }
+      if (telegramTimeouts.fullscreen) {
+        clearTimeout(telegramTimeouts.fullscreen)
+        telegramTimeouts.fullscreen = undefined
+      }
+    }
+  }, [])
+
+  const isHomePage = currentScreen === 'home'
+
+  return (
+    <ContentLoadingGate>
+      <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+        <div className="flex-1 relative w-full h-full overflow-hidden overflow-x-hidden">
+          <BackButton isHomePage={isHomePage} onBack={goBack} />
+          <div className="relative w-full h-full overflow-hidden">
+            <AnimatePresence mode="wait">
+              <ScreenRouter />
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </ContentLoadingGate>
+  )
+}
+
+export default function App() {
+  return <AppContent />
+}

@@ -5,9 +5,10 @@ import './styles/globals.css'
 import { fontLoader } from './utils/fontLoader'
 import TelegramAnalytics from '@telegram-apps/analytics'
 import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react'
-import { isAnalyticsEnabled } from './utils/analytics/posthog'
+import { isAnalyticsEnabled } from './src/effects/analytics.effects'
 import { ErrorFallback } from './components/ErrorFallback'
-import { captureException } from './utils/analytics/posthog'
+import { captureException } from './src/effects/analytics.effects'
+import { isTelegramWebAppAvailable } from './src/effects/telegram.effects'
 
 // Ensure DOM is ready
 const root = document.getElementById('root')
@@ -21,7 +22,14 @@ if (!root) {
 // auto-tracked events (e.g. app open) are captured correctly.
 try {
   const tgAnalyticsToken = (import.meta as any).env?.VITE_TG_ANALYTICS_TOKEN as string | undefined
-  if (tgAnalyticsToken && typeof window !== 'undefined' && !(window as any).__TG_ANALYTICS_INIT) {
+  // Telegram Analytics SDK may touch sensor APIs internally.
+  // Initialize only in real Telegram WebApp context to avoid browser policy violations.
+  if (
+    tgAnalyticsToken &&
+    typeof window !== 'undefined' &&
+    isTelegramWebAppAvailable() &&
+    !(window as any).__TG_ANALYTICS_INIT
+  ) {
     ;(window as any).__TG_ANALYTICS_INIT = true
     TelegramAnalytics.init({
       token: tgAnalyticsToken,

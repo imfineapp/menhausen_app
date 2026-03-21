@@ -2,6 +2,7 @@
 import { useContent } from './ContentContext';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { LoadingScreen } from './LoadingScreen';
 import { ReferralSection } from './ProfileReferralSection';
 
 // Типы для пропсов компонента
@@ -91,17 +92,7 @@ export function AboutAppScreen({ onBack: _onBack }: AboutAppScreenProps) {
   
   // Если контент не загружен, показываем загрузку
   if (!content || !content.about || !content.about.title) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-bg-primary">
-        <div className="text-center">
-          <div className="text-lg text-brand-primary">Загрузка контента...</div>
-          <div className="text-sm text-secondary mt-2">Язык: {currentLanguage}</div>
-          <div className="text-xs text-tertiary mt-1">Контент: {content ? 'загружен' : 'не загружен'}</div>
-          <div className="text-xs text-tertiary mt-1">About: {content?.about ? 'есть' : 'нет'}</div>
-          <div className="text-xs text-tertiary mt-1">UI: {content?.ui ? 'есть' : 'нет'}</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
   return (

@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StatusBlock } from './StatusBlock';
 import { LevelIcon, MentalStatusIcon, ExerciseIcon } from './UserProfileIcons';
 import { useContent } from './ContentContext';
 import { useTranslation } from './LanguageContext';
 import { useAchievements } from '../contexts/AchievementsContext';
-import { PointsManager } from '../utils/PointsManager';
-import { ThemeCardManager } from '../utils/ThemeCardManager';
+import { useStore } from '@nanostores/react';
+import { $currentLevel, $pointsBalance } from '@/src/stores/points.store';
+import { $totalCompletedAttempts } from '@/src/stores/theme-progress.store';
 
 interface StatusBlocksRowProps {
   onBadgesClick?: () => void;
@@ -26,40 +27,9 @@ export function StatusBlocksRow({
   const _badges = _getLocalizedBadges();
   const { unlockedCount: _unlockedCount } = useAchievements();
   
-  const [totalEarned, setTotalEarned] = useState<number>(0);
-  const [totalCompletedAttempts, setTotalCompletedAttempts] = useState<number>(0);
-  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
-  const level = Math.max(1, computedLevel);
-
-  useEffect(() => {
-    const read = () => {
-      const t = PointsManager.getBalance();
-      setTotalEarned(t);
-    };
-    read();
-    const onUpdate = () => read();
-    window.addEventListener('storage', onUpdate);
-    window.addEventListener('points:updated', onUpdate as EventListener);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-      window.removeEventListener('points:updated', onUpdate as EventListener);
-    };
-  }, []);
-
-  useEffect(() => {
-    const readAttempts = () => {
-      const total = ThemeCardManager.getTotalCompletedAttempts();
-      setTotalCompletedAttempts(total);
-    };
-    readAttempts();
-    const onUpdate = () => readAttempts();
-    window.addEventListener('storage', onUpdate);
-    window.addEventListener('card:completed', onUpdate as EventListener);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-      window.removeEventListener('card:completed', onUpdate as EventListener);
-    };
-  }, []);
+  const totalEarned = useStore($pointsBalance);
+  const level = useStore($currentLevel);
+  const totalCompletedAttempts = useStore($totalCompletedAttempts);
 
   return (
     <div className="flex flex-row gap-3 sm:gap-4 w-full items-stretch" data-name="Status blocks row">

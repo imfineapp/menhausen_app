@@ -143,11 +143,6 @@ export class ThemeCardManager {
 
       this.saveCardProgress(cardId, updatedProgress);
       
-      // Dispatch custom event to notify about card completion
-      window.dispatchEvent(new CustomEvent('card:completed', { 
-        detail: { cardId, totalAttempts: updatedProgress.totalCompletedAttempts } 
-      }));
-      
       return updatedProgress;
     } catch (error) {
       console.error(`Error adding completed attempt for card ${cardId}:`, error);

@@ -1,9 +1,15 @@
-// Импортируем необходимые хуки React
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { getInitialLanguage, saveLanguage, getSavedLanguage } from '../utils/languageDetector';
+import { useStore } from '@nanostores/react'
 
-// Типы для языков приложения
-export type Language = 'en' | 'ru';
+import {
+  $language,
+  $isLanguageModalOpen,
+  setLanguage as setLanguageAction,
+  openLanguageModal as openLanguageModalAction,
+  closeLanguageModal as closeLanguageModalAction,
+  type Language,
+} from '@/src/stores/language.store'
+
+export type { Language } from '@/src/stores/language.store'
 
 // Интерфейс для контекста языка
 interface LanguageContextType {
@@ -14,110 +20,21 @@ interface LanguageContextType {
   closeLanguageModal: () => void; // Функция для закрытия модального окна
 }
 
-// Создаем контекст языка
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// Типы для провайдера контекста
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-/**
- * Провайдер контекста языка приложения
- * Управляет текущим языком и состоянием модального окна выбора языка
- */
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  // Состояние для текущего языка (определяется автоматически)
-  const [language, setLanguageState] = useState<Language>(() => {
-    const initialLanguage = getInitialLanguage();
-    console.log('LanguageProvider: Initial language set to:', initialLanguage);
-    return initialLanguage;
-  });
-  
-  // Состояние для модального окна выбора языка
-  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
-
-  /**
-   * Оптимизация: Синхронизируем язык с localStorage после монтирования
-   * Это позволяет учесть язык, загруженный из Supabase в fastSyncCriticalData
-   * до того, как ContentContext загрузит контент
-   */
-  useEffect(() => {
-    // Небольшая задержка для того, чтобы fastSyncCriticalData успел сохранить язык в localStorage
-    const checkLanguageTimeout = setTimeout(() => {
-      const savedLanguage = getSavedLanguage();
-      if (savedLanguage && savedLanguage !== language) {
-        console.log(`LanguageProvider: Language synchronized from localStorage: ${language} -> ${savedLanguage}`);
-        setLanguageState(savedLanguage);
-      }
-    }, 100); // 100ms достаточно для завершения fastSyncCriticalData в большинстве случаев
-
-    return () => clearTimeout(checkLanguageTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Выполняется только один раз при монтировании - language не нужен в зависимостях, чтобы избежать циклов
-
-  /**
-   * Функция для изменения языка приложения
-   * Сохраняет выбор в localStorage для постоянства
-   * ContentContext будет автоматически обновлен через useEffect
-   */
-  const setLanguage = (lang: Language) => {
-    // Проверяем, действительно ли язык изменился, чтобы избежать лишних обновлений
-    if (lang === language) {
-      console.log('LanguageProvider: Language unchanged, skipping update:', lang);
-      return;
-    }
-    
-    console.log('LanguageProvider: setLanguage called with:', lang);
-    setLanguageState(lang);
-    saveLanguage(lang);
-    console.log('LanguageProvider: Language changed to:', lang);
-  };
-
-  /**
-   * Функция для открытия модального окна выбора языка
-   */
-  const openLanguageModal = () => {
-    setIsLanguageModalOpen(true);
-  };
-
-  /**
-   * Функция для закрытия модального окна выбора языка
-   */
-  const closeLanguageModal = () => {
-    setIsLanguageModalOpen(false);
-  };
-
-  // Язык уже определен в useState через getInitialLanguage()
-
-  // Значение контекста
-  const contextValue: LanguageContextType = {
-    language,
-    setLanguage,
-    isLanguageModalOpen,
-    openLanguageModal,
-    closeLanguageModal
-  };
-
-  return (
-    <LanguageContext.Provider value={contextValue}>
-      {children}
-    </LanguageContext.Provider>
-  );
-}
-
 /**
  * Хук для использования контекста языка
  * Возвращает текущий язык и функции для управления им
  */
 export function useLanguage(): LanguageContextType {
-  const context = useContext(LanguageContext);
-  
-  if (context === undefined) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+  const language = useStore($language)
+  const isLanguageModalOpen = useStore($isLanguageModalOpen)
+
+  return {
+    language,
+    setLanguage: setLanguageAction,
+    isLanguageModalOpen,
+    openLanguageModal: openLanguageModalAction,
+    closeLanguageModal: closeLanguageModalAction,
   }
-  
-  return context;
 }
 
 /**

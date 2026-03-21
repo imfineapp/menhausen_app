@@ -1,8 +1,11 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from './ui/chart';
 import { useContent } from './ContentContext';
 import { DailyCheckinManager, CheckinData } from '../utils/DailyCheckinManager';
+import { buildMentalLevelChartData } from '@/src/domain/mentalLevel.domain';
+import { useStore } from '@nanostores/react';
+import { $totalCheckins } from '@/src/stores/checkin.store';
 
 /**
  * Блок для отображения истории чекинов за последние 14 дней
@@ -11,53 +14,15 @@ import { DailyCheckinManager, CheckinData } from '../utils/DailyCheckinManager';
 export function MentalLevelBlock() {
   const { getUI } = useContent();
   const ui = getUI();
-  const [checkins, setCheckins] = useState<CheckinData[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  useStore($totalCheckins)
 
-  // Получаем данные чекинов
-  useEffect(() => {
-    const allCheckins = DailyCheckinManager.getAllCheckins();
-    setCheckins(allCheckins);
-  }, []);
+  // Recompute on each render; store subscription above triggers updates when checkins change.
+  const checkins = DailyCheckinManager.getAllCheckins() as CheckinData[]
 
   // Формируем данные за последние 14 дней
-  const chartData = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Создаем массив из 14 дней
-    const days: Array<{ date: string; value: number }> = [];
-    const checkinsMap = new Map<string, number>();
-    
-    // Заполняем карту чекинов по датам
-    checkins.forEach(checkin => {
-      const checkinDate = new Date(checkin.date);
-      checkinDate.setHours(0, 0, 0, 0);
-      const daysDiff = Math.floor((today.getTime() - checkinDate.getTime()) / (1000 * 60 * 60 * 24));
-      
-      // Берем только последние 14 дней
-      if (daysDiff >= 0 && daysDiff < 14) {
-        const dateKey = checkin.date;
-        // Нормализуем значение: 0-4 → 1-5 для лучшей визуализации
-        checkinsMap.set(dateKey, checkin.value + 1);
-      }
-    });
-
-    // Создаем массив данных для всех 14 дней
-    for (let i = 13; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      
-      // Форматируем дату для отображения (DD.MM)
-      const displayDate = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
-      // Используем значение из чекина или 0 для пропущенных дней
-      const value = checkinsMap.get(dateKey) || 0;
-      days.push({ date: displayDate, value });
-    }
-
-    return days;
+  const chartData = React.useMemo(() => {
+    return buildMentalLevelChartData({ checkins, daysCount: 14 });
   }, [checkins]);
 
   // Получаем заголовок
@@ -136,7 +101,7 @@ export function MentalLevelBlock() {
             </ChartContainer>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-              {ui.common?.loading || 'Нет данных для отображения'}
+              {'Нет данных для отображения'}
             </div>
           )}
         </div>

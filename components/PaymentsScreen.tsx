@@ -4,7 +4,8 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useContent } from './ContentContext';
-import { telegramStarsPaymentService } from '../utils/telegramStarsPaymentService';
+import { purchasePremium } from '@/src/effects/payment.effects';
+import { hapticNotificationOccurred, isTelegramOpenInvoiceAvailable, isTelegramShowAlertAvailable, showTelegramAlert } from '@/src/effects/telegram.effects';
 
 /**
  * Компонент страницы покупки Premium подписки
@@ -704,17 +705,15 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
       setIsLoading(true);
 
       // Проверяем доступность Telegram WebApp API
-      if (!window.Telegram?.WebApp?.openInvoice) {
+      if (!isTelegramOpenInvoiceAvailable()) {
         throw new Error(content.payments.messages.telegramNotAvailable || 'Telegram WebApp API not available. Please open this app in Telegram.');
       }
 
       // Тактильная обратная связь
-      if (window.Telegram?.WebApp?.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-      }
+      hapticNotificationOccurred('success');
 
       // Создаём инвойс и открываем его в Telegram
-      const paymentStatus = await telegramStarsPaymentService.purchasePremium(selectedPlan);
+      const paymentStatus = await purchasePremium(selectedPlan);
 
       if (paymentStatus === 'paid') {
         // Успешная оплата
@@ -735,11 +734,8 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
         const errorMessage = content.payments.messages.error;
         setStatus('error');
         setStatusMessage(errorMessage);
-        if (window.Telegram?.WebApp?.showAlert) {
-          window.Telegram.WebApp.showAlert(errorMessage);
-        } else {
-          alert(errorMessage);
-        }
+        if (isTelegramShowAlertAvailable()) showTelegramAlert(errorMessage)
+        else alert(errorMessage)
       }
 
     } catch (error) {
@@ -750,11 +746,8 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
       setStatus('error');
       setStatusMessage(errorMessage);
       
-      if (window.Telegram?.WebApp?.showAlert) {
-        window.Telegram.WebApp.showAlert(errorMessage);
-      } else {
-        alert(errorMessage);
-      }
+      if (isTelegramShowAlertAvailable()) showTelegramAlert(errorMessage)
+      else alert(errorMessage)
     } finally {
       setIsLoading(false);
     }

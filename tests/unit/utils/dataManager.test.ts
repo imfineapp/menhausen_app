@@ -119,6 +119,25 @@ describe('CriticalDataManager', () => {
       const loadedCompletions = await dataManager.loadExerciseCompletions();
       expect(loadedCompletions).toBeNull();
     });
+
+    it('should load and migrate legacy plain JSON user preferences', async () => {
+      const legacyPreferences = {
+        language: 'ru',
+        theme: 'dark',
+        notifications: false,
+        analytics: true,
+      };
+      mockStorage['menhausen_user_preferences'] = JSON.stringify(legacyPreferences);
+
+      const loadedPreferences = await dataManager.loadUserPreferences();
+      expect(loadedPreferences).toEqual({
+        ...legacyPreferences,
+        articleFontSizeStep: 0,
+      });
+
+      // Legacy payload should be rewritten in encrypted format.
+      expect(mockStorage['menhausen_user_preferences']).not.toBe(JSON.stringify(legacyPreferences));
+    });
   });
 
   describe('Exercise Completion Management', () => {

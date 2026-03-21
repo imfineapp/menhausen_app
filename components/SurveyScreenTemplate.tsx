@@ -8,6 +8,7 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
 import { Light } from './ProfileLayoutComponents';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { LoadingScreen } from './LoadingScreen';
 
 interface SurveyScreenTemplateProps {
   screenId: keyof SurveyContent;
@@ -157,11 +158,7 @@ export function SurveyScreenTemplate({
   // =====================================================================================
 
   if (!surveyData) {
-    return (
-      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
-        <p className="text-white">Error loading survey screen</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   const { screen, localizedScreen } = surveyData;

@@ -4,6 +4,7 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { useLanguage } from './LanguageContext';
+import { hapticImpactOccurred } from '@/src/effects/telegram.effects';
 
 /**
  * Компонент страницы "Under Construction"
@@ -147,9 +148,7 @@ export function UnderConstructionScreen({ onBack, featureName }: UnderConstructi
       setIsLoading(true);
 
       // Добавляем тактильную обратную связь если доступна
-      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-      }
+      hapticImpactOccurred('light');
 
       // Небольшая задержка для UX
       await new Promise(resolve => setTimeout(resolve, 200));

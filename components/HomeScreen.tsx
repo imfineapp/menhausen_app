@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -10,10 +10,12 @@ import { ActivityBlockNew } from './ActivityBlockNew';
 import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
-import { PointsManager } from '../utils/PointsManager';
+import { useStore } from '@nanostores/react';
+import { $currentLevel } from '@/src/stores/points.store';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
+import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
 
 
 // Типы для пропсов компонента
@@ -117,21 +119,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
   const { content } = useContent();
-  const [totalEarned, setTotalEarned] = useState<number>(0);
-  const computedLevel = totalEarned === 0 ? 0 : Math.floor(totalEarned / 1000) + 1;
-  const displayLevel = Math.max(1, computedLevel);
-
-  useEffect(() => {
-    const read = () => setTotalEarned(PointsManager.getBalance());
-    read();
-    const onUpdate = () => read();
-    window.addEventListener('storage', onUpdate);
-    window.addEventListener('points:updated', onUpdate as EventListener);
-    return () => {
-      window.removeEventListener('storage', onUpdate);
-      window.removeEventListener('points:updated', onUpdate as EventListener);
-    };
-  }, []);
+  const displayLevel = useStore($currentLevel);
 
   return (
     <div
@@ -296,7 +284,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
     ? themeList
     : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
 
-  const worries = source
+  const worries: ThemeWorry[] = source
     .map((theme: any) => {
       const allCardIds: string[] = Array.isArray(theme.cards)
         ? theme.cards.map((c: any) => c.id)
@@ -326,33 +314,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
         matchPercentage: matchPercentage ?? -1, // Используем -1 для тем без соответствия, чтобы они шли в конец
       };
     })
-    .sort((a, b) => {
-      // 1. Stress всегда первая, если она бесплатная
-      const aIsStress = a.themeId === 'stress';
-      const bIsStress = b.themeId === 'stress';
-      
-      if (aIsStress && !a.isPremium && !bIsStress) return -1;
-      if (bIsStress && !b.isPremium && !aIsStress) return 1;
-      
-      // Если обе темы Stress, оставляем их в исходном порядке (Stress уже первая)
-      if (aIsStress && bIsStress) return 0;
-      
-      // 2. Остальные темы сортируем по наличию процента соответствия
-      const aHasMatch = a.matchPercentage >= 0;
-      const bHasMatch = b.matchPercentage >= 0;
-      if (aHasMatch !== bHasMatch) {
-        return aHasMatch ? -1 : 1;
-      }
-      
-      // 3. Если оба имеют процент соответствия, сортируем по нему (по убыванию)
-      if (aHasMatch && bHasMatch) {
-        const matchDiff = b.matchPercentage - a.matchPercentage;
-        if (matchDiff !== 0) return matchDiff;
-      }
-      
-      // 4. Если проценты совпадают или оба отсутствуют, сортируем по доступности (премиум или нет)
-      return Number(b.isAvailable) - Number(a.isAvailable);
-    });
+  const sortedWorries = sortWorries(worries)
 
   const handleThemeClick = (themeId: string, _isAvailable: boolean) => {
     // Всегда открываем экран темы. Для премиум тем без подписки
@@ -366,7 +328,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
       className="box-border content-stretch flex flex-col gap-8 sm:gap-10 items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries list"
     >
-      {worries.map((worry: any) => (
+      {sortedWorries.map((worry) => (
         <ThemeCard 
           key={worry.themeId}
           title={worry.title}

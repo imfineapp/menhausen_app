@@ -47,6 +47,34 @@ export class SupabaseSyncService {
   private debounceTimers: Map<SyncDataType, number> = new Map();
   private initializationPromise: Promise<void>;
 
+  private parsePreferencesFromStorage(raw: string): Record<string, any> | null {
+    // Try legacy/plain JSON first.
+    try {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.data && typeof parsed.data === 'object') {
+          return parsed.data as Record<string, any>;
+        }
+        return parsed as Record<string, any>;
+      }
+    } catch {
+      // Continue with encrypted payload fallback.
+    }
+
+    // Fallback for encrypted payload from CriticalDataManager.
+    try {
+      const decrypted = decodeURIComponent(escape(atob(raw)));
+      const parsed = JSON.parse(decrypted);
+      if (parsed && typeof parsed === 'object' && parsed.data && typeof parsed.data === 'object') {
+        return parsed.data as Record<string, any>;
+      }
+    } catch {
+      // Invalid/unsupported payload. Caller will ignore it.
+    }
+
+    return null;
+  }
+
   constructor(config?: Partial<SyncConfig>) {
     this.config = { ...DEFAULT_SYNC_CONFIG, ...config };
     // Initialize Supabase asynchronously and track the promise
@@ -511,10 +539,9 @@ export class SupabaseSyncService {
       // Load existing preferences if available
       const preferencesRaw = localStorage.getItem('menhausen_user_preferences');
       if (preferencesRaw) {
-        try {
-          preferences = JSON.parse(preferencesRaw);
-        } catch (e) {
-          console.warn('Error parsing preferences:', e);
+        const parsedPreferences = this.parsePreferencesFromStorage(preferencesRaw);
+        if (parsedPreferences) {
+          preferences = parsedPreferences;
         }
       }
       

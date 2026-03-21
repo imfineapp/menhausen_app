@@ -1,7 +1,7 @@
 // Базовые тесты функциональности приложения
 // Optimized: replaced networkidle with domcontentloaded and element-based waiting
 import { test, expect } from '@playwright/test';
-import { primeAppForHome, waitForPageLoad, waitForHomeScreen } from './utils/test-helpers';
+import { primeAppForHome, waitForPageLoad } from './utils/test-helpers';
 
 test.describe('Basic App Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -13,15 +13,16 @@ test.describe('Basic App Functionality', () => {
 
     await page.goto('/');
     await waitForPageLoad(page);
-    await waitForHomeScreen(page);
   });
 
   test('должен загружать главную страницу', async ({ page }) => {
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 5000 });
     await expect(page.locator('[data-name="Worries container"]')).toBeVisible();
     await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible();
   });
 
   test('должен открывать профиль при клике на блок пользователя', async ({ page }) => {
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
     await page.click('[data-name="User frame info block"]');
     await expect(page.locator('[data-name="User Profile Page"]')).toBeVisible({ timeout: 5000 });
   });

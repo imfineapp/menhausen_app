@@ -29,7 +29,7 @@ module.exports = defineConfig([
     // Browser/React configuration
     {
         files: ["**/*.{ts,tsx,js,jsx}"],
-        ignores: ["**/dist/**", "**/node_modules/**", "**/imports/**", "**/scripts/**", "**/*.config.{js,cjs,mjs}", "**/.eslintrc.cjs", "**/.stylelintrc.cjs"],
+        ignores: ["**/dist/**", "**/node_modules/**", "**/imports/**", "**/coverage/**", "**/scripts/**", "**/*.config.{js,cjs,mjs}", "**/.eslintrc.cjs", "**/.stylelintrc.cjs"],
         languageOptions: {
             globals: {
                 ...globals.browser,
@@ -84,5 +84,5 @@ module.exports = defineConfig([
             "no-undef": "off",
         },
     },
-    globalIgnores(["**/dist", "**/node_modules", "**/imports/**"]),
+    globalIgnores(["**/dist", "**/node_modules", "**/imports/**", "**/coverage/**"]),
 ]);

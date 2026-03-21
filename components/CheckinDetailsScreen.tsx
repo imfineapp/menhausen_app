@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { LoadingScreen } from './LoadingScreen';
 import { useContent } from './ContentContext';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { ThemeLoader } from '../utils/ThemeLoader';
@@ -268,28 +269,7 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
 
   // Показываем загрузку
   if (loading) {
-    return (
-      <div 
-        className="bg-[#111111] relative size-full min-h-screen overflow-x-hidden" 
-        data-name="Checkin Details Page"
-      >
-        <Light />
-        <MiniStripeLogo />
-        
-        <div className="absolute top-[141px] left-0 right-0 bottom-0 overflow-y-auto">
-          <div className="px-4 sm:px-6 md:px-[21px] py-5 pb-[180px]">
-            <div className="w-full max-w-[351px] mx-auto flex flex-col gap-10">
-              <div className="text-center text-white">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-                <p>Загрузка...</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <CheckinDetailsBottomButton onClick={onBack} />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Показываем ошибку

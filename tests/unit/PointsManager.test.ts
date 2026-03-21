@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { PointsManager } from '../../utils/PointsManager';
 
 describe('PointsManager', () => {
@@ -36,14 +36,7 @@ describe('PointsManager', () => {
     expect(PointsManager.getBalance()).toBe(130);
   });
 
-  it('dispatches points:updated event on earn/spend (browser env)', () => {
-    const spy = vi.fn();
-    window.addEventListener('points:updated', spy as EventListener);
-    PointsManager.earn(10);
-    PointsManager.spend(5);
-    expect(spy).toHaveBeenCalled();
-    window.removeEventListener('points:updated', spy as EventListener);
-  });
+  // Note: DOM events (`points:updated`) are removed; React UI refresh should use `points.store.ts`.
 });
 
 const BALANCE_KEY = 'menhausen_points_balance';
