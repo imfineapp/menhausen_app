@@ -109,6 +109,7 @@ function AppContent() {
   }, [])
 
   useEffect(() => {
+    let cancelled = false
     resetNavigation()
 
     const determineInitialScreen = (progress: ReturnType<typeof loadFlowProgressFromLocalStorage>): AppScreen => {
@@ -148,10 +149,12 @@ function AppContent() {
 
     const loadAllUserData = async (): Promise<void> => {
       try {
+        if (cancelled) return
         console.log('[App] Loading all user data from Supabase...')
         const syncStartTime = Date.now()
         const { initSync } = await import('./src/stores/sync.store')
         const result = await initSync()
+        if (cancelled) return
         const syncDuration = Date.now() - syncStartTime
         console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success)
 
@@ -177,6 +180,7 @@ function AppContent() {
     }
 
     const initializeApp = async () => {
+      if (cancelled) return
       const initStartTime = Date.now()
       const hasLocalData = checkLocalData()
       const optimisticProgress = loadFlowProgressFromLocalStorage()
@@ -198,6 +202,7 @@ function AppContent() {
 
       const syncStartTime = Date.now()
       await loadAllUserData()
+      if (cancelled) return
       const syncDuration = Date.now() - syncStartTime
 
       const updatedProgress = loadFlowProgressFromLocalStorage()
@@ -213,7 +218,9 @@ function AppContent() {
 
     void initializeApp()
 
-    return () => {}
+    return () => {
+      cancelled = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

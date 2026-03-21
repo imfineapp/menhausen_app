@@ -36,9 +36,16 @@ export class SupabaseSyncService {
   private supabase: SupabaseClient | null = null;
   private syncInProgress = false;
   private offlineQueue: SyncQueueItem[] = [];
-  private fetchUserDataCache: { data: { hasPremium?: boolean; premiumSignature?: any } | null; timestamp: number } | null = null;
-  private fetchFromSupabaseInFlight: Promise<UserDataFromAPI | null> | null = null;
-  private readonly FETCH_USER_DATA_CACHE_TTL_MS = 120_000;
+  private fetchCache: {
+    inFlight: Promise<UserDataFromAPI | null> | null;
+    result: UserDataFromAPI | null;
+    timestamp: number;
+  } = {
+    inFlight: null,
+    result: null,
+    timestamp: 0,
+  };
+  private readonly FETCH_CACHE_TTL_MS = 60_000;
   private syncStatus: SyncStatus = {
     isOnline: navigator.onLine,
     lastSync: null,
@@ -641,7 +648,7 @@ export class SupabaseSyncService {
   /**
    * Fetch user data from Supabase
    */
-  private async fetchFromSupabase(_telegramUserId: number): Promise<UserDataFromAPI | null> {
+  private async fetchFromSupabase(_telegramUserId: number, source: string = 'unknown'): Promise<UserDataFromAPI | null> {
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
       console.log('[SyncService] Mocked: fetchFromSupabase - returning null (e2e test mode)');
@@ -652,9 +659,21 @@ export class SupabaseSyncService {
       throw new Error('Supabase client not initialized');
     }
 
-    if (this.fetchFromSupabaseInFlight) {
-      console.log('[SyncService] fetchFromSupabase - Reusing in-flight request');
-      return this.fetchFromSupabaseInFlight;
+    const callStack = new Error(`[fetchFromSupabase] source=${source}`).stack;
+    console.log(`[SyncService] fetchFromSupabase called from: ${source}`);
+    console.log('[SyncService] fetchFromSupabase stack:', callStack);
+
+    if (
+      this.fetchCache.timestamp > 0 &&
+      Date.now() - this.fetchCache.timestamp < this.FETCH_CACHE_TTL_MS
+    ) {
+      console.log(`[SyncService] fetchFromSupabase(${source}) - Cache hit`);
+      return this.fetchCache.result;
+    }
+
+    if (this.fetchCache.inFlight) {
+      console.log(`[SyncService] fetchFromSupabase(${source}) - Reusing in-flight request`);
+      return this.fetchCache.inFlight;
     }
 
     const requestPromise = (async () => {
@@ -742,15 +761,18 @@ export class SupabaseSyncService {
       return null;
     })();
 
-    this.fetchFromSupabaseInFlight = requestPromise;
+    this.fetchCache.inFlight = requestPromise;
 
     try {
-      return await requestPromise;
+      const result = await requestPromise;
+      this.fetchCache.result = result;
+      this.fetchCache.timestamp = Date.now();
+      return result;
     } catch (error) {
       console.error('Error fetching from Supabase:', error);
       throw error;
     } finally {
-      this.fetchFromSupabaseInFlight = null;
+      this.fetchCache.inFlight = null;
     }
   }
 
@@ -1037,112 +1059,6 @@ export class SupabaseSyncService {
   }
 
   /**
-   * Fast sync of critical data only (flowProgress + psychologicalTest + today's checkin)
-   * Used for initial screen determination when local data is missing
-   * Uses optimized get-user-data Edge Function (which uses PostgreSQL RPC function for single-query optimization)
-   */
-  public async fastSyncCriticalData(): Promise<{ flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } | null> {
-    // Check if sync is mocked (e2e tests)
-    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log('[SyncService] Mocked: fastSyncCriticalData - returning null (e2e test mode)');
-      return null;
-    }
-    
-    // Wait for initialization to complete
-    await this.initializationPromise;
-    
-    const telegramUserIdStr = getTelegramUserId();
-    if (!telegramUserIdStr) {
-      return null;
-    }
-
-    const telegramUserId = parseInt(telegramUserIdStr, 10);
-    if (isNaN(telegramUserId)) {
-      return null;
-    }
-
-    try {
-      const syncStartTime = Date.now();
-      
-      // Use optimized get-user-data Edge Function instead of multiple REST calls
-      // This now uses PostgreSQL RPC function for single-query optimization
-      const userData = await this.fetchFromSupabase(telegramUserId);
-      
-      const syncDuration = Date.now() - syncStartTime;
-      console.log(`[SyncService] Fast critical data sync completed in ${syncDuration}ms`);
-      
-      if (!userData) {
-        return null;
-      }
-
-      const result: { flowProgress?: any; psychologicalTest?: any; todayCheckin?: any; preferences?: any } = {};
-      const todayDateKey = DailyCheckinManager.getCurrentDayKey();
-
-      // Extract critical data from userData
-      if (userData.flowProgress) {
-        result.flowProgress = userData.flowProgress;
-        // Save to localStorage immediately
-        localStorage.setItem('app-flow-progress', JSON.stringify(result.flowProgress));
-      }
-
-      if (userData.preferences) {
-        result.preferences = userData.preferences;
-        // Save preferences to localStorage immediately
-        localStorage.setItem('menhausen_user_preferences', JSON.stringify(result.preferences));
-        
-        // Also save language separately for compatibility with existing code
-        if (result.preferences.language) {
-          localStorage.setItem('menhausen-language', result.preferences.language);
-        }
-      }
-
-      if (userData.psychologicalTest?.lastCompletedAt) {
-        result.psychologicalTest = {
-          lastCompletedAt: userData.psychologicalTest.lastCompletedAt,
-        };
-        // Save minimal test data to indicate test was completed
-        const existingTest = localStorage.getItem('psychological-test-results');
-        if (!existingTest) {
-          localStorage.setItem('psychological-test-results', JSON.stringify({
-            lastCompletedAt: result.psychologicalTest.lastCompletedAt,
-            scores: userData.psychologicalTest.scores || {},
-            percentages: userData.psychologicalTest.percentages || {},
-            history: userData.psychologicalTest.history || [],
-          }));
-        }
-      }
-
-      // Extract today's checkin from dailyCheckins object
-      if (userData.dailyCheckins?.[todayDateKey]) {
-        const checkin = userData.dailyCheckins[todayDateKey];
-        result.todayCheckin = {
-          mood: checkin.mood,
-          value: checkin.value,
-          color: checkin.color,
-          completed: checkin.completed !== undefined ? checkin.completed : true,
-        };
-        // Save today's checkin to localStorage immediately
-        const storageKey = DailyCheckinManager.getStorageKey(todayDateKey);
-        const fullCheckinData = {
-          id: `checkin_${todayDateKey}_${Date.now()}`,
-          date: todayDateKey,
-          timestamp: Date.now(),
-          mood: checkin.mood,
-          value: checkin.value,
-          color: checkin.color,
-          completed: checkin.completed !== undefined ? checkin.completed : true,
-        };
-        localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
-      }
-
-      return Object.keys(result).length > 0 ? result : null;
-    } catch (error) {
-      console.warn('[SyncService] Fast critical data sync failed:', error);
-      return null;
-    }
-  }
-
-  /**
    * Initial sync on app load
    * - If new user (no data in Supabase): upload all local data
    * - If existing user: fetch and merge with local data
@@ -1210,7 +1126,7 @@ export class SupabaseSyncService {
     try {
       // Check if user exists in Supabase
       console.log('[SyncService] Checking if user exists in Supabase...');
-      const remoteData = await this.fetchFromSupabase(telegramUserId);
+      const remoteData = await this.fetchFromSupabase(telegramUserId, 'initialSync');
       console.log('[SyncService] Remote data check result:', remoteData ? 'User exists' : 'New user');
 
       if (remoteData) {
@@ -1323,34 +1239,26 @@ export class SupabaseSyncService {
     }
 
     try {
-      if (
-        this.fetchUserDataCache &&
-        Date.now() - this.fetchUserDataCache.timestamp < this.FETCH_USER_DATA_CACHE_TTL_MS
-      ) {
-        return this.fetchUserDataCache.data;
-      }
-
-      const userData = await this.fetchFromSupabase(telegramUserId);
+      const userData = await this.fetchFromSupabase(telegramUserId, 'fetchUserData');
       if (userData) {
-        const result = {
+        return {
           hasPremium: userData.hasPremium,
           premiumSignature: userData.premiumSignature
         };
-        this.fetchUserDataCache = {
-          data: result,
-          timestamp: Date.now(),
-        };
-        return result;
       }
-      this.fetchUserDataCache = {
-        data: null,
-        timestamp: Date.now(),
-      };
       return null;
     } catch (error) {
       console.error('[SyncService] Error fetching user data:', error);
       return null;
     }
+  }
+
+  public clearFetchCache(): void {
+    this.fetchCache = {
+      inFlight: null,
+      result: null,
+      timestamp: 0,
+    };
   }
 }
 
@@ -1377,12 +1285,6 @@ export function getSyncService(): SupabaseSyncService {
     // If we're in Playwright test mode with mocked sync, override methods to do nothing
     if (isMockedSyncEnabled()) {
       console.log('[SyncService] E2E test mode detected - Supabase sync is mocked');
-      
-      // Override fastSyncCriticalData to return null (no data from Supabase)
-      syncServiceInstance.fastSyncCriticalData = async () => {
-        console.log('[SyncService] Mocked: fastSyncCriticalData - returning null (e2e test mode)');
-        return null;
-      };
       
       // Override initialSync to return success without syncing
       syncServiceInstance.initialSync = async () => {
