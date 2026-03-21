@@ -78,7 +78,7 @@ test.describe('Home Progress Display', () => {
   test('should update progress display dynamically', async ({ page }) => {
     await seedTwoDaysHistory(page);
     // Увеличен timeout для учета времени синхронизации с Supabase и обновления UI
-    await expect(page.locator(TWO_DAYS_SELECTOR)).toBeVisible({ timeout: 30000 });
+    await expect(page.locator(TWO_DAYS_SELECTOR)).toBeVisible({ timeout: 5000 });
   });
 
   test('should handle accessibility features', async ({ page }) => {

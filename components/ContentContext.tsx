@@ -549,6 +549,8 @@ export function useContent(): ContentContextType {
 
 /** Loading / error UI for content store — use in app shell (e.g. AppContent). */
 export function ContentLoadingGate({ children }: { children: ReactNode }) {
+  // Ensure `$content` has an active subscriber so its `onMount` loader runs.
+  void useStore($content);
   const isLoading = useStore($isContentLoading);
   const error = useStore($contentError);
   const currentLanguage = useStore($language) as SupportedLanguage;

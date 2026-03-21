@@ -6,7 +6,7 @@ import { $currentScreen, $isNavigatingForward, $navigationHistory, navigateTo } 
 import type { AppScreen } from '@/types/userState'
 import { calculateTestResults } from '@/utils/psychologicalTestCalculator'
 import { loadTestResults } from '@/utils/psychologicalTestStorage'
-import type { PsychologicalTestPercentages } from '@/types/psychologicalTest'
+import type { LikertScaleAnswer, PsychologicalTestPercentages } from '@/types/psychologicalTest'
 import { OnboardingScreen01 } from '@/components/OnboardingScreen01'
 
 import { $surveyResults, $psychologicalTestAnswers } from '@/src/stores/survey.store'
@@ -44,7 +44,7 @@ export type ScreenRouterProps = {
   renderCurrentScreen?: () => React.ReactNode
 }
 
-function getPsychologicalTestPercentages(psychologicalTestAnswers: string[]): PsychologicalTestPercentages {
+function getPsychologicalTestPercentages(psychologicalTestAnswers: LikertScaleAnswer[]): PsychologicalTestPercentages {
   const savedResults = loadTestResults()
   if (savedResults?.percentages) {
     return savedResults.percentages

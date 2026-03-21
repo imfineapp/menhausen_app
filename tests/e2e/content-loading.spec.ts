@@ -13,9 +13,9 @@ test.describe('Content Loading Tests', () => {
 
     // Проверяем наличие элементов с увеличенным таймаутом
     // Проверяем home screen через data-testid, так как он более надежен
-    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="User frame info block"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('[data-name="Theme card narrow"]').first()).toBeVisible({ timeout: 5000 });
   });
 
   test('should load content in Russian', async ({ page }) => {

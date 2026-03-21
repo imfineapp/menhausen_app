@@ -1,6 +1,8 @@
 import type React from 'react'
 
 import type { AppScreen } from '@/types/userState'
+import type { SupportedLanguage, SurveyResults } from '@/types/content'
+import type { LikertScaleAnswer } from '@/types/psychologicalTest'
 
 type UserAnswers = {
   question1?: string
@@ -23,10 +25,10 @@ type ThemeData = {
 }
 
 export type RouteContext = {
-  currentScreen: string
+  currentScreen: AppScreen
   wrapScreen: (screen: React.ReactNode) => React.ReactNode
   userHasPremium: boolean
-  currentLanguage: string
+  currentLanguage: SupportedLanguage
   currentTheme: string
   currentCard: CurrentCard
   currentCheckin: CurrentCheckin
@@ -35,11 +37,14 @@ export type RouteContext = {
   earnedAchievementIds: string[]
   navigationHistory: AppScreen[]
   userAnswers: UserAnswers
-  surveyResults: Record<string, unknown>
-  psychologicalTestAnswers: string[]
+  surveyResults: Partial<SurveyResults>
+  psychologicalTestAnswers: LikertScaleAnswer[]
   getTheme: (themeId: string) => ThemeData | undefined
-  getCardQuestions: (...args: unknown[]) => unknown
-  getCardMessageData: (...args: unknown[]) => unknown
+  getCardQuestions: (cardId: string, language: string) => Promise<string[]>
+  getCardMessageData: (
+    cardId: string,
+    language: string
+  ) => Promise<{ finalMessage: string; practiceTask: string; whyExplanation: string }>
   checkAndShowAchievementsBound: (delay?: number, forceCheck?: boolean) => Promise<void>
   setEarnedAchievementIdsForArticle: (ids: string[] | ((prev: string[]) => string[])) => void
   onCheckInSubmit: (mood: string) => void

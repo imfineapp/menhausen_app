@@ -13,11 +13,11 @@ setup('authenticate', async ({ page }) => {
   
   // Ждем загрузки контента - проверяем наличие основных элементов
   await Promise.race([
-    page.waitForSelector('text=Good morning', { timeout: 15000 }),
-    page.waitForSelector('text=Доброе утро', { timeout: 15000 }),
-    page.waitForSelector('text=Welcome to Menhausen', { timeout: 15000 }),
-    page.waitForSelector('text=Next', { timeout: 15000 }),
-    page.waitForSelector('[data-testid="loading"]', { state: 'hidden', timeout: 15000 })
+    page.waitForSelector('text=Good morning', { timeout: 5000 }),
+    page.waitForSelector('text=Доброе утро', { timeout: 5000 }),
+    page.waitForSelector('text=Welcome to Menhausen', { timeout: 5000 }),
+    page.waitForSelector('text=Next', { timeout: 5000 }),
+    page.waitForSelector('[data-testid="loading"]', { state: 'hidden', timeout: 5000 })
   ]);
   
   // Дополнительная проверка - ждем исчезновения loading экрана
