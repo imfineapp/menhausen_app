@@ -66,11 +66,7 @@ export class CriticalDataManager {
   }
 
   private decrypt(encryptedData: string): string {
-    try {
-      return decodeURIComponent(escape(atob(encryptedData)));
-    } catch (error) {
-      throw error;
-    }
+    return decodeURIComponent(escape(atob(encryptedData)));
   }
 
   private isDataSchema(value: unknown): value is DataSchema {
