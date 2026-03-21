@@ -69,34 +69,53 @@ export class CriticalDataManager {
     try {
       return decodeURIComponent(escape(atob(encryptedData)));
     } catch (error) {
-      console.error('Decryption failed:', error);
-      throw error; // Re-throw to allow parent to handle
+      throw error;
     }
   }
 
-  private isLikelyBase64(value: string): boolean {
-    const normalized = value.trim();
-    if (!normalized || normalized.length % 4 !== 0) return false;
-    return /^[A-Za-z0-9+/=]+$/.test(normalized);
-  }
-
-  private isVersionedSchema(value: unknown): value is DataSchema {
+  private isDataSchema(value: unknown): value is DataSchema {
     if (!value || typeof value !== 'object') return false;
-    const maybeSchema = value as Partial<DataSchema>;
-    return typeof maybeSchema.version === 'number'
-      && typeof maybeSchema.createdAt === 'string'
-      && typeof maybeSchema.updatedAt === 'string'
-      && typeof maybeSchema.checksum === 'string'
-      && Object.prototype.hasOwnProperty.call(maybeSchema, 'data');
+    const candidate = value as Partial<DataSchema>;
+    return (
+      typeof candidate.version === 'number'
+      && typeof candidate.createdAt === 'string'
+      && typeof candidate.updatedAt === 'string'
+      && typeof candidate.checksum === 'string'
+      && Object.prototype.hasOwnProperty.call(candidate, 'data')
+    );
   }
 
-  private parseLegacyStoredValue<T>(rawValue: string): T | null {
-    // Legacy format support: plain JSON DataSchema or plain JSON data.
-    const parsed = JSON.parse(rawValue);
-    if (this.isVersionedSchema(parsed)) {
-      return parsed.data as T;
+  private parseStoredPayload(rawValue: string): unknown | null {
+    try {
+      return JSON.parse(rawValue);
+    } catch {
+      return null;
     }
-    return parsed as T;
+  }
+
+  private async parseStoredSchema(key: string, storedValue: string): Promise<DataSchema | null> {
+    try {
+      const decrypted = this.decrypt(storedValue);
+      const parsed = this.parseStoredPayload(decrypted);
+      if (this.isDataSchema(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Not encrypted base64 payload - continue with legacy fallback.
+    }
+
+    const parsedLegacyPayload = this.parseStoredPayload(storedValue);
+    if (!parsedLegacyPayload) {
+      return null;
+    }
+
+    if (this.isDataSchema(parsedLegacyPayload)) {
+      await this.saveCriticalData(key, parsedLegacyPayload.data);
+      return parsedLegacyPayload;
+    }
+
+    await this.saveCriticalData(key, parsedLegacyPayload);
+    return this.createVersionedData(parsedLegacyPayload);
   }
 
   private calculateChecksum(data: string): string {
@@ -153,36 +172,24 @@ export class CriticalDataManager {
 
   async loadCriticalData<T>(key: string): Promise<T | null> {
     try {
-      const storedValue = localStorage.getItem(`${this.STORAGE_PREFIX}${key}`);
-      if (!storedValue) return null;
+      const encrypted = localStorage.getItem(`${this.STORAGE_PREFIX}${key}`);
+      if (!encrypted) return null;
 
-      // Current format: encrypted(base64(JSON<DataSchema>))
-      if (this.isLikelyBase64(storedValue)) {
-        const decrypted = this.decrypt(storedValue);
-        const schema: DataSchema = JSON.parse(decrypted);
-
-        // Validate data integrity
-        if (!this.validateDataIntegrity(schema)) {
-          console.warn('Data integrity check failed, attempting backup recovery');
-          return this.recoverFromBackup<T>(key);
-        }
-
-        // Migrate schema if needed
-        const migratedSchema = await this.migrateData(schema);
-        if (migratedSchema.version !== schema.version) {
-          await this.saveCriticalData(key, migratedSchema.data);
-        }
-        return migratedSchema.data as T;
+      const schema = await this.parseStoredSchema(key, encrypted);
+      if (!schema) {
+        return this.recoverFromBackup<T>(key);
       }
 
-      // Legacy format: plain JSON
-      const legacyData = this.parseLegacyStoredValue<T>(storedValue);
-      if (legacyData !== null) {
-        await this.saveCriticalData(key, legacyData);
-        return legacyData;
+      // Validate data integrity
+      if (!this.validateDataIntegrity(schema)) {
+        console.warn('Data integrity check failed, attempting backup recovery');
+        return this.recoverFromBackup<T>(key);
       }
 
-      return this.recoverFromBackup<T>(key);
+      // Migrate data if needed
+      const migratedSchema = await this.migrateData(schema);
+      
+      return migratedSchema.data as T;
     } catch (error) {
       console.error('Failed to load critical data:', error);
       return this.recoverFromBackup<T>(key);
@@ -191,24 +198,16 @@ export class CriticalDataManager {
 
   private async recoverFromBackup<T>(key: string): Promise<T | null> {
     try {
-      const backupStoredValue = localStorage.getItem(`${this.STORAGE_PREFIX}${key}_backup`);
-      if (!backupStoredValue) return null;
+      const backupEncrypted = localStorage.getItem(`${this.STORAGE_PREFIX}${key}_backup`);
+      if (!backupEncrypted) return null;
 
-      // Preferred path: current encrypted backup
-      if (this.isLikelyBase64(backupStoredValue)) {
-        const decrypted = this.decrypt(backupStoredValue);
-        const schema: DataSchema = JSON.parse(decrypted);
-        if (this.validateDataIntegrity(schema)) {
-          await this.saveCriticalData(key, schema.data);
-          return schema.data as T;
-        }
-      }
+      const schema = await this.parseStoredSchema(key, backupEncrypted);
+      if (!schema) return null;
 
-      // Fallback path: legacy plain JSON backup
-      const legacyData = this.parseLegacyStoredValue<T>(backupStoredValue);
-      if (legacyData !== null) {
-        await this.saveCriticalData(key, legacyData);
-        return legacyData;
+      if (this.validateDataIntegrity(schema)) {
+        // Restore main data from backup in canonical encrypted format.
+        await this.saveCriticalData(key, schema.data);
+        return schema.data as T;
       }
 
       return null;
