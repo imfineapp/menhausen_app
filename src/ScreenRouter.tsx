@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useStore } from '@nanostores/react'
 
-import { goBack, navigateTo, $currentScreen, $isNavigatingForward } from './stores/navigation.store'
+import { goBack, navigateTo, $currentScreen, $isNavigatingForward, $navigationHistory } from './stores/navigation.store'
 import type { AppScreen } from '@/types/userState'
 import { calculateTestResults } from '@/utils/psychologicalTestCalculator'
 import { loadTestResults } from '@/utils/psychologicalTestStorage'
@@ -49,111 +49,175 @@ import { SquareBreathingScreen } from '@/components/mental-techniques/SquareBrea
 import { Grounding54321Screen } from '@/components/mental-techniques/Grounding54321Screen'
 import { GroundingAnchorScreen } from '@/components/mental-techniques/GroundingAnchorScreen'
 
-type ScreenRouterProps = Record<string, any>
+import { $surveyResults, $psychologicalTestAnswers } from '@/src/stores/survey.store'
+import { $isPremium } from '@/src/stores/premium.store'
+import { $language } from '@/src/stores/language.store'
+import { $screenParams, setEarnedAchievementIds } from '@/src/stores/screen-params.store'
+import { getThemeFromStore } from '@/src/stores/contentSelectors'
+import { checkAndShowAchievements } from '@/src/stores/actions/achievement-display.actions'
+import { handleCheckInSubmit } from '@/src/stores/actions/checkin.actions'
+import * as onboardingActions from '@/src/stores/actions/onboarding.actions'
+import * as surveyActions from '@/src/stores/actions/survey.actions'
+import * as psychTestActions from '@/src/stores/actions/psych-test.actions'
+import * as articleActions from '@/src/stores/actions/article.actions'
+import * as profileActions from '@/src/stores/actions/profile.actions'
+import * as themeCardActions from '@/src/stores/actions/theme-card.actions'
+import {
+  QuestionScreen01WithLoader,
+  QuestionScreen02WithLoader,
+  FinalCardMessageScreenWithLoader,
+} from '@/components/ThemeCardQuestionLoaders'
 
-export default function ScreenRouter(props: ScreenRouterProps) {
+const {
+  handleNextScreen,
+  handleShowSurvey,
+  handleCompletePinSetup,
+  handleSkipPinSetup,
+} = onboardingActions
+const {
+  handleSurvey01Next,
+  handleSurvey02Next,
+  handleSurvey03Next,
+  handleSurvey04Next,
+  handleSurvey05Next,
+  handleSurvey06Next,
+  handleBackToSurvey01,
+  handleBackToSurvey02,
+  handleBackToSurvey03,
+  handleBackToSurvey04,
+  handleBackToSurvey05,
+  handleBackToOnboarding2,
+  handleBackToSurvey,
+} = surveyActions
+const {
+  handlePsychologicalTestPreambulaNext,
+  handlePsychologicalTestInstructionNext,
+  handlePsychologicalTestQuestionNext,
+  handlePsychologicalTestResultsNext,
+} = psychTestActions
+const {
+  handleOpenArticle,
+  handleGoToAllArticles,
+  handleBackFromArticle,
+  handleBackToHomeFromArticles,
+} = articleActions
+const {
+  handleShowAboutApp,
+  handleShowAppSettings,
+  handleBackToProfile,
+  handleBackToProfileFromSettings,
+  handleShowPinSettings,
+  handleCompletePinSettings,
+  handleSkipPinSettings,
+  handleShowPrivacy,
+  handleShowTerms,
+  handleShowPrivacyFromProfile,
+  handleShowTermsFromProfile,
+  handleBackToHome,
+  handleShowDeleteAccount,
+  handleDeleteAccount,
+  handleBackToProfileFromDelete,
+  handleShowPayments,
+  handlePurchaseComplete,
+  handleBackToProfileFromPayments,
+  handleShowDonations,
+  handleBackToProfileFromDonations,
+  handleBackToProfileFromUnderConstruction,
+  handleBackFromMentalTechnique,
+  handleGoToProfile,
+  handleGoToBadges,
+} = profileActions
+const {
+  handleGoToTheme,
+  handleBackToHomeFromTheme,
+  handleStartTheme,
+  handleThemeCardClick,
+  handleOpenNextLevel,
+  handleBackToThemeHome,
+  handleOpenCardExercise,
+  handleOpenCheckin,
+  handleBackToCardDetails,
+  handleBackToCardDetailsFromWelcome,
+  handleStartCardExercise,
+  handleNextQuestion,
+  handleBackToQuestion01,
+  handleBackToQuestion02,
+  handleCompleteExercise,
+  handleCompleteFinalMessage,
+  handleBackToFinalMessage,
+  handleCompleteRating,
+  getCardQuestions,
+  getCardMessageData,
+} = themeCardActions
+
+export type ScreenRouterProps = {
+  renderCurrentScreen?: () => React.ReactNode
+}
+
+export default function ScreenRouter(props: ScreenRouterProps = {}) {
   const currentScreen = useStore($currentScreen)
   const isNavigatingForward = useStore($isNavigatingForward)
-
-  if (typeof props.renderCurrentScreen === 'function') {
-    return props.renderCurrentScreen()
-  }
-
+  const surveyResults = useStore($surveyResults)
+  const psychologicalTestAnswers = useStore($psychologicalTestAnswers)
+  const userHasPremium = useStore($isPremium)
+  const navigationHistory = useStore($navigationHistory)
+  const currentLanguage = useStore($language)
+  const screenParams = useStore($screenParams)
   const {
-    // State used by render logic
-    surveyResults,
-    psychologicalTestAnswers,
-    userHasPremium,
     currentTheme,
     currentCard,
     currentCheckin,
     currentArticle,
-    navigationHistory,
     currentFeatureName,
     earnedAchievementIds,
-    setEarnedAchievementIds,
-    currentLanguage,
     userAnswers,
-    // Content selectors
-    getTheme,
-    // Loader components defined in App.tsx
-    QuestionScreen01WithLoader,
-    QuestionScreen02WithLoader,
-    FinalCardMessageScreenWithLoader,
-    // Utilities/helpers
-    getCardQuestions,
-    getCardMessageData,
-    // Handlers for switching screens
-    handleNextScreen,
-    handleShowPrivacy,
-    handleShowTerms,
-    handleShowSurvey,
-    handleSurvey01Next,
-    handleBackToOnboarding2,
-    handleSurvey02Next,
-    handleBackToSurvey01,
-    handleBackToSurvey02,
-    handleSurvey03Next,
-    handleBackToSurvey03,
-    handleSurvey04Next,
-    handleBackToSurvey04,
-    handleSurvey05Next,
-    handleBackToSurvey05,
-    handleSurvey06Next,
-    handlePsychologicalTestPreambulaNext,
-    handlePsychologicalTestInstructionNext,
-    handlePsychologicalTestQuestionNext,
-    handlePsychologicalTestResultsNext,
-    handleCompletePinSetup,
-    handleSkipPinSetup,
-    handleBackToSurvey,
-    handleCheckInSubmit,
-    handleBackToHome,
-    handleGoToProfile,
-    handleGoToTheme,
-    handleOpenArticle,
-    handleGoToAllArticles,
-    handleBackToHomeFromTheme,
-    handleStartTheme,
-    handleShowPayments,
-    handleThemeCardClick,
-    handleOpenNextLevel,
-    handleBackToThemeHome,
-    handleOpenCardExercise,
-    handleOpenCheckin,
-    handleBackToCardDetails,
-    handleBackToCardDetailsFromWelcome,
-    handleStartCardExercise,
-    handleNextQuestion,
-    handleBackToQuestion01,
-    handleBackToQuestion02,
-    handleCompleteExercise,
-    handleCompleteFinalMessage,
-    handleBackToFinalMessage,
-    handleCompleteRating,
-    handleBackToHomeFromArticles,
-    handleGoToBadges,
-    handleShowAppSettings,
-    handleBackToProfile,
-    handleShowAboutApp,
-    handleBackToProfileFromSettings,
-    handleShowPinSettings,
-    handleShowPrivacyFromProfile,
-    handleShowTermsFromProfile,
-    handleShowDeleteAccount,
-    handleShowDonations,
-    handleCompletePinSettings,
-    handleSkipPinSettings,
-    handleBackToProfileFromDelete,
-    handleDeleteAccount,
-    handleBackToProfileFromPayments,
-    handlePurchaseComplete,
-    handleBackToProfileFromDonations,
-    handleBackToProfileFromUnderConstruction,
-    handleBackFromMentalTechnique,
-    handleBackFromArticle,
-    checkAndShowAchievements,
-  } = props
+  } = screenParams
+
+  const isMountedRef = useRef(true)
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const cardExerciseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const checkAndShowAchievementsBound = useCallback(
+    (delay?: number, forceCheck?: boolean) =>
+      checkAndShowAchievements(delay ?? 200, forceCheck ?? false, { isMounted: () => isMountedRef.current }),
+    []
+  )
+
+  const setEarnedAchievementIdsForArticle = useCallback(
+    (ids: string[] | ((prev: string[]) => string[])) => {
+      if (typeof ids === 'function') {
+        const prev = $screenParams.get().earnedAchievementIds
+        setEarnedAchievementIds(ids(prev))
+      } else {
+        setEarnedAchievementIds(ids)
+      }
+    },
+    []
+  )
+
+  const onCheckInSubmit = useCallback(
+    (mood: string) => {
+      handleCheckInSubmit(mood, {
+        isMounted: () => isMountedRef.current,
+        checkInTimeoutRef,
+        checkAndShowAchievements: checkAndShowAchievementsBound,
+      })
+    },
+    [checkAndShowAchievementsBound]
+  )
+
+  const getTheme = useCallback((themeId: string) => getThemeFromStore(themeId), [])
+
+  if (typeof props.renderCurrentScreen === 'function') {
+    return props.renderCurrentScreen()
+  }
 
   const wrapScreen = (screen: React.ReactNode) => (
     <motion.div
@@ -519,7 +583,7 @@ export default function ScreenRouter(props: ScreenRouterProps) {
         )
 
       case 'checkin':
-        return wrapScreen(<CheckInScreen onSubmit={handleCheckInSubmit} onBack={handleBackToHome} />)
+        return wrapScreen(<CheckInScreen onSubmit={onCheckInSubmit} onBack={handleBackToHome} />)
 
       case 'home':
         return wrapScreen(
@@ -635,7 +699,9 @@ export default function ScreenRouter(props: ScreenRouterProps) {
         return wrapScreen(
           <RateCardScreen
             onBack={handleBackToFinalMessage}
-            onNext={handleCompleteRating}
+            onNext={(rating, text) =>
+              handleCompleteRating(rating, text, { cardExerciseTimeoutRef, isMountedRef })
+            }
             cardId={currentCard.id}
             cardTitle={currentCard.title || ''}
           />,
@@ -645,7 +711,7 @@ export default function ScreenRouter(props: ScreenRouterProps) {
         return wrapScreen(
           <UserProfileScreen
             onBack={handleBackToHome}
-            onShowPayments={props.handleShowPayments ?? handleShowPayments}
+            onShowPayments={handleShowPayments}
             onGoToBadges={handleGoToBadges}
             onShowSettings={handleShowAppSettings}
             userHasPremium={userHasPremium}
@@ -663,8 +729,8 @@ export default function ScreenRouter(props: ScreenRouterProps) {
             onShowPinSettings={handleShowPinSettings}
             onShowPrivacy={handleShowPrivacyFromProfile}
             onShowTerms={handleShowTermsFromProfile}
-            onShowDeleteAccount={props.handleShowDeleteAccount ?? handleShowDeleteAccount}
-            onShowDonations={props.handleShowDonations ?? handleShowDonations}
+            onShowDeleteAccount={handleShowDeleteAccount}
+            onShowDonations={handleShowDonations}
           />,
         )
 
@@ -762,13 +828,13 @@ export default function ScreenRouter(props: ScreenRouterProps) {
         return wrapScreen(
           <ArticleScreen
             articleId={currentArticle}
-            onBack={props.handleBackFromArticle ?? handleBackFromArticle}
+            onBack={handleBackFromArticle}
             onGoToTheme={handleGoToTheme}
             userHasPremium={userHasPremium}
-            checkAndShowAchievements={checkAndShowAchievements}
+            checkAndShowAchievements={checkAndShowAchievementsBound}
             navigateTo={navigateTo}
             earnedAchievementIds={earnedAchievementIds}
-            setEarnedAchievementIds={setEarnedAchievementIds}
+            setEarnedAchievementIds={setEarnedAchievementIdsForArticle}
           />,
         )
 

@@ -1,10 +1,10 @@
 /**
- * React Context для управления состоянием достижений
+ * Achievements API backed by nanostores (no React Context).
  */
 
-import React, { createContext, useContext, ReactNode } from 'react';
-import type { UserAchievement } from '../types/achievements';
-import { useStore } from '@nanostores/react';
+import React, { type ReactNode } from 'react'
+import type { UserAchievement } from '../types/achievements'
+import { useStore } from '@nanostores/react'
 
 import {
   $achievements,
@@ -14,36 +14,33 @@ import {
   $achievementsError,
   checkAndUnlockAchievements,
   updateAchievementProgress,
-  refreshAchievements
-} from '@/src/stores/achievements.store';
+  refreshAchievements,
+} from '@/src/stores/achievements.store'
 
 interface AchievementsContextType {
-  achievements: Record<string, UserAchievement>;
-  totalXP: number;
-  unlockedCount: number;
-  isLoading: boolean;
-  error: string | null;
-  
-  // Actions
-  checkAndUnlockAchievements: () => Promise<string[]>;
-  updateAchievementProgress: (achievementId: string) => void;
-  refreshAchievements: () => Promise<void>;
+  achievements: Record<string, UserAchievement>
+  totalXP: number
+  unlockedCount: number
+  isLoading: boolean
+  error: string | null
+  checkAndUnlockAchievements: () => Promise<string[]>
+  updateAchievementProgress: (achievementId: string) => void
+  refreshAchievements: () => Promise<void>
 }
 
-const AchievementsContext = createContext<AchievementsContextType | null>(null);
-
-interface AchievementsProviderProps {
-  children: ReactNode;
+/** @deprecated No-op; kept for tests that still wrap the tree. */
+export function AchievementsProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>
 }
 
-export function AchievementsProvider({ children }: AchievementsProviderProps) {
+export function useAchievements(): AchievementsContextType {
   const achievements = useStore($achievements)
   const totalXP = useStore($totalXP)
   const unlockedCount = useStore($unlockedCount)
   const isLoading = useStore($isAchievementsLoading)
   const error = useStore($achievementsError)
 
-  const contextValue: AchievementsContextType = {
+  return {
     achievements,
     totalXP,
     unlockedCount,
@@ -51,22 +48,7 @@ export function AchievementsProvider({ children }: AchievementsProviderProps) {
     error,
     checkAndUnlockAchievements,
     updateAchievementProgress,
-    refreshAchievements
+    refreshAchievements,
   }
-
-  return <AchievementsContext.Provider value={contextValue}>{children}</AchievementsContext.Provider>
-}
-
-/**
- * Хук для использования контекста достижений
- */
-export function useAchievements() {
-  const context = useContext(AchievementsContext);
-  
-  if (!context) {
-    throw new Error('useAchievements must be used within an AchievementsProvider');
-  }
-  
-  return context;
 }
 

@@ -12,6 +12,221 @@ import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
 import React from 'react';
+import { useStore } from '@nanostores/react';
+import { $language } from '../../src/stores/language.store';
+
+const mockStressTheme = {
+  id: 'stress',
+  title: 'Stress theme',
+  description: 'Stress description',
+  cards: [
+    { id: 'stress-c1', title: 'Card 1', duration: '5 min' },
+    { id: 'stress-c2', title: 'Card 2', duration: '10 min' },
+  ],
+};
+
+function buildUiForLanguage(lang: string) {
+  const isRu = lang === 'ru';
+  return {
+    language: 'Language',
+    english: 'English',
+    russian: 'Russian',
+    navigation: {
+      back: isRu ? 'Назад' : 'Back',
+      next: isRu ? 'Далее' : 'Next',
+    },
+    common: {
+      loading: isRu ? 'Загрузка...' : 'Loading...',
+    },
+    home: {
+      greeting: isRu ? 'Доброе утро' : 'Good morning',
+      whatWorriesYou: isRu ? 'Что вас беспокоит?' : 'What worries you?',
+      activity: {
+        streakLabel: 'days',
+        weeklyCheckins: 'Check-ins',
+        points: 'points',
+        target: 'target',
+      },
+    },
+    profile: {
+      yourStatus: 'Your status',
+      settings: 'Settings',
+      premium: 'Premium',
+      free: 'Free',
+      title: isRu ? 'Профиль' : 'Profile',
+    },
+    about: {
+      title: isRu ? 'О приложении' : 'About Menhausen',
+      description: 'Menhausen is your personal mental health companion',
+      keyFeatures: 'Key Features',
+      features: {
+        moodTracking: 'Daily mood tracking',
+        exercises: 'Personalized exercises',
+        progress: 'Progress tracking',
+        privacy: 'Secure and private',
+        telegram: 'Built for Telegram',
+      },
+      developmentTeam: 'Development Team',
+      teamDescription: 'Created with care',
+      madeWithLove: 'Made with ❤️',
+      copyright: '© 2024 Menhausen Team',
+      technicalInformation: 'Technical Information',
+      importantNote: 'Important Note',
+      disclaimer: 'Disclaimer text',
+      emergency: 'Emergency text',
+      version: 'Version:',
+      platform: 'Platform:',
+      builtWith: 'Built with:',
+      lastUpdated: 'Last updated:',
+      betaVersion: 'Beta Version 1.0.0',
+    },
+    levels: {
+      title: 'Levels',
+      yourLevel: 'Your Level',
+      toNextLevel: 'To Next Level',
+      pointsHistory: 'Points History',
+      actions: {
+        dailyCheckin: 'Daily Check-in',
+        exerciseComplete: 'Exercise Complete',
+        achievementEarned: 'Achievement Earned',
+      },
+    },
+  };
+}
+
+/** Global ContentContext mock: must stay in sync with `useContent()` surface used in tests. */
+vi.mock('../../components/ContentContext', () => ({
+  ContentLoadingGate: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children),
+  ContentProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children),
+  useContent: () => {
+    const lang = useStore($language) as string;
+
+    const getUI = () => buildUiForLanguage(lang);
+
+    return {
+      currentLanguage: lang === 'ru' ? 'ru' : 'en',
+      content: {
+        ui: buildUiForLanguage(lang),
+        payments: {
+          freePlanDetails: '',
+          currentPlan: 'Current',
+          freePlan: 'Free',
+          premiumTitle: 'Premium',
+          premiumIntro: '',
+          premiumThemes: [],
+          benefitsTitle: '',
+          benefits: {
+            angry: 'a',
+            sadness: 's',
+            anxiety: 'x',
+            confidence: 'c',
+            relationships: 'r',
+          },
+          premiumProgress: '',
+          plans: {
+            monthly: 'Monthly',
+            annually: 'Annual',
+            lifetime: 'Lifetime',
+            perMonth: '/mo',
+            perYear: '/yr',
+            perLifetime: 'once',
+            savingsBadge: '',
+            mostPopularBadge: '',
+          },
+          starsInfo: '',
+          promo: {
+            havePromoLink: '',
+            placeholder: '',
+            apply: 'Apply',
+            applied: 'Applied',
+            invalid: 'Invalid',
+          },
+          legal: {
+            disclaimer: '',
+            termsHref: '/terms',
+            termsText: 'Terms',
+            privacyHref: '/privacy',
+            privacyText: 'Privacy',
+          },
+          cta: { processing: 'Processing', buy: 'Buy' },
+          messages: { telegramNotAvailable: 'Open in Telegram', error: 'Error' },
+        },
+        about: {
+          title: 'About Menhausen',
+          description: 'Menhausen is your personal mental health companion',
+          keyFeatures: 'Key Features',
+          features: {
+            moodTracking: 'Daily mood tracking',
+            exercises: 'Personalized exercises',
+            progress: 'Progress tracking',
+            privacy: 'Secure and private',
+            telegram: 'Built for Telegram',
+          },
+          developmentTeam: 'Development Team',
+          teamDescription: 'Created with care',
+          madeWithLove: 'Made with ❤️',
+          copyright: '© 2024 Menhausen Team',
+          technicalInformation: 'Technical Information',
+          importantNote: 'Important Note',
+          disclaimer: 'Disclaimer text',
+          emergency: 'Emergency text',
+          version: 'Version:',
+          platform: 'Platform:',
+          builtWith: 'Built with:',
+          lastUpdated: 'Last updated:',
+          betaVersion: 'Beta Version 1.0.0',
+        },
+      },
+      setLanguage: vi.fn(),
+      getLocalizedText: vi.fn((key: string) => key),
+      getUI,
+      getTheme: (themeId: string) => (themeId === 'stress' ? mockStressTheme : undefined),
+      getCard: vi.fn(),
+      getSurvey: vi.fn(),
+      getMentalTechnique: vi.fn(),
+      getMentalTechniquesMenu: vi.fn(),
+      getAllThemes: () => [mockStressTheme, { id: 'anxiety', title: 'Anxiety', description: 'd', cards: [] }],
+      getThemeCards: (themeId: string) =>
+        themeId === 'stress' ? (mockStressTheme.cards as unknown[]) : [],
+      getLocalizedBadges: () => ({
+        title: 'Badges',
+        subtitle: 'Subtitle',
+        congratulations: 'Congrats',
+        unlockedBadge: 'Unlocked',
+        shareButton: 'Share',
+        shareMessage: 'Message',
+        shareDescription: 'Desc',
+        appLink: 'https://example.com',
+        lockedBadge: 'Locked',
+        unlockCondition: 'Condition',
+        progress: 'Progress',
+        totalBadges: 'Total',
+        unlockedCount: 'Unlocked',
+        inProgress: 'In progress',
+        points: 'pts',
+        motivatingText: 'Motivating',
+        motivatingTextNoBadges: 'No badges',
+        received: 'Received',
+        locked: 'Locked',
+        cancel: 'Cancel',
+        unlocked: 'Unlocked',
+        reward: {
+          title: 'Reward',
+          subtitle: 'Sub',
+          continueButton: 'Continue',
+          nextAchievement: 'Next',
+          congratulations: 'Congrats',
+          earnedAchievement: 'Earned',
+        },
+        achievements: {},
+      }),
+      isLoading: false,
+      error: null,
+    };
+  },
+}));
 
 // Cleanup after each test
 afterEach(() => {
@@ -157,188 +372,6 @@ beforeEach(() => {
     writable: true,
     value: true,
   });
-
-  // Mock content loading
-  vi.mock('../components/ContentContext', () => ({
-    ContentProvider: ({ children }: { children: React.ReactNode }) => {
-      const ContentContext = React.createContext({
-        currentLanguage: 'en',
-        content: {
-          ui: {
-            home: {
-              greeting: 'Good morning'
-            },
-            language: 'Language',
-            english: 'English',
-            russian: 'Russian'
-          }
-        },
-        setLanguage: vi.fn(),
-        getLocalizedText: vi.fn((key: string) => key),
-        getUI: vi.fn(() => ({
-          language: 'Language',
-          english: 'English',
-          russian: 'Russian'
-        })),
-        getTheme: vi.fn(),
-        getCard: vi.fn(),
-        getSurvey: vi.fn(),
-        getMentalTechnique: vi.fn(),
-        getMentalTechniquesMenu: vi.fn(),
-        isLoading: false,
-        error: null
-      });
-      
-      return React.createElement(ContentContext.Provider, { value: {
-        currentLanguage: 'en',
-        content: {
-          ui: {
-            home: {
-              greeting: 'Good morning',
-              activity: {
-                streakLabel: 'days',
-                weeklyCheckins: 'Check-ins',
-                points: 'points',
-                target: 'target'
-              }
-            },
-            language: 'Language',
-            english: 'English',
-            russian: 'Russian',
-            profile: {
-              yourStatus: 'Your status',
-              settings: 'Settings'
-            },
-            about: {
-              title: 'About Menhausen',
-              description: 'Menhausen is your personal mental health companion',
-              keyFeatures: 'Key Features',
-              features: {
-                moodTracking: 'Daily mood tracking',
-                exercises: 'Personalized exercises',
-                progress: 'Progress tracking',
-                privacy: 'Secure and private',
-                telegram: 'Built for Telegram'
-              },
-              developmentTeam: 'Development Team',
-              teamDescription: 'Created with care',
-              madeWithLove: 'Made with ❤️',
-              copyright: '© 2024 Menhausen Team',
-              technicalInformation: 'Technical Information',
-              importantNote: 'Important Note',
-              disclaimer: 'Disclaimer text',
-              emergency: 'Emergency text',
-              version: 'Version:',
-              platform: 'Platform:',
-              builtWith: 'Built with:',
-              lastUpdated: 'Last updated:',
-              betaVersion: 'Beta Version 1.0.0'
-            }
-          }
-        } as any,
-        setLanguage: vi.fn(),
-        getLocalizedText: vi.fn((key: string) => key),
-        getUI: vi.fn(() => ({
-          language: 'Language',
-          english: 'English',
-          russian: 'Russian',
-          home: {
-            activity: {
-              streakLabel: 'days',
-              weeklyCheckins: 'Check-ins',
-              points: 'points',
-              target: 'target'
-            }
-          },
-          profile: {
-            yourStatus: 'Your status',
-            settings: 'Settings'
-          }
-        })),
-        getTheme: vi.fn(),
-        getCard: vi.fn(),
-        getSurvey: vi.fn(),
-        getMentalTechnique: vi.fn(),
-        getMentalTechniquesMenu: vi.fn(),
-        isLoading: false,
-        error: null
-      } }, children);
-    },
-    useContent: vi.fn(() => ({
-      currentLanguage: 'en',
-      content: {
-        ui: {
-          home: {
-            greeting: 'Good morning',
-            activity: {
-              streakLabel: 'days',
-              weeklyCheckins: 'Check-ins',
-              points: 'points',
-              target: 'target'
-            }
-          },
-          language: 'Language',
-          english: 'English',
-          russian: 'Russian',
-          profile: {
-            yourStatus: 'Your status',
-            settings: 'Settings'
-          }
-        },
-        about: {
-          title: 'About Menhausen',
-          description: 'Menhausen is your personal mental health companion',
-          keyFeatures: 'Key Features',
-          features: {
-            moodTracking: 'Daily mood tracking',
-            exercises: 'Personalized exercises',
-            progress: 'Progress tracking',
-            privacy: 'Secure and private',
-            telegram: 'Built for Telegram'
-          },
-          developmentTeam: 'Development Team',
-          teamDescription: 'Created with care',
-          madeWithLove: 'Made with ❤️',
-          copyright: '© 2024 Menhausen Team',
-          technicalInformation: 'Technical Information',
-          importantNote: 'Important Note',
-          disclaimer: 'Disclaimer text',
-          emergency: 'Emergency text',
-          version: 'Version:',
-          platform: 'Platform:',
-          builtWith: 'Built with:',
-          lastUpdated: 'Last updated:',
-          betaVersion: 'Beta Version 1.0.0'
-        }
-      },
-      setLanguage: vi.fn(),
-      getLocalizedText: vi.fn((key: string) => key),
-      getUI: vi.fn(() => ({
-        language: 'Language',
-        english: 'English',
-        russian: 'Russian',
-        home: {
-          activity: {
-            streakLabel: 'days',
-            weeklyCheckins: 'Check-ins',
-            points: 'points',
-            target: 'target'
-          }
-        },
-        profile: {
-          yourStatus: 'Your status',
-          settings: 'Settings'
-        }
-      })),
-      getTheme: vi.fn(),
-      getCard: vi.fn(),
-      getSurvey: vi.fn(),
-      getMentalTechnique: vi.fn(),
-      getMentalTechniquesMenu: vi.fn(),
-      isLoading: false,
-      error: null
-    }))
-  }));
 
   // Mock Telegram WebApp API
   Object.defineProperty(window, 'Telegram', {

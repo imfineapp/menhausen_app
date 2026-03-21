@@ -2,10 +2,10 @@
 // REACT КОНТЕКСТ ДЛЯ УПРАВЛЕНИЯ КОНТЕНТОМ И ЯЗЫКОМ
 // ========================================================================================
 
-import React, { createContext, useContext, useCallback, useEffect, useState, ReactNode } from 'react';
+import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { useStore } from '@nanostores/react';
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
-import { useLanguage } from './LanguageContext';
+import { $language, setLanguage as setLanguageFromStore } from '@/src/stores/language.store';
 import { $content, $contentError, $isContentLoading, loadContentForLanguage } from '@/src/stores/content.store';
 import { loadUserStats } from '../services/userStatsService';
 import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
@@ -13,35 +13,23 @@ import { sortArticlesForDisplay } from '../utils/articleOrdering';
 // Моки больше не используются - все тесты используют реальный контент
 
 /**
- * React контекст для централизованного управления контентом
+ * Content API backed by nanostores. Use `useContent()` from any component.
+ * `ContentProvider` is a deprecated no-op kept for tests.
  */
-const ContentContext = createContext<ContentContextType | null>(null);
-
-/**
- * Провайдер контента - оборачивает все приложение
- */
-interface ContentProviderProps {
-  children: ReactNode;
-}
-
-export function ContentProvider({ children }: ContentProviderProps) {
-  // Получаем язык и функцию изменения языка из LanguageContext
-  const { language, setLanguage: setLanguageFromContext } = useLanguage();
+export function useContent(): ContentContextType {
+  const language = useStore($language);
   const currentLanguage = language as SupportedLanguage;
-  console.log('ContentProvider: Current language from LanguageContext:', currentLanguage);
-  
-  // Nanostores as the single source of truth for content loading state.
+
   const content = useStore($content);
-  const isLoading = useStore($isContentLoading);
-  const error = useStore($contentError);
+  void useStore($isContentLoading);
+  void useStore($contentError);
 
   /**
    * Изменение языка приложения
    */
   const setLanguage = useCallback((language: SupportedLanguage) => {
-    // Используем функцию из LanguageContext
-    setLanguageFromContext(language as 'en' | 'ru');
-  }, [setLanguageFromContext]);
+    setLanguageFromStore(language as 'en' | 'ru');
+  }, []);
 
   /**
    * Получение локализованного текста для текущего языка
@@ -559,9 +547,20 @@ export function ContentProvider({ children }: ContentProviderProps) {
     getLocalizedBadges
   };
 
-  // E2E тесты теперь используют реальный контент из JSON файлов
+  return contextValue;
+}
 
-  // Показываем загрузку или ошибку
+/** @deprecated No-op; kept for tests that still wrap the tree. */
+export function ContentProvider({ children }: { children: ReactNode }) {
+  return <>{children}</>;
+}
+
+/** Loading / error UI for content store — use in app shell (e.g. AppContent). */
+export function ContentLoadingGate({ children }: { children: ReactNode }) {
+  const isLoading = useStore($isContentLoading);
+  const error = useStore($contentError);
+  const currentLanguage = useStore($language) as SupportedLanguage;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -577,7 +576,8 @@ export function ContentProvider({ children }: ContentProviderProps) {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="text-lg text-red-600">Error loading content: {error}</div>
-          <button 
+          <button
+            type="button"
             onClick={() => loadContentForLanguage(currentLanguage)}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
@@ -588,25 +588,7 @@ export function ContentProvider({ children }: ContentProviderProps) {
     );
   }
 
-  return (
-    <ContentContext.Provider value={contextValue}>
-      {children}
-    </ContentContext.Provider>
-  );
-}
-
-/**
- * Хук для использования контента в компонентах
- * Автоматически получает локализованные тексты
- */
-export function useContent() {
-  const context = useContext(ContentContext);
-  
-  if (!context) {
-    throw new Error('useContent must be used within a ContentProvider');
-  }
-  
-  return context;
+  return <>{children}</>;
 }
 
 /**
