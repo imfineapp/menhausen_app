@@ -7,6 +7,7 @@ import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { LikertScaleAnswer } from '../types/psychologicalTest';
+import { LoadingScreen } from './LoadingScreen';
 
 interface PsychologicalTestQuestionScreenProps {
   questionNumber: number; // 1-30
@@ -34,11 +35,7 @@ export function PsychologicalTestQuestionScreen({
   }, [questionNumber, initialAnswer]);
 
   if (!testContent) {
-    return (
-      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
-        <p className="text-white">Error loading test content</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Получаем вопрос по номеру (вопросы нумеруются с 1)

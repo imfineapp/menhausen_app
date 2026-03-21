@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { QuestionScreen01 } from '@/components/QuestionScreen01'
 import { QuestionScreen02 } from '@/components/QuestionScreen02'
 import { FinalCardMessageScreen } from '@/components/FinalCardMessageScreen'
+import { LoadingScreen } from '@/components/LoadingScreen'
 import { useContent } from '@/components/ContentContext'
 
 export function QuestionScreen01WithLoader({
@@ -40,13 +41,7 @@ export function QuestionScreen01WithLoader({
   }, [cardId, currentLanguage, getCardQuestions])
 
   if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">{getUI().common.loadingQuestions}</div>
-        </div>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   const questionText = questions[0] || getUI().cards.questionNotFound
@@ -99,13 +94,7 @@ export function QuestionScreen02WithLoader({
   }, [cardId, currentLanguage, getCardQuestions])
 
   if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">{getUI().common.loadingQuestions}</div>
-        </div>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   const questionText = questions[1] || getUI().cards.questionNotFound
@@ -172,20 +161,14 @@ export function FinalCardMessageScreenWithLoader({
   }, [cardId, currentLanguage, getCardMessageData, getUI])
 
   if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">{getUI().common.loadingFinalMessage || getUI().common.loading}</div>
-        </div>
-      </div>
-    )
+    return <LoadingScreen />
   }
 
   if (!messageData) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg text-red-400">{getUI().common.errorLoadingMessageData || getUI().common.error}</div>
+          <div className="text-lg text-red-400">{getUI().common.error || 'Error'}</div>
         </div>
       </div>
     )

@@ -15,9 +15,9 @@ export function getCardUiStrings() {
     practiceTaskNotFound: ui?.cards.practiceTaskNotFound ?? 'Practice task not found',
     explanationNotFound: ui?.cards.explanationNotFound ?? 'Explanation not found',
     questionNotFound: ui?.cards.questionNotFound ?? 'Question not found',
-    loadingQuestions: ui?.common.loadingQuestions ?? 'Loading questions...',
-    loadingFinalMessage: ui?.common.loadingFinalMessage ?? 'Loading...',
-    loading: ui?.common.loading ?? 'Loading...',
+    loadingQuestions: ui?.common.loadingQuestions ?? 'Please wait...',
+    loadingFinalMessage: ui?.common.loadingFinalMessage ?? 'Please wait...',
+    loading: ui?.common.loading ?? 'Please wait...',
     error: ui?.common.error ?? 'Error',
     errorLoadingMessageData: ui?.common.errorLoadingMessageData ?? 'Error',
   }

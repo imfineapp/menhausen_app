@@ -210,7 +210,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="typography-h1 text-[#e1ff00] mb-2">
-              {getText('Ошибка загрузки техники', 'Technique loading error')}
+              {getText('Ошибка данных техники', 'Technique data error')}
             </h1>
             <p className="typography-body text-[#cfcfcf]">
               {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}

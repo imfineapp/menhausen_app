@@ -5,6 +5,7 @@
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { useStore } from '@nanostores/react';
 import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
+import { LoadingScreen } from './LoadingScreen';
 import { $language, setLanguage as setLanguageFromStore } from '@/src/stores/language.store';
 import { $content, $contentError, $isContentLoading, loadContentForLanguage } from '@/src/stores/content.store';
 import { loadUserStats } from '../services/userStatsService';
@@ -104,7 +105,7 @@ export function useContent(): ContentContextType {
   const getMentalTechniquesMenu = useCallback((): MentalTechniquesMenuData => {
     return content?.mentalTechniquesMenu || {
       title: 'Techniques',
-      subtitle: 'Loading...',
+      subtitle: 'Please wait...',
       categories: {
         emergency: {
           title: 'Emergency',
@@ -154,7 +155,7 @@ export function useContent(): ContentContextType {
         more: 'More'
       },
       common: {
-        loading: 'Loading...',
+        loading: 'Please wait...',
         error: 'Error',
         tryAgain: 'Try again',
         save: 'Save',
@@ -162,9 +163,9 @@ export function useContent(): ContentContextType {
         delete: 'Delete',
         edit: 'Edit',
         close: 'Close',
-        loadingQuestions: 'Loading questions...',
-        loadingFinalMessage: 'Loading final message...',
-        errorLoadingMessageData: 'Error loading message data'
+        loadingQuestions: 'Please wait...',
+        loadingFinalMessage: 'Please wait...',
+        errorLoadingMessageData: 'Message data is unavailable'
       },
       home: {
         greeting: 'Hello',
@@ -556,20 +557,14 @@ export function ContentLoadingGate({ children }: { children: ReactNode }) {
   const currentLanguage = useStore($language) as SupportedLanguage;
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="text-lg text-gray-600">Loading content...</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="text-lg text-red-600">Error loading content: {error}</div>
+          <div className="text-lg text-red-600">Content is unavailable: {error}</div>
           <button
             type="button"
             onClick={() => loadContentForLanguage(currentLanguage)}

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
+import { LoadingScreen } from './LoadingScreen';
 import { useContent } from './ContentContext';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager, CardCompletionStatus } from '../utils/ThemeCardManager';
@@ -447,15 +448,7 @@ export function ThemeHomeScreen({
   
   // Состояния загрузки и ошибок
   if (loading) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
-        <div className="text-white text-center">
-          <div className="text-lg animate-pulse">Загрузка темы...</div>
-          <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
-          <div className="text-xs mt-1 text-gray-500">Загружаем карточки...</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
   
   if (error) {
@@ -489,7 +482,7 @@ export function ThemeHomeScreen({
     return (
       <div className="w-full h-screen flex items-center justify-center bg-bg-primary">
         <div className="text-white text-center">
-          <div className="text-lg text-red-400">Error loading content</div>
+          <div className="text-lg text-red-400">Content is unavailable</div>
           <div className="text-sm mt-2 text-gray-400">Theme: {themeId}</div>
           <button 
             onClick={() => window.location.reload()} 

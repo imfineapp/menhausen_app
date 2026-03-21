@@ -244,7 +244,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getText('Ошибка загрузки техники', 'Technique loading error')}
+              {getText('Ошибка данных техники', 'Technique data error')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
               {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}

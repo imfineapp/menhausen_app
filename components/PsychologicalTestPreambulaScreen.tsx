@@ -6,6 +6,7 @@ import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
+import { LoadingScreen } from './LoadingScreen';
 
 interface PsychologicalTestPreambulaScreenProps {
   onNext: () => void;
@@ -36,11 +37,7 @@ export function PsychologicalTestPreambulaScreen({ onNext }: PsychologicalTestPr
   const testContent = content.psychologicalTest;
 
   if (!testContent) {
-    return (
-      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
-        <p className="text-white">Error loading test content</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

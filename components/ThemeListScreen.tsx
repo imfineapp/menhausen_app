@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
+import { LoadingScreen } from './LoadingScreen';
 
 /**
  * Экран со списком всех доступных тем
@@ -37,11 +38,7 @@ export default function ThemeListScreen() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Загрузка тем...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error) {

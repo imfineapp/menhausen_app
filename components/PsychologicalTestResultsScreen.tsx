@@ -8,6 +8,7 @@ import { Light } from './ProfileLayoutComponents';
 import { useContent } from './ContentContext';
 import { PsychologicalTestPercentages } from '../types/psychologicalTest';
 import { AlertTriangle } from 'lucide-react';
+import { LoadingScreen } from './LoadingScreen';
 
 interface PsychologicalTestResultsScreenProps {
   percentages: PsychologicalTestPercentages;
@@ -26,11 +27,7 @@ export function PsychologicalTestResultsScreen({
   const testContent = content.psychologicalTest;
 
   if (!testContent) {
-    return (
-      <div className="w-full h-screen bg-[#111111] flex items-center justify-center">
-        <p className="text-white">Error loading test content</p>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   // Формируем список результатов по темам
