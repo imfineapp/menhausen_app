@@ -26,6 +26,7 @@ import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
 import { getValidJWTToken } from './authService';
+import { criticalDataManager } from '../dataManager';
 
 /**
  * Supabase Sync Service Class
@@ -511,10 +512,9 @@ export class SupabaseSyncService {
       // Load existing preferences if available
       const preferencesRaw = localStorage.getItem('menhausen_user_preferences');
       if (preferencesRaw) {
-        try {
-          preferences = JSON.parse(preferencesRaw);
-        } catch (e) {
-          console.warn('Error parsing preferences:', e);
+        const loaded = this.parsePreferencesFromStorage(preferencesRaw);
+        if (loaded && typeof loaded === 'object') {
+          preferences = loaded;
         }
       }
       
@@ -606,6 +606,38 @@ export class SupabaseSyncService {
     }, {} as Record<string, string>));
 
     return data;
+  }
+
+  private parsePreferencesFromStorage(preferencesRaw: string): Record<string, unknown> | null {
+    // Legacy/plain JSON preferences.
+    try {
+      const parsed = JSON.parse(preferencesRaw);
+      if (parsed && typeof parsed === 'object') {
+        return parsed as Record<string, unknown>;
+      }
+      return null;
+    } catch {
+      // Continue to encrypted format parser.
+    }
+
+    // Encrypted DataSchema format from CriticalDataManager.
+    try {
+      const decrypted = decodeURIComponent(escape(atob(preferencesRaw)));
+      const parsed = JSON.parse(decrypted);
+      if (
+        parsed
+        && typeof parsed === 'object'
+        && Object.prototype.hasOwnProperty.call(parsed, 'data')
+        && parsed.data
+        && typeof parsed.data === 'object'
+      ) {
+        return parsed.data as Record<string, unknown>;
+      }
+    } catch {
+      // Ignore invalid payload - caller will proceed with empty preferences.
+    }
+
+    return null;
   }
 
   /**
@@ -881,8 +913,8 @@ export class SupabaseSyncService {
       const merged = resolveConflict('preferences', localData.preferences, remoteData.preferences);
       const localFormat = transformFromAPIFormat('preferences', merged);
       
-      // Save preferences object
-      localStorage.setItem('menhausen_user_preferences', JSON.stringify(localFormat));
+      // Save preferences in canonical encrypted critical-data format.
+      void criticalDataManager.saveUserPreferences(localFormat);
       
       // Also save language separately for compatibility with existing code
       if (localFormat.language) {
@@ -1044,8 +1076,8 @@ export class SupabaseSyncService {
 
       if (userData.preferences) {
         result.preferences = userData.preferences;
-        // Save preferences to localStorage immediately
-        localStorage.setItem('menhausen_user_preferences', JSON.stringify(result.preferences));
+        // Save preferences to localStorage immediately in canonical encrypted format
+        await criticalDataManager.saveUserPreferences(result.preferences);
         
         // Also save language separately for compatibility with existing code
         if (result.preferences.language) {
