@@ -53,8 +53,18 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           // React core libraries
-          if (id.includes('react') || id.includes('react-dom')) {
+          if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
             return 'react-vendor';
+          }
+
+          // Supabase SDK family (auth/realtime/postgrest/storage/functions)
+          if (id.includes('@supabase/')) {
+            return 'supabase-sdk';
+          }
+
+          // Analytics SDKs that are not needed for first paint
+          if (id.includes('posthog-js') || id.includes('@posthog/') || id.includes('@telegram-apps/analytics')) {
+            return 'analytics-sdk';
           }
           
           // Radix UI components (large component library)
@@ -85,6 +95,11 @@ export default defineConfig({
               id.includes('@floating-ui') || id.includes('react-resizable') ||
               id.includes('react-slick') || id.includes('react-responsive-masonry')) {
             return 'utilities';
+          }
+
+          // Common utility deps often pulled indirectly by SDKs
+          if (id.includes('/lodash/') || id.includes('lodash-es')) {
+            return 'utility-vendor';
           }
           
           // Large node_modules that don't fit above categories

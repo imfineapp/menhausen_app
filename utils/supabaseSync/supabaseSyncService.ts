@@ -36,6 +36,8 @@ export class SupabaseSyncService {
   private supabase: SupabaseClient | null = null;
   private syncInProgress = false;
   private offlineQueue: SyncQueueItem[] = [];
+  private fetchUserDataCache: { data: { hasPremium?: boolean; premiumSignature?: any } | null; timestamp: number } | null = null;
+  private readonly FETCH_USER_DATA_CACHE_TTL_MS = 120_000;
   private syncStatus: SyncStatus = {
     isOnline: navigator.onLine,
     lastSync: null,
@@ -1206,15 +1208,23 @@ export class SupabaseSyncService {
         // Upload merged local data to ensure consistency
         const localData = this.getAllLocalStorageData();
         console.log('[SyncService] Local data keys after merge:', Object.keys(localData));
-        console.log('[SyncService] Uploading merged data to Supabase...');
-        const uploadResult = await this.syncToSupabase(localData);
-        console.log('[SyncService] Upload result:', uploadResult);
+        console.log('[SyncService] Uploading merged data to Supabase in background...');
+        void this.syncToSupabase(localData)
+          .then((uploadResult) => {
+            console.log('[SyncService] Background upload result:', uploadResult);
+          })
+          .catch((error) => {
+            console.warn('[SyncService] Background upload failed:', error);
+          });
 
         this.syncStatus.lastSync = new Date();
         this.syncStatus.syncInProgress = false;
         this.syncInProgress = false;
 
-        return uploadResult;
+        return {
+          success: true,
+          syncedTypes: [],
+        };
       } else {
         // New user: upload all local data
         console.log('[SyncService] New user detected, uploading local data');
@@ -1227,13 +1237,21 @@ export class SupabaseSyncService {
 
         // Only upload if there's data to upload
         if (Object.keys(localData).length > 0) {
-          console.log('[SyncService] Uploading local data to Supabase...');
-          const uploadResult = await this.syncToSupabase(localData);
-          console.log('[SyncService] Upload result:', uploadResult);
+          console.log('[SyncService] Uploading local data to Supabase in background...');
+          void this.syncToSupabase(localData)
+            .then((uploadResult) => {
+              console.log('[SyncService] Background upload result:', uploadResult);
+            })
+            .catch((error) => {
+              console.warn('[SyncService] Background upload failed:', error);
+            });
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
-          return uploadResult;
+          return {
+            success: true,
+            syncedTypes: [],
+          };
         } else {
           // No local data, just mark as synced
           this.syncStatus.lastSync = new Date();
@@ -1291,13 +1309,29 @@ export class SupabaseSyncService {
     }
 
     try {
+      if (
+        this.fetchUserDataCache &&
+        Date.now() - this.fetchUserDataCache.timestamp < this.FETCH_USER_DATA_CACHE_TTL_MS
+      ) {
+        return this.fetchUserDataCache.data;
+      }
+
       const userData = await this.fetchFromSupabase(telegramUserId);
       if (userData) {
-        return {
+        const result = {
           hasPremium: userData.hasPremium,
           premiumSignature: userData.premiumSignature
         };
+        this.fetchUserDataCache = {
+          data: result,
+          timestamp: Date.now(),
+        };
+        return result;
       }
+      this.fetchUserDataCache = {
+        data: null,
+        timestamp: Date.now(),
+      };
       return null;
     } catch (error) {
       console.error('[SyncService] Error fetching user data:', error);

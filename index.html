@@ -34,6 +34,7 @@
     <!-- Google Fonts - iOS Safari Optimized Loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ciwclljuxgbyqwqxmhxg.supabase.co" crossorigin>
   <link
     rel="preload"
     as="style"
@@ -84,6 +85,25 @@
       height: 100vh;
       max-height: 100vh;
     }
+
+    #root {
+      min-height: 100vh;
+      background-color: #111111;
+    }
+
+    /* Minimal utility classes used by initial LoadingScreen */
+    .w-full { width: 100%; }
+    .h-screen { height: 100vh; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .relative { position: relative; }
+    .w-32 { width: 8rem; }
+    .h-32 { height: 8rem; }
+    .rounded-full { border-radius: 9999px; }
+    .bg-\[\#111111\] { background-color: #111111; }
+    .animate-breathe { animation: breathe 3s ease-in-out infinite; }
     
     /* iOS Safari specific font rendering */
     @supports (-webkit-touch-callout: none) {
@@ -135,6 +155,20 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 15px rgba(225, 255, 0, 0.4));
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 35px rgba(225, 255, 0, 0.7));
+        opacity: 0.9;
+      }
     }
     
     /* Hide loading when React app is ready */
