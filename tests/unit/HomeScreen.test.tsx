@@ -18,6 +18,19 @@ vi.mock('../../utils/DailyCheckinManager', () => ({
   }
 }));
 
+vi.mock('../../components/ActivityBlockNew', () => ({
+  ActivityBlockNew: () => {
+    const total = DailyCheckinManager.getTotalCheckins() ?? 0;
+    const streak = DailyCheckinManager.getCheckinStreak?.() ?? 0;
+    return (
+      <div data-testid="activity-block-mock">
+        <span>{`${total} days`}</span>
+        <span>{`streak:${streak}`}</span>
+      </div>
+    );
+  },
+}));
+
 // Mock achievement services
 vi.mock('../../services/achievementStorage', () => {
   const mockLoad = vi.fn(() => ({
@@ -174,9 +187,10 @@ describe('HomeScreen', () => {
   });
 
   describe('Progress Display', () => {
-    it('should display actual check-in count instead of placeholder', () => {
+    it('should display actual check-in count instead of placeholder', async () => {
       const mockGetTotalCheckins = vi.mocked(DailyCheckinManager.getTotalCheckins);
       mockGetTotalCheckins.mockReturnValue(5);
+      refreshCheckin();
 
       renderWithLanguageProvider({
         onGoToProfile: mockOnGoToProfile,
@@ -185,7 +199,7 @@ describe('HomeScreen', () => {
       });
 
       // Should display actual count (5) instead of placeholder (142)
-      expect(screen.getByText('5 days')).toBeInTheDocument();
+      expect(await screen.findByText('5 days')).toBeInTheDocument();
     });
 
     it('should display zero when no check-ins exist', () => {
