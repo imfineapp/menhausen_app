@@ -1,12 +1,11 @@
 // Импортируем необходимые хуки и SVG пути
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
-import { ActivityBlockNew } from './ActivityBlockNew';
 import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
@@ -17,6 +16,7 @@ import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
 
+const ActivityBlockNew = lazy(() => import('./ActivityBlockNew').then((m) => ({ default: m.ActivityBlockNew })));
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -104,7 +104,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
       <div className={`typography-button text-center text-nowrap tracking-[-0.43px] ${
         isPremium 
           ? 'text-[#2d2b2b]' 
-          : 'text-[#696969]'
+          : 'text-[#8a8a8a]'
       }`}>
         <p className="adjustLetterSpacing block whitespace-pre">
           {isPremium ? content.ui.profile.premium : content.ui.profile.free}
@@ -126,7 +126,7 @@ function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
       className="box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-start p-0 relative shrink-0"
       data-name="User level and paid status"
     >
-      <div className="typography-body text-[#696969] text-left text-nowrap">
+      <div className="typography-body text-[#8a8a8a] text-left text-nowrap">
         <p className="block whitespace-pre">{content.ui.home.level} {displayLevel.toLocaleString()}</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
@@ -177,7 +177,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
           <UserAvatar />
           <UserInfoBlock userHasPremium={userHasPremium} />
         </div>
-        <ChevronRight className="w-5 h-5 text-[#696969] flex-shrink-0" />
+        <ChevronRight className="w-5 h-5 text-[#8a8a8a] flex-shrink-0" />
       </button>
     </div>
   );
@@ -260,7 +260,7 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
     >
       <div className="flex flex-row items-center justify-center relative size-full">
         <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
-          <div className="typography-button text-[#696969] text-center text-nowrap tracking-[-0.43px]">
+          <div className="typography-button text-[#8a8a8a] text-center text-nowrap tracking-[-0.43px]">
             <p className="adjustLetterSpacing block whitespace-pre">{content.ui.home.checkInButton}</p>
           </div>
         </div>
@@ -380,7 +380,9 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
 
       {/* CheckInBlock скрыт по требованию */}
       {/* <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} /> */}
-      <ActivityBlockNew />
+      <Suspense fallback={<div className="h-[220px] w-full rounded-xl bg-[rgba(217,217,217,0.04)]" aria-hidden="true" />}>
+        <ActivityBlockNew />
+      </Suspense>
       {onArticleClick && onViewAllArticles && (
         <ArticlesBlock 
           onArticleClick={onArticleClick} 

@@ -71,9 +71,22 @@ export async function initPosthog(): Promise<void> {
     capture_exceptions: true,
     // Disable remote config/decide endpoint to avoid loading site apps like ExceptionAutocapture
     advanced_disable_decide: true,
+    // Defer recorder payload and work from critical path.
+    disable_session_recording: true,
   })
   ;(ph as any).__initialized = true
   if (w) w.__POSTHOG_INIT = true
+
+  const startRecording = () => {
+    if (typeof ph.startSessionRecording === 'function') {
+      ph.startSessionRecording()
+    }
+  }
+  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+    ;(window as any).requestIdleCallback(startRecording, { timeout: 4000 })
+  } else {
+    setTimeout(startRecording, 1200)
+  }
 }
 
 export async function capture(eventName: string, properties?: Record<string, any>): Promise<void> {

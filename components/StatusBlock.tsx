@@ -50,13 +50,13 @@ export function StatusBlock({ icon, title, value, subtitle, onClick }: StatusBlo
         </div>
         
         {/* Заголовок - фиксированный отступ от числа */}
-        <div className="text-sm text-[#696969] text-center leading-tight flex-shrink-0 flex items-center justify-center mt-3">
+        <div className="text-sm text-[#8a8a8a] text-center leading-tight flex-shrink-0 flex items-center justify-center mt-3">
           {title}
         </div>
         
         {/* Дополнительный подзаголовок (если есть) */}
         {subtitle && (
-          <div className="text-xs text-[#696969] text-center leading-tight flex-shrink-0 mt-1">
+          <div className="text-xs text-[#8a8a8a] text-center leading-tight flex-shrink-0 mt-1">
             {subtitle}
           </div>
         )}

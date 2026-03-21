@@ -206,7 +206,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                       {unlockedCount}
                     </div>
                     
-                    <div className="text-sm text-[#696969] text-center leading-tight">
+                    <div className="text-sm text-[#8a8a8a] text-center leading-tight">
                       {getLocalizedBadges().unlockedCount}
                     </div>
                   </div>
@@ -230,7 +230,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                       {inProgressCount}
                     </div>
                     
-                    <div className="text-sm text-[#696969] text-center leading-tight">
+                    <div className="text-sm text-[#8a8a8a] text-center leading-tight">
                       {getLocalizedBadges().inProgress}
                     </div>
                   </div>
@@ -254,7 +254,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                       {totalXP}
                     </div>
                     
-                    <div className="text-sm text-[#696969] text-center leading-tight">
+                    <div className="text-sm text-[#8a8a8a] text-center leading-tight">
                       {getLocalizedBadges().points}
                     </div>
                   </div>

@@ -71,7 +71,7 @@ function CardInfo({ cardTitle, formattedDate }: { cardTitle: string; formattedDa
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
         <h2 className="typography-h2">
           <span>{cardTitle} / </span>
-          <span className="text-[#696969]">{formattedDate}</span>
+          <span className="text-[#8a8a8a]">{formattedDate}</span>
         </h2>
       </div>
       <SeparationLine />

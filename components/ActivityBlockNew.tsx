@@ -142,7 +142,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
           <div className="relative mb-3">
             <div className="absolute inset-0 bg-[#e1ff00]/30 rounded-full blur-lg scale-150"></div>                                                             
             <div className="relative bg-[#e1ff00] rounded-full p-2">
-              <Flame className="w-8 h-8 text-[#696969] flame-glow" />
+              <Flame className="w-8 h-8 text-[#8a8a8a] flame-glow" />
             </div>
           </div>
 
@@ -152,7 +152,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
           </div>
 
           {/* Подпись */}
-          <div className="text-sm text-[#696969] text-center">
+          <div className="text-sm text-[#8a8a8a] text-center">
             {getUI().home.activity.weeklyCheckins}
           </div>
         </div>

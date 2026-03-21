@@ -172,7 +172,7 @@ export function ArticleScreen({
           <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px] pb-[100px]">
             <div className="max-w-[351px] mx-auto">
               <div className="text-center py-12">
-                <div className="typography-body text-[#696969]">
+                <div className="typography-body text-[#8a8a8a]">
                   {content.ui.articles?.noArticles || 'Статья не найдена'}
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function ArticleScreen({
               <h1 className="typography-h1 text-[#e1ff00] mb-4">
                 {articleTitle}
               </h1>
-              <p className="typography-body text-[#696969] mb-6">
+              <p className="typography-body text-[#8a8a8a] mb-6">
                 {articlePreview}
               </p>
               {/* Article text size controls */}
@@ -316,7 +316,7 @@ export function ArticleScreen({
               
               return (
                 <div className="mt-8 pt-6 border-t border-[#212121]">
-                  <p className="typography-body text-[#696969] mb-6">
+                  <p className="typography-body text-[#8a8a8a] mb-6">
                     {content.ui.articles?.relatedThemes || 'Связанные темы:'}
                   </p>
                   <div className="flex flex-col gap-8 sm:gap-10">

@@ -1,36 +1,45 @@
-import type React from 'react'
-
-import { BadgesScreen } from '@/components/BadgesScreen'
+import React, { Suspense } from 'react'
+import { LoadingScreen } from '@/components/LoadingScreen'
+const BadgesScreen = React.lazy(() => import('@/components/BadgesScreen').then((m) => ({ default: m.BadgesScreen })))
 import { CheckInScreen } from '@/components/CheckInScreen'
-import { Grounding54321Screen } from '@/components/mental-techniques/Grounding54321Screen'
-import { GroundingAnchorScreen } from '@/components/mental-techniques/GroundingAnchorScreen'
-import { Breathing478Screen } from '@/components/mental-techniques/Breathing478Screen'
-import { SquareBreathingScreen } from '@/components/mental-techniques/SquareBreathingScreen'
-import { RewardManager } from '@/components/RewardManager'
+const Grounding54321Screen = React.lazy(() =>
+  import('@/components/mental-techniques/Grounding54321Screen').then((m) => ({ default: m.Grounding54321Screen })),
+)
+const GroundingAnchorScreen = React.lazy(() =>
+  import('@/components/mental-techniques/GroundingAnchorScreen').then((m) => ({ default: m.GroundingAnchorScreen })),
+)
+const Breathing478Screen = React.lazy(() =>
+  import('@/components/mental-techniques/Breathing478Screen').then((m) => ({ default: m.Breathing478Screen })),
+)
+const SquareBreathingScreen = React.lazy(() =>
+  import('@/components/mental-techniques/SquareBreathingScreen').then((m) => ({ default: m.SquareBreathingScreen })),
+)
+const RewardManager = React.lazy(() => import('@/components/RewardManager').then((m) => ({ default: m.RewardManager })))
 import { goBack } from '@/src/stores/navigation.store'
 
 import type { RouteContext } from './types'
 
 export function renderMiscRoutes(ctx: RouteContext): React.ReactNode | null {
   const { currentScreen, wrapScreen, handlers, earnedAchievementIds, onCheckInSubmit, onRewardDone } = ctx
+  const withSuspense = (screen: React.ReactNode) => <Suspense fallback={<LoadingScreen />}>{screen}</Suspense>
 
   switch (currentScreen) {
     case 'checkin':
       return wrapScreen(<CheckInScreen onSubmit={onCheckInSubmit} onBack={handlers.handleBackToHome} />)
     case 'breathing-4-7-8':
-      return wrapScreen(<Breathing478Screen onBack={handlers.handleBackFromMentalTechnique} />)
+      return wrapScreen(withSuspense(<Breathing478Screen onBack={handlers.handleBackFromMentalTechnique} />))
     case 'breathing-square':
-      return wrapScreen(<SquareBreathingScreen onBack={handlers.handleBackFromMentalTechnique} />)
+      return wrapScreen(withSuspense(<SquareBreathingScreen onBack={handlers.handleBackFromMentalTechnique} />))
     case 'grounding-5-4-3-2-1':
-      return wrapScreen(<Grounding54321Screen onBack={handlers.handleBackFromMentalTechnique} />)
+      return wrapScreen(withSuspense(<Grounding54321Screen onBack={handlers.handleBackFromMentalTechnique} />))
     case 'grounding-anchor':
-      return wrapScreen(<GroundingAnchorScreen onBack={handlers.handleBackFromMentalTechnique} />)
+      return wrapScreen(withSuspense(<GroundingAnchorScreen onBack={handlers.handleBackFromMentalTechnique} />))
     case 'reward':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <RewardManager earnedAchievementIds={earnedAchievementIds} onComplete={onRewardDone} onBack={onRewardDone} />,
-      )
+      ))
     case 'badges':
-      return wrapScreen(<BadgesScreen onBack={goBack} />)
+      return wrapScreen(withSuspense(<BadgesScreen onBack={goBack} />))
     default:
       return null
   }

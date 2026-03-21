@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   
   <!-- Telegram WebApp Meta Tags -->
   <meta name="telegram-web-app-theme-color" content="#111111" />
@@ -15,14 +15,12 @@
   <meta name="msapplication-TileColor" content="#111111" />
   
   <!-- Content Security Policy for development -->
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org https://us-assets.i.posthog.com https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; img-src 'self' data: https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com; object-src 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://telegram.org https://*.telegram.org https://us-assets.i.posthog.com https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; img-src 'self' data: https://*.posthog.com https://*.i.posthog.com https://lopata.menhausen.com; worker-src 'self' blob:; object-src 'none';" />
   
   <!-- iOS Safari specific -->
   <meta name="apple-touch-fullscreen" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Menhausen" />
   
-  <!-- Prevent zoom on input focus (iOS) -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   
   <!-- Favicons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -36,7 +34,19 @@
     <!-- Google Fonts - iOS Safari Optimized Loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&family=PT+Sans:wght@400;700&display=swap"
+      rel="stylesheet"
+    >
+  </noscript>
+  <link rel="preload" as="image" type="image/webp" href="/android-chrome-256x256.webp">
   
   <!-- iOS Safari fallback fonts -->
   <style>
@@ -57,7 +67,7 @@
   <!-- Critical resources are bundled by Vite -->
 
   <!-- Telegram WebApp Script -->
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script defer src="https://telegram.org/js/telegram-web-app.js"></script>
   
   <style>
     /* Prevent FOUC (Flash of Unstyled Content) - iOS Optimized */
@@ -145,16 +155,6 @@
   
   <script>
     // Telegram WebApp initialization is now handled by TelegramWebAppProvider component
-    
-    // Prevent zoom on double tap (iOS Safari)
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-      const now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
     
     // Prevent context menu
     document.addEventListener('contextmenu', function(e) {

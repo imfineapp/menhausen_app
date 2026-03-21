@@ -313,7 +313,7 @@ function RadioButton({ isSelected, color }: { isSelected: boolean; color: string
             cy="7" 
             id="Ellipse 5" 
             r="6" 
-            stroke={color === '#2d2b2b' ? "var(--stroke-0, #2D2B2B)" : "var(--stroke-0, #696969)"} 
+            stroke={color === '#2d2b2b' ? "var(--stroke-0, #2D2B2B)" : "var(--stroke-0, #8a8a8a)"} 
             strokeWidth="2" 
           />
           {isSelected && (

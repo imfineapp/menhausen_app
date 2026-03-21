@@ -30,7 +30,7 @@ function LockShieldFilled() {
     <div className="relative shrink-0 size-7" data-name="Lock Shield Filled">
       <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28 28">
         <g id="Lock Shield Filled">
-          <path d={svgPaths.p70b1000} fill="var(--fill-0, #696969)" id="Shape" />
+          <path d={svgPaths.p70b1000} fill="var(--fill-0, #8a8a8a)" id="Shape" />
         </g>
       </svg>
     </div>
@@ -49,7 +49,7 @@ function EncryptInfoBlock() {
       data-name="Encrypt_info_block"
     >
       <LockShieldFilled />
-      <div className="typography-caption text-[#696969] text-left flex-1">
+      <div className="typography-caption text-[#8a8a8a] text-left flex-1">
         <p className="block">{content.ui.cards.question.encryption}</p>
       </div>
     </div>
@@ -94,7 +94,7 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#8a8a8a] min-h-[280px] sm:min-h-[300px] md:min-h-[320px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />

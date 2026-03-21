@@ -1,7 +1,9 @@
-import type React from 'react'
-
-import { AllArticlesScreen } from '@/components/AllArticlesScreen'
-import { ArticleScreen } from '@/components/ArticleScreen'
+import React, { Suspense } from 'react'
+import { LoadingScreen } from '@/components/LoadingScreen'
+const AllArticlesScreen = React.lazy(() =>
+  import('@/components/AllArticlesScreen').then((m) => ({ default: m.AllArticlesScreen })),
+)
+const ArticleScreen = React.lazy(() => import('@/components/ArticleScreen').then((m) => ({ default: m.ArticleScreen })))
 import { navigateTo } from '@/src/stores/navigation.store'
 
 import type { RouteContext } from './types'
@@ -17,14 +19,15 @@ export function renderArticleRoutes(ctx: RouteContext): React.ReactNode | null {
     earnedAchievementIds,
     setEarnedAchievementIdsForArticle,
   } = ctx
+  const withSuspense = (screen: React.ReactNode) => <Suspense fallback={<LoadingScreen />}>{screen}</Suspense>
 
   switch (currentScreen) {
     case 'all-articles':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <AllArticlesScreen onBack={handlers.handleBackToHomeFromArticles} onArticleClick={handlers.handleOpenArticle} />,
-      )
+      ))
     case 'article':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <ArticleScreen
           articleId={currentArticle}
           onBack={handlers.handleBackFromArticle}
@@ -35,7 +38,7 @@ export function renderArticleRoutes(ctx: RouteContext): React.ReactNode | null {
           earnedAchievementIds={earnedAchievementIds}
           setEarnedAchievementIds={setEarnedAchievementIdsForArticle}
         />,
-      )
+      ))
     default:
       return null
   }

@@ -77,14 +77,14 @@ export function MentalLevelBlock() {
                 </defs>
                 <XAxis 
                   dataKey="date" 
-                  tick={{ fill: '#696969', fontSize: 12 }}
+                  tick={{ fill: '#8a8a8a', fontSize: 12 }}
                   axisLine={{ stroke: '#212121' }}
                   tickLine={{ stroke: '#212121' }}
                 />
                 <YAxis 
                   domain={[1, 5]}
                   ticks={[1, 2, 3, 4, 5]}
-                  tick={{ fill: '#696969', fontSize: 12 }}
+                  tick={{ fill: '#8a8a8a', fontSize: 12 }}
                   axisLine={{ stroke: '#212121' }}
                   tickLine={{ stroke: '#212121' }}
                   width={30}

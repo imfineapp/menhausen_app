@@ -2,10 +2,26 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
+const analyzeBundle = process.env.ANALYZE === 'true'
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(analyzeBundle
+      ? [
+          visualizer({
+            filename: 'dist/stats.html',
+            gzipSize: true,
+            brotliSize: true,
+            template: 'treemap',
+          }),
+        ]
+      : []),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
@@ -23,14 +39,14 @@ export default defineConfig({
       port: 5173,
     },
     headers: {
-      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; object-src 'none';"
+      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; worker-src 'self' blob:; object-src 'none';"
     }
   },
   build: {
     target: 'esnext',
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
+    sourcemap: 'hidden',
     minify: 'terser',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
@@ -76,18 +92,7 @@ export default defineConfig({
             return 'vendor-misc';
           }
           
-          // App components by directory
-          if (id.includes('/components/ui/')) {
-            return 'app-ui-components';
-          }
-          
-          if (id.includes('/components/') && !id.includes('/components/ui/')) {
-            return 'app-components';
-          }
-          
-          if (id.includes('/imports/')) {
-            return 'app-imports';
-          }
+          // Keep app modules eligible for route-level split chunks.
         },
       },
     },
