@@ -4,10 +4,6 @@ import React from 'react';
 import { ActivityBlockNew } from '../../components/ActivityBlockNew';
 import { PointsManager } from '../../utils/PointsManager';
 
-// Simple providers mock wrappers if needed from existing tests
-import { ContentProvider } from '../../components/ContentContext';
-import { LanguageProvider } from '../../components/LanguageContext';
-
 describe('ActivityBlockNew points display', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -23,13 +19,7 @@ describe('ActivityBlockNew points display', () => {
   it('shows total earned and next target (5863 / 6000)', async () => {
     PointsManager.earn(5863);
 
-    const { unmount } = render(
-      <LanguageProvider>
-        <ContentProvider>
-          <ActivityBlockNew />
-        </ContentProvider>
-      </LanguageProvider>
-    );
+    const { unmount } = render(<ActivityBlockNew />);
 
     try {
       // Ждём появления очков с помощью waitFor

@@ -1,4 +1,3 @@
-import { useLayoutEffect, type ReactNode } from 'react'
 import { useStore } from '@nanostores/react'
 
 import {
@@ -7,7 +6,6 @@ import {
   setLanguage as setLanguageAction,
   openLanguageModal as openLanguageModalAction,
   closeLanguageModal as closeLanguageModalAction,
-  initLanguage,
   type Language,
 } from '@/src/stores/language.store'
 
@@ -20,25 +18,6 @@ interface LanguageContextType {
   isLanguageModalOpen: boolean; // Состояние открытия модального окна
   openLanguageModal: () => void; // Функция для открытия модального окна
   closeLanguageModal: () => void; // Функция для закрытия модального окна
-}
-
-// Типы для провайдера контекста
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-/**
- * Провайдер контекста языка приложения
- * Управляет текущим языком и состоянием модального окна выбора языка
- */
-export function LanguageProvider({ children }: LanguageProviderProps) {
-  // Kept for backwards-compatibility with existing imports/tests.
-  // The source of truth is now nanostores in `src/stores/language.store.ts`.
-  useLayoutEffect(() => {
-    initLanguage()
-  }, [])
-
-  return <>{children}</>
 }
 
 /**

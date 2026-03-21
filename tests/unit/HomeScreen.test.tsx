@@ -7,7 +7,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HomeScreen } from '../../components/HomeScreen';
 import { DailyCheckinManager } from '../../utils/DailyCheckinManager';
-import { AchievementsProvider } from '../../contexts/AchievementsContext';
 import { refreshCheckin } from '../../src/stores/checkin.store';
 import { setLanguage } from '../../src/stores/language.store';
 
@@ -162,11 +161,7 @@ vi.mock('../../components/ContentContext', () => ({
 
 // HomeScreen now reads language/achievements state from stores directly.
 const renderWithLanguageProvider = (props: any) => {
-  return render(
-    <AchievementsProvider>
-      <HomeScreen {...props} />
-    </AchievementsProvider>
-  );
+  return render(<HomeScreen {...props} />);
 };
 
 describe('HomeScreen', () => {
@@ -243,13 +238,11 @@ describe('HomeScreen', () => {
       refreshCheckin()
       
       rerender(
-        <AchievementsProvider>
-          <HomeScreen 
-            onGoToProfile={mockOnGoToProfile} 
-            onGoToTheme={mockOnGoToTheme} 
-            userHasPremium={false} 
-          />
-        </AchievementsProvider>
+        <HomeScreen 
+          onGoToProfile={mockOnGoToProfile} 
+          onGoToTheme={mockOnGoToTheme} 
+          userHasPremium={false} 
+        />
       );
 
       await waitFor(() => {
@@ -479,13 +472,11 @@ describe('HomeScreen', () => {
       // Multiple re-renders should not cause issues
       for (let i = 0; i < 5; i++) {
         rerender(
-          <AchievementsProvider>
-            <HomeScreen 
-              onGoToProfile={mockOnGoToProfile} 
-              onGoToTheme={mockOnGoToTheme} 
-              userHasPremium={false} 
-            />
-          </AchievementsProvider>
+          <HomeScreen 
+            onGoToProfile={mockOnGoToProfile} 
+            onGoToTheme={mockOnGoToTheme} 
+            userHasPremium={false} 
+          />
         );
       }
 
@@ -507,13 +498,11 @@ describe('HomeScreen', () => {
         mockGetTotalCheckins.mockReturnValue(i);
         refreshCheckin()
         rerender(
-          <AchievementsProvider>
-            <HomeScreen 
-              onGoToProfile={mockOnGoToProfile} 
-              onGoToTheme={mockOnGoToTheme} 
-              userHasPremium={false} 
-            />
-          </AchievementsProvider>
+          <HomeScreen 
+            onGoToProfile={mockOnGoToProfile} 
+            onGoToTheme={mockOnGoToTheme} 
+            userHasPremium={false} 
+          />
         );
       }
 

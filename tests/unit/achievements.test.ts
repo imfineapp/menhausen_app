@@ -9,9 +9,8 @@ import {
   saveUserAchievements,
   getUserAchievement 
 } from '../../services/achievementStorage';
-import { AchievementsProvider, useAchievements } from '../../contexts/AchievementsContext';
+import { useAchievements } from '../../contexts/AchievementsContext';
 import { renderHook, waitFor } from '@testing-library/react';
-import React, { ReactNode } from 'react';
 import { UserStats, AchievementDefinition } from '../../types/achievements';
 import { getAllAchievementsMetadata } from '../../utils/achievementsMetadata';
 
@@ -244,10 +243,7 @@ describe('Achievement System Tests', () => {
       expect(getUserAchievement('newcomer')).toBeUndefined();
 
       // Проверяем достижения через контекст
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       // Ждем, пока контекст загрузится
       await waitFor(() => {
@@ -283,10 +279,7 @@ describe('Achievement System Tests', () => {
     it('should unlock beginner achievement after opening 3 stress cards', async () => {
       localStorage.clear();
 
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       // Ждем, пока контекст загрузится
       await waitFor(() => {
@@ -322,10 +315,7 @@ describe('Achievement System Tests', () => {
     it('should unlock seeker achievement after opening 5 stress cards', async () => {
       localStorage.clear();
 
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       // Ждем, пока контекст загрузится
       await waitFor(() => {
@@ -364,10 +354,7 @@ describe('Achievement System Tests', () => {
       incrementCardsOpened('stress');
       incrementCardsOpened('stress');
 
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       // Ждем, пока контекст загрузится
       await waitFor(() => {
@@ -390,10 +377,7 @@ describe('Achievement System Tests', () => {
     it('should not unlock achievement twice', async () => {
       localStorage.clear();
 
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       // Ждем, пока контекст загрузится
       await waitFor(() => {
@@ -438,10 +422,7 @@ describe('Achievement System Tests', () => {
         incrementCardsOpened('stress'); // beginner (120 XP)
       }
 
-      const wrapper = ({ children }: { children: ReactNode }) => 
-        React.createElement(AchievementsProvider, null, children);
-
-      const { result } = renderHook(() => useAchievements(), { wrapper });
+      const { result } = renderHook(() => useAchievements());
 
       await waitFor(async () => {
         await result.current.checkAndUnlockAchievements();

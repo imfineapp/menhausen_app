@@ -12,10 +12,7 @@ import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 import { sortArticlesForDisplay } from '../utils/articleOrdering';
 // Моки больше не используются - все тесты используют реальный контент
 
-/**
- * Content API backed by nanostores. Use `useContent()` from any component.
- * `ContentProvider` is a deprecated no-op kept for tests.
- */
+/** Content API backed by nanostores. Use `useContent()` from any component. */
 export function useContent(): ContentContextType {
   const language = useStore($language);
   const currentLanguage = language as SupportedLanguage;
@@ -548,11 +545,6 @@ export function useContent(): ContentContextType {
   };
 
   return contextValue;
-}
-
-/** @deprecated No-op; kept for tests that still wrap the tree. */
-export function ContentProvider({ children }: { children: ReactNode }) {
-  return <>{children}</>;
 }
 
 /** Loading / error UI for content store — use in app shell (e.g. AppContent). */

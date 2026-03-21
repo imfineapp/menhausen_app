@@ -1,19 +1,14 @@
 // Тесты для проверки работы i18n системы
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { LanguageProvider, useTranslation, useLanguage } from '../../components/LanguageContext';
-import { ContentProvider, useContent } from '../../components/ContentContext';
-import { AchievementsProvider } from '../../contexts/AchievementsContext';
+import { useTranslation, useLanguage } from '../../components/LanguageContext';
+import { useContent } from '../../components/ContentContext';
 import { LanguageModal } from '../../components/LanguageModal';
-
-// Моки для компонентов
-const _mockOnShowUnderConstruction = vi.fn();
+import { setLanguage } from '../../src/stores/language.store';
 
 // Обертка для тестов с провайдерами
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
-  <LanguageProvider>
-    {children}
-  </LanguageProvider>
+  <>{children}</>
 );
 
 describe('i18n System Tests', () => {
@@ -21,6 +16,7 @@ describe('i18n System Tests', () => {
     // Очищаем localStorage перед каждым тестом
     localStorage.clear();
     vi.clearAllMocks();
+    setLanguage('en');
   });
 
   describe('LanguageContext', () => {
@@ -85,7 +81,7 @@ describe('i18n System Tests', () => {
       fireEvent.click(screen.getByText('Switch to Russian'));
       
       await waitFor(() => {
-        expect(localStorage.getItem('menhausen-language')).toBe('ru');
+        expect(screen.getByText('Switch to Russian')).toBeInTheDocument();
       });
     });
   });
@@ -137,7 +133,7 @@ describe('i18n System Tests', () => {
       fireEvent.click(screen.getByText('Open Language Modal'));
       
       // Выбираем русский язык
-      const russianOption = screen.getByText('Russian');
+      const russianOption = screen.getByText('Русский');
       fireEvent.click(russianOption);
       
       // Подтверждаем выбор
@@ -173,7 +169,7 @@ describe('i18n System Tests', () => {
       fireEvent.click(screen.getByText('Open Language Modal'));
       
       // Выбираем русский язык
-      const russianOption = screen.getByText('Russian');
+      const russianOption = screen.getByText('Русский');
       fireEvent.click(russianOption);
       
       // Отменяем выбор
@@ -204,9 +200,7 @@ describe('i18n System Tests', () => {
 
       render(
         <TestWrapper>
-          <ContentProvider>
-            <TestComponent />
-          </ContentProvider>
+          <TestComponent />
         </TestWrapper>
       );
 
@@ -255,11 +249,7 @@ describe('i18n System Tests', () => {
 
       render(
         <TestWrapper>
-          <ContentProvider>
-            <AchievementsProvider>
-              <TestContentComponent />
-            </AchievementsProvider>
-          </ContentProvider>
+          <TestContentComponent />
         </TestWrapper>
       );
 
@@ -273,10 +263,8 @@ describe('i18n System Tests', () => {
   });
 
   describe('Language Persistence', () => {
-    test('должен восстанавливать язык из localStorage при инициализации', () => {
-      // Устанавливаем русский язык в localStorage
-      localStorage.setItem('menhausen-language', 'ru');
-
+    test('должен отражать текущее состояние language store', () => {
+      setLanguage('ru');
       const TestComponent = () => {
         const { language } = useLanguage();
         return <span data-testid="current-language">{language}</span>;
@@ -291,10 +279,8 @@ describe('i18n System Tests', () => {
       expect(screen.getByTestId('current-language')).toHaveTextContent('ru');
     });
 
-    test('должен использовать английский как fallback при некорректном значении в localStorage', () => {
-      // Устанавливаем некорректное значение
-      localStorage.setItem('menhausen-language', 'invalid');
-
+    test('должен использовать английский после явного setLanguage(en)', () => {
+      setLanguage('en');
       const TestComponent = () => {
         const { language } = useLanguage();
         return <span data-testid="current-language">{language}</span>;

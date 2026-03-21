@@ -98,8 +98,6 @@ function buildUiForLanguage(lang: string) {
 vi.mock('../../components/ContentContext', () => ({
   ContentLoadingGate: ({ children }: { children: React.ReactNode }) =>
     React.createElement(React.Fragment, null, children),
-  ContentProvider: ({ children }: { children: React.ReactNode }) =>
-    React.createElement(React.Fragment, null, children),
   useContent: () => {
     const lang = useStore($language) as string;
 

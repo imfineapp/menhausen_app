@@ -7,8 +7,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import { PaymentsScreen } from '../../components/PaymentsScreen'
 import * as paymentEffects from '../../src/effects/payment.effects'
-import { ContentProvider } from '../../components/ContentContext'
-import { LanguageProvider } from '../../components/LanguageContext'
 
 // Mock dependencies
 vi.mock('../../src/effects/payment.effects', () => ({
@@ -97,13 +95,7 @@ describe('PaymentsScreen', () => {
   const mockOnPurchaseComplete = vi.fn()
 
   const renderPaymentsScreen = () => {
-    return render(
-      <LanguageProvider>
-        <ContentProvider>
-          <PaymentsScreen onBack={mockOnBack} onPurchaseComplete={mockOnPurchaseComplete} />
-        </ContentProvider>
-      </LanguageProvider>
-    )
+    return render(<PaymentsScreen onBack={mockOnBack} onPurchaseComplete={mockOnPurchaseComplete} />)
   }
 
   describe('rendering', () => {
