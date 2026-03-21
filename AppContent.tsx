@@ -213,13 +213,6 @@ function AppContent() {
 
     void initializeApp()
 
-    const checkPremiumAfterSync = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      const { loadPremiumFromSupabase } = await import('./src/stores/premium.store')
-      await loadPremiumFromSupabase()
-    }
-    void checkPremiumAfterSync()
-
     return () => {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

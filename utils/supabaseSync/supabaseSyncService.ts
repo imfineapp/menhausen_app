@@ -37,6 +37,7 @@ export class SupabaseSyncService {
   private syncInProgress = false;
   private offlineQueue: SyncQueueItem[] = [];
   private fetchUserDataCache: { data: { hasPremium?: boolean; premiumSignature?: any } | null; timestamp: number } | null = null;
+  private fetchFromSupabaseInFlight: Promise<UserDataFromAPI | null> | null = null;
   private readonly FETCH_USER_DATA_CACHE_TTL_MS = 120_000;
   private syncStatus: SyncStatus = {
     isOnline: navigator.onLine,
@@ -651,7 +652,12 @@ export class SupabaseSyncService {
       throw new Error('Supabase client not initialized');
     }
 
-    try {
+    if (this.fetchFromSupabaseInFlight) {
+      console.log('[SyncService] fetchFromSupabase - Reusing in-flight request');
+      return this.fetchFromSupabaseInFlight;
+    }
+
+    const requestPromise = (async () => {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       if (!supabaseUrl) {
         throw new Error('VITE_SUPABASE_URL not configured');
@@ -734,9 +740,17 @@ export class SupabaseSyncService {
       }
 
       return null;
+    })();
+
+    this.fetchFromSupabaseInFlight = requestPromise;
+
+    try {
+      return await requestPromise;
     } catch (error) {
       console.error('Error fetching from Supabase:', error);
       throw error;
+    } finally {
+      this.fetchFromSupabaseInFlight = null;
     }
   }
 

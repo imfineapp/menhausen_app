@@ -52,8 +52,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React core libraries
-          if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+          // React runtime core only (avoid matching react-* libraries).
+          if (
+            id.includes('/node_modules/react/') ||
+            id.includes('/node_modules/react-dom/') ||
+            id.includes('/node_modules/scheduler/')
+          ) {
             return 'react-vendor';
           }
 
@@ -86,6 +90,7 @@ export default defineConfig({
           
           // Form and interaction libraries
           if (id.includes('react-hook-form') || id.includes('react-dnd') ||
+              id.includes('react-dnd-html5-backend') ||
               id.includes('input-otp') || id.includes('react-day-picker')) {
             return 'forms-interaction';
           }
