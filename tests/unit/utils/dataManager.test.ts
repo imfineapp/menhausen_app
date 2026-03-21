@@ -119,6 +119,40 @@ describe('CriticalDataManager', () => {
       const loadedCompletions = await dataManager.loadExerciseCompletions();
       expect(loadedCompletions).toBeNull();
     });
+
+    it('should read legacy plain JSON user preferences and migrate them', async () => {
+      const legacyPreferences = {
+        language: 'ru',
+        theme: 'dark',
+        notifications: false,
+        analytics: true,
+      };
+      mockStorage['menhausen_user_preferences'] = JSON.stringify(legacyPreferences);
+
+      const loadedPreferences = await dataManager.loadUserPreferences();
+      expect(loadedPreferences).toEqual({
+        ...legacyPreferences,
+        articleFontSizeStep: 0
+      });
+      expect(mockStorage['menhausen_user_preferences']).not.toBe(JSON.stringify(legacyPreferences));
+    });
+
+    it('should recover from legacy plain JSON backup when main value is invalid', async () => {
+      const legacyBackupPreferences = {
+        language: 'en',
+        theme: 'light',
+        notifications: true,
+        analytics: false,
+      };
+      mockStorage['menhausen_user_preferences'] = '%%%not-base64%%%';
+      mockStorage['menhausen_user_preferences_backup'] = JSON.stringify(legacyBackupPreferences);
+
+      const loadedPreferences = await dataManager.loadUserPreferences();
+      expect(loadedPreferences).toEqual({
+        ...legacyBackupPreferences,
+        articleFontSizeStep: 0
+      });
+    });
   });
 
   describe('Exercise Completion Management', () => {
