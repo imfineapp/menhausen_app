@@ -2,10 +2,26 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
+const analyzeBundle = process.env.ANALYZE === 'true'
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(analyzeBundle
+      ? [
+          visualizer({
+            filename: 'dist/stats.html',
+            gzipSize: true,
+            brotliSize: true,
+            template: 'treemap',
+          }),
+        ]
+      : []),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
@@ -23,22 +39,36 @@ export default defineConfig({
       port: 5173,
     },
     headers: {
-      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; object-src 'none';"
+      'Content-Security-Policy': "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://*.cloudflareinsights.com; connect-src 'self' http://127.0.0.1:* http://localhost:* https://telegram.org https://*.telegram.org https://lopata.menhausen.com https://tganalytics.xyz https://*.tganalytics.xyz https://*.supabase.co https://ciwclljuxgbyqwqxmhxg.supabase.co; worker-src 'self' blob:; object-src 'none';"
     }
   },
   build: {
     target: 'esnext',
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
+    sourcemap: 'hidden',
     minify: 'terser',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React core libraries
-          if (id.includes('react') || id.includes('react-dom')) {
+          // React runtime core only (avoid matching react-* libraries).
+          if (
+            id.includes('/node_modules/react/') ||
+            id.includes('/node_modules/react-dom/') ||
+            id.includes('/node_modules/scheduler/')
+          ) {
             return 'react-vendor';
+          }
+
+          // Supabase SDK family (auth/realtime/postgrest/storage/functions)
+          if (id.includes('@supabase/')) {
+            return 'supabase-sdk';
+          }
+
+          // Analytics SDKs that are not needed for first paint
+          if (id.includes('posthog-js') || id.includes('@posthog/') || id.includes('@telegram-apps/analytics')) {
+            return 'analytics-sdk';
           }
           
           // Radix UI components (large component library)
@@ -60,6 +90,7 @@ export default defineConfig({
           
           // Form and interaction libraries
           if (id.includes('react-hook-form') || id.includes('react-dnd') ||
+              id.includes('react-dnd-html5-backend') ||
               id.includes('input-otp') || id.includes('react-day-picker')) {
             return 'forms-interaction';
           }
@@ -70,24 +101,18 @@ export default defineConfig({
               id.includes('react-slick') || id.includes('react-responsive-masonry')) {
             return 'utilities';
           }
+
+          // Common utility deps often pulled indirectly by SDKs
+          if (id.includes('/lodash/') || id.includes('lodash-es')) {
+            return 'utility-vendor';
+          }
           
           // Large node_modules that don't fit above categories
           if (id.includes('node_modules')) {
             return 'vendor-misc';
           }
           
-          // App components by directory
-          if (id.includes('/components/ui/')) {
-            return 'app-ui-components';
-          }
-          
-          if (id.includes('/components/') && !id.includes('/components/ui/')) {
-            return 'app-components';
-          }
-          
-          if (id.includes('/imports/')) {
-            return 'app-imports';
-          }
+          // Keep app modules eligible for route-level split chunks.
         },
       },
     },

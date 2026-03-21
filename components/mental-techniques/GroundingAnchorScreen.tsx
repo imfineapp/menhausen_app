@@ -41,13 +41,13 @@ function AnchorVisualization({
           <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center text-2xl transition-all duration-500 ${
             isGroundingStepCompleted(currentStep, index)
               ? "border-[#e1ff00] bg-[#e1ff00] text-[#2d2b2b]" 
-              : "border-[#333] text-[#696969]"
+              : "border-[#333] text-[#8a8a8a]"
           }`}>
             {step.icon}
           </div>
           <div className="flex-1">
             <p className={`text-sm font-medium transition-colors duration-500 ${
-              isGroundingStepCompleted(currentStep, index) ? "text-[#e1ff00]" : "text-[#696969]"
+              isGroundingStepCompleted(currentStep, index) ? "text-[#e1ff00]" : "text-[#8a8a8a]"
             }`}>
               {step.text}
             </p>
@@ -104,10 +104,10 @@ function InteractiveInput({
           onKeyPress={(e) => e.key === "Enter" && handleSubmit()}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="w-full px-4 py-3 bg-transparent text-[#cfcfcf] placeholder-[#696969] focus:outline-none"
+          className="w-full px-4 py-3 bg-transparent text-[#cfcfcf] placeholder-[#8a8a8a] focus:outline-none"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <span className="text-[#696969] text-sm">
+          <span className="text-[#8a8a8a] text-sm">
             {value.length}/{maxLength}
           </span>
         </div>
@@ -120,7 +120,7 @@ function InteractiveInput({
           w-full mt-3 py-2 rounded-lg font-semibold transition-all duration-200
           ${value.trim() 
             ? "bg-[#e1ff00] text-[#2d2b2b] hover:bg-[#d4e600]" 
-            : "bg-[#333] text-[#696969] cursor-not-allowed"
+            : "bg-[#333] text-[#8a8a8a] cursor-not-allowed"
           }
         `}
       >
@@ -166,7 +166,7 @@ function ConfirmationCheckbox({
             w-6 h-6 rounded border-2 flex items-center justify-center
             ${isChecked 
               ? "border-[#2d2b2b] bg-[#2d2b2b]" 
-              : "border-[#696969]"
+              : "border-[#8a8a8a]"
             }
           `}>
             {isChecked && (

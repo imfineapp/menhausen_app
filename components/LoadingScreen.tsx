@@ -12,9 +12,12 @@ export const LoadingScreen: React.FC = () => {
     <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
       <div className="relative flex flex-col items-center justify-center">
         <img
-          src="/android-chrome-512x512.png"
+          src="/android-chrome-256x256.webp"
           alt={altText}
           className="w-32 h-32 animate-breathe rounded-full"
+          fetchPriority="high"
+          width={128}
+          height={128}
         />
       </div>
     </div>

@@ -92,7 +92,7 @@ function InputTextMessageBlock({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#696969] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
+        className="typography-body bg-transparent border-none outline-none resize-none text-[#cfcfcf] text-left w-full h-full placeholder:text-[#8a8a8a] min-h-[60px] sm:min-h-[70px] md:min-h-[80px]"
         style={{ overflow: 'hidden' }}
         onInput={adjustTextareaHeight}
       />

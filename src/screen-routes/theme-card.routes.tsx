@@ -1,23 +1,32 @@
-import type React from 'react'
-
-import { CardDetailsScreen } from '@/components/CardDetailsScreen'
-import { CardWelcomeScreen } from '@/components/CardWelcomeScreen'
-import { CheckinDetailsScreen } from '@/components/CheckinDetailsScreen'
+import React, { Suspense } from 'react'
+import { LoadingScreen } from '@/components/LoadingScreen'
+const CardDetailsScreen = React.lazy(() => import('@/components/CardDetailsScreen').then((m) => ({ default: m.CardDetailsScreen })))
+const CardWelcomeScreen = React.lazy(() => import('@/components/CardWelcomeScreen').then((m) => ({ default: m.CardWelcomeScreen })))
+const CheckinDetailsScreen = React.lazy(() =>
+  import('@/components/CheckinDetailsScreen').then((m) => ({ default: m.CheckinDetailsScreen })),
+)
 import { HomeScreen } from '@/components/HomeScreen'
-import { RateCardScreen } from '@/components/RateCardScreen'
-import { ThemeHomeScreen } from '@/components/ThemeHomeScreen'
-import { ThemeWelcomeScreen } from '@/components/ThemeWelcomeScreen'
-import {
-  FinalCardMessageScreenWithLoader,
-  QuestionScreen01WithLoader,
-  QuestionScreen02WithLoader,
-} from '@/components/ThemeCardQuestionLoaders'
+const RateCardScreen = React.lazy(() => import('@/components/RateCardScreen').then((m) => ({ default: m.RateCardScreen })))
+const ThemeHomeScreen = React.lazy(() => import('@/components/ThemeHomeScreen').then((m) => ({ default: m.ThemeHomeScreen })))
+const ThemeWelcomeScreen = React.lazy(() =>
+  import('@/components/ThemeWelcomeScreen').then((m) => ({ default: m.ThemeWelcomeScreen })),
+)
+const FinalCardMessageScreenWithLoader = React.lazy(() =>
+  import('@/components/ThemeCardQuestionLoaders').then((m) => ({ default: m.FinalCardMessageScreenWithLoader })),
+)
+const QuestionScreen01WithLoader = React.lazy(() =>
+  import('@/components/ThemeCardQuestionLoaders').then((m) => ({ default: m.QuestionScreen01WithLoader })),
+)
+const QuestionScreen02WithLoader = React.lazy(() =>
+  import('@/components/ThemeCardQuestionLoaders').then((m) => ({ default: m.QuestionScreen02WithLoader })),
+)
 
 import type { RouteContext } from './types'
 
 export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null {
   const { currentScreen, wrapScreen, handlers } = ctx
   const { currentTheme, currentCard, currentCheckin, userHasPremium, currentLanguage, userAnswers, getTheme } = ctx
+  const withSuspense = (screen: React.ReactNode) => <Suspense fallback={<LoadingScreen />}>{screen}</Suspense>
 
   switch (currentScreen) {
     case 'home':
@@ -32,7 +41,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
       )
     case 'theme-welcome': {
       const themeData = getTheme(currentTheme)
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <ThemeWelcomeScreen
           onBack={handlers.handleBackToHomeFromTheme}
           onStart={handlers.handleStartTheme}
@@ -41,12 +50,12 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           isPremiumTheme={themeData?.isPremium || false}
           userHasPremium={userHasPremium}
         />,
-      )
+      ))
     }
     case 'theme-home': {
       const themeData = getTheme(currentTheme)
       const isPremiumTheme = themeData?.isPremium || false
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <ThemeHomeScreen
           onBack={handlers.handleBackToHomeFromTheme}
           onCardClick={handlers.handleThemeCardClick}
@@ -55,10 +64,10 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           userHasPremium={userHasPremium}
           onUnlock={isPremiumTheme && !userHasPremium ? handlers.handleShowPayments : undefined}
         />,
-      )
+      ))
     }
     case 'card-details':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <CardDetailsScreen
           onBack={handlers.handleBackToThemeHome}
           onOpenCard={handlers.handleOpenCardExercise}
@@ -67,18 +76,18 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           cardTitle={currentCard.title || ''}
           cardDescription={currentCard.description}
         />,
-      )
+      ))
     case 'checkin-details':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <CheckinDetailsScreen
           onBack={handlers.handleBackToCardDetails}
           checkinId={currentCheckin.id}
           cardTitle={currentCheckin.cardTitle}
           checkinDate={currentCheckin.date}
         />,
-      )
+      ))
     case 'card-welcome':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <CardWelcomeScreen
           onBack={handlers.handleBackToCardDetailsFromWelcome}
           onNext={handlers.handleStartCardExercise}
@@ -86,9 +95,9 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           cardTitle={currentCard.title || ''}
           cardDescription={currentCard.description}
         />,
-      )
+      ))
     case 'question-01':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <QuestionScreen01WithLoader
           onBack={handlers.handleBackToCardDetails}
           onNext={handlers.handleNextQuestion}
@@ -97,9 +106,9 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           getCardQuestions={ctx.getCardQuestions}
           currentLanguage={currentLanguage}
         />,
-      )
+      ))
     case 'question-02':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <QuestionScreen02WithLoader
           onBack={handlers.handleBackToQuestion01}
           onNext={handlers.handleCompleteExercise}
@@ -109,9 +118,9 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           currentLanguage={currentLanguage}
           previousAnswer={userAnswers.question1 || ''}
         />,
-      )
+      ))
     case 'final-message':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <FinalCardMessageScreenWithLoader
           onBack={handlers.handleBackToQuestion02}
           onNext={handlers.handleCompleteFinalMessage}
@@ -120,16 +129,16 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           getCardMessageData={ctx.getCardMessageData}
           currentLanguage={currentLanguage}
         />,
-      )
+      ))
     case 'rate-card':
-      return wrapScreen(
+      return wrapScreen(withSuspense(
         <RateCardScreen
           onBack={handlers.handleBackToFinalMessage}
           onNext={handlers.handleCompleteRating}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}
         />,
-      )
+      ))
     default:
       return null
   }

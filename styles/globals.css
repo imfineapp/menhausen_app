@@ -201,7 +201,7 @@
   --theme-card-border: #212121;
   --theme-card-title: #e1ff00;
   --theme-card-text: #ffffff;
-  --theme-card-text-secondary: #696969;
+  --theme-card-text-secondary: #8a8a8a;
   --theme-card-hover: rgba(217, 217, 217, 0.06);
 
   /* ThemeCard spacing */
@@ -230,7 +230,7 @@
   /* Text Colors - Design Tokens */
   --color-text-primary: #ffffff;
   --color-text-secondary: #cfcfcf;
-  --color-text-tertiary: #696969;
+  --color-text-tertiary: #8a8a8a;
   --color-text-disabled: #9a9a9a;
   --color-text-disabled-light: #8a8a8a;
   --color-text-dark: #2d2b2b;
@@ -294,7 +294,7 @@
   --theme-card-border: #212121;
   --theme-card-title: #e1ff00;
   --theme-card-text: #ffffff;
-  --theme-card-text-secondary: #696969;
+  --theme-card-text-secondary: #8a8a8a;
   --theme-card-hover: rgba(217, 217, 217, 0.08);
 
   /* Brand Colors - Design Tokens (dark theme) */
@@ -311,7 +311,7 @@
   /* Text Colors - Design Tokens (dark theme) */
   --color-text-primary: oklch(0.985 0 0);
   --color-text-secondary: #cfcfcf;
-  --color-text-tertiary: #696969;
+  --color-text-tertiary: #8a8a8a;
   --color-text-disabled: #9a9a9a;
   --color-text-disabled-light: #8a8a8a;
   --color-text-dark: oklch(0.205 0 0);

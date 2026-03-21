@@ -106,7 +106,8 @@ describe('premium.store', () => {
     })
 
     vi.mocked(getSyncService).mockReturnValue({
-      fetchUserData
+      fetchUserData,
+      clearFetchCache: vi.fn()
     } as any)
 
     vi.mocked(verifyPremiumSignature).mockResolvedValue(true)

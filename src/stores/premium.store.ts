@@ -9,6 +9,7 @@ import {
 import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects'
 import { onPremiumActivated } from '@/src/effects/premium.effects'
 import { fetchUserData } from '@/src/effects/supabase.effects'
+import { getSyncService } from '@/utils/supabaseSync'
 
 export type PremiumStatusSource =
   | 'legacyLocalStorage'
@@ -93,6 +94,8 @@ export function initPremiumFromLocalStorage() {
 
 export async function loadPremiumFromSupabase() {
   try {
+    // Premium activation can happen right after startup sync; force a fresh read.
+    getSyncService().clearFetchCache()
     const result = await fetchUserData()
     if (!result) return
 

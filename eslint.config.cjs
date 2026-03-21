@@ -12,6 +12,7 @@ const {
 
 const tsParser = require("@typescript-eslint/parser");
 const reactRefresh = require("eslint-plugin-react-refresh");
+const jsxA11y = require("eslint-plugin-jsx-a11y");
 const typescriptEslint = require("@typescript-eslint/eslint-plugin");
 const js = require("@eslint/js");
 
@@ -43,6 +44,7 @@ module.exports = defineConfig([
         )),
         plugins: {
             "react-refresh": reactRefresh,
+            "jsx-a11y": jsxA11y,
             "@typescript-eslint": fixupPluginRules(typescriptEslint),
         },
         rules: {
@@ -56,6 +58,7 @@ module.exports = defineConfig([
             "@typescript-eslint/no-non-null-assertion": "off",
             "@typescript-eslint/no-empty-function": "off",
             "@typescript-eslint/no-var-requires": "off",
+            "jsx-a11y/no-autofocus": "warn",
         },
     },
     // Node.js scripts configuration
@@ -73,7 +76,7 @@ module.exports = defineConfig([
     },
     // Config files (ignore linting)
     {
-        files: ["**/*.config.{js,cjs,mjs}", "**/.eslintrc.cjs", "**/.stylelintrc.cjs"],
+        files: ["**/*.config.{js,cjs,mjs}", "**/.eslintrc.cjs", "**/.stylelintrc.cjs", "**/lighthouserc.js"],
         languageOptions: {
             globals: {
                 ...globals.node,

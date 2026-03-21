@@ -29,7 +29,7 @@ export function InfoModal({ isOpen, onClose, title, content }: InfoModalProps) {
           </h2>
           <button
             onClick={onClose}
-            className="text-[#696969] hover:text-[#e1ff00] transition-colors duration-200 p-1"
+            className="text-[#8a8a8a] hover:text-[#e1ff00] transition-colors duration-200 p-1"
             aria-label="Закрыть модальное окно"
           >
             <svg 

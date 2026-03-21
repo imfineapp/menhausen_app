@@ -32,7 +32,7 @@ export const backgroundColors = {
 export const textColors = {
   primary: '#ffffff',
   secondary: '#cfcfcf',
-  tertiary: '#696969',
+  tertiary: '#8a8a8a',
   disabled: '#9a9a9a',
   disabledLight: '#8a8a8a',
   dark: '#2d2b2b',

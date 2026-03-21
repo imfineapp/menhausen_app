@@ -78,6 +78,7 @@ const app = (
           api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
           defaults: '2025-05-24',
           capture_exceptions: true,
+          disable_session_recording: true,
         }}
       >
         <PostHogErrorBoundary

@@ -84,6 +84,32 @@ function AppContent() {
   }, [])
 
   useEffect(() => {
+    const prefetchLikelyScreens = () => {
+      void import('./components/HomeScreen')
+      void import('./src/screen-routes/psych-test.routes')
+    }
+    const browserWindow = window as Window & {
+      requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number
+      cancelIdleCallback?: (id: number) => void
+    }
+
+    if (typeof browserWindow.requestIdleCallback === 'function') {
+      const idleId = browserWindow.requestIdleCallback(() => prefetchLikelyScreens(), { timeout: 2000 })
+      return () => {
+        if (typeof browserWindow.cancelIdleCallback === 'function') {
+          browserWindow.cancelIdleCallback(idleId)
+        }
+      }
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      prefetchLikelyScreens()
+    }, 600)
+    return () => clearTimeout(timeoutId)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
     resetNavigation()
 
     const determineInitialScreen = (progress: ReturnType<typeof loadFlowProgressFromLocalStorage>): AppScreen => {
@@ -123,10 +149,12 @@ function AppContent() {
 
     const loadAllUserData = async (): Promise<void> => {
       try {
+        if (cancelled) return
         console.log('[App] Loading all user data from Supabase...')
         const syncStartTime = Date.now()
         const { initSync } = await import('./src/stores/sync.store')
         const result = await initSync()
+        if (cancelled) return
         const syncDuration = Date.now() - syncStartTime
         console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success)
 
@@ -152,50 +180,47 @@ function AppContent() {
     }
 
     const initializeApp = async () => {
+      if (cancelled) return
       const initStartTime = Date.now()
       const hasLocalData = checkLocalData()
+      const optimisticProgress = loadFlowProgressFromLocalStorage()
+      const optimisticScreen = determineInitialScreen(optimisticProgress)
+      const optimisticDuration = Date.now() - initStartTime
 
-      if (hasLocalData) {
-        const progress = loadFlowProgressFromLocalStorage()
-        const initialScreen = determineInitialScreen(progress)
-        const initDuration = Date.now() - initStartTime
-        console.log(`[App] Local data found, showing app after ${initDuration}ms with screen:`, initialScreen)
-        setNavigationState(initialScreen, [initialScreen])
-        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
-          load_time_ms: initDuration,
-          screen: initialScreen,
-          data_source: 'local',
-          has_local_data: true,
-        })
-      } else {
-        const dataLoadStartTime = Date.now()
-        await loadAllUserData()
-        const dataLoadDuration = Date.now() - dataLoadStartTime
-        const progress = loadFlowProgressFromLocalStorage()
-        const initialScreen = determineInitialScreen(progress)
-        const initDuration = Date.now() - initStartTime
-        console.log(`[App] All user data loaded, showing app after ${initDuration}ms with screen:`, initialScreen)
-        setNavigationState(initialScreen, [initialScreen])
-        capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
-          load_time_ms: initDuration,
-          data_load_time_ms: dataLoadDuration,
-          screen: initialScreen,
-          data_source: 'remote',
-          has_local_data: false,
-        })
+      console.log(
+        `[App] Showing optimistic screen after ${optimisticDuration}ms:`,
+        optimisticScreen,
+        `hasLocalData=${hasLocalData}`
+      )
+      setNavigationState(optimisticScreen, [optimisticScreen])
+      capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+        load_time_ms: optimisticDuration,
+        screen: optimisticScreen,
+        data_source: hasLocalData ? 'local' : 'optimistic',
+        has_local_data: hasLocalData,
+      })
+
+      const syncStartTime = Date.now()
+      await loadAllUserData()
+      if (cancelled) return
+      const syncDuration = Date.now() - syncStartTime
+
+      const updatedProgress = loadFlowProgressFromLocalStorage()
+      const correctedScreen = determineInitialScreen(updatedProgress)
+
+      if (correctedScreen !== optimisticScreen) {
+        console.log(
+          `[App] Correcting screen after sync (${syncDuration}ms): ${optimisticScreen} -> ${correctedScreen}`
+        )
+        setNavigationState(correctedScreen, [correctedScreen])
       }
     }
 
     void initializeApp()
 
-    const checkPremiumAfterSync = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      const { loadPremiumFromSupabase } = await import('./src/stores/premium.store')
-      await loadPremiumFromSupabase()
+    return () => {
+      cancelled = true
     }
-    void checkPremiumAfterSync()
-
-    return () => {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

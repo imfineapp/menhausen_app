@@ -90,10 +90,10 @@ function InteractiveInput({
           onKeyPress={(e) => e.key === 'Enter' && handleSubmit()}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="w-full px-4 py-3 bg-transparent text-[#cfcfcf] placeholder-[#696969] focus:outline-none"
+          className="w-full px-4 py-3 bg-transparent text-[#cfcfcf] placeholder-[#8a8a8a] focus:outline-none"
         />
         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <span className="text-[#696969] text-sm">
+          <span className="text-[#8a8a8a] text-sm">
             {value.length}/{maxLength}
           </span>
         </div>
@@ -106,7 +106,7 @@ function InteractiveInput({
           w-full mt-3 py-2 rounded-lg font-semibold transition-all duration-200
           ${value.trim() 
             ? 'bg-[#e1ff00] text-[#2d2b2b] hover:bg-[#d4e600]' 
-            : 'bg-[#333] text-[#696969] cursor-not-allowed'
+            : 'bg-[#333] text-[#8a8a8a] cursor-not-allowed'
           }
         `}
       >

@@ -96,7 +96,7 @@ async function verifyEd25519Signature(
 
     return isValid;
   } catch (error) {
-    console.error('[premiumSignature] Signature verification error:', error);
+    console.warn('[premiumSignature] Signature verification error:', error);
     return false;
   }
 }
@@ -110,6 +110,11 @@ async function verifyEd25519Signature(
 export async function verifyPremiumSignature(
   signatureData: PremiumSignatureData
 ): Promise<boolean> {
+  if (!isEd25519Supported()) {
+    console.warn('[premiumSignature] Ed25519 verification is not supported in this browser');
+    return false;
+  }
+
   try {
     // Import public key
     const publicKey = await importEd25519PublicKey(signatureData.publicKey);
@@ -130,7 +135,7 @@ export async function verifyPremiumSignature(
 
     return isValid;
   } catch (error) {
-    console.error('[premiumSignature] Error verifying premium signature:', error);
+    console.warn('[premiumSignature] Ed25519 not supported or signature invalid:', error);
     return false;
   }
 }
@@ -223,15 +228,11 @@ export async function getVerifiedPremiumStatus(): Promise<{
  */
 export function isEd25519Supported(): boolean {
   try {
-    // Check if Web Crypto API is available
-    if (!crypto || !crypto.subtle) {
+    if (typeof crypto === 'undefined' || typeof crypto.subtle === 'undefined') {
       return false;
     }
 
-    // Check if Ed25519 is supported (try to generate a key)
-    // Note: This is async, so we'll just check if the API exists
-    // Actual support will be checked when trying to use it
-    return typeof crypto.subtle.generateKey === 'function';
+    return typeof crypto.subtle.importKey === 'function' && typeof crypto.subtle.verify === 'function';
   } catch {
     return false;
   }

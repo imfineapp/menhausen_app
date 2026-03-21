@@ -126,7 +126,7 @@ function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: Co
           ))
         ) : (
           <div className="w-full p-4 text-center">
-            <p className="typography-body text-[#696969]">
+            <p className="typography-body text-[#8a8a8a]">
               {getLocalizedText(content.ui.cards.noAttempts)}
             </p>
           </div>

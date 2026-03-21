@@ -34,7 +34,7 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
       data-name="User account status"
     >
       <div className={`typography-caption text-center text-nowrap ${
-        isPremium ? 'text-[#2d2b2b]' : 'text-[#696969]'
+        isPremium ? 'text-[#2d2b2b]' : 'text-[#8a8a8a]'
       }`}>
         <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px] whitespace-pre">
           {isPremium ? ui.profile.premium : ui.profile.free}
@@ -171,7 +171,7 @@ export function SettingsItem({
         </div>
         <div
           aria-hidden="true"
-          className="absolute border-[#696969] border-b inset-x-0 bottom-0 pointer-events-none"
+          className="absolute border-[#8a8a8a] border-b inset-x-0 bottom-0 pointer-events-none"
         />
       </div>
     );
@@ -199,7 +199,7 @@ export function SettingsItem({
       </div>
       <div
         aria-hidden="true"
-        className="absolute border-[#696969] border-b inset-x-0 bottom-0 pointer-events-none"
+        className="absolute border-[#8a8a8a] border-b inset-x-0 bottom-0 pointer-events-none"
       />
     </button>
   );

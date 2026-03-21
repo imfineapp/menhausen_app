@@ -1,13 +1,16 @@
-import type React from 'react'
+import React, { Suspense } from 'react'
 
 import { LoadingScreen } from '@/components/LoadingScreen'
 import { OnboardingScreen01 } from '@/components/OnboardingScreen01'
-import { OnboardingScreen02 } from '@/components/OnboardingScreen02'
+const OnboardingScreen02 = React.lazy(() =>
+  import('@/components/OnboardingScreen02').then((m) => ({ default: m.OnboardingScreen02 })),
+)
 
 import type { RouteContext } from './types'
 
 export function renderOnboardingRoutes(ctx: RouteContext): React.ReactNode | null {
   const { currentScreen, wrapScreen, handlers } = ctx
+  const withSuspense = (screen: React.ReactNode) => <Suspense fallback={<LoadingScreen />}>{screen}</Suspense>
 
   switch (currentScreen) {
     case 'loading':
@@ -21,7 +24,7 @@ export function renderOnboardingRoutes(ctx: RouteContext): React.ReactNode | nul
         />,
       )
     case 'onboarding2':
-      return wrapScreen(<OnboardingScreen02 onComplete={handlers.handleShowSurvey} />)
+      return wrapScreen(withSuspense(<OnboardingScreen02 onComplete={handlers.handleShowSurvey} />))
     default:
       return null
   }

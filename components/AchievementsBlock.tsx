@@ -62,7 +62,7 @@ interface AchievementsBlockProps {
 const getIconColor = (unlocked: boolean, progress: number): string => {
   if (unlocked) return 'text-[#e1ff00]'; // Желтый - получено
   if (progress > 0) return 'text-[#e1ff00]/60'; // Приглушенный желтый - начато
-  return 'text-[#696969]'; // Серый - не взято
+  return 'text-[#8a8a8a]'; // Серый - не взято
 };
 
 /**
