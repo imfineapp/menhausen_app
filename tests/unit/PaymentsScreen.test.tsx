@@ -13,12 +13,12 @@ vi.mock('../../src/effects/payment.effects', () => ({
   purchasePremium: vi.fn(),
 }))
 
-vi.mock('../../src/effects/analytics.effects', () => ({
-  capture: vi.fn(),
-  AnalyticsEvent: {
-    PAYWALL_SHOWN: 'paywall_shown',
-    PAYWALL_CTA_CLICKED: 'paywall_cta_clicked',
-  },
+const { mockPosthogCapture } = vi.hoisted(() => ({
+  mockPosthogCapture: vi.fn(),
+}))
+
+vi.mock('../../src/hooks/usePostHogAnalytics', () => ({
+  usePostHog: () => ({ capture: mockPosthogCapture, identify: vi.fn() }),
 }))
 
 // Mock SVG imports

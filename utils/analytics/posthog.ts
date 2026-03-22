@@ -1,10 +1,11 @@
-// Dynamic import to avoid loading PostHog when disabled
-let posthog: any = null
+import posthog from 'posthog-js'
+import type { PostHogConfig } from 'posthog-js'
+
+/** Singleton used by PostHogProvider (`client={posthog}`) and non-React code (stores, services). */
+export { posthog }
 
 function getEnv(key: string): string | undefined {
   try {
-    // Vite exposes env via import.meta.env
-    // Keys must be prefixed with VITE_ to be exposed to client
     return (import.meta as any).env?.[key]
   } catch {
     return undefined
@@ -12,21 +13,8 @@ function getEnv(key: string): string | undefined {
 }
 
 const PUBLIC_KEY = getEnv('VITE_PUBLIC_POSTHOG_KEY')
+const PUBLIC_HOST = getEnv('VITE_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com'
 const POSTHOG_ENABLED = (getEnv('VITE_POSTHOG_ENABLE') || 'false').toLowerCase() === 'true'
-
-// Dynamically load PostHog only when needed
-async function loadPostHog() {
-  if (posthog) return posthog
-  if (!POSTHOG_ENABLED || !PUBLIC_KEY) return null
-  
-  try {
-    const posthogModule = await import('posthog-js')
-    posthog = posthogModule.default
-    return posthog
-  } catch {
-    return null
-  }
-}
 
 function isTestMode(): boolean {
   try {
@@ -38,45 +26,61 @@ function isTestMode(): boolean {
 
 export function isAnalyticsEnabled(): boolean {
   if (typeof window === 'undefined') return false
-  // Check if PostHog is explicitly enabled via environment variable
   if (!POSTHOG_ENABLED) return false
-  // Then check if we have a valid key
   if (!PUBLIC_KEY) return false
-  // Disable in test mode
   if (isTestMode()) return false
 
   return true
 }
 
-export async function capture(eventName: string, properties?: Record<string, any>): Promise<void> {
+function getInitConfig(): Partial<PostHogConfig> {
+  return {
+    api_host: PUBLIC_HOST,
+    defaults: '2026-01-30',
+    capture_pageview: false,
+    autocapture: true,
+    debug: false,
+    capture_exceptions: true,
+    advanced_disable_flags: true,
+    disable_session_recording: false,
+  }
+}
+
+/**
+ * Call once from main.tsx before render when isAnalyticsEnabled().
+ * PostHogProvider must receive the same `posthog` instance via `client={posthog}`.
+ */
+export function initPosthog(): void {
+  if (!isAnalyticsEnabled()) return
+
+  const w = typeof window !== 'undefined' ? (window as any) : undefined
+  if (w?.__POSTHOG_INIT) return
+
+  posthog.init(PUBLIC_KEY as string, getInitConfig() as PostHogConfig)
+  if (w) w.__POSTHOG_INIT = true
+}
+
+export function capture(eventName: string, properties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
   try {
-    const ph = await loadPostHog()
-    if (!ph) return
-    
     const defaultEventProps = { source: 'web' }
-    ph.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
+    posthog.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
 }
 
-export async function identify(distinctId: string, properties?: Record<string, any>): Promise<void> {
+export function identify(distinctId: string, properties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
   try {
-    const ph = await loadPostHog()
-    if (!ph) return
-    
     const defaultProps: Record<string, any> = {}
 
-    // Platform details for segmentation
     try {
       const nav = typeof navigator !== 'undefined' ? (navigator as any) : undefined
       const uaData = nav?.userAgentData
       const ua: string | undefined = nav?.userAgent
       const platform: string | undefined = nav?.platform
 
-      // High-level device type
       let deviceType = 'unknown'
       if (uaData?.mobile === true) deviceType = 'mobile'
       else if (ua && /(Mobi|Android|iPhone)/i.test(ua)) deviceType = 'mobile'
@@ -93,7 +97,6 @@ export async function identify(distinctId: string, properties?: Record<string, a
       void 0
     }
 
-    // Telegram Mini App context (if present)
     try {
       const w = typeof window !== 'undefined' ? (window as any) : undefined
       const tgUser = w?.Telegram?.WebApp?.initDataUnsafe?.user
@@ -107,30 +110,29 @@ export async function identify(distinctId: string, properties?: Record<string, a
       void 0
     }
 
-    // Merge caller-provided properties last so caller can override defaults
     const mergedProps = { ...defaultProps, ...(properties || {}) }
 
-    ph.identify(distinctId, mergedProps)
+    posthog.identify(distinctId, mergedProps)
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
 }
 
-export async function shutdown(): Promise<void> {
+export function shutdown(): void {
   try {
-    const ph = await loadPostHog()
-    if (!ph) return
-    
+    const ph = posthog as { shutdown?: () => void }
     if (typeof ph.shutdown === 'function') {
       ph.shutdown()
     }
+    const w = typeof window !== 'undefined' ? (window as any) : undefined
+    if (w) w.__POSTHOG_INIT = false
   } catch {
     // Ignore shutdown errors
   }
 }
 
-export async function getPostHogClient() {
-  return await loadPostHog()
+export function getPostHogClient(): typeof posthog {
+  return posthog
 }
 
 /**
@@ -138,25 +140,17 @@ export async function getPostHogClient() {
  * @param error - The error object or error message
  * @param additionalProperties - Additional properties to include with the error event
  */
-export async function captureException(
-  error: Error | string,
-  additionalProperties?: Record<string, any>
-): Promise<void> {
+export function captureException(error: Error | string, additionalProperties?: Record<string, any>): void {
   if (!isAnalyticsEnabled()) return
-  
+
   try {
-    const ph = await loadPostHog()
-    if (!ph) return
-    
-    // PostHog's captureException method
-    if (typeof ph.captureException === 'function') {
-      ph.captureException(error, additionalProperties)
+    if (typeof posthog.captureException === 'function') {
+      posthog.captureException(error, additionalProperties)
     } else {
-      // Fallback: capture as $exception event if captureException is not available
       const errorMessage = error instanceof Error ? error.message : String(error)
       const errorStack = error instanceof Error ? error.stack : undefined
-      
-      ph.capture('$exception', {
+
+      posthog.capture('$exception', {
         $exception_message: errorMessage,
         $exception_type: error instanceof Error ? error.name : 'Error',
         $exception_stack: errorStack,
@@ -190,4 +184,4 @@ export const AnalyticsEvent = {
   SYNC_COMPLETE_TTI: 'sync_complete_tti',
 } as const
 
-export type AnalyticsEventName = typeof AnalyticsEvent[keyof typeof AnalyticsEvent]
+export type AnalyticsEventName = (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent]
