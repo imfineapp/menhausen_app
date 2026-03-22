@@ -72,7 +72,7 @@ export class SupabaseSyncService {
       // Continue with encrypted payload fallback.
     }
 
-    // Fallback for encrypted payload from CriticalDataManager.
+    // Fallback for legacy base64-encoded preferences payload.
     try {
       const decrypted = decodeURIComponent(escape(atob(raw)));
       const parsed = JSON.parse(decrypted);

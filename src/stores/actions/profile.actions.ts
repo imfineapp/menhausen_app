@@ -3,7 +3,7 @@ import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.sto
 import { setPremium } from '@/src/stores/premium.store'
 import { initSurveyState } from '@/src/stores/survey.store'
 import { refreshFlowProgress } from '@/src/stores/app-flow.store'
-import { criticalDataManager } from '@/utils/dataManager'
+import { clearMenhausenPrefixedLocalStorage } from '@/utils/userPreferencesStorage'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
 export function handleShowAboutApp(): void {
@@ -134,7 +134,7 @@ export function handleDeleteAccount(): void {
   localStorage.removeItem('checkin-data')
   localStorage.removeItem('has-shown-first-achievement')
 
-  criticalDataManager.clearAllData()
+  clearMenhausenPrefixedLocalStorage()
 
   localStorage.removeItem('menhausen_points_balance')
   localStorage.removeItem('menhausen_points_transactions')
