@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { $screenParams } from '@/src/stores/screen-params.store';
+import { AnalyticsEvent } from '@/src/effects/analytics.effects';
+import { usePostHog } from '@/src/hooks/usePostHogAnalytics';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -622,6 +625,7 @@ function MainContainer({
  * Основной компонент экрана покупки Premium подписки
  */
 export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchaseComplete }: PaymentsScreenProps) {
+  const posthogClient = usePostHog()
   const { content } = useContent();
   const [selectedPlan, setSelectedPlan] = useState<PlanId>('annually');
   const [isLoading, setIsLoading] = useState(false);
@@ -631,6 +635,11 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'idle' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const paywallSource = $screenParams.get().paywallSource || 'profile'
+    posthogClient?.capture(AnalyticsEvent.PAYWALL_SHOWN, { source: paywallSource })
+  }, [posthogClient])
 
   // Listen for premium activation events
   useEffect(() => {
@@ -711,6 +720,12 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
 
       // Тактильная обратная связь
       hapticNotificationOccurred('success');
+
+      posthogClient?.capture(AnalyticsEvent.PAYWALL_CTA_CLICKED, {
+        source: 'web',
+        plan_type: selectedPlan,
+        price_stars: getPlanPrice(selectedPlan),
+      })
 
       // Создаём инвойс и открываем его в Telegram
       const paymentStatus = await purchasePremium(selectedPlan);

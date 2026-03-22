@@ -13,6 +13,14 @@ vi.mock('../../src/effects/payment.effects', () => ({
   purchasePremium: vi.fn(),
 }))
 
+const { mockPosthogCapture } = vi.hoisted(() => ({
+  mockPosthogCapture: vi.fn(),
+}))
+
+vi.mock('../../src/hooks/usePostHogAnalytics', () => ({
+  usePostHog: () => ({ capture: mockPosthogCapture, identify: vi.fn() }),
+}))
+
 // Mock SVG imports
 vi.mock('../../imports/svg-4zkt7ew0xn', () => ({
   default: {

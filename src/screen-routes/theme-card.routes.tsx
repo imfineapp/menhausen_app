@@ -45,7 +45,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
         <ThemeWelcomeScreen
           onBack={handlers.handleBackToHomeFromTheme}
           onStart={handlers.handleStartTheme}
-          onUnlock={handlers.handleShowPayments}
+          onUnlock={() => handlers.handleShowPayments('theme')}
           themeTitle={currentTheme}
           isPremiumTheme={themeData?.isPremium || false}
           userHasPremium={userHasPremium}
@@ -62,7 +62,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           onOpenNextLevel={handlers.handleOpenNextLevel}
           themeId={currentTheme}
           userHasPremium={userHasPremium}
-          onUnlock={isPremiumTheme && !userHasPremium ? handlers.handleShowPayments : undefined}
+          onUnlock={isPremiumTheme && !userHasPremium ? () => handlers.handleShowPayments('theme') : undefined}
         />,
       ))
     }

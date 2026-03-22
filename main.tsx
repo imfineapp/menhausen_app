@@ -5,6 +5,7 @@ import './styles/globals.css'
 import { fontLoader } from './utils/fontLoader'
 import TelegramAnalytics from '@telegram-apps/analytics'
 import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react'
+import { initPosthog, posthog } from './utils/analytics/posthog'
 import { isAnalyticsEnabled } from './src/effects/analytics.effects'
 import { ErrorFallback } from './components/ErrorFallback'
 import { captureException } from './src/effects/analytics.effects'
@@ -68,19 +69,15 @@ class SimpleErrorBoundary extends React.Component<
   }
 }
 
+if (isAnalyticsEnabled()) {
+  initPosthog()
+}
+
 // Initialize React app
 const app = (
   <React.StrictMode>
     {isAnalyticsEnabled() ? (
-      <PostHogProvider 
-        apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY} 
-        options={{
-          api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-          defaults: '2025-05-24',
-          capture_exceptions: true,
-          disable_session_recording: true,
-        }}
-      >
+      <PostHogProvider client={posthog}>
         <PostHogErrorBoundary
           fallback={({ error, componentStack }) => {
             // error is unknown; boundary already sent it via client.captureException in componentDidCatch

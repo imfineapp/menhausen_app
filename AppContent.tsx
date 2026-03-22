@@ -10,7 +10,9 @@ import { initLanguage } from './src/stores/language.store'
 
 import { isTelegramEnvironment } from './utils/telegramUserUtils'
 import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager'
-import { capture, AnalyticsEvent } from './src/effects/analytics.effects'
+import { capture, AnalyticsEvent, identify } from './src/effects/analytics.effects'
+import { initScreenViewTracking } from './src/effects/screen-view.effect'
+import { getTelegramUserId } from './utils/telegramUserUtils'
 import { processReferralCode, updateReferrerStatsFromList } from './utils/referralUtils'
 import { hasTestBeenCompleted } from './utils/psychologicalTestStorage'
 import { AppScreen } from './types/userState'
@@ -34,6 +36,11 @@ function AppContent() {
 
   useLayoutEffect(() => {
     initLanguage()
+  }, [])
+
+  useEffect(() => {
+    const cleanup = initScreenViewTracking()
+    return cleanup
   }, [])
 
   useEffect(() => {
@@ -193,12 +200,17 @@ function AppContent() {
         `hasLocalData=${hasLocalData}`
       )
       setNavigationState(optimisticScreen, [optimisticScreen])
-      capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+      void capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
         load_time_ms: optimisticDuration,
         screen: optimisticScreen,
         data_source: hasLocalData ? 'local' : 'optimistic',
         has_local_data: hasLocalData,
       })
+
+      const userId = getTelegramUserId()
+      if (userId && userId !== '111') {
+        void identify(userId)
+      }
 
       const syncStartTime = Date.now()
       await loadAllUserData()
@@ -207,6 +219,13 @@ function AppContent() {
 
       const updatedProgress = loadFlowProgressFromLocalStorage()
       const correctedScreen = determineInitialScreen(updatedProgress)
+
+      void capture(AnalyticsEvent.SYNC_COMPLETE_TTI, {
+        optimistic_load_ms: optimisticDuration,
+        sync_duration_ms: syncDuration,
+        total_tti_ms: optimisticDuration + syncDuration,
+        screen_corrected: correctedScreen !== optimisticScreen,
+      })
 
       if (correctedScreen !== optimisticScreen) {
         console.log(

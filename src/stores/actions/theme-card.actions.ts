@@ -159,6 +159,11 @@ export function handleBackToFinalMessage(): void {
 export function handleNextQuestion(answer: string): void {
   const { currentCard } = $screenParams.get()
   console.log(`Question 1 answered for card: ${currentCard.id}`, answer)
+  const themeId = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  void capture(AnalyticsEvent.CARD_QUESTION_1_ANSWERED, {
+    card_id: currentCard.id,
+    theme_id: themeId,
+  })
   patchScreenParams({ userAnswers: { ...$screenParams.get().userAnswers, question1: answer } })
   navigateTo('question-02')
 }
@@ -166,6 +171,11 @@ export function handleNextQuestion(answer: string): void {
 export function handleCompleteExercise(answer: string): void {
   const { currentCard, userAnswers } = $screenParams.get()
   console.log(`Question 2 answered for card: ${currentCard.id}`, answer)
+  const themeIdForQ2 = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  void capture(AnalyticsEvent.CARD_QUESTION_2_ANSWERED, {
+    card_id: currentCard.id,
+    theme_id: themeIdForQ2,
+  })
   const finalAnswers = { ...userAnswers, question2: answer }
   patchScreenParams({ userAnswers: finalAnswers, finalAnswers })
 
@@ -341,6 +351,11 @@ export async function handleThemeCardClick(cardId: string): Promise<void> {
   console.log(`[Card] Card clicked: ${cardId}`)
   const language = $language.get()
   const cardData = await getCardData(cardId, language)
+  const themeId = cardData.themeId ?? getThemeIdFromCardId(cardId)
+  void capture(AnalyticsEvent.CARD_OPENED, {
+    card_id: cardId,
+    theme_id: themeId,
+  })
   patchScreenParams({ currentCard: cardData })
   navigateTo('card-details')
 }
@@ -358,6 +373,11 @@ export async function handleOpenNextLevel(): Promise<void> {
     console.log(`Opening next available card: ${nextCard}`)
     const language = $language.get()
     const cardData = await getCardData(nextCard, language)
+    const themeId = cardData.themeId ?? getThemeIdFromCardId(nextCard)
+    void capture(AnalyticsEvent.CARD_OPENED, {
+      card_id: nextCard,
+      theme_id: themeId,
+    })
     patchScreenParams({ currentCard: cardData })
     navigateTo('card-details')
   } else {

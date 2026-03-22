@@ -4,6 +4,8 @@
  * Handles JWT token management for Telegram authentication
  */
 
+import { captureException } from '../analytics/posthog';
+
 const JWT_TOKEN_KEY = 'supabase_jwt_token';
 const JWT_TOKEN_EXPIRY_KEY = 'supabase_jwt_token_expiry';
 
@@ -119,9 +121,15 @@ export async function authenticateWithTelegram(): Promise<AuthResponse> {
         errorData = { error: errorText || `HTTP ${response.status}` };
       }
       console.log('[authService] Parsed error data:', errorData);
+      const msg = errorData.error || `HTTP ${response.status}`;
+      void captureException(new Error(msg), {
+        context: 'auth_telegram',
+        code: errorData.code || 'AUTH_FAILED',
+        http_status: response.status,
+      });
       return {
         success: false,
-        error: errorData.error || `HTTP ${response.status}`,
+        error: msg,
         code: errorData.code || 'AUTH_FAILED',
       };
     }
@@ -141,6 +149,10 @@ export async function authenticateWithTelegram(): Promise<AuthResponse> {
     };
   } catch (error) {
     console.error('Error authenticating with Telegram:', error);
+    void captureException(error instanceof Error ? error : new Error(String(error)), {
+      context: 'auth_telegram',
+      code: 'NETWORK_ERROR',
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error',
