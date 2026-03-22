@@ -29,6 +29,8 @@ import {
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { $lastSyncTime, forceSync } from './src/stores/sync.store'
 import { setAuthState } from './src/stores/auth.store'
+import { getJWTExpiry } from './utils/supabaseSync/authService'
+import { shouldPullSyncOnForeground } from './src/utils/visibilitySync'
 import { $screenParams, setEarnedAchievementIds } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService'
@@ -171,7 +173,7 @@ function AppContent() {
           setAuthState({
             status: 'authenticated',
             telegramUserId: getTelegramUserId(),
-            jwtExpiresAt: null,
+            jwtExpiresAt: getJWTExpiry(),
             lastError: null,
           })
           refreshFlowProgress()
@@ -263,8 +265,8 @@ function AppContent() {
     const handleVisibility = () => {
       if (document.visibilityState !== 'visible') return
       const last = $lastSyncTime.get()
-      const lastMs = last?.getTime() ?? 0
-      if (Date.now() - lastMs > 60_000) {
+      const lastMs = last?.getTime() ?? null
+      if (shouldPullSyncOnForeground(lastMs)) {
         void forceSync()
       }
     }

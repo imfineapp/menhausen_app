@@ -2,10 +2,6 @@ import { atom, computed, onMount } from 'nanostores'
 
 import type { PointsTransaction } from '@/types/points'
 import { PointsManager } from '@/utils/PointsManager'
-import { initializeLocalStorageInterceptor } from '@/utils/supabaseSync/localStorageInterceptor'
-
-const BALANCE_KEY = 'menhausen_points_balance'
-const TX_KEY = 'menhausen_points_transactions'
 
 function calculateNextLevelTarget(totalEarned: number, step = 1000): number {
   if (step <= 0) step = 1000
@@ -40,18 +36,6 @@ export function spendPoints(amount: number, meta?: { note?: string; correlationI
 }
 
 onMount($pointsBalance, () => {
-  // Ensure initial hydration even if localStorage was changed after module import.
   refreshPoints()
-
-  // Subscribe to in-tab localStorage changes so UI updates without DOM events.
-  // (The supabase sync module also uses this, but we initialize here so points are reactive independently.)
-  const interceptor = initializeLocalStorageInterceptor()
-  const unsubscribe = interceptor.onKeyChange((key) => {
-    if (key === BALANCE_KEY || key === TX_KEY) {
-      refreshPoints()
-    }
-  })
-
-  return () => unsubscribe()
 })
 

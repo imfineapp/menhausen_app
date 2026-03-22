@@ -4,8 +4,6 @@
  * Replaces legacy CriticalDataManager for this key.
  */
 
-import { getLocalStorageInterceptor } from './supabaseSync/localStorageInterceptor'
-
 const PREFERENCES_KEY = 'menhausen_user_preferences'
 
 export interface UserPreferences {
@@ -108,20 +106,14 @@ function isMenhausenScopedKey(key: string): boolean {
 
 /** Remove all localStorage keys under the Menhausen prefix (underscore + hyphen variants). */
 export function clearMenhausenPrefixedLocalStorage(): void {
-  const interceptor = getLocalStorageInterceptor()
-  interceptor.setSilentMode(true)
-  try {
-    const keys: string[] = []
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key) keys.push(key)
-    }
-    keys.forEach((key) => {
-      if (isMenhausenScopedKey(key)) {
-        localStorage.removeItem(key)
-      }
-    })
-  } finally {
-    interceptor.setSilentMode(false)
+  const keys: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key) keys.push(key)
   }
+  keys.forEach((key) => {
+    if (isMenhausenScopedKey(key)) {
+      localStorage.removeItem(key)
+    }
+  })
 }

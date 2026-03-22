@@ -17,8 +17,6 @@ import { DEFAULT_SYNC_CONFIG } from './types';
 import { transformFromAPIFormat } from './dataTransformers';
 import { resolveConflict } from './conflictResolver';
 import { getTelegramUserId } from '../telegramUserUtils';
-import { markStorageScopeMigrated } from '../userScopedStorage';
-import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
 import { getValidJWTToken } from './authService';
 import { AnalyticsEvent, capture, captureException } from '../analytics/posthog';
 import { syncLog } from './syncLogger';
@@ -105,7 +103,6 @@ export class SupabaseSyncService {
     });
     this.setupOnlineListeners();
     this.loadOfflineQueue();
-    this.setupLocalStorageInterceptor();
     this.setupUnloadFlush();
   }
 
@@ -176,12 +173,12 @@ export class SupabaseSyncService {
         const raw = JSON.parse(stored) as any[];
         this.offlineQueue = raw.map((item: any) => {
           if (item.types && item.payload) {
-            return {
-              types: item.types as SyncDataType[],
-              payload: item.payload as Record<string, unknown>,
-              timestamp: new Date(item.timestamp),
-              retryCount: item.retryCount ?? 0,
-            };
+          return {
+            types: item.types as SyncDataType[],
+            payload: item.payload as Record<string, unknown>,
+            timestamp: new Date(item.timestamp),
+            retryCount: typeof item.retryCount === 'number' ? item.retryCount : 0,
+          };
           }
           // Legacy single-type queue
           const legacyType = item.type as SyncDataType;
@@ -193,7 +190,7 @@ export class SupabaseSyncService {
             types: legacyType ? [legacyType] : [],
             payload,
             timestamp: new Date(item.timestamp),
-            retryCount: item.retryCount ?? 0,
+            retryCount: typeof item.retryCount === 'number' ? item.retryCount : 0,
           };
         });
         this.syncStatus.pendingItems = this.offlineQueue.length;
@@ -323,28 +320,6 @@ export class SupabaseSyncService {
           retryable: true,
         });
       }
-    }
-  }
-
-  /**
-   * Setup localStorage interceptor for real-time sync
-   */
-  private setupLocalStorageInterceptor(): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    try {
-      const interceptor = initializeLocalStorageInterceptor();
-      
-      // Register change handler
-      interceptor.onKeyChange((_key: string, syncType: SyncDataType | null, _value: string | null) => {
-        if (syncType) {
-          this.queueSync(syncType);
-        }
-      });
-    } catch (error) {
-      console.warn('[SyncService] Failed to setup localStorage interceptor:', error);
     }
   }
 
@@ -709,10 +684,6 @@ export class SupabaseSyncService {
    * Merge remote data with local data and save to localStorage
    */
   private mergeAndSave(remoteData: UserDataFromAPI): void {
-    // Disable interceptor notifications during merge to avoid infinite loops
-    const interceptor = getLocalStorageInterceptor();
-    interceptor.setSilentMode(true);
-
     try {
       const localData = this.getAllLocalStorageData();
 
@@ -877,8 +848,15 @@ export class SupabaseSyncService {
       }
     }
     } finally {
-      // Re-enable interceptor notifications
-      interceptor.setSilentMode(false);
+      if (typeof window !== 'undefined') {
+        void import('../../src/sync/storeHydration')
+          .then((m) => {
+            m.refreshAllStoresFromStorage();
+          })
+          .catch((err) => {
+            console.warn('[SyncService] refreshAllStoresFromStorage failed:', err);
+          });
+      }
     }
   }
 
@@ -997,13 +975,6 @@ export class SupabaseSyncService {
         this.syncStatus.syncInProgress = false;
         this.syncInProgress = false;
 
-        try {
-          const id = getTelegramUserId();
-          if (id && id !== '111') markStorageScopeMigrated(id);
-        } catch {
-          // ignore
-        }
-
         void capture(AnalyticsEvent.SYNC_SUCCESS, {
           duration_ms: Date.now() - syncStartTime,
           synced_types: [] as string[],
@@ -1037,12 +1008,6 @@ export class SupabaseSyncService {
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
-          try {
-            const id = getTelegramUserId();
-            if (id && id !== '111') markStorageScopeMigrated(id);
-          } catch {
-            // ignore
-          }
           void capture(AnalyticsEvent.SYNC_SUCCESS, {
             duration_ms: Date.now() - syncStartTime,
             synced_types: [] as string[],
@@ -1057,12 +1022,6 @@ export class SupabaseSyncService {
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
-          try {
-            const id = getTelegramUserId();
-            if (id && id !== '111') markStorageScopeMigrated(id);
-          } catch {
-            // ignore
-          }
           void capture(AnalyticsEvent.SYNC_SUCCESS, {
             duration_ms: Date.now() - syncStartTime,
             synced_types: [] as string[],

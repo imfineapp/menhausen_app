@@ -4,7 +4,7 @@ import { setPremium } from '@/src/stores/premium.store'
 import { initSurveyState } from '@/src/stores/survey.store'
 import { refreshFlowProgress } from '@/src/stores/app-flow.store'
 import { clearMenhausenPrefixedLocalStorage } from '@/utils/userPreferencesStorage'
-import { deleteUserDataFromSupabase } from '@/utils/supabaseSync'
+import { clearJWTToken, deleteUserDataFromSupabase } from '@/utils/supabaseSync'
 import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
@@ -114,17 +114,22 @@ export function handleGoToBadges(): void {
   navigateTo('badges')
 }
 
-export async function handleDeleteAccount(): Promise<void> {
+export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }> {
   console.log('Account deleted, returning to onboarding')
 
+  let serverDeleted = false
   try {
     const result = await deleteUserDataFromSupabase()
+    serverDeleted = result.success
     if (!result.success) {
       console.warn('[handleDeleteAccount] Server delete failed:', result.error)
     }
   } catch (e) {
     console.warn('[handleDeleteAccount] Server delete error:', e)
   }
+
+  // End local session even if server DELETE failed (user chose to leave the app)
+  clearJWTToken()
 
   patchScreenParams({
     completedCards: new Set(),
@@ -147,9 +152,6 @@ export async function handleDeleteAccount(): Promise<void> {
 
   clearMenhausenPrefixedLocalStorage()
 
-  localStorage.removeItem('menhausen_points_balance')
-  localStorage.removeItem('menhausen_points_transactions')
-
   resetUserStats()
 
   const cardProgressKeys: string[] = []
@@ -170,19 +172,6 @@ export async function handleDeleteAccount(): Promise<void> {
   }
   checkinKeys.forEach((key) => localStorage.removeItem(key))
 
-  localStorage.removeItem('menhausen_referred_by')
-  localStorage.removeItem('menhausen_referral_code')
-  localStorage.removeItem('menhausen_referral_registered')
-
-  const referralListKeys: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key && key.startsWith('menhausen_referral_list_')) {
-      referralListKeys.push(key)
-    }
-  }
-  referralListKeys.forEach((key) => localStorage.removeItem(key))
-
   try {
     localStorage.removeItem('supabase_sync_queue')
     localStorage.removeItem('premium-signature')
@@ -202,4 +191,6 @@ export async function handleDeleteAccount(): Promise<void> {
   })
 
   setNavigationState('onboarding1', ['onboarding1'])
+
+  return { serverDeleted }
 }

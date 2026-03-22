@@ -5,6 +5,7 @@
  */
 
 import { captureException } from '../analytics/posthog';
+import { setAuthState } from '../../src/stores/auth.store';
 
 const JWT_TOKEN_KEY = 'supabase_jwt_token';
 const JWT_TOKEN_EXPIRY_KEY = 'supabase_jwt_token_expiry';
@@ -173,6 +174,7 @@ export function storeJWTToken(token: string): void {
     if (expiry) {
       localStorage.setItem(JWT_TOKEN_EXPIRY_KEY, expiry.toString());
     }
+    setAuthState({ jwtExpiresAt: expiry ?? null })
   } catch (error) {
     console.error('Error storing JWT token:', error);
   }
@@ -221,7 +223,7 @@ export function isJWTTokenExpired(): boolean {
 }
 
 /**
- * Extract expiry time from JWT token
+ * Extract expiry time from JWT token (ms since epoch), or null.
  */
 function getTokenExpiry(token: string): number | null {
   try {
@@ -250,6 +252,13 @@ function getTokenExpiry(token: string): number | null {
     console.error('Error extracting token expiry:', error);
     return null;
   }
+}
+
+/** Public: JWT `exp` claim as ms since epoch for the current stored token. */
+export function getJWTExpiry(): number | null {
+  const token = getJWTToken();
+  if (!token) return null;
+  return getTokenExpiry(token);
 }
 
 /**
@@ -281,6 +290,7 @@ export function clearJWTToken(): void {
   try {
     localStorage.removeItem(JWT_TOKEN_KEY);
     localStorage.removeItem(JWT_TOKEN_EXPIRY_KEY);
+    setAuthState({ jwtExpiresAt: null })
   } catch (error) {
     console.error('Error clearing JWT token:', error);
   }
@@ -358,6 +368,10 @@ export async function getValidJWTToken(): Promise<string | null> {
     }
   } else {
     console.log('[authService] Using existing JWT token');
+  }
+
+  if (token) {
+    setAuthState({ jwtExpiresAt: getTokenExpiry(token) ?? null })
   }
 
   return token;

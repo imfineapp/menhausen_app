@@ -1,7 +1,7 @@
 import { atom, computed, onMount } from 'nanostores'
 
 import type { UserAchievement, UserAchievementsState } from '@/types/achievements'
-import { PointsManager } from '@/utils/PointsManager'
+import { earnPoints } from '@/src/stores/points.store'
 import { loadUserAchievements, saveUserAchievements, updateAchievement } from '@/services/achievementStorage'
 import { checkAchievementCondition } from '@/services/achievementChecker'
 import { loadUserStats } from '@/services/userStatsService'
@@ -18,7 +18,7 @@ export const $unlockedCount = computed($achievementsState, (state) => state.unlo
 function awardAchievementXP(achievementId: string, xp: number) {
   if (xp <= 0) return
   const correlationId = `achievement_${achievementId}`
-  PointsManager.earn(xp, {
+  earnPoints(xp, {
     correlationId,
     note: `Achievement unlocked: ${achievementId}`
   })
