@@ -287,6 +287,56 @@ export function clearJWTToken(): void {
 }
 
 /**
+ * DELETE user data on the server (Edge Function) and invalidate local session token after.
+ * Call before clearing local app state on account deletion.
+ */
+export async function deleteUserDataFromSupabase(): Promise<{ success: boolean; error?: string }> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  if (!supabaseUrl) {
+    return { success: false, error: 'VITE_SUPABASE_URL not configured' };
+  }
+
+  const jwtToken = await getValidJWTToken();
+  if (!jwtToken) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  try {
+    const url = `${supabaseUrl}/functions/v1/delete-user-data`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: anonKey,
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: typeof body.error === 'string' ? body.error : `HTTP ${response.status}`,
+      };
+    }
+
+    if (body.success) {
+      clearJWTToken();
+      return { success: true };
+    }
+
+    return { success: false, error: body.error || 'Delete failed' };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return { success: false, error: message };
+  }
+}
+
+/**
  * Get JWT token, refreshing if expired
  */
 export async function getValidJWTToken(): Promise<string | null> {

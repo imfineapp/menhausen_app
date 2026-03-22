@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   loadUserPreferences,
   saveUserPreferences,
@@ -23,7 +23,7 @@ describe('userPreferencesStorage', () => {
     expect(prefs.articleFontSizeStep).toBe(1);
   });
 
-  it('clearMenhausenPrefixedLocalStorage removes menhausen_ keys only', () => {
+  it('clearMenhausenPrefixedLocalStorage removes menhausen_ and menhausen- keys only', () => {
     localStorage.setItem('menhausen_user_preferences', '{}');
     localStorage.setItem('menhausen-language', 'en');
     localStorage.setItem('other_key', 'keep');

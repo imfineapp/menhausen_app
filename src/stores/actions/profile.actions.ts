@@ -4,6 +4,8 @@ import { setPremium } from '@/src/stores/premium.store'
 import { initSurveyState } from '@/src/stores/survey.store'
 import { refreshFlowProgress } from '@/src/stores/app-flow.store'
 import { clearMenhausenPrefixedLocalStorage } from '@/utils/userPreferencesStorage'
+import { deleteUserDataFromSupabase } from '@/utils/supabaseSync'
+import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
 export function handleShowAboutApp(): void {
@@ -112,8 +114,17 @@ export function handleGoToBadges(): void {
   navigateTo('badges')
 }
 
-export function handleDeleteAccount(): void {
+export async function handleDeleteAccount(): Promise<void> {
   console.log('Account deleted, returning to onboarding')
+
+  try {
+    const result = await deleteUserDataFromSupabase()
+    if (!result.success) {
+      console.warn('[handleDeleteAccount] Server delete failed:', result.error)
+    }
+  } catch (e) {
+    console.warn('[handleDeleteAccount] Server delete error:', e)
+  }
 
   patchScreenParams({
     completedCards: new Set(),
@@ -171,6 +182,24 @@ export function handleDeleteAccount(): void {
     }
   }
   referralListKeys.forEach((key) => localStorage.removeItem(key))
+
+  try {
+    localStorage.removeItem('supabase_sync_queue')
+    localStorage.removeItem('premium-signature')
+    localStorage.removeItem('user-premium-status')
+    localStorage.removeItem('user-premium-plan')
+    localStorage.removeItem('user-premium-purchased-at')
+    localStorage.removeItem('user-premium-expires-at')
+  } catch {
+    // ignore
+  }
+
+  setAuthState({
+    status: 'unauthenticated',
+    telegramUserId: null,
+    jwtExpiresAt: null,
+    lastError: null,
+  })
 
   setNavigationState('onboarding1', ['onboarding1'])
 }

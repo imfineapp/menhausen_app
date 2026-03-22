@@ -13,7 +13,6 @@ import type { SyncDataType } from './types';
 const KEY_TO_SYNC_TYPE: Record<string, SyncDataType> = {
   'survey-results': 'surveyResults',
   'app-flow-progress': 'flowProgress',
-  'has-shown-first-achievement': 'hasShownFirstAchievement',
   'menhausen-language': 'preferences', // Language is part of preferences
   'menhausen_user_stats': 'userStats',
   'menhausen_achievements': 'achievements',
@@ -88,8 +87,13 @@ export class LocalStorageInterceptor {
   private changeCallbacks: Set<ChangeCallback> = new Set();
   private isIntercepted = false;
   private debounceTimers: Map<string, number> = new Map();
-  private readonly debounceMs = 150;
+  /** Single debounce lives in SupabaseSyncService.queueSync; notify immediately. */
+  private readonly debounceMs = 0;
   private isSilent = false; // Flag to temporarily disable notifications
+  private storageProto: Storage | null = null;
+  private origSetItem: Storage['setItem'] | null = null;
+  private origRemoveItem: Storage['removeItem'] | null = null;
+  private origClear: Storage['clear'] | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -98,8 +102,7 @@ export class LocalStorageInterceptor {
   }
 
   /**
-   * Initialize interceptor
-   * Replaces window.localStorage with proxy
+   * Patch Storage.prototype for window.localStorage only (no Proxy on window).
    */
   public intercept(): void {
     if (typeof window === 'undefined' || this.isIntercepted) {
@@ -110,75 +113,47 @@ export class LocalStorageInterceptor {
       return;
     }
 
-    // Create proxy for localStorage
-    // Use arrow functions to preserve 'this' context instead of aliasing
-    const localStorageProxy = new Proxy(this.originalLocalStorage, {
-      get: (target: Storage, prop: string | symbol): any => {
-        const propStr = String(prop);
+    try {
+      const ls = window.localStorage;
+      this.storageProto = Object.getPrototypeOf(ls) as Storage;
+      this.origSetItem = this.storageProto.setItem;
+      this.origRemoveItem = this.storageProto.removeItem;
+      this.origClear = this.storageProto.clear;
 
-        // Intercept setItem
-        if (propStr === 'setItem') {
-          return (key: string, value: string) => {
-            target.setItem(key, value);
-            this.onChange(key, value);
-          };
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
+      const self = this;
+
+      this.storageProto.setItem = function (this: Storage, key: string, value: string) {
+        self.origSetItem!.call(this, key, value);
+        if (this === window.localStorage) {
+          self.onChange(key, value);
         }
+      };
 
-        // Intercept removeItem
-        if (propStr === 'removeItem') {
-          return (key: string) => {
-            target.removeItem(key);
-            this.onChange(key, null);
-          };
+      this.storageProto.removeItem = function (this: Storage, key: string) {
+        self.origRemoveItem!.call(this, key);
+        if (this === window.localStorage) {
+          self.onChange(key, null);
         }
+      };
 
-        // Intercept clear
-        if (propStr === 'clear') {
-          return () => {
-            // Notify about all keys being cleared
-            const keys: string[] = [];
-            for (let i = 0; i < target.length; i++) {
-              const key = target.key(i);
-              if (key) keys.push(key);
-            }
-            target.clear();
-            keys.forEach(key => this.onChange(key, null));
-          };
-        }
-
-        // Pass through other operations
-        const value = target[propStr as keyof Storage];
-        if (typeof value === 'function') {
-          return value.bind(target);
-        }
-        return value;
-      },
-
-      set: (target: Storage, prop: string | symbol, value: any): boolean => {
-        // Allow setting properties directly (for compatibility)
-        // But also notify about changes
-        const propStr = String(prop);
-        if (propStr !== 'length') {
-          Reflect.set(target, prop, value);
-          if (typeof propStr === 'string' && propStr.startsWith('setItem')) {
-            // This is unlikely but handle it
-            this.onChange(propStr, value);
+      this.storageProto.clear = function (this: Storage) {
+        const keys: string[] = [];
+        if (this === window.localStorage) {
+          for (let i = 0; i < this.length; i++) {
+            const k = this.key(i);
+            if (k) keys.push(k);
           }
         }
-        return true;
-      },
-    });
+        self.origClear!.call(this);
+        if (this === window.localStorage) {
+          keys.forEach((k) => self.onChange(k, null));
+        }
+      };
 
-    // Replace window.localStorage
-    try {
-      Object.defineProperty(window, 'localStorage', {
-        value: localStorageProxy,
-        writable: true,
-        configurable: true,
-      });
       this.isIntercepted = true;
     } catch (error) {
-      console.warn('[LocalStorageInterceptor] Failed to intercept localStorage:', error);
+      console.warn('[LocalStorageInterceptor] Failed to patch localStorage:', error);
     }
   }
 
@@ -239,32 +214,31 @@ export class LocalStorageInterceptor {
   }
 
   /**
-   * Remove interceptor (restore original localStorage)
+   * Restore Storage.prototype methods (tests only).
    */
   public remove(): void {
-    if (!this.isIntercepted) {
+    if (!this.isIntercepted || !this.storageProto || !this.origSetItem) {
       return;
     }
 
-    // Clear all timers
     this.debounceTimers.forEach(timer => {
       clearTimeout(timer);
     });
     this.debounceTimers.clear();
 
-    // Restore original localStorage
-    if (this.originalLocalStorage) {
-      try {
-        Object.defineProperty(window, 'localStorage', {
-          value: this.originalLocalStorage,
-          writable: true,
-          configurable: true,
-        });
-        this.isIntercepted = false;
-      } catch (error) {
-        console.warn('[LocalStorageInterceptor] Failed to remove interceptor:', error);
-      }
+    try {
+      this.storageProto.setItem = this.origSetItem;
+      this.storageProto.removeItem = this.origRemoveItem!;
+      this.storageProto.clear = this.origClear!;
+    } catch (error) {
+      console.warn('[LocalStorageInterceptor] Failed to restore Storage prototype:', error);
     }
+
+    this.isIntercepted = false;
+    this.storageProto = null;
+    this.origSetItem = null;
+    this.origRemoveItem = null;
+    this.origClear = null;
   }
 }
 

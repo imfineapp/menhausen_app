@@ -43,9 +43,10 @@ export interface SyncError {
 /**
  * Sync queue item
  */
+/** Batched offline retry: payload is POST body `data` object (partial keys). */
 export interface SyncQueueItem {
-  type: SyncDataType;
-  data: any;
+  types: SyncDataType[];
+  payload: Record<string, unknown>;
   timestamp: Date;
   retryCount: number;
 }
@@ -121,7 +122,7 @@ export interface SyncConfig {
  * Default sync configuration
  */
 export const DEFAULT_SYNC_CONFIG: SyncConfig = {
-  debounceMs: 150,
+  debounceMs: 500,
   maxRetries: 3,
   retryDelayMs: 1000,
   enableOfflineQueue: true,

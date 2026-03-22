@@ -14,7 +14,7 @@ import { hapticNotificationOccurred } from '@/src/effects/telegram.effects';
 
 interface DeleteAccountScreenProps {
   onBack: () => void;
-  onDeleteAccount: () => void;
+  onDeleteAccount: () => void | Promise<void>;
 }
 
 /**
@@ -186,16 +186,12 @@ export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: Delete
       // Добавляем тактильную обратную связь если доступна
       hapticNotificationOccurred('warning');
 
-      // Имитация API запроса на удаление аккаунта
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await Promise.resolve(onDeleteAccount());
 
       console.log('Account deletion completed');
-      
+
       // Показываем уведомление об успешном удалении
       alert(successMessage);
-
-      // Вызываем callback для удаления аккаунта
-      onDeleteAccount();
 
     } catch (error) {
       console.error('Error deleting account:', error);
