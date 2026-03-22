@@ -2,7 +2,6 @@ export {
   capture,
   captureException,
   identify,
-  initPosthog,
   shutdown,
   getPostHogClient
 } from '@/utils/analytics/posthog'

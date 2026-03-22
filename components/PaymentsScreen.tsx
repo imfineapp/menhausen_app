@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { $screenParams } from '@/src/stores/screen-params.store';
+import { AnalyticsEvent, capture } from '@/src/effects/analytics.effects';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -632,6 +634,11 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
   const [status, setStatus] = useState<'idle' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    const source = $screenParams.get().paywallSource || 'profile';
+    void capture(AnalyticsEvent.PAYWALL_SHOWN, { source });
+  }, []);
+
   // Listen for premium activation events
   useEffect(() => {
     const handlePremiumActivated = (event: CustomEvent) => {
@@ -711,6 +718,11 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
 
       // Тактильная обратная связь
       hapticNotificationOccurred('success');
+
+      void capture(AnalyticsEvent.PAYWALL_CTA_CLICKED, {
+        plan_type: selectedPlan,
+        price_stars: getPlanPrice(selectedPlan),
+      });
 
       // Создаём инвойс и открываем его в Telegram
       const paymentStatus = await purchasePremium(selectedPlan);

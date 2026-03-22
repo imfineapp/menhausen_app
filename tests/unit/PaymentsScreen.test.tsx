@@ -13,6 +13,14 @@ vi.mock('../../src/effects/payment.effects', () => ({
   purchasePremium: vi.fn(),
 }))
 
+vi.mock('../../src/effects/analytics.effects', () => ({
+  capture: vi.fn(),
+  AnalyticsEvent: {
+    PAYWALL_SHOWN: 'paywall_shown',
+    PAYWALL_CTA_CLICKED: 'paywall_cta_clicked',
+  },
+}))
+
 // Mock SVG imports
 vi.mock('../../imports/svg-4zkt7ew0xn', () => ({
   default: {

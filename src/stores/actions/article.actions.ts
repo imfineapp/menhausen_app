@@ -1,11 +1,16 @@
 import { $currentScreen, navigateTo } from '@/src/stores/navigation.store'
 import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.store'
+import { AnalyticsEvent, capture } from '@/src/effects/analytics.effects'
 
 export function handleOpenArticle(articleId: string): void {
   console.log(`Opening article: ${articleId}`)
   const currentScreen = $currentScreen.get()
   const originScreen = currentScreen === 'all-articles' ? 'all-articles' : 'home'
   patchScreenParams({ articleReturnScreen: originScreen, currentArticle: articleId })
+  void capture(AnalyticsEvent.ARTICLE_OPENED, {
+    article_id: articleId,
+    origin_screen: originScreen,
+  })
   navigateTo('article')
 }
 

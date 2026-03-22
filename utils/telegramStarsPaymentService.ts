@@ -6,6 +6,7 @@
 
 import { getTelegramUserId } from './telegramUserUtils';
 import { getValidJWTToken } from './supabaseSync/authService';
+import { AnalyticsEvent, capture, captureException } from './analytics/posthog';
 
 /**
  * Get Telegram initData for authentication
@@ -121,6 +122,7 @@ class TelegramStarsPaymentService {
     planType: 'monthly' | 'annually' | 'lifetime'
   ): Promise<void> {
     if (status === 'paid') {
+      void capture(AnalyticsEvent.PAYMENT_SUCCESS, { plan_type: planType });
       // Update premium status locally
       localStorage.setItem('user-premium-status', 'true');
       localStorage.setItem('user-premium-plan', planType);
@@ -139,15 +141,19 @@ class TelegramStarsPaymentService {
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
       }
     } else if (status === 'cancelled') {
+      void capture(AnalyticsEvent.PAYMENT_CANCELLED, { plan_type: planType });
       // User cancelled - no action needed
       if (window.Telegram?.WebApp?.HapticFeedback) {
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
       }
     } else if (status === 'failed') {
+      void capture(AnalyticsEvent.PAYMENT_FAILED, { plan_type: planType, phase: 'invoice_callback' });
       // Payment failed
       if (window.Telegram?.WebApp?.HapticFeedback) {
         window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
       }
+    } else if (status === 'pending') {
+      void capture(AnalyticsEvent.PAYMENT_FAILED, { plan_type: planType, phase: 'pending' });
     }
   }
   
@@ -168,6 +174,10 @@ class TelegramStarsPaymentService {
       return paymentStatus;
     } catch (error) {
       console.error('[TelegramStarsPaymentService] Purchase error:', error);
+      void captureException(error instanceof Error ? error : new Error(String(error)), {
+        context: 'payment',
+        plan_type: planType,
+      });
       throw error;
     }
   }

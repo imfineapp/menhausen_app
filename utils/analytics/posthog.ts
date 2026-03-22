@@ -49,46 +49,6 @@ export function isAnalyticsEnabled(): boolean {
   return true
 }
 
-export async function initPosthog(): Promise<void> {
-  if (!isAnalyticsEnabled()) return
-
-  // Global idempotent guard to survive StrictMode double-invoke and HMR
-  const w = typeof window !== 'undefined' ? (window as any) : undefined
-  if (w && w.__POSTHOG_INIT === true) return
-
-  const ph = await loadPostHog()
-  if (!ph) return
-
-  if ((ph as any).__initialized) return
-
-  ph.init(PUBLIC_KEY as string, {
-    api_host: PUBLIC_HOST,
-    capture_pageview: false,
-    autocapture: true,
-    debug: false,
-    // Enable exception tracking - uses window.onerror and window.onunhandledrejection
-    // This doesn't require external scripts, so it's safe with CSP
-    capture_exceptions: true,
-    // Disable remote config/decide endpoint to avoid loading site apps like ExceptionAutocapture
-    advanced_disable_decide: true,
-    // Defer recorder payload and work from critical path.
-    disable_session_recording: true,
-  })
-  ;(ph as any).__initialized = true
-  if (w) w.__POSTHOG_INIT = true
-
-  const startRecording = () => {
-    if (typeof ph.startSessionRecording === 'function') {
-      ph.startSessionRecording()
-    }
-  }
-  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-    ;(window as any).requestIdleCallback(startRecording, { timeout: 4000 })
-  } else {
-    setTimeout(startRecording, 1200)
-  }
-}
-
 export async function capture(eventName: string, properties?: Record<string, any>): Promise<void> {
   if (!isAnalyticsEnabled()) return
   try {
@@ -165,9 +125,6 @@ export async function shutdown(): Promise<void> {
     if (typeof ph.shutdown === 'function') {
       ph.shutdown()
     }
-    ph.__initialized = false
-    const w = typeof window !== 'undefined' ? (window as any) : undefined
-    if (w) w.__POSTHOG_INIT = false
   } catch {
     // Ignore shutdown errors
   }
@@ -219,6 +176,19 @@ export const AnalyticsEvent = {
   ONBOARDING_COMPLETED: 'onboarding_completed',
   FIRST_SCREEN_LOADED: 'first_screen_loaded',
   REFERRAL_REGISTERED: 'referral_registered',
+  ARTICLE_OPENED: 'article_opened',
+  CARD_OPENED: 'card_opened',
+  CARD_QUESTION_1_ANSWERED: 'card_question_1_answered',
+  CARD_QUESTION_2_ANSWERED: 'card_question_2_answered',
+  SCREEN_VIEW: 'screen_view',
+  SYNC_SUCCESS: 'sync_success',
+  SYNC_ERROR: 'sync_error',
+  PAYWALL_SHOWN: 'paywall_shown',
+  PAYWALL_CTA_CLICKED: 'paywall_cta_clicked',
+  PAYMENT_SUCCESS: 'payment_success',
+  PAYMENT_FAILED: 'payment_failed',
+  PAYMENT_CANCELLED: 'payment_cancelled',
+  SYNC_COMPLETE_TTI: 'sync_complete_tti',
 } as const
 
 export type AnalyticsEventName = typeof AnalyticsEvent[keyof typeof AnalyticsEvent]

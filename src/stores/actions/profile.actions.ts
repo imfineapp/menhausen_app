@@ -64,7 +64,8 @@ export function handleBackToProfileFromDelete(): void {
   navigateTo('profile')
 }
 
-export function handleShowPayments(): void {
+export function handleShowPayments(source: 'profile' | 'theme' | 'home' | 'article' = 'profile'): void {
+  patchScreenParams({ paywallSource: source })
   navigateTo('payments')
 }
 

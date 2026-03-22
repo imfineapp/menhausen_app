@@ -26,6 +26,7 @@ import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
 import { getValidJWTToken } from './authService';
+import { AnalyticsEvent, capture, captureException } from '../analytics/posthog';
 
 /**
  * Supabase Sync Service Class
@@ -277,7 +278,11 @@ export class SupabaseSyncService {
       this.syncStatus.syncInProgress = false;
     } catch (error) {
       console.error(`[SyncService] Error syncing ${type}:`, error);
-      
+      void captureException(error instanceof Error ? error : new Error(String(error)), {
+        context: 'sync_incremental',
+        data_type: type,
+      });
+
       // Add to offline queue if retryable
       if (this.config.enableOfflineQueue) {
         this.offlineQueue.push({
@@ -1064,6 +1069,8 @@ export class SupabaseSyncService {
    * - If existing user: fetch and merge with local data
    */
   public async initialSync(): Promise<SyncResult> {
+    const syncStartTime = Date.now();
+
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
       console.log('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
@@ -1076,6 +1083,11 @@ export class SupabaseSyncService {
     
     if (this.syncInProgress) {
       console.warn('[SyncService] Sync already in progress');
+      void capture(AnalyticsEvent.SYNC_ERROR, {
+        error_message: 'Sync already in progress',
+        reason: 'sync_in_progress',
+        duration_ms: Date.now() - syncStartTime,
+      });
       return {
         success: false,
         syncedTypes: [],
@@ -1090,6 +1102,11 @@ export class SupabaseSyncService {
     // Note: In local development, getTelegramUserId() returns "111" automatically
     if (!this.supabase) {
       console.warn('[SyncService] Supabase not configured, skipping sync');
+      void capture(AnalyticsEvent.SYNC_ERROR, {
+        error_message: 'Supabase not configured',
+        reason: 'supabase_not_configured',
+        duration_ms: Date.now() - syncStartTime,
+      });
       return {
         success: false,
         syncedTypes: [],
@@ -1100,6 +1117,11 @@ export class SupabaseSyncService {
     const telegramUserIdStr = getTelegramUserId();
     if (!telegramUserIdStr) {
       console.warn('[SyncService] Telegram user ID not available, skipping sync');
+      void capture(AnalyticsEvent.SYNC_ERROR, {
+        error_message: 'Telegram user ID not available',
+        reason: 'no_telegram_user_id',
+        duration_ms: Date.now() - syncStartTime,
+      });
       return {
         success: false,
         syncedTypes: [],
@@ -1110,6 +1132,11 @@ export class SupabaseSyncService {
     const telegramUserId = parseInt(telegramUserIdStr, 10);
     if (isNaN(telegramUserId)) {
       console.warn('[SyncService] Invalid Telegram user ID, skipping sync');
+      void capture(AnalyticsEvent.SYNC_ERROR, {
+        error_message: 'Invalid Telegram user ID',
+        reason: 'invalid_telegram_user_id',
+        duration_ms: Date.now() - syncStartTime,
+      });
       return {
         success: false,
         syncedTypes: [],
@@ -1151,6 +1178,12 @@ export class SupabaseSyncService {
         this.syncStatus.syncInProgress = false;
         this.syncInProgress = false;
 
+        void capture(AnalyticsEvent.SYNC_SUCCESS, {
+          duration_ms: Date.now() - syncStartTime,
+          synced_types: [] as string[],
+          flow: 'existing_user',
+        });
+
         return {
           success: true,
           syncedTypes: [],
@@ -1178,6 +1211,11 @@ export class SupabaseSyncService {
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
+          void capture(AnalyticsEvent.SYNC_SUCCESS, {
+            duration_ms: Date.now() - syncStartTime,
+            synced_types: [] as string[],
+            flow: 'new_user_upload',
+          });
           return {
             success: true,
             syncedTypes: [],
@@ -1187,6 +1225,11 @@ export class SupabaseSyncService {
           this.syncStatus.lastSync = new Date();
           this.syncStatus.syncInProgress = false;
           this.syncInProgress = false;
+          void capture(AnalyticsEvent.SYNC_SUCCESS, {
+            duration_ms: Date.now() - syncStartTime,
+            synced_types: [] as string[],
+            flow: 'new_user_empty',
+          });
           return {
             success: true,
             syncedTypes: [],
@@ -1197,6 +1240,13 @@ export class SupabaseSyncService {
       console.error('[SyncService] Initial sync failed:', error);
       this.syncStatus.syncInProgress = false;
       this.syncInProgress = false;
+      const err = error instanceof Error ? error : new Error(String(error));
+      void capture(AnalyticsEvent.SYNC_ERROR, {
+        error_message: err.message,
+        reason: 'initial_sync_exception',
+        duration_ms: Date.now() - syncStartTime,
+      });
+      void captureException(err, { context: 'initial_sync' });
       return {
         success: false,
         syncedTypes: [],

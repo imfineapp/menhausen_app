@@ -77,7 +77,11 @@ const app = (
         options={{
           api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
           defaults: '2025-05-24',
+          capture_pageview: false,
+          autocapture: true,
+          debug: false,
           capture_exceptions: true,
+          advanced_disable_decide: true,
           disable_session_recording: true,
         }}
       >

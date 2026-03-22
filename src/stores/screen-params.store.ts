@@ -23,6 +23,8 @@ export type ScreenUserAnswers = {
   question2?: string
 }
 
+export type PaywallSource = 'profile' | 'theme' | 'home' | 'article' | ''
+
 export type ScreenParamsState = {
   currentFeatureName: string
   currentTheme: string
@@ -30,6 +32,8 @@ export type ScreenParamsState = {
   currentCheckin: ScreenCheckinState
   currentArticle: string
   articleReturnScreen: AppScreen
+  /** Set before navigating to payments for paywall_shown analytics */
+  paywallSource: PaywallSource
   userAnswers: ScreenUserAnswers
   finalAnswers: ScreenUserAnswers
   cardRating: number
@@ -57,6 +61,7 @@ export const $screenParams = map<ScreenParamsState>({
   currentCheckin: { id: '' },
   currentArticle: '',
   articleReturnScreen: 'home',
+  paywallSource: '',
   userAnswers: {},
   finalAnswers: {},
   cardRating: 0,
