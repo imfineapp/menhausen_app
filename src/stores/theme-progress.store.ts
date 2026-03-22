@@ -1,11 +1,8 @@
 import { atom, computed, onMount } from 'nanostores'
 
 import { ThemeCardManager } from '@/utils/ThemeCardManager'
-import { initializeLocalStorageInterceptor } from '@/utils/supabaseSync/localStorageInterceptor'
 
-const CARD_PROGRESS_KEY_PREFIX = 'theme_card_progress_'
-
-// Incremented whenever any card progress localStorage key changes.
+// Incremented whenever card progress changes (ThemeCardManager.saveCardProgress or merge).
 export const $themeProgressVersion = atom(0)
 
 export const $totalCompletedAttempts = computed($themeProgressVersion, () => {
@@ -21,16 +18,5 @@ export function refreshThemeProgress() {
 }
 
 onMount($themeProgressVersion, () => {
-  // Ensure initial computation.
   refreshThemeProgress()
-
-  const interceptor = initializeLocalStorageInterceptor()
-  const unsubscribe = interceptor.onKeyChange((key: string) => {
-    if (key && key.startsWith(CARD_PROGRESS_KEY_PREFIX)) {
-      bumpThemeProgressVersion()
-    }
-  })
-
-  return () => unsubscribe()
 })
-

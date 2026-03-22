@@ -1,9 +1,6 @@
 import { atom, computed, onMount } from 'nanostores'
 
-import { initializeLocalStorageInterceptor } from '@/utils/supabaseSync/localStorageInterceptor'
 import { DailyCheckinManager, type CheckinData, DailyCheckinStatus } from '../../utils/DailyCheckinManager'
-
-const CHECKIN_KEY_PREFIX = 'daily_checkin_'
 
 export const $todayCheckin = atom<CheckinData | null>(null)
 
@@ -52,16 +49,6 @@ export function saveCheckin(checkinData: Omit<CheckinData, 'id' | 'date' | 'time
 
 onMount($todayCheckin, () => {
   refreshCheckin()
-
-  const interceptor = initializeLocalStorageInterceptor()
-  const unsubscribe = interceptor.onKeyChange((key: string) => {
-    // If any "today" check-in key changes, recompute streak/status from storage.
-    if (key && key.startsWith(CHECKIN_KEY_PREFIX)) {
-      refreshCheckin()
-    }
-  })
-
-  return () => unsubscribe()
 })
 
 export { DailyCheckinStatus }

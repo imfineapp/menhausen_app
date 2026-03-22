@@ -403,6 +403,8 @@ export interface UITexts {
     confirmMessage: LocalizedContent;
     successTitle: LocalizedContent;
     successMessage: LocalizedContent;
+    /** Shown when local data was cleared but server DELETE failed or could not be confirmed */
+    serverDeleteFailedMessage?: LocalizedContent;
     errorTitle: LocalizedContent;
     errorMessage: LocalizedContent;
   };

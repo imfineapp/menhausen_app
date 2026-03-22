@@ -10,6 +10,7 @@ import { isAnalyticsEnabled } from './src/effects/analytics.effects'
 import { ErrorFallback } from './components/ErrorFallback'
 import { captureException } from './src/effects/analytics.effects'
 import { isTelegramWebAppAvailable } from './src/effects/telegram.effects'
+import { initStoreSyncSubscriptions } from './src/sync/storeSyncSubscriptions'
 
 // Ensure DOM is ready
 const root = document.getElementById('root')
@@ -72,6 +73,8 @@ class SimpleErrorBoundary extends React.Component<
 if (isAnalyticsEnabled()) {
   initPosthog()
 }
+
+initStoreSyncSubscriptions()
 
 // Initialize React app
 const app = (

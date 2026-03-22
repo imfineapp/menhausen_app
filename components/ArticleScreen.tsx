@@ -10,7 +10,7 @@ import { ThemeCard } from './ThemeCard';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { getAchievementsToShow, markAchievementsAsShown } from '../services/achievementDisplayService';
 import { AppScreen } from '../types/userState';
-import { criticalDataManager } from '../utils/dataManager';
+import { loadUserPreferences, saveUserPreferences } from '../utils/userPreferencesStorage';
 import { formatArticleContent } from '@/src/domain/articleContent.domain';
 
 /** Article body font size (px) by step: -1 = small, 0 = medium, 1 = large */
@@ -76,7 +76,7 @@ export function ArticleScreen({
 
   // Load and persist article font size from preferences
   useEffect(() => {
-    criticalDataManager.loadUserPreferences().then((prefs) => {
+    void loadUserPreferences().then((prefs) => {
       const step = prefs.articleFontSizeStep ?? 0;
       const clamped = Math.max(ARTICLE_FONT_STEP_MIN, Math.min(ARTICLE_FONT_STEP_MAX, step));
       setArticleFontStep(clamped);
@@ -87,8 +87,8 @@ export function ArticleScreen({
     setArticleFontStep((prev) => {
       const next = Math.max(ARTICLE_FONT_STEP_MIN, Math.min(ARTICLE_FONT_STEP_MAX, prev + delta));
       if (next === prev) return prev;
-      criticalDataManager.loadUserPreferences().then((prefs) => {
-        criticalDataManager.saveUserPreferences({ ...prefs, articleFontSizeStep: next });
+      void loadUserPreferences().then((prefs) => {
+        void saveUserPreferences({ ...prefs, articleFontSizeStep: next });
       });
       return next;
     });

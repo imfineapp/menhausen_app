@@ -27,6 +27,10 @@ import {
 } from './src/stores/navigation.store'
 
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
+import { $lastSyncTime, forceSync } from './src/stores/sync.store'
+import { setAuthState } from './src/stores/auth.store'
+import { getJWTExpiry } from './utils/supabaseSync/authService'
+import { shouldPullSyncOnForeground } from './src/utils/visibilitySync'
 import { $screenParams, setEarnedAchievementIds } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
 import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService'
@@ -166,6 +170,12 @@ function AppContent() {
         console.log(`[App] All user data loaded in ${syncDuration}ms:`, result.success)
 
         if (result.success) {
+          setAuthState({
+            status: 'authenticated',
+            telegramUserId: getTelegramUserId(),
+            jwtExpiresAt: getJWTExpiry(),
+            lastError: null,
+          })
           refreshFlowProgress()
           try {
             const savedLanguage = localStorage.getItem('menhausen-language')
@@ -248,6 +258,20 @@ function AppContent() {
 
   useEffect(() => {
     return () => {}
+  }, [])
+
+  /** Refresh remote data when returning to the app after background (e.g. after payment). */
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState !== 'visible') return
+      const last = $lastSyncTime.get()
+      const lastMs = last?.getTime() ?? null
+      if (shouldPullSyncOnForeground(lastMs)) {
+        void forceSync()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibility)
+    return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [])
 
   if (isE2ETestEnvironment) {

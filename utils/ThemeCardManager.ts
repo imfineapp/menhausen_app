@@ -88,6 +88,9 @@ export class ThemeCardManager {
       
       const key = `${this.STORAGE_KEY_PREFIX}${cardId}`;
       localStorage.setItem(key, JSON.stringify(progress));
+      void import('../src/stores/theme-progress.store')
+        .then(({ refreshThemeProgress }) => refreshThemeProgress())
+        .catch(() => {});
     } catch (error) {
       console.error(`Error saving card progress for ${cardId}:`, error);
       throw error;

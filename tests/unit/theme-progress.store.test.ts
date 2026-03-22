@@ -10,12 +10,6 @@ vi.mock('@/utils/ThemeCardManager', () => ({
   },
 }))
 
-vi.mock('@/utils/supabaseSync/localStorageInterceptor', () => ({
-  initializeLocalStorageInterceptor: () => ({
-    onKeyChange: () => () => {},
-  }),
-}))
-
 import {
   $themeProgressVersion,
   $totalCompletedAttempts,

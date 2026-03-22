@@ -5,6 +5,7 @@
  */
 
 import { captureException } from '../analytics/posthog';
+import { setAuthState } from '../../src/stores/auth.store';
 
 const JWT_TOKEN_KEY = 'supabase_jwt_token';
 const JWT_TOKEN_EXPIRY_KEY = 'supabase_jwt_token_expiry';
@@ -173,6 +174,7 @@ export function storeJWTToken(token: string): void {
     if (expiry) {
       localStorage.setItem(JWT_TOKEN_EXPIRY_KEY, expiry.toString());
     }
+    setAuthState({ jwtExpiresAt: expiry ?? null })
   } catch (error) {
     console.error('Error storing JWT token:', error);
   }
@@ -221,7 +223,7 @@ export function isJWTTokenExpired(): boolean {
 }
 
 /**
- * Extract expiry time from JWT token
+ * Extract expiry time from JWT token (ms since epoch), or null.
  */
 function getTokenExpiry(token: string): number | null {
   try {
@@ -250,6 +252,13 @@ function getTokenExpiry(token: string): number | null {
     console.error('Error extracting token expiry:', error);
     return null;
   }
+}
+
+/** Public: JWT `exp` claim as ms since epoch for the current stored token. */
+export function getJWTExpiry(): number | null {
+  const token = getJWTToken();
+  if (!token) return null;
+  return getTokenExpiry(token);
 }
 
 /**
@@ -281,8 +290,59 @@ export function clearJWTToken(): void {
   try {
     localStorage.removeItem(JWT_TOKEN_KEY);
     localStorage.removeItem(JWT_TOKEN_EXPIRY_KEY);
+    setAuthState({ jwtExpiresAt: null })
   } catch (error) {
     console.error('Error clearing JWT token:', error);
+  }
+}
+
+/**
+ * DELETE user data on the server (Edge Function) and invalidate local session token after.
+ * Call before clearing local app state on account deletion.
+ */
+export async function deleteUserDataFromSupabase(): Promise<{ success: boolean; error?: string }> {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  if (!supabaseUrl) {
+    return { success: false, error: 'VITE_SUPABASE_URL not configured' };
+  }
+
+  const jwtToken = await getValidJWTToken();
+  if (!jwtToken) {
+    return { success: false, error: 'Not authenticated' };
+  }
+
+  try {
+    const url = `${supabaseUrl}/functions/v1/delete-user-data`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: anonKey,
+        Authorization: `Bearer ${jwtToken}`,
+      },
+    });
+
+    const body = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: typeof body.error === 'string' ? body.error : `HTTP ${response.status}`,
+      };
+    }
+
+    if (body.success) {
+      clearJWTToken();
+      return { success: true };
+    }
+
+    return { success: false, error: body.error || 'Delete failed' };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return { success: false, error: message };
   }
 }
 
@@ -308,6 +368,10 @@ export async function getValidJWTToken(): Promise<string | null> {
     }
   } else {
     console.log('[authService] Using existing JWT token');
+  }
+
+  if (token) {
+    setAuthState({ jwtExpiresAt: getTokenExpiry(token) ?? null })
   }
 
   return token;

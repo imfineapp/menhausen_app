@@ -5,6 +5,7 @@
  */
 
 export { SupabaseSyncService, getSyncService } from './supabaseSyncService';
+export { clearJWTToken, deleteUserDataFromSupabase, getJWTExpiry } from './authService';
 export * from './types';
 export * from './dataTransformers';
 export * from './conflictResolver';

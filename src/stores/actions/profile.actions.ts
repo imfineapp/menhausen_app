@@ -3,7 +3,9 @@ import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.sto
 import { setPremium } from '@/src/stores/premium.store'
 import { initSurveyState } from '@/src/stores/survey.store'
 import { refreshFlowProgress } from '@/src/stores/app-flow.store'
-import { criticalDataManager } from '@/utils/dataManager'
+import { clearMenhausenPrefixedLocalStorage } from '@/utils/userPreferencesStorage'
+import { clearJWTToken, deleteUserDataFromSupabase } from '@/utils/supabaseSync'
+import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
 export function handleShowAboutApp(): void {
@@ -112,8 +114,22 @@ export function handleGoToBadges(): void {
   navigateTo('badges')
 }
 
-export function handleDeleteAccount(): void {
+export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }> {
   console.log('Account deleted, returning to onboarding')
+
+  let serverDeleted = false
+  try {
+    const result = await deleteUserDataFromSupabase()
+    serverDeleted = result.success
+    if (!result.success) {
+      console.warn('[handleDeleteAccount] Server delete failed:', result.error)
+    }
+  } catch (e) {
+    console.warn('[handleDeleteAccount] Server delete error:', e)
+  }
+
+  // End local session even if server DELETE failed (user chose to leave the app)
+  clearJWTToken()
 
   patchScreenParams({
     completedCards: new Set(),
@@ -134,10 +150,7 @@ export function handleDeleteAccount(): void {
   localStorage.removeItem('checkin-data')
   localStorage.removeItem('has-shown-first-achievement')
 
-  criticalDataManager.clearAllData()
-
-  localStorage.removeItem('menhausen_points_balance')
-  localStorage.removeItem('menhausen_points_transactions')
+  clearMenhausenPrefixedLocalStorage()
 
   resetUserStats()
 
@@ -159,18 +172,25 @@ export function handleDeleteAccount(): void {
   }
   checkinKeys.forEach((key) => localStorage.removeItem(key))
 
-  localStorage.removeItem('menhausen_referred_by')
-  localStorage.removeItem('menhausen_referral_code')
-  localStorage.removeItem('menhausen_referral_registered')
-
-  const referralListKeys: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key && key.startsWith('menhausen_referral_list_')) {
-      referralListKeys.push(key)
-    }
+  try {
+    localStorage.removeItem('supabase_sync_queue')
+    localStorage.removeItem('premium-signature')
+    localStorage.removeItem('user-premium-status')
+    localStorage.removeItem('user-premium-plan')
+    localStorage.removeItem('user-premium-purchased-at')
+    localStorage.removeItem('user-premium-expires-at')
+  } catch {
+    // ignore
   }
-  referralListKeys.forEach((key) => localStorage.removeItem(key))
+
+  setAuthState({
+    status: 'unauthenticated',
+    telegramUserId: null,
+    jwtExpiresAt: null,
+    lastError: null,
+  })
 
   setNavigationState('onboarding1', ['onboarding1'])
+
+  return { serverDeleted }
 }

@@ -286,10 +286,18 @@ beforeEach(() => {
     configurable: true,
   });
 
-  // Mock localStorage with event emission
+  // Mock localStorage with event emission (length/key must match real Storage API for code that enumerates keys)
   const localStorageMock = {
+    storage: {} as Record<string, string>,
+    get length() {
+      return Object.keys(this.storage).length;
+    },
+    key: vi.fn((index: number) => {
+      const keys = Object.keys(localStorageMock.storage);
+      return keys[index] ?? null;
+    }),
     getItem: vi.fn((key: string) => {
-      return localStorageMock.storage[key] || null;
+      return localStorageMock.storage[key] ?? null;
     }),
     setItem: vi.fn((key: string, value: string) => {
       localStorageMock.storage[key] = value;
@@ -309,9 +317,6 @@ beforeEach(() => {
       const storageEvent = new Event('storage');
       dispatchEventMock(storageEvent);
     }),
-    key: vi.fn(),
-    length: 0,
-    storage: {} as Record<string, string>,
   };
   
   Object.defineProperty(window, 'localStorage', {

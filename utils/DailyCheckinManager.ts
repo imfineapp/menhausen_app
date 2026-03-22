@@ -1,4 +1,5 @@
 import { PointsManager } from './PointsManager';
+import { earnPoints } from '@/src/stores/points.store';
 
 /**
  * DailyCheckinManager - Utility class for managing daily check-in logic
@@ -100,7 +101,7 @@ export class DailyCheckinManager {
           .some(t => t.correlationId === correlationId && t.type === 'earn' && t.amount === this.CHECKIN_REWARD);
 
         if (!alreadyAwarded) {
-          PointsManager.earn(this.CHECKIN_REWARD, {
+          earnPoints(this.CHECKIN_REWARD, {
             correlationId,
             note: 'Daily check-in reward'
           });

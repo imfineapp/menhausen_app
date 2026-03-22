@@ -18,8 +18,12 @@ describe('DailyCheckinManager', () => {
   };
 
   beforeEach(() => {
-    // Reset localStorage mock
-    Object.assign(localStorage, localStorageMock);
+    // Replace localStorage entirely (global setup uses a mock with a length getter; Object.assign breaks)
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true,
+      configurable: true,
+    });
     localStorageMock.getItem.mockClear();
     localStorageMock.setItem.mockClear();
     localStorageMock.removeItem.mockClear();

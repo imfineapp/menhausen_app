@@ -27,10 +27,8 @@ vi.mock('@/utils/achievementsMetadata', () => ({
   getAllAchievementsMetadata: mocks.getAllAchievementsMetadata,
 }))
 
-vi.mock('@/utils/PointsManager', () => ({
-  PointsManager: {
-    earn: mocks.earn,
-  },
+vi.mock('@/src/stores/points.store', () => ({
+  earnPoints: mocks.earn,
 }))
 
 import {

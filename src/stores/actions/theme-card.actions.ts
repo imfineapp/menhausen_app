@@ -16,7 +16,7 @@ import {
 } from '@/src/stores/screen-params.store'
 import { getThemeFromStore, getCardUiStrings } from '@/src/stores/contentSelectors'
 import { ThemeCardManager } from '@/utils/ThemeCardManager'
-import { PointsManager } from '@/utils/PointsManager'
+import { earnPoints } from '@/src/stores/points.store'
 import {
   incrementCardsOpened,
   addTopicCompleted,
@@ -288,7 +288,7 @@ export function handleCompleteRating(
       const amount = getPointsForLevel(level)
       if (amount > 0) {
         const note = `Card ${currentCard.id} completed (level ${level}, theme ${tid})`
-        PointsManager.earn(amount, { correlationId: attemptId, note })
+        earnPoints(amount, { correlationId: attemptId, note })
       }
     } catch (earnError) {
       console.warn('Failed to award points for card completion', earnError)

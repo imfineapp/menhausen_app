@@ -14,19 +14,13 @@ import type {
   UserDataFromAPI,
 } from './types';
 import { DEFAULT_SYNC_CONFIG } from './types';
-import { transformToAPIFormat, transformFromAPIFormat } from './dataTransformers';
+import { transformFromAPIFormat } from './dataTransformers';
 import { resolveConflict } from './conflictResolver';
 import { getTelegramUserId } from '../telegramUserUtils';
-import { loadUserStats } from '../../services/userStatsService';
-import { loadUserAchievements } from '../../services/achievementStorage';
-import { PointsManager } from '../PointsManager';
-import { loadTestResults } from '../psychologicalTestStorage';
-import { DailyCheckinManager } from '../DailyCheckinManager';
-import { ThemeCardManager } from '../ThemeCardManager';
-import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
-import { initializeLocalStorageInterceptor, getLocalStorageInterceptor } from './localStorageInterceptor';
 import { getValidJWTToken } from './authService';
 import { AnalyticsEvent, capture, captureException } from '../analytics/posthog';
+import { syncLog } from './syncLogger';
+import { loadSyncPayloadForType } from './buildSyncPayload';
 
 /**
  * Supabase Sync Service Class
@@ -55,8 +49,23 @@ export class SupabaseSyncService {
     errors: [],
   };
   private config: SyncConfig;
-  private debounceTimers: Map<SyncDataType, number> = new Map();
+  /** Pending data types to sync in one batched POST after debounce. */
+  private pendingSyncTypes = new Set<SyncDataType>();
+  private batchFlushTimer: number | null = null;
   private initializationPromise: Promise<void>;
+
+  private static readonly ALL_SYNCABLE_TYPES: SyncDataType[] = [
+    'surveyResults',
+    'dailyCheckins',
+    'userStats',
+    'achievements',
+    'points',
+    'preferences',
+    'flowProgress',
+    'psychologicalTest',
+    'cardProgress',
+    'referralData',
+  ];
 
   private parsePreferencesFromStorage(raw: string): Record<string, any> | null {
     // Try legacy/plain JSON first.
@@ -72,7 +81,7 @@ export class SupabaseSyncService {
       // Continue with encrypted payload fallback.
     }
 
-    // Fallback for encrypted payload from CriticalDataManager.
+    // Fallback for legacy base64-encoded preferences payload.
     try {
       const decrypted = decodeURIComponent(escape(atob(raw)));
       const parsed = JSON.parse(decrypted);
@@ -94,7 +103,7 @@ export class SupabaseSyncService {
     });
     this.setupOnlineListeners();
     this.loadOfflineQueue();
-    this.setupLocalStorageInterceptor();
+    this.setupUnloadFlush();
   }
 
   /**
@@ -161,10 +170,29 @@ export class SupabaseSyncService {
     try {
       const stored = localStorage.getItem('supabase_sync_queue');
       if (stored) {
-        this.offlineQueue = JSON.parse(stored).map((item: any) => ({
-          ...item,
-          timestamp: new Date(item.timestamp),
-        }));
+        const raw = JSON.parse(stored) as any[];
+        this.offlineQueue = raw.map((item: any) => {
+          if (item.types && item.payload) {
+          return {
+            types: item.types as SyncDataType[],
+            payload: item.payload as Record<string, unknown>,
+            timestamp: new Date(item.timestamp),
+            retryCount: typeof item.retryCount === 'number' ? item.retryCount : 0,
+          };
+          }
+          // Legacy single-type queue
+          const legacyType = item.type as SyncDataType;
+          const payload: Record<string, unknown> = {};
+          if (legacyType && item.data !== undefined) {
+            payload[legacyType] = item.data;
+          }
+          return {
+            types: legacyType ? [legacyType] : [],
+            payload,
+            timestamp: new Date(item.timestamp),
+            retryCount: typeof item.retryCount === 'number' ? item.retryCount : 0,
+          };
+        });
         this.syncStatus.pendingItems = this.offlineQueue.length;
       }
     } catch (error) {
@@ -185,32 +213,27 @@ export class SupabaseSyncService {
   }
 
   /**
-   * Queue a sync operation
+   * Queue a sync for one or more data types; batches into a single POST after debounce.
    */
-  public queueSync(type: SyncDataType, data: any): void {
+  public queueSync(type: SyncDataType, _data?: unknown): void {
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log(`[SyncService] Mocked: queueSync(${type}) - skipping sync (e2e test mode)`);
+      syncLog.debug(`[SyncService] Mocked: queueSync(${type}) - skipping sync (e2e test mode)`);
       return;
     }
-    
+
     if (!this.config.enableOfflineQueue) {
       return;
     }
 
-    // Clear existing debounce timer for this type
-    const existingTimer = this.debounceTimers.get(type);
-    if (existingTimer) {
-      clearTimeout(existingTimer);
+    this.pendingSyncTypes.add(type);
+    if (this.batchFlushTimer) {
+      clearTimeout(this.batchFlushTimer);
     }
-
-    // Set new debounce timer
-    const timer = window.setTimeout(() => {
-      this.performSync(type, data);
-      this.debounceTimers.delete(type);
+    this.batchFlushTimer = window.setTimeout(() => {
+      this.batchFlushTimer = null;
+      void this.flushPendingBatchSync();
     }, this.config.debounceMs);
-
-    this.debounceTimers.set(type, timer);
   }
 
   /**
@@ -231,28 +254,37 @@ export class SupabaseSyncService {
     if (!initData) {
       // Local development: create mock initData with user ID 111
       const mockInitData = this.createMockInitData();
-      console.log('[SyncService] Using mock initData for local development (user ID 111)');
+      syncLog.debug('[SyncService] Using mock initData for local development (user ID 111)');
       return mockInitData;
     }
     return initData;
   }
 
   /**
-   * Perform incremental sync operation for a specific data type
+   * Flush pending types as one POST (partial `data` body).
    */
-  private async performSync(type: SyncDataType, data: any): Promise<void> {
-    // Check if sync is mocked (e2e tests)
+  private async flushPendingBatchSync(): Promise<void> {
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log(`[SyncService] Mocked: performSync(${type}) - skipping sync (e2e test mode)`);
       return;
     }
-    
+
+    if (this.pendingSyncTypes.size === 0) {
+      return;
+    }
+
+    const types = new Set(this.pendingSyncTypes);
+    this.pendingSyncTypes.clear();
+
+    const data = this.getLocalStorageDataForTypes(types);
+    if (Object.keys(data).length === 0) {
+      return;
+    }
+
     if (!this.supabase || !this.syncStatus.isOnline) {
-      // Queue for later if offline
       if (this.config.enableOfflineQueue) {
         this.offlineQueue.push({
-          type,
-          data,
+          types: Array.from(types),
+          payload: data,
           timestamp: new Date(),
           retryCount: 0,
         });
@@ -262,163 +294,32 @@ export class SupabaseSyncService {
     }
 
     try {
-      // Get data for this specific type
-      const localData = this.getAllLocalStorageData();
-      const typeData = localData[type];
-
-      if (!typeData) {
-        return; // No data to sync
-      }
-
-      // Sync to Supabase using incremental sync (PATCH)
-      await this.syncIncremental(type, typeData);
-      
-      // Update sync status
+      await this.syncToSupabase(data);
       this.syncStatus.lastSync = new Date();
       this.syncStatus.syncInProgress = false;
     } catch (error) {
-      console.error(`[SyncService] Error syncing ${type}:`, error);
-      void captureException(error instanceof Error ? error : new Error(String(error)), {
-        context: 'sync_incremental',
-        data_type: type,
-      });
+      const err = error instanceof Error ? error : new Error(String(error));
+      syncLog.error('[SyncService] batch sync error:', err);
+      void captureException(err, { context: 'sync_batch_post', types: Array.from(types).join(',') });
 
-      // Add to offline queue if retryable
       if (this.config.enableOfflineQueue) {
         this.offlineQueue.push({
-          type,
-          data,
+          types: Array.from(types),
+          payload: data,
           timestamp: new Date(),
           retryCount: 0,
         });
         this.saveOfflineQueue();
       }
 
-      // Track error
-      this.syncStatus.errors.push({
-        type,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date(),
-        retryable: true,
-      });
-    }
-  }
-
-  /**
-   * Setup localStorage interceptor for real-time sync
-   */
-  private setupLocalStorageInterceptor(): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    try {
-      const interceptor = initializeLocalStorageInterceptor();
-      
-      // Register change handler
-      interceptor.onKeyChange((key: string, syncType: SyncDataType | null, _value: string | null) => {
-        if (syncType) {
-          // Get current data for this type
-          const localData = this.getAllLocalStorageData();
-          const typeData = localData[syncType];
-          
-          if (typeData) {
-            // Queue sync operation (will be debounced)
-            this.queueSync(syncType, typeData);
-          }
-        }
-      });
-    } catch (error) {
-      console.warn('[SyncService] Failed to setup localStorage interceptor:', error);
-    }
-  }
-
-  /**
-   * Perform incremental sync for a specific data type
-   */
-  private async syncIncremental(type: SyncDataType, data: any): Promise<void> {
-    // Check if sync is mocked (e2e tests)
-    if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log(`[SyncService] Mocked: syncIncremental(${type}) - skipping sync (e2e test mode)`);
-      return;
-    }
-    
-    if (!this.supabase) {
-      throw new Error('Supabase client not initialized');
-    }
-
-    try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) {
-        throw new Error('VITE_SUPABASE_URL not configured');
+      for (const type of types) {
+        this.syncStatus.errors.push({
+          type,
+          error: err.message,
+          timestamp: new Date(),
+          retryable: true,
+        });
       }
-
-      // Get JWT token (refresh if expired)
-      const jwtToken = await getValidJWTToken();
-      
-      // Fallback to Telegram initData if JWT not available (backward compatibility)
-      const initData = jwtToken ? null : this.getInitData();
-      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-      console.log(`[SyncService] syncIncremental - Syncing ${type}`);
-      console.log(`[SyncService] syncIncremental - Data preview:`, typeof data === 'object' ? JSON.stringify(data).substring(0, 200) : data);
-      console.log(`[SyncService] syncIncremental - Using JWT:`, !!jwtToken);
-
-      const url = `${supabaseUrl}/functions/v1/sync-user-data`;
-      const body = JSON.stringify({
-        dataType: type,
-        data,
-      });
-      console.log(`[SyncService] syncIncremental - URL:`, url);
-      console.log(`[SyncService] syncIncremental - Body size:`, body.length, 'bytes');
-
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-        'apikey': anonKey,
-      };
-
-      if (jwtToken) {
-        headers['Authorization'] = `Bearer ${jwtToken}`;
-      } else if (initData) {
-        headers['X-Telegram-Init-Data'] = initData;
-      } else {
-        throw new Error('No authentication method available (JWT token or Telegram initData)');
-      }
-
-      // Call Edge Function with PATCH method for incremental sync
-      console.log('[SyncService] Making PATCH request to:', url);
-      console.log('[SyncService] Request headers:', Object.keys(headers));
-      
-      const response = await fetch(url, {
-        method: 'PATCH',
-        mode: 'cors',
-        credentials: 'omit',
-        headers,
-        body,
-      });
-      
-      console.log('[SyncService] Response headers:', Object.fromEntries(response.headers.entries()));
-
-      console.log(`[SyncService] syncIncremental - Response status:`, response.status, response.statusText);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`[SyncService] syncIncremental - Error response:`, errorText);
-        throw new Error(`Failed to sync ${type}: ${response.status} - ${errorText}`);
-      }
-
-      const result = await response.json();
-      console.log(`[SyncService] syncIncremental - Response success:`, result.success);
-      
-      if (!result.success) {
-        console.error(`[SyncService] syncIncremental - Sync failed:`, result.error);
-        throw new Error(result.error || 'Sync failed');
-      }
-      
-      console.log(`[SyncService] syncIncremental - Successfully synced ${type}`);
-    } catch (error) {
-      console.error(`[SyncService] Error in incremental sync for ${type}:`, error);
-      throw error;
     }
   }
 
@@ -430,15 +331,16 @@ export class SupabaseSyncService {
       return;
     }
 
-    // Process queued items with retry logic
     const itemsToProcess = [...this.offlineQueue];
     this.offlineQueue = [];
 
     for (const item of itemsToProcess) {
       try {
-        await this.performSync(item.type, item.data);
+        if (!this.supabase || Object.keys(item.payload).length === 0) {
+          continue;
+        }
+        await this.syncToSupabase(item.payload);
       } catch {
-        // Re-queue if retries not exhausted
         if (item.retryCount < this.config.maxRetries) {
           this.offlineQueue.push({
             ...item,
@@ -452,202 +354,94 @@ export class SupabaseSyncService {
   }
 
   /**
+   * Best-effort flush of pending batched sync when leaving the page (Telegram WebView close).
+   */
+  private setupUnloadFlush(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const run = () => {
+      if (this.pendingSyncTypes.size === 0) {
+        return;
+      }
+      const types = new Set(this.pendingSyncTypes);
+      this.pendingSyncTypes.clear();
+      if (this.batchFlushTimer) {
+        clearTimeout(this.batchFlushTimer);
+        this.batchFlushTimer = null;
+      }
+      const data = this.getLocalStorageDataForTypes(types);
+      if (Object.keys(data).length === 0) {
+        return;
+      }
+      void this.flushUnloadWithKeepalive(data);
+    };
+    window.addEventListener('pagehide', run);
+    window.addEventListener('beforeunload', run);
+  }
+
+  private async flushUnloadWithKeepalive(data: Record<string, unknown>): Promise<void> {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    if (!supabaseUrl) return;
+    try {
+      const jwtToken = await getValidJWTToken();
+      const initData = jwtToken ? null : this.getInitData();
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+      const url = `${supabaseUrl}/functions/v1/sync-user-data`;
+      const body = JSON.stringify({ data });
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        apikey: anonKey,
+      };
+      if (jwtToken) {
+        headers.Authorization = `Bearer ${jwtToken}`;
+      } else if (initData) {
+        headers['X-Telegram-Init-Data'] = initData;
+      } else {
+        return;
+      }
+      await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
+        headers,
+        body,
+        keepalive: true,
+      });
+    } catch {
+      // ignore
+    }
+  }
+
+  /**
    * Get sync status
    */
   public getStatus(): SyncStatus {
     return { ...this.syncStatus };
   }
 
-  /**
-   * Get all localStorage data in API format
-   */
-  private getAllLocalStorageData(): any {
-    console.log('[SyncService] getAllLocalStorageData - Starting data collection');
-    const data: any = {};
+  private collectSyncPayloadForType(type: SyncDataType): unknown {
+    return loadSyncPayloadForType(type, (raw) => this.parsePreferencesFromStorage(raw));
+  }
 
-    // Survey results
-    try {
-      const surveyResultsRaw = localStorage.getItem('survey-results');
-      if (surveyResultsRaw) {
-        const surveyResults = JSON.parse(surveyResultsRaw);
-        data.surveyResults = transformToAPIFormat('surveyResults', surveyResults);
+  private getLocalStorageDataForTypes(types: Set<SyncDataType>): Record<string, unknown> {
+    const data: Record<string, unknown> = {};
+    for (const t of types) {
+      const v = this.collectSyncPayloadForType(t);
+      if (v !== undefined && v !== null) {
+        data[t] = v;
       }
-    } catch (e) {
-      console.warn('Error loading survey results:', e);
     }
-
-    // Daily checkins
-    try {
-      const checkins = DailyCheckinManager.getAllCheckins();
-      console.log('[SyncService] getAllLocalStorageData - Daily checkins count:', checkins.length);
-      if (checkins.length > 0) {
-        // Transform array to API format: { "YYYY-MM-DD": { ...checkinData } }
-        // This is already in API format, no need for transformToAPIFormat
-        const checkinsObj: Record<string, any> = {};
-        checkins.forEach(checkin => {
-          // Skip checkins without a valid date to prevent "daily_checkin_undefined"
-          if (!checkin.date || typeof checkin.date !== 'string') {
-            console.warn('[SyncService] getAllLocalStorageData - Skipping checkin with invalid date:', checkin);
-            return;
-          }
-          
-          // Validate date format (should be YYYY-MM-DD)
-          if (!/^\d{4}-\d{2}-\d{2}$/.test(checkin.date)) {
-            console.warn('[SyncService] getAllLocalStorageData - Skipping checkin with invalid date format:', checkin.date);
-            return;
-          }
-          
-          checkinsObj[checkin.date] = {
-            mood: checkin.mood,
-            value: checkin.value,
-            color: checkin.color,
-            completed: checkin.completed,
-          };
-        });
-        console.log('[SyncService] getAllLocalStorageData - Daily checkins dates:', Object.keys(checkinsObj));
-        data.dailyCheckins = checkinsObj;
-      } else {
-        console.log('[SyncService] getAllLocalStorageData - No daily checkins found');
-      }
-    } catch (e) {
-      console.warn('[SyncService] Error loading checkins:', e);
-    }
-
-    // User stats
-    try {
-      const userStats = loadUserStats();
-      if (userStats) {
-        data.userStats = transformToAPIFormat('userStats', userStats);
-      }
-    } catch (e) {
-      console.warn('Error loading user stats:', e);
-    }
-
-    // Achievements
-    try {
-      const achievements = loadUserAchievements();
-      if (achievements) {
-        data.achievements = transformToAPIFormat('achievements', achievements);
-      }
-    } catch (e) {
-      console.warn('Error loading achievements:', e);
-    }
-
-    // Points
-    try {
-      const balance = PointsManager.getBalance();
-      const transactions = PointsManager.getTransactions();
-      if (balance > 0 || transactions.length > 0) {
-        data.points = transformToAPIFormat('points', {
-          balance,
-          transactions,
-        });
-      }
-    } catch (e) {
-      console.warn('Error loading points:', e);
-    }
-
-    // Preferences (include language)
-    try {
-      let preferences: any = {};
-      
-      // Load existing preferences if available
-      const preferencesRaw = localStorage.getItem('menhausen_user_preferences');
-      if (preferencesRaw) {
-        const parsedPreferences = this.parsePreferencesFromStorage(preferencesRaw);
-        if (parsedPreferences) {
-          preferences = parsedPreferences;
-        }
-      }
-      
-      // Include language from localStorage if available
-      const language = localStorage.getItem('menhausen-language');
-      if (language && (language === 'en' || language === 'ru')) {
-        preferences.language = language;
-      }
-      
-      // Only include preferences if we have at least language
-      if (preferences.language || Object.keys(preferences).length > 0) {
-        data.preferences = transformToAPIFormat('preferences', preferences);
-      }
-    } catch (e) {
-      console.warn('Error loading preferences:', e);
-    }
-
-    // Flow progress
-    try {
-      const flowProgressRaw = localStorage.getItem('app-flow-progress');
-      if (flowProgressRaw) {
-        const flowProgress = JSON.parse(flowProgressRaw);
-        data.flowProgress = transformToAPIFormat('flowProgress', flowProgress);
-      }
-    } catch (e) {
-      console.warn('Error loading flow progress:', e);
-    }
-
-    // Psychological test
-    try {
-      const psychologicalTest = loadTestResults();
-      if (psychologicalTest) {
-        data.psychologicalTest = transformToAPIFormat('psychologicalTest', psychologicalTest);
-      }
-    } catch (e) {
-      console.warn('Error loading psychological test:', e);
-    }
-
-    // Card progress
-    try {
-      const cardProgressObj: Record<string, any> = {};
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('theme_card_progress_')) {
-          const cardId = key.replace('theme_card_progress_', '');
-          const cardProgress = ThemeCardManager.getCardProgress(cardId);
-          if (cardProgress) {
-            cardProgressObj[cardId] = cardProgress;
-          }
-        }
-      }
-      if (Object.keys(cardProgressObj).length > 0) {
-        data.cardProgress = transformToAPIFormat('cardProgress', cardProgressObj);
-      }
-    } catch (e) {
-      console.warn('Error loading card progress:', e);
-    }
-
-    // Referral data
-    try {
-      const telegramUserId = getTelegramUserId();
-      if (telegramUserId) {
-        const referralData: any = {
-          referredBy: getReferrerId(),
-          referralRegistered: isReferralRegistered(),
-          referralList: [],
-        };
-        // Try to get referral list if exists
-        try {
-          const referralList = getReferralList(telegramUserId);
-          referralData.referralList = referralList.referrals.map(r => r.userId);
-        } catch {
-          // Ignore if referral list doesn't exist
-        }
-        data.referralData = transformToAPIFormat('referralData', referralData);
-      }
-    } catch (e) {
-      console.warn('Error loading referral data:', e);
-    }
-
-    // Note: hasShownFirstAchievement is stored locally only.
-    // The Edge Function does not support this dataType, so we skip syncing it.
-
-    console.log('[SyncService] getAllLocalStorageData - Collected data keys:', Object.keys(data));
-    console.log('[SyncService] getAllLocalStorageData - Data summary:', Object.keys(data).reduce((acc, key) => {
-      const value = data[key];
-      acc[key] = value ? (typeof value === 'object' ? 'present' : typeof value) : 'null';
-      return acc;
-    }, {} as Record<string, string>));
-
+    syncLog.debug('[SyncService] getLocalStorageDataForTypes keys:', Object.keys(data));
     return data;
+  }
+
+  /**
+   * Get all localStorage data in API format (full snapshot for initial / forced sync).
+   */
+  private getAllLocalStorageData(): Record<string, unknown> {
+    syncLog.debug('[SyncService] getAllLocalStorageData - Starting data collection');
+    return this.getLocalStorageDataForTypes(new Set(SupabaseSyncService.ALL_SYNCABLE_TYPES));
   }
 
   /**
@@ -656,7 +450,7 @@ export class SupabaseSyncService {
   private async fetchFromSupabase(_telegramUserId: number, source: string = 'unknown'): Promise<UserDataFromAPI | null> {
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log('[SyncService] Mocked: fetchFromSupabase - returning null (e2e test mode)');
+      syncLog.debug('[SyncService] Mocked: fetchFromSupabase - returning null (e2e test mode)');
       return null;
     }
     
@@ -665,19 +459,19 @@ export class SupabaseSyncService {
     }
 
     const callStack = new Error(`[fetchFromSupabase] source=${source}`).stack;
-    console.log(`[SyncService] fetchFromSupabase called from: ${source}`);
-    console.log('[SyncService] fetchFromSupabase stack:', callStack);
+    syncLog.debug(`[SyncService] fetchFromSupabase called from: ${source}`);
+    syncLog.debug('[SyncService] fetchFromSupabase stack:', callStack);
 
     if (
       this.fetchCache.timestamp > 0 &&
       Date.now() - this.fetchCache.timestamp < this.FETCH_CACHE_TTL_MS
     ) {
-      console.log(`[SyncService] fetchFromSupabase(${source}) - Cache hit`);
+      syncLog.debug(`[SyncService] fetchFromSupabase(${source}) - Cache hit`);
       return this.fetchCache.result;
     }
 
     if (this.fetchCache.inFlight) {
-      console.log(`[SyncService] fetchFromSupabase(${source}) - Reusing in-flight request`);
+      syncLog.debug(`[SyncService] fetchFromSupabase(${source}) - Reusing in-flight request`);
       return this.fetchCache.inFlight;
     }
 
@@ -693,11 +487,11 @@ export class SupabaseSyncService {
       // Fallback to Telegram initData if JWT not available (backward compatibility)
       const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-      console.log('[SyncService] fetchFromSupabase - User ID:', _telegramUserId);
-      console.log('[SyncService] fetchFromSupabase - Using JWT:', !!jwtToken);
+      syncLog.debug('[SyncService] fetchFromSupabase - User ID:', _telegramUserId);
+      syncLog.debug('[SyncService] fetchFromSupabase - Using JWT:', !!jwtToken);
 
       const url = `${supabaseUrl}/functions/v1/get-user-data`;
-      console.log('[SyncService] fetchFromSupabase - Calling URL:', url);
+      syncLog.debug('[SyncService] fetchFromSupabase - Calling URL:', url);
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -712,8 +506,8 @@ export class SupabaseSyncService {
         throw new Error('No authentication method available (JWT token or Telegram initData)');
       }
 
-      console.log('[SyncService] Making GET request to:', url);
-      console.log('[SyncService] Request headers:', Object.keys(headers));
+      syncLog.debug('[SyncService] Making GET request to:', url);
+      syncLog.debug('[SyncService] Request headers:', Object.keys(headers));
       
       // Call Edge Function
       const response = await fetch(url, {
@@ -723,34 +517,34 @@ export class SupabaseSyncService {
         headers,
       });
       
-      console.log('[SyncService] Response headers:', Object.fromEntries(response.headers.entries()));
+      syncLog.debug('[SyncService] Response headers:', Object.fromEntries(response.headers.entries()));
 
-      console.log('[SyncService] fetchFromSupabase - Response status:', response.status, response.statusText);
+      syncLog.debug('[SyncService] fetchFromSupabase - Response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
         console.error('[SyncService] fetchFromSupabase - Error response:', errorText);
         if (response.status === 404) {
-          console.log('[SyncService] fetchFromSupabase - User not found (404)');
+          syncLog.debug('[SyncService] fetchFromSupabase - User not found (404)');
           return null; // User doesn't exist
         }
         throw new Error(`Failed to fetch user data: ${response.status} - ${errorText}`);
       }
 
       const result = await response.json();
-      console.log('[SyncService] fetchFromSupabase - Response success:', result.success);
-      console.log('[SyncService] fetchFromSupabase - Response data keys:', result.data ? Object.keys(result.data) : 'no data');
-      console.log('[SyncService] fetchFromSupabase - hasPremium:', result.hasPremium);
-      console.log('[SyncService] fetchFromSupabase - premiumSignature:', result.premiumSignature ? 'present' : 'missing');
+      syncLog.debug('[SyncService] fetchFromSupabase - Response success:', result.success);
+      syncLog.debug('[SyncService] fetchFromSupabase - Response data keys:', result.data ? Object.keys(result.data) : 'no data');
+      syncLog.debug('[SyncService] fetchFromSupabase - hasPremium:', result.hasPremium);
+      syncLog.debug('[SyncService] fetchFromSupabase - premiumSignature:', result.premiumSignature ? 'present' : 'missing');
       
       // Debug: Check dailyCheckins data
       if (result.data && result.data.dailyCheckins) {
         const checkinsCount = Object.keys(result.data.dailyCheckins).length;
         const checkinsDates = Object.keys(result.data.dailyCheckins);
-        console.log('[SyncService] fetchFromSupabase - dailyCheckins found:', checkinsCount, 'checkins');
-        console.log('[SyncService] fetchFromSupabase - dailyCheckins dates:', checkinsDates);
+        syncLog.debug('[SyncService] fetchFromSupabase - dailyCheckins found:', checkinsCount, 'checkins');
+        syncLog.debug('[SyncService] fetchFromSupabase - dailyCheckins dates:', checkinsDates);
       } else {
-        console.log('[SyncService] fetchFromSupabase - No dailyCheckins in response data');
+        syncLog.debug('[SyncService] fetchFromSupabase - No dailyCheckins in response data');
       }
       
       if (result.success && result.data) {
@@ -787,7 +581,7 @@ export class SupabaseSyncService {
   private async syncToSupabase(data: any): Promise<SyncResult> {
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log('[SyncService] Mocked: syncToSupabase - returning success without syncing (e2e test mode)');
+      syncLog.debug('[SyncService] Mocked: syncToSupabase - returning success without syncing (e2e test mode)');
       return {
         success: true,
         syncedTypes: [],
@@ -812,9 +606,9 @@ export class SupabaseSyncService {
       const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-      console.log('[SyncService] syncToSupabase - Starting full sync');
-      console.log('[SyncService] syncToSupabase - Data keys:', Object.keys(data));
-      console.log('[SyncService] syncToSupabase - Using JWT:', !!jwtToken);
+      syncLog.debug('[SyncService] syncToSupabase - Starting full sync');
+      syncLog.debug('[SyncService] syncToSupabase - Data keys:', Object.keys(data));
+      syncLog.debug('[SyncService] syncToSupabase - Using JWT:', !!jwtToken);
       const dataSummary = Object.keys(data).reduce((acc, key) => {
         const value = data[key];
         if (value === null || value === undefined) {
@@ -830,12 +624,12 @@ export class SupabaseSyncService {
         }
         return acc;
       }, {} as Record<string, string>);
-      console.log('[SyncService] syncToSupabase - Data summary:', dataSummary);
+      syncLog.debug('[SyncService] syncToSupabase - Data summary:', dataSummary);
 
       const url = `${supabaseUrl}/functions/v1/sync-user-data`;
       const body = JSON.stringify({ data });
-      console.log('[SyncService] syncToSupabase - URL:', url);
-      console.log('[SyncService] syncToSupabase - Body size:', body.length, 'bytes');
+      syncLog.debug('[SyncService] syncToSupabase - URL:', url);
+      syncLog.debug('[SyncService] syncToSupabase - Body size:', body.length, 'bytes');
 
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -857,7 +651,7 @@ export class SupabaseSyncService {
         body,
       });
 
-      console.log('[SyncService] syncToSupabase - Response status:', response.status, response.statusText);
+      syncLog.debug('[SyncService] syncToSupabase - Response status:', response.status, response.statusText);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -866,8 +660,8 @@ export class SupabaseSyncService {
       }
 
       const result = await response.json();
-      console.log('[SyncService] syncToSupabase - Response success:', result.success);
-      console.log('[SyncService] syncToSupabase - Synced types:', result.syncedTypes);
+      syncLog.debug('[SyncService] syncToSupabase - Response success:', result.success);
+      syncLog.debug('[SyncService] syncToSupabase - Synced types:', result.syncedTypes);
       if (result.errors && result.errors.length > 0) {
         console.error('[SyncService] syncToSupabase - Errors:', result.errors);
       }
@@ -890,10 +684,6 @@ export class SupabaseSyncService {
    * Merge remote data with local data and save to localStorage
    */
   private mergeAndSave(remoteData: UserDataFromAPI): void {
-    // Disable interceptor notifications during merge to avoid infinite loops
-    const interceptor = getLocalStorageInterceptor();
-    interceptor.setSilentMode(true);
-
     try {
       const localData = this.getAllLocalStorageData();
 
@@ -905,27 +695,27 @@ export class SupabaseSyncService {
     }
 
     if (remoteData.dailyCheckins) {
-      console.log('[SyncService] mergeAndSave - Processing dailyCheckins');
+      syncLog.debug('[SyncService] mergeAndSave - Processing dailyCheckins');
       const remoteCheckins = remoteData.dailyCheckins;
       const remoteDates = Object.keys(remoteCheckins);
-      console.log('[SyncService] mergeAndSave - remoteData.dailyCheckins dates:', remoteDates);
+      syncLog.debug('[SyncService] mergeAndSave - remoteData.dailyCheckins dates:', remoteDates);
       
       const merged = resolveConflict('dailyCheckins', localData.dailyCheckins, remoteCheckins);
       const mergedDates = Object.keys(merged);
-      console.log('[SyncService] mergeAndSave - merged dailyCheckins dates:', mergedDates);
+      syncLog.debug('[SyncService] mergeAndSave - merged dailyCheckins dates:', mergedDates);
       
       const localFormat = transformFromAPIFormat('dailyCheckins', merged);
       const localFormatKeys = Object.keys(localFormat);
-      console.log('[SyncService] mergeAndSave - localFormat keys (localStorage):', localFormatKeys);
-      console.log('[SyncService] mergeAndSave - Saving', localFormatKeys.length, 'checkins to localStorage');
+      syncLog.debug('[SyncService] mergeAndSave - localFormat keys (localStorage):', localFormatKeys);
+      syncLog.debug('[SyncService] mergeAndSave - Saving', localFormatKeys.length, 'checkins to localStorage');
       
       localFormatKeys.forEach(key => {
-        console.log('[SyncService] mergeAndSave - Saving checkin key:', key);
+        syncLog.debug('[SyncService] mergeAndSave - Saving checkin key:', key);
         localStorage.setItem(key, JSON.stringify(localFormat[key]));
       });
-      console.log('[SyncService] mergeAndSave - dailyCheckins saved successfully');
+      syncLog.debug('[SyncService] mergeAndSave - dailyCheckins saved successfully');
     } else {
-      console.log('[SyncService] mergeAndSave - No remoteData.dailyCheckins');
+      syncLog.debug('[SyncService] mergeAndSave - No remoteData.dailyCheckins');
     }
 
     if (remoteData.userStats) {
@@ -963,19 +753,19 @@ export class SupabaseSyncService {
     if (remoteData.flowProgress) {
       const merged = resolveConflict('flowProgress', localData.flowProgress, remoteData.flowProgress);
       const localFormat = transformFromAPIFormat('flowProgress', merged);
-      console.log('[SyncService] mergeAndSave - Updating app-flow-progress:', localFormat);
+      syncLog.debug('[SyncService] mergeAndSave - Updating app-flow-progress:', localFormat);
       localStorage.setItem('app-flow-progress', JSON.stringify(localFormat));
     } else {
-      console.log('[SyncService] mergeAndSave - No remote flowProgress data');
+      syncLog.debug('[SyncService] mergeAndSave - No remote flowProgress data');
     }
 
     if (remoteData.psychologicalTest) {
       const merged = resolveConflict('psychologicalTest', localData.psychologicalTest, remoteData.psychologicalTest);
       const localFormat = transformFromAPIFormat('psychologicalTest', merged);
-      console.log('[SyncService] mergeAndSave - Updating psychological-test-results, hasResults:', !!localFormat);
+      syncLog.debug('[SyncService] mergeAndSave - Updating psychological-test-results, hasResults:', !!localFormat);
       localStorage.setItem('psychological-test-results', JSON.stringify(localFormat));
     } else {
-      console.log('[SyncService] mergeAndSave - No remote psychologicalTest data');
+      syncLog.debug('[SyncService] mergeAndSave - No remote psychologicalTest data');
     }
 
     if (remoteData.cardProgress) {
@@ -1041,14 +831,14 @@ export class SupabaseSyncService {
 
     // Handle premium status
     if (remoteData.hasPremium !== undefined) {
-      console.log('[SyncService] mergeAndSave - Updating premium status:', remoteData.hasPremium);
+      syncLog.debug('[SyncService] mergeAndSave - Updating premium status:', remoteData.hasPremium);
       // Save legacy format for backward compatibility
       localStorage.setItem('user-premium-status', remoteData.hasPremium ? 'true' : 'false');
     }
 
     // Handle premium signature (Ed25519 signed data)
     if (remoteData.premiumSignature) {
-      console.log('[SyncService] mergeAndSave - Saving premium signature');
+      syncLog.debug('[SyncService] mergeAndSave - Saving premium signature');
       // Save signature synchronously to localStorage (no async needed)
       try {
         localStorage.setItem('premium-signature', JSON.stringify(remoteData.premiumSignature));
@@ -1058,8 +848,15 @@ export class SupabaseSyncService {
       }
     }
     } finally {
-      // Re-enable interceptor notifications
-      interceptor.setSilentMode(false);
+      if (typeof window !== 'undefined') {
+        void import('../../src/sync/storeHydration')
+          .then((m) => {
+            m.refreshAllStoresFromStorage();
+          })
+          .catch((err) => {
+            console.warn('[SyncService] refreshAllStoresFromStorage failed:', err);
+          });
+      }
     }
   }
 
@@ -1073,7 +870,7 @@ export class SupabaseSyncService {
 
     // Check if sync is mocked (e2e tests)
     if (typeof window !== 'undefined' && (window as any).__PLAYWRIGHT__ && (window as any).__MOCK_SUPABASE_SYNC__) {
-      console.log('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
+      syncLog.debug('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
       return {
         success: true,
         syncedTypes: [],
@@ -1144,31 +941,31 @@ export class SupabaseSyncService {
       };
     }
 
-    console.log('[SyncService] Starting initial sync for user ID:', telegramUserId);
-    console.log('[SyncService] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+    syncLog.debug('[SyncService] Starting initial sync for user ID:', telegramUserId);
+    syncLog.debug('[SyncService] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
 
     this.syncInProgress = true;
     this.syncStatus.syncInProgress = true;
 
     try {
       // Check if user exists in Supabase
-      console.log('[SyncService] Checking if user exists in Supabase...');
+      syncLog.debug('[SyncService] Checking if user exists in Supabase...');
       const remoteData = await this.fetchFromSupabase(telegramUserId, 'initialSync');
-      console.log('[SyncService] Remote data check result:', remoteData ? 'User exists' : 'New user');
+      syncLog.debug('[SyncService] Remote data check result:', remoteData ? 'User exists' : 'New user');
 
       if (remoteData) {
         // Existing user: merge remote with local
-        console.log('[SyncService] Existing user detected, merging data');
-        console.log('[SyncService] Remote data keys:', Object.keys(remoteData));
+        syncLog.debug('[SyncService] Existing user detected, merging data');
+        syncLog.debug('[SyncService] Remote data keys:', Object.keys(remoteData));
         this.mergeAndSave(remoteData);
 
         // Upload merged local data to ensure consistency
         const localData = this.getAllLocalStorageData();
-        console.log('[SyncService] Local data keys after merge:', Object.keys(localData));
-        console.log('[SyncService] Uploading merged data to Supabase in background...');
+        syncLog.debug('[SyncService] Local data keys after merge:', Object.keys(localData));
+        syncLog.debug('[SyncService] Uploading merged data to Supabase in background...');
         void this.syncToSupabase(localData)
           .then((uploadResult) => {
-            console.log('[SyncService] Background upload result:', uploadResult);
+            syncLog.debug('[SyncService] Background upload result:', uploadResult);
           })
           .catch((error) => {
             console.warn('[SyncService] Background upload failed:', error);
@@ -1190,20 +987,20 @@ export class SupabaseSyncService {
         };
       } else {
         // New user: upload all local data
-        console.log('[SyncService] New user detected, uploading local data');
+        syncLog.debug('[SyncService] New user detected, uploading local data');
         const localData = this.getAllLocalStorageData();
-        console.log('[SyncService] Local data keys:', Object.keys(localData));
-        console.log('[SyncService] Local data summary:', Object.keys(localData).reduce((acc, key) => {
+        syncLog.debug('[SyncService] Local data keys:', Object.keys(localData));
+        syncLog.debug('[SyncService] Local data summary:', Object.keys(localData).reduce((acc, key) => {
           acc[key] = localData[key] ? (typeof localData[key] === 'object' ? Object.keys(localData[key]).length + ' items' : 'present') : 'null';
           return acc;
         }, {} as Record<string, string>));
 
         // Only upload if there's data to upload
         if (Object.keys(localData).length > 0) {
-          console.log('[SyncService] Uploading local data to Supabase in background...');
+          syncLog.debug('[SyncService] Uploading local data to Supabase in background...');
           void this.syncToSupabase(localData)
             .then((uploadResult) => {
-              console.log('[SyncService] Background upload result:', uploadResult);
+              syncLog.debug('[SyncService] Background upload result:', uploadResult);
             })
             .catch((error) => {
               console.warn('[SyncService] Background upload failed:', error);
@@ -1334,11 +1131,11 @@ export function getSyncService(): SupabaseSyncService {
     
     // If we're in Playwright test mode with mocked sync, override methods to do nothing
     if (isMockedSyncEnabled()) {
-      console.log('[SyncService] E2E test mode detected - Supabase sync is mocked');
+      syncLog.debug('[SyncService] E2E test mode detected - Supabase sync is mocked');
       
       // Override initialSync to return success without syncing
       syncServiceInstance.initialSync = async () => {
-        console.log('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
+        syncLog.debug('[SyncService] Mocked: initialSync - returning success without syncing (e2e test mode)');
         return {
           success: true,
           syncedTypes: [],
@@ -1350,7 +1147,7 @@ export function getSyncService(): SupabaseSyncService {
       const originalQueueSync = (syncServiceInstance as any).queueSync;
       if (originalQueueSync) {
         (syncServiceInstance as any).queueSync = () => {
-          console.log('[SyncService] Mocked: queueSync - skipping sync (e2e test mode)');
+          syncLog.debug('[SyncService] Mocked: queueSync - skipping sync (e2e test mode)');
           // Do nothing - skip sync operations
         };
       }
