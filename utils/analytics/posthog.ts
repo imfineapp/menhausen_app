@@ -12,7 +12,6 @@ function getEnv(key: string): string | undefined {
 }
 
 const PUBLIC_KEY = getEnv('VITE_PUBLIC_POSTHOG_KEY')
-const PUBLIC_HOST = getEnv('VITE_PUBLIC_POSTHOG_HOST') || 'https://us.i.posthog.com'
 const POSTHOG_ENABLED = (getEnv('VITE_POSTHOG_ENABLE') || 'false').toLowerCase() === 'true'
 
 // Dynamically load PostHog only when needed
