@@ -41,6 +41,37 @@ function getInitConfig(): Partial<PostHogConfig> {
     autocapture: true,
     debug: false,
     capture_exceptions: true,
+    before_send: (event: any) => {
+      // Telegram Android WebView can inject synthetic scripts that trigger noisy, un-actionable SyntaxErrors.
+      // Suppress: `SyntaxError: Unexpected identifier 'page'`.
+      try {
+        if (event?.event !== '$exception') return event
+
+        const props = event?.properties || {}
+        const type = props.$exception_type
+        const handled = props.$exception_handled
+
+        const firstException = Array.isArray(props.$exception_list) ? props.$exception_list[0] : null
+        const synthetic = !!firstException?.mechanism?.synthetic
+
+        const message =
+          (typeof props.$exception_message === 'string' && props.$exception_message) ||
+          (Array.isArray(props.$exception_values) && typeof props.$exception_values[0] === 'string' ? props.$exception_values[0] : undefined)
+
+        const isPageSyntaxError =
+          type === 'SyntaxError' &&
+          (handled === false || handled === 'false') &&
+          synthetic === true &&
+          typeof message === 'string' &&
+          message.includes("Unexpected identifier 'page'")
+
+        if (isPageSyntaxError) return null
+      } catch {
+        // Best-effort filtering only.
+      }
+
+      return event
+    },
     advanced_disable_flags: true,
     disable_session_recording: false,
   }
