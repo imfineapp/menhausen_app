@@ -21,6 +21,8 @@ interface AuthResponse {
   code?: string;
 }
 
+let authenticateWithTelegramInFlight: Promise<AuthResponse> | null = null;
+
 /**
  * Get Telegram initData for authentication
  */
@@ -72,94 +74,159 @@ function getTelegramUserId(): string | null {
  * Authenticate with Telegram and get JWT token
  */
 export async function authenticateWithTelegram(): Promise<AuthResponse> {
-  try {
-    const initData = getTelegramInitData();
-    if (!initData) {
-      return {
-        success: false,
-        error: 'Telegram initData not available',
-        code: 'NO_INIT_DATA',
-      };
+  if (authenticateWithTelegramInFlight) return authenticateWithTelegramInFlight
+
+  authenticateWithTelegramInFlight = doAuthenticateWithTelegram().finally(() => {
+    authenticateWithTelegramInFlight = null
+  })
+
+  return authenticateWithTelegramInFlight
+}
+
+async function doAuthenticateWithTelegram(): Promise<AuthResponse> {
+  const isOffline = (): boolean => {
+    try {
+      return typeof navigator !== 'undefined' && navigator.onLine === false
+    } catch {
+      return false
     }
-
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    if (!supabaseUrl) {
-      return {
-        success: false,
-        error: 'VITE_SUPABASE_URL not configured',
-        code: 'CONFIG_MISSING',
-      };
-    }
-
-    const url = `${supabaseUrl}/functions/v1/auth-telegram`;
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-    
-    
-    console.log('[authService] Making request to:', url);
-    console.log('[authService] Headers:', { 'Content-Type': 'application/json', 'apikey': anonKey ? 'present' : 'missing', 'X-Telegram-Init-Data': initData ? 'present' : 'missing' });
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'omit',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': anonKey,
-        'X-Telegram-Init-Data': initData,
-      },
-    });
-    
-    console.log('[authService] Response status:', response.status, response.statusText);
-    console.log('[authService] Response headers:', Object.fromEntries(response.headers.entries()));
-
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      console.log('[authService] Error response body:', errorText);
-      let errorData: any = {};
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = { error: errorText || `HTTP ${response.status}` };
-      }
-      console.log('[authService] Parsed error data:', errorData);
-      const msg = errorData.error || `HTTP ${response.status}`;
-      void captureException(new Error(msg), {
-        context: 'auth_telegram',
-        code: errorData.code || 'AUTH_FAILED',
-        http_status: response.status,
-      });
-      return {
-        success: false,
-        error: msg,
-        code: errorData.code || 'AUTH_FAILED',
-      };
-    }
-
-    const data: AuthResponse = await response.json();
-    
-    if (data.success && data.token) {
-      // Store JWT token
-      storeJWTToken(data.token);
-      return data;
-    }
-
-    return {
-      success: false,
-      error: data.error || 'Authentication failed',
-      code: data.code || 'AUTH_FAILED',
-    };
-  } catch (error) {
-    console.error('Error authenticating with Telegram:', error);
-    void captureException(error instanceof Error ? error : new Error(String(error)), {
-      context: 'auth_telegram',
-      code: 'NETWORK_ERROR',
-    });
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      code: 'NETWORK_ERROR',
-    };
   }
+
+  // Offline guard: avoid capturing noisy "Failed to fetch" exceptions.
+  if (isOffline()) {
+    return {
+      success: false,
+      error: 'Device is offline',
+      code: 'OFFLINE',
+    }
+  }
+
+  const initData = getTelegramInitData()
+  if (!initData) {
+    return {
+      success: false,
+      error: 'Telegram initData not available',
+      code: 'NO_INIT_DATA',
+    }
+  }
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  if (!supabaseUrl) {
+    return {
+      success: false,
+      error: 'VITE_SUPABASE_URL not configured',
+      code: 'CONFIG_MISSING',
+    }
+  }
+
+  const url = `${supabaseUrl}/functions/v1/auth-telegram`
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+
+  const wait = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms))
+
+  // Retry on transient failures (network errors, rate limits, server errors).
+  const maxAttempts = 3
+  let lastError: unknown = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      // Keep logs for debugging but avoid spamming on retries.
+      if (attempt === 1) {
+        console.log('[authService] Making request to:', url)
+        console.log('[authService] Headers:', {
+          'Content-Type': 'application/json',
+          apikey: anonKey ? 'present' : 'missing',
+          'X-Telegram-Init-Data': initData ? 'present' : 'missing',
+        })
+      }
+
+      const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: anonKey,
+          'X-Telegram-Init-Data': initData,
+        },
+      })
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => '')
+        let errorData: any = {}
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { error: errorText || `HTTP ${response.status}` }
+        }
+
+        const msg = errorData.error || `HTTP ${response.status}`
+        const code = errorData.code || 'AUTH_FAILED'
+
+        // Retry on rate limit / server errors.
+        if (attempt < maxAttempts && (response.status === 429 || response.status >= 500)) {
+          await wait(300 * Math.pow(2, attempt - 1))
+          continue
+        }
+
+        void captureException(new Error(msg), {
+          context: 'auth_telegram',
+          code,
+          http_status: response.status,
+        })
+
+        return {
+          success: false,
+          error: msg,
+          code,
+        }
+      }
+
+      const data: AuthResponse = await response.json()
+
+      if (data.success && data.token) {
+        // Store JWT token
+        storeJWTToken(data.token)
+        return data
+      }
+
+      return {
+        success: false,
+        error: data.error || 'Authentication failed',
+        code: data.code || 'AUTH_FAILED',
+      }
+    } catch (error) {
+      lastError = error
+      if (isOffline()) {
+        return {
+          success: false,
+          error: 'Device is offline',
+          code: 'OFFLINE',
+        }
+      }
+
+      // Retry only on likely transient network issues.
+      const isFetchFailure = error instanceof TypeError && /fetch/i.test(String(error.message))
+      if (attempt < maxAttempts && isFetchFailure) {
+        await wait(300 * Math.pow(2, attempt - 1))
+        continue
+      }
+
+      void captureException(error instanceof Error ? error : new Error(String(error)), {
+        context: 'auth_telegram',
+        code: 'NETWORK_ERROR',
+      })
+
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        code: 'NETWORK_ERROR',
+      }
+    }
+  }
+
+  const msg = lastError instanceof Error ? lastError.message : 'Authentication failed'
+  return { success: false, error: msg, code: 'NETWORK_ERROR' }
 }
 
 /**

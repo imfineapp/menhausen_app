@@ -6,11 +6,26 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 const analyzeBundle = process.env.ANALYZE === 'true'
+const BUILD_TIMESTAMP = Date.now()
+
+const versionJsonPlugin = {
+  name: 'version-json',
+  apply: 'build' as const,
+  generateBundle() {
+    // Emit a small root-level file so the app can detect when the deployed build changed.
+    this.emitFile({
+      type: 'asset',
+      fileName: 'version.json',
+      source: JSON.stringify({ buildTimestamp: BUILD_TIMESTAMP }),
+    })
+  },
+}
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    versionJsonPlugin,
     ...(analyzeBundle
       ? [
           visualizer({
@@ -130,6 +145,7 @@ export default defineConfig({
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    __BUILD_TIMESTAMP__: JSON.stringify(BUILD_TIMESTAMP),
   },
   esbuild: {
     target: 'esnext',

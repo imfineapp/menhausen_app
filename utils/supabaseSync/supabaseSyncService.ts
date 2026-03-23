@@ -300,7 +300,10 @@ export class SupabaseSyncService {
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       syncLog.error('[SyncService] batch sync error:', err);
-      void captureException(err, { context: 'sync_batch_post', types: Array.from(types).join(',') });
+      const isOffline = typeof navigator !== 'undefined' && navigator.onLine === false
+      if (!isOffline) {
+        void captureException(err, { context: 'sync_batch_post', types: Array.from(types).join(',') })
+      }
 
       if (this.config.enableOfflineQueue) {
         this.offlineQueue.push({
@@ -453,6 +456,11 @@ export class SupabaseSyncService {
       syncLog.debug('[SyncService] Mocked: fetchFromSupabase - returning null (e2e test mode)');
       return null;
     }
+
+    // Offline guard: avoid "Failed to fetch" noise when offline.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return null;
+    }
     
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
@@ -587,6 +595,11 @@ export class SupabaseSyncService {
         syncedTypes: [],
         errors: [],
       };
+    }
+
+    // Offline guard: avoid attempting network sync when the device is offline.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      throw new Error('Device is offline');
     }
     
     if (!this.supabase) {

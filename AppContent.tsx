@@ -262,8 +262,37 @@ function AppContent() {
 
   /** Refresh remote data when returning to the app after background (e.g. after payment). */
   useEffect(() => {
+    let lastVersionCheckAt = 0
+    const localBuildTimestamp = String(__BUILD_TIMESTAMP__)
+
+    const checkBuildVersion = async () => {
+      // Throttle to avoid repeated fetches when Telegram WebView triggers multiple visibility events.
+      const now = Date.now()
+      if (now - lastVersionCheckAt < 30_000) return
+      lastVersionCheckAt = now
+
+      try {
+        const res = await fetch('/version.json', { cache: 'no-store' })
+        if (!res.ok) return
+
+        const json: any = await res.json()
+        const remote = json?.buildTimestamp
+        if (remote === undefined || remote === null) return
+
+        if (String(remote) !== localBuildTimestamp) {
+          console.warn('[App] New build detected. Reloading to avoid stale assets.')
+          window.location.reload()
+        }
+      } catch {
+        // Best-effort only.
+      }
+    }
+
     const handleVisibility = () => {
       if (document.visibilityState !== 'visible') return
+
+      void checkBuildVersion()
+
       const last = $lastSyncTime.get()
       const lastMs = last?.getTime() ?? null
       if (shouldPullSyncOnForeground(lastMs)) {
