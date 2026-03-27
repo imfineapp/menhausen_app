@@ -26,4 +26,86 @@ test.describe('Reward system integrity', () => {
     expect(result.count).toBe(1);
     expect(result.payload.value).toBe(4);
   });
+
+  test('does not perform local fallback write when server rejects reward grant', async ({ page }) => {
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    const result = await page.evaluate(async () => {
+      localStorage.setItem('menhausen_points_balance', '9999');
+      localStorage.removeItem('menhausen_reward_offline_queue');
+
+      const originalFetch = window.fetch.bind(window);
+      const telegramContainer = (window as any).Telegram || {};
+      const originalTelegram = telegramContainer.WebApp;
+      (window as any).Telegram = {
+        ...telegramContainer,
+        WebApp: { ...(telegramContainer.WebApp || {}), initData: 'mock_init_data' },
+      };
+      window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input).includes('/functions/v1/grant-reward')) {
+          return new Response(
+            JSON.stringify({
+              success: true,
+              granted: false,
+              reason: 'already_granted',
+            }),
+            { status: 200, headers: { 'Content-Type': 'application/json' } },
+          );
+        }
+        return originalFetch(input as RequestInfo, init);
+      };
+
+      try {
+        // @ts-expect-error Browser-side import path resolved by Vite during Playwright run.
+        const mod = await import('/src/stores/points.store.ts');
+        await mod.earnPoints(10, {
+          eventType: 'daily_checkin',
+          referenceId: 'integrity-reject',
+          note: 'integrity test',
+        });
+      } finally {
+        window.fetch = originalFetch;
+        (window as any).Telegram = { ...telegramContainer, WebApp: originalTelegram };
+      }
+
+      return Number(localStorage.getItem('menhausen_points_balance') || 0);
+    });
+
+    expect(result).toBe(9999);
+  });
+
+  test('persists offline reward request for replay on network failure', async ({ page }) => {
+    await page.goto('/');
+    await waitForPageLoad(page);
+
+    const queuedCount = await page.evaluate(async () => {
+      localStorage.removeItem('menhausen_reward_offline_queue');
+
+      const originalFetch = window.fetch.bind(window);
+      window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input).includes('/functions/v1/grant-reward')) {
+          throw new Error('network down');
+        }
+        return originalFetch(input as RequestInfo, init);
+      };
+
+      try {
+        // @ts-expect-error Browser-side import path resolved by Vite during Playwright run.
+        const mod = await import('/src/stores/points.store.ts');
+        await mod.earnPoints(10, {
+          eventType: 'daily_checkin',
+          referenceId: 'integrity-offline',
+          note: 'integrity test',
+        });
+      } finally {
+        window.fetch = originalFetch;
+      }
+
+      const queue = JSON.parse(localStorage.getItem('menhausen_reward_offline_queue') || '[]');
+      return Array.isArray(queue) ? queue.length : 0;
+    });
+
+    expect(queuedCount).toBe(1);
+  });
 });

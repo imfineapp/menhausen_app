@@ -2,7 +2,12 @@ import { atom, computed, onMount } from 'nanostores'
 
 import type { PointsTransaction } from '@/types/points'
 import { PointsManager } from '@/utils/PointsManager'
-import { grantReward, RewardEventType } from '@/utils/supabaseSync/rewardService'
+import {
+  grantReward,
+  queueOfflineReward,
+  replayOfflineRewardQueue,
+  RewardEventType,
+} from '@/utils/supabaseSync/rewardService'
 
 function calculateNextLevelTarget(totalEarned: number, step = 1000): number {
   if (step <= 0) step = 1000
@@ -64,8 +69,32 @@ export async function earnPoints(
         refreshPoints()
         return
       }
+
+      // Server reached but reward was not granted: do not perform local fallback writes.
+      if (granted.success) {
+        return
+      }
+
+      queueOfflineReward({
+        eventType,
+        referenceId,
+        payload: {
+          points: amount,
+          note: meta?.note,
+          ...(meta?.payload || {}),
+        },
+      })
     } catch (error) {
       console.warn('Server reward grant failed, using local fallback', error)
+      queueOfflineReward({
+        eventType,
+        referenceId,
+        payload: {
+          points: amount,
+          note: meta?.note,
+          ...(meta?.payload || {}),
+        },
+      })
     }
   }
 
@@ -81,5 +110,18 @@ export function spendPoints(amount: number, meta?: { note?: string; correlationI
 
 onMount($pointsBalance, () => {
   refreshPoints()
+  replayOfflineRewardQueue().catch((error) => {
+    console.warn('Failed to replay offline reward queue on mount', error)
+  })
+
+  const onOnline = () => {
+    replayOfflineRewardQueue().catch((error) => {
+      console.warn('Failed to replay offline reward queue on reconnect', error)
+    })
+  }
+  window.addEventListener('online', onOnline)
+  return () => {
+    window.removeEventListener('online', onOnline)
+  }
 })
 

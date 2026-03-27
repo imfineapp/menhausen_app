@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/utils/supabaseSync/authService', () => ({
   getValidJWTToken: vi.fn(),
@@ -6,14 +6,21 @@ vi.mock('@/utils/supabaseSync/authService', () => ({
 
 import { getValidJWTToken } from '@/utils/supabaseSync/authService';
 import { grantReward, RewardEventType } from '@/utils/supabaseSync/rewardService';
+import { withMockedFetch } from '../helpers/fetchMock';
 
 describe('rewardService.grantReward', () => {
+  let fetchMockControl: ReturnType<typeof withMockedFetch>;
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.unstubAllEnvs();
     vi.stubEnv('VITE_SUPABASE_URL', 'https://example.supabase.co');
     vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon');
-    (globalThis as any).fetch = vi.fn();
+    fetchMockControl = withMockedFetch();
+  });
+
+  afterEach(() => {
+    fetchMockControl.restore();
   });
 
   it('sends request with JWT and returns granted payload', async () => {
@@ -58,5 +65,56 @@ describe('rewardService.grantReward', () => {
 
     expect(result.success).toBe(false);
     expect(result.granted).toBe(false);
+  });
+
+  it('returns server rejection reason for inflated payload attempts', async () => {
+    vi.mocked(getValidJWTToken).mockResolvedValue('jwt_token');
+    (globalThis.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        granted: false,
+        reason: 'points_exceed_limit',
+      }),
+    });
+
+    const result = await grantReward({
+      eventType: RewardEventType.CARD_COMPLETE_LEVEL_1,
+      referenceId: 'attempt-1',
+      payload: { points: 999999 },
+    });
+
+    expect(result).toEqual({
+      success: true,
+      granted: false,
+      reason: 'points_exceed_limit',
+      points: undefined,
+      balance: undefined,
+      transactionId: undefined,
+    });
+  });
+
+  it('returns capped points from server for payload-driven rules', async () => {
+    vi.mocked(getValidJWTToken).mockResolvedValue('jwt_token');
+    (globalThis.fetch as any).mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        granted: true,
+        reason: 'granted',
+        points: 500,
+        balance: 1500,
+        transactionId: 'tx_capped',
+      }),
+    });
+
+    const result = await grantReward({
+      eventType: RewardEventType.ACHIEVEMENT_XP,
+      referenceId: 'achievement-1',
+      payload: { points: 5000 },
+    });
+
+    expect(result.points).toBe(500);
+    expect(result.granted).toBe(true);
   });
 });

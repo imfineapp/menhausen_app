@@ -1,23 +1,60 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+const mocks = vi.hoisted(() => ({
+  grantReward: vi.fn(),
+  queueOfflineReward: vi.fn(),
+  replayOfflineRewardQueue: vi.fn(),
+  earn: vi.fn(),
+  appendServerEarn: vi.fn(),
+  getBalance: vi.fn(() => 0),
+  getTransactions: vi.fn(() => []),
+}));
+
+vi.mock('@/utils/supabaseSync/rewardService', () => ({
+  RewardEventType: {
+    DAILY_CHECKIN: 'daily_checkin',
+  },
+  grantReward: mocks.grantReward,
+  queueOfflineReward: mocks.queueOfflineReward,
+  replayOfflineRewardQueue: mocks.replayOfflineRewardQueue,
+}));
+
+vi.mock('@/utils/PointsManager', () => ({
+  PointsManager: {
+    earn: mocks.earn,
+    appendServerEarn: mocks.appendServerEarn,
+    getBalance: mocks.getBalance,
+    getTransactions: mocks.getTransactions,
+  },
+}));
+
+import { earnPoints } from '@/src/stores/points.store';
+
 describe('reward offline queue behavior', () => {
   beforeEach(() => {
-    vi.resetModules();
+    vi.clearAllMocks();
     localStorage.clear();
   });
 
-  it('stores failed sync payload in offline queue', async () => {
-    const { SupabaseSyncService } = await import('@/utils/supabaseSync/supabaseSyncService');
-    const svc = new SupabaseSyncService({ debounceMs: 1 });
-    const internal = svc as any;
-    internal.supabase = {};
-    internal.syncStatus.isOnline = true;
-    vi.spyOn(internal, 'syncToSupabase').mockRejectedValue(new Error('offline'));
+  it('queues reward request when grant call fails and keeps optimistic local write', async () => {
+    mocks.grantReward.mockResolvedValue({
+      success: false,
+      granted: false,
+      reason: 'network_error',
+    });
 
-    localStorage.setItem('menhausen-language', 'en');
-    svc.queueSync('preferences');
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await earnPoints(10, {
+      eventType: 'daily_checkin',
+      referenceId: '2026-03-27',
+      note: 'Daily check-in reward',
+    });
 
-    expect(internal.offlineQueue.length).toBeGreaterThan(0);
+    expect(mocks.queueOfflineReward).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'daily_checkin',
+        referenceId: '2026-03-27',
+      }),
+    );
+    expect(mocks.earn).toHaveBeenCalledTimes(1);
   });
 });

@@ -18,7 +18,6 @@ describe('DailyCheckinManager points awarding', () => {
 
     const ok2 = DailyCheckinManager.saveCheckin({ mood: 'ok', value: 4, color: '#aaa' });
     expect(ok2).toBe(true);
-    // called again, but with the same reference id and correlation id
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy.mock.calls[0][1]).toEqual(expect.objectContaining({ referenceId: expect.any(String) }));
     expect(spy.mock.calls[1][1]).toEqual(expect.objectContaining({ referenceId: spy.mock.calls[0][1]?.referenceId }));

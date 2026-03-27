@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
   grantReward: vi.fn(),
+  queueOfflineReward: vi.fn(),
+  replayOfflineRewardQueue: vi.fn(),
   earn: vi.fn(),
   appendServerEarn: vi.fn(),
   getBalance: vi.fn(() => 0),
@@ -13,6 +15,8 @@ vi.mock('@/utils/supabaseSync/rewardService', () => ({
     DAILY_CHECKIN: 'daily_checkin',
   },
   grantReward: mocks.grantReward,
+  queueOfflineReward: mocks.queueOfflineReward,
+  replayOfflineRewardQueue: mocks.replayOfflineRewardQueue,
 }));
 
 vi.mock('@/utils/PointsManager', () => ({

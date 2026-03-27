@@ -10,7 +10,7 @@ import { validateTelegramAuthWithMultipleTokens } from '../_shared/telegram-auth
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-telegram-init-data',
   'Access-Control-Max-Age': '86400',
   'Access-Control-Allow-Credentials': 'false',
@@ -29,6 +29,9 @@ interface GrantRewardResponse {
   points?: number;
   balance?: number;
   transactionId?: string;
+  expectedBalance?: number;
+  previousBalance?: number;
+  reconciled?: boolean;
   error?: string;
   code?: string;
 }
@@ -58,11 +61,11 @@ serve(async (req) => {
       return new Response('', { status: 200, headers: corsHeaders });
     }
 
-    if (req.method !== 'POST') {
+    if (req.method !== 'POST' && req.method !== 'GET') {
       return new Response(
         JSON.stringify({
           success: false,
-          error: 'Method not allowed. Use POST',
+          error: 'Method not allowed. Use GET or POST',
           code: 'INVALID_METHOD',
         } as GrantRewardResponse),
         { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
@@ -127,6 +130,49 @@ serve(async (req) => {
         throw new Error('SUPABASE_SERVICE_ROLE_KEY not configured');
       }
       supabase = createClient(supabaseUrl, supabaseServiceKey);
+    }
+
+    const action = new URL(req.url).searchParams.get('action');
+    if (req.method === 'GET' && action === 'reconcile') {
+      const { data, error } = await supabase.rpc('reconcile_user_balance', {
+        p_telegram_user_id: telegramUserId,
+      });
+
+      if (error) {
+        console.error('[grant-reward] Reconcile RPC error:', error);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: error.message || 'reconcile_user_balance RPC failed',
+            code: 'RPC_ERROR',
+          } as GrantRewardResponse),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        );
+      }
+
+      const reconcileResult = typeof data === 'string' ? JSON.parse(data) : data;
+      return new Response(
+        JSON.stringify({
+          success: !!reconcileResult?.success,
+          reason: reconcileResult?.reason,
+          balance: reconcileResult?.balance,
+          expectedBalance: reconcileResult?.expected_balance,
+          previousBalance: reconcileResult?.previous_balance,
+          reconciled: !!reconcileResult?.reconciled,
+        } as GrantRewardResponse),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (req.method === 'GET') {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Unsupported GET action',
+          code: 'INVALID_REQUEST',
+        } as GrantRewardResponse),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
     }
 
     const body = (await req.json()) as GrantRewardRequest;
