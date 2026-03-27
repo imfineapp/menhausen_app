@@ -4,7 +4,7 @@
  * check-ins, card rewards, and achievement grants — faster than achievement-XP-only totals.
  * Tune this constant to keep a similar progression feel to the old `(order - 3) * 1000` on achievement XP.
  */
-export const ARTICLE_UNLOCK_POINTS_STEP = 3000
+export const ARTICLE_UNLOCK_POINTS_STEP = 1000
 
 export function getRequiredPointsForArticle(orderOrIndex: number): number {
   // Первые 3 статьи (1..3) открыты бесплатно; с 4-й — шаг по ARTICLE_UNLOCK_POINTS_STEP
