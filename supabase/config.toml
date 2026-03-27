@@ -437,3 +437,9 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/handle-payment-webhook/deno.json"
 entrypoint = "./functions/handle-payment-webhook/index.ts"
+
+[functions.grant-reward]
+enabled = true
+verify_jwt = false
+import_map = "./functions/grant-reward/deno.json"
+entrypoint = "./functions/grant-reward/index.ts"

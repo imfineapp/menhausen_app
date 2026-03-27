@@ -170,49 +170,8 @@ async function syncAchievements(supabase: any, telegramUserId: number, data: any
     });
 }
 
-/**
- * Sync points
- */
-async function syncPoints(supabase: any, telegramUserId: number, data: any): Promise<void> {
-  if (!data || typeof data !== 'object') return;
-
-  // Sync balance
-  await supabase
-    .from('user_points')
-    .upsert({
-      telegram_user_id: telegramUserId,
-      balance: data.balance || 0,
-    }, {
-      onConflict: 'telegram_user_id',
-    });
-
-  // Sync transactions
-  if (data.transactions && Array.isArray(data.transactions)) {
-    // Delete existing transactions for this user
-    await supabase
-      .from('points_transactions')
-      .delete()
-      .eq('telegram_user_id', telegramUserId);
-
-    // Insert all transactions
-    const transactions = data.transactions.map((tx: any) => ({
-      telegram_user_id: telegramUserId,
-      transaction_id: tx.id,
-      type: tx.type,
-      amount: tx.amount,
-      balance_after: tx.balanceAfter,
-      note: tx.note || null,
-      correlation_id: tx.correlationId || null,
-      timestamp: tx.timestamp,
-    }));
-
-    if (transactions.length > 0) {
-      await supabase
-        .from('points_transactions')
-        .insert(transactions);
-    }
-  }
-}
+// Legacy points sync intentionally removed.
+// Reward points are server-authoritative via POST /functions/v1/grant-reward -> grant_reward().
 
 /**
  * Sync preferences
@@ -618,10 +577,18 @@ serve(async (req) => {
         await syncAchievements(supabase, telegramUserId, data.achievements);
         await updateSyncMetadata(supabase, telegramUserId, 'achievements');
         syncedTypes.push('achievements');
-      } else if (dataType === 'points' && data.points) {
-        await syncPoints(supabase, telegramUserId, data.points);
-        await updateSyncMetadata(supabase, telegramUserId, 'points');
-        syncedTypes.push('points');
+      } else if (dataType === 'points') {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'points sync is deprecated; use grant-reward endpoint',
+            code: 'POINTS_SYNC_DEPRECATED',
+          } as SyncUserDataResponse),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
       } else if (dataType === 'preferences' && data.preferences) {
         await syncPreferences(supabase, telegramUserId, data.preferences);
         await updateSyncMetadata(supabase, telegramUserId, 'preferences');
@@ -735,11 +702,7 @@ serve(async (req) => {
       syncedTypes.push('achievements');
     }
 
-    if (data.points) {
-      await syncPoints(supabase, telegramUserId, data.points);
-      await updateSyncMetadata(supabase, telegramUserId, 'points');
-      syncedTypes.push('points');
-    }
+    // points are intentionally ignored in full sync; rewards are server-authoritative
 
     if (data.preferences) {
       await syncPreferences(supabase, telegramUserId, data.preferences);

@@ -59,7 +59,6 @@ export class SupabaseSyncService {
     'dailyCheckins',
     'userStats',
     'achievements',
-    'points',
     'preferences',
     'flowProgress',
     'psychologicalTest',

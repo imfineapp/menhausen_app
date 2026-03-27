@@ -9,7 +9,6 @@ import { $achievementsState } from '@/src/stores/achievements.store'
 import { $flowProgress } from '@/src/stores/app-flow.store'
 import { $todayCheckin } from '@/src/stores/checkin.store'
 import { $language } from '@/src/stores/language.store'
-import { $pointsBalance, $pointsTransactions } from '@/src/stores/points.store'
 import { $surveyResults } from '@/src/stores/survey.store'
 import { $themeProgressVersion } from '@/src/stores/theme-progress.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
@@ -38,8 +37,6 @@ export function initStoreSyncSubscriptions(): void {
   onSet($surveyResults, () => queueIfNeeded('surveyResults'))
   onSet($flowProgress, () => queueIfNeeded('flowProgress'))
   onSet($todayCheckin, () => queueIfNeeded('dailyCheckins'))
-  onSet($pointsBalance, () => queueIfNeeded('points'))
-  onSet($pointsTransactions, () => queueIfNeeded('points'))
   onSet($achievementsState, () => queueIfNeeded('achievements'))
   onSet($language, () => queueIfNeeded('preferences'))
   onSet($themeProgressVersion, () => queueIfNeeded('cardProgress'))

@@ -1,0 +1,68 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mocks = vi.hoisted(() => ({
+  grantReward: vi.fn(),
+  earn: vi.fn(),
+  appendServerEarn: vi.fn(),
+  getBalance: vi.fn(() => 0),
+  getTransactions: vi.fn(() => []),
+}));
+
+vi.mock('@/utils/supabaseSync/rewardService', () => ({
+  RewardEventType: {
+    DAILY_CHECKIN: 'daily_checkin',
+  },
+  grantReward: mocks.grantReward,
+}));
+
+vi.mock('@/utils/PointsManager', () => ({
+  PointsManager: {
+    earn: mocks.earn,
+    appendServerEarn: mocks.appendServerEarn,
+    getBalance: mocks.getBalance,
+    getTransactions: mocks.getTransactions,
+  },
+}));
+
+import { earnPoints } from '@/src/stores/points.store';
+
+describe('points.store dual-write', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('uses server grant when event metadata is provided', async () => {
+    mocks.grantReward.mockResolvedValue({
+      success: true,
+      granted: true,
+      points: 20,
+      balance: 200,
+      transactionId: 'srv-tx-1',
+    });
+
+    await earnPoints(20, {
+      eventType: 'daily_checkin',
+      referenceId: '2026-03-27',
+      note: 'Daily check-in reward',
+    });
+
+    expect(mocks.grantReward).toHaveBeenCalledTimes(1);
+    expect(mocks.appendServerEarn).toHaveBeenCalledTimes(1);
+    expect(mocks.earn).not.toHaveBeenCalled();
+  });
+
+  it('falls back to local writer when server call fails', async () => {
+    mocks.grantReward.mockRejectedValue(new Error('network'));
+
+    await earnPoints(10, {
+      eventType: 'daily_checkin',
+      referenceId: '2026-03-28',
+      note: 'Daily check-in reward',
+    });
+
+    expect(mocks.earn).toHaveBeenCalledWith(
+      10,
+      expect.objectContaining({ referenceId: '2026-03-28' }),
+    );
+  });
+});

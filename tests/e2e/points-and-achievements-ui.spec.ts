@@ -11,7 +11,7 @@ test.describe('Points & Achievements UI', () => {
     await waitForHomeScreen(page);
   });
 
-  test('should update profile ProgressBlock when points balance changes', async ({ page }) => {
+  test('should update profile ProgressBlock when reward transaction is applied', async ({ page }) => {
     // Ждем появления элемента с увеличенным таймаутом
     // Проверяем home screen через data-testid, так как он более надежен
     await expect(page.locator('[data-testid="home-ready"]')).toBeVisible({ timeout: 5000 });
@@ -21,7 +21,7 @@ test.describe('Points & Achievements UI', () => {
 
     await page.evaluate(() => {
       localStorage.setItem('menhausen_points_transactions', JSON.stringify([]));
-      localStorage.setItem('menhausen_points_balance', String(1234));
+      localStorage.setItem('menhausen_points_balance', '1234');
     });
 
     // Ждем, пока страница профиля загрузится полностью

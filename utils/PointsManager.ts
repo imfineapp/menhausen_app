@@ -150,5 +150,43 @@ export class PointsManager {
     writeBalance(balance);
     return balance;
   }
+
+  static overwriteFromServer(balance: number, txs?: PointsTransaction[]): void {
+    const safeBalance = Number.isInteger(balance) && balance >= 0 ? balance : 0;
+    writeBalance(safeBalance);
+    if (Array.isArray(txs)) {
+      writeTransactions(txs);
+    }
+  }
+
+  static appendServerEarn(tx: {
+    id: string;
+    amount: number;
+    timestamp: string;
+    note?: string;
+    correlationId?: string;
+    balanceAfter: number;
+  }): PointsChangeResult {
+    assertPositiveInt(tx.amount);
+    const txs = readTransactions();
+    const existing = txs.find((t) => t.id === tx.id || (tx.correlationId && t.correlationId === tx.correlationId));
+    if (existing) {
+      writeBalance(existing.balanceAfter);
+      return { balance: existing.balanceAfter, transaction: existing };
+    }
+
+    const nextTx: PointsTransaction = {
+      id: tx.id,
+      type: 'earn',
+      amount: tx.amount,
+      timestamp: tx.timestamp,
+      note: tx.note,
+      correlationId: tx.correlationId,
+      balanceAfter: tx.balanceAfter,
+    };
+    writeTransactions([...txs, nextTx]);
+    writeBalance(tx.balanceAfter);
+    return { balance: tx.balanceAfter, transaction: nextTx };
+  }
 }
 
