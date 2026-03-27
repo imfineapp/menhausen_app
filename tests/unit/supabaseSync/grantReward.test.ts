@@ -10,12 +10,10 @@ import { grantReward, RewardEventType } from '@/utils/supabaseSync/rewardService
 describe('rewardService.grantReward', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_SUPABASE_URL', 'https://example.supabase.co');
+    vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'anon');
     (globalThis as any).fetch = vi.fn();
-    (import.meta as any).env = {
-      ...(import.meta as any).env,
-      VITE_SUPABASE_URL: 'https://example.supabase.co',
-      VITE_SUPABASE_ANON_KEY: 'anon',
-    };
   });
 
   it('sends request with JWT and returns granted payload', async () => {
