@@ -36,7 +36,7 @@ describe('reward offline queue behavior', () => {
     localStorage.clear();
   });
 
-  it('queues reward request when grant call fails and keeps optimistic local write', async () => {
+  it('queues reward request when grant fails without writing locally', async () => {
     mocks.grantReward.mockResolvedValue({
       success: false,
       granted: false,
@@ -55,6 +55,6 @@ describe('reward offline queue behavior', () => {
         referenceId: '2026-03-27',
       }),
     );
-    expect(mocks.earn).toHaveBeenCalledTimes(1);
+    expect(mocks.earn).not.toHaveBeenCalled();
   });
 });

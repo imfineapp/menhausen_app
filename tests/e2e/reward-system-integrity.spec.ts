@@ -79,8 +79,10 @@ test.describe('Reward system integrity', () => {
     await page.goto('/');
     await waitForPageLoad(page);
 
-    const queuedCount = await page.evaluate(async () => {
+    const result = await page.evaluate(async () => {
       localStorage.removeItem('menhausen_reward_offline_queue');
+      localStorage.setItem('menhausen_points_balance', '100');
+      const balanceBefore = Number(localStorage.getItem('menhausen_points_balance') || 0);
 
       const originalFetch = window.fetch.bind(window);
       window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -103,9 +105,15 @@ test.describe('Reward system integrity', () => {
       }
 
       const queue = JSON.parse(localStorage.getItem('menhausen_reward_offline_queue') || '[]');
-      return Array.isArray(queue) ? queue.length : 0;
+      const balanceAfter = Number(localStorage.getItem('menhausen_points_balance') || 0);
+      return {
+        queuedCount: Array.isArray(queue) ? queue.length : 0,
+        balanceBefore,
+        balanceAfter,
+      };
     });
 
-    expect(queuedCount).toBe(1);
+    expect(result.queuedCount).toBe(1);
+    expect(result.balanceAfter).toBe(result.balanceBefore);
   });
 });

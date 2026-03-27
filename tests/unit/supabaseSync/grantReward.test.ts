@@ -94,7 +94,7 @@ describe('rewardService.grantReward', () => {
     });
   });
 
-  it('returns capped points from server for payload-driven rules', async () => {
+  it('returns server-fixed points for achievement_xp (ignores inflated client payload)', async () => {
     vi.mocked(getValidJWTToken).mockResolvedValue('jwt_token');
     (globalThis.fetch as any).mockResolvedValue({
       ok: true,
@@ -102,9 +102,9 @@ describe('rewardService.grantReward', () => {
         success: true,
         granted: true,
         reason: 'granted',
-        points: 500,
+        points: 50,
         balance: 1500,
-        transactionId: 'tx_capped',
+        transactionId: 'tx_achievement',
       }),
     });
 
@@ -114,7 +114,7 @@ describe('rewardService.grantReward', () => {
       payload: { points: 5000 },
     });
 
-    expect(result.points).toBe(500);
+    expect(result.points).toBe(50);
     expect(result.granted).toBe(true);
   });
 });

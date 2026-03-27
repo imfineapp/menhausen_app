@@ -55,7 +55,7 @@ describe('points.store dual-write', () => {
     expect(mocks.earn).not.toHaveBeenCalled();
   });
 
-  it('falls back to local writer when server call fails', async () => {
+  it('queues for offline and does not write locally when grant throws (network)', async () => {
     mocks.grantReward.mockRejectedValue(new Error('network'));
 
     await earnPoints(10, {
@@ -64,9 +64,27 @@ describe('points.store dual-write', () => {
       note: 'Daily check-in reward',
     });
 
-    expect(mocks.earn).toHaveBeenCalledWith(
-      10,
-      expect.objectContaining({ referenceId: '2026-03-28' }),
+    expect(mocks.queueOfflineReward).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: 'daily_checkin',
+        referenceId: '2026-03-28',
+      }),
     );
+    expect(mocks.earn).not.toHaveBeenCalled();
+    expect(mocks.appendServerEarn).not.toHaveBeenCalled();
+  });
+
+  it('queues for offline and does not write locally when server returns failure', async () => {
+    mocks.grantReward.mockResolvedValue({ success: false, granted: false, reason: 'http_500' });
+
+    await earnPoints(10, {
+      eventType: 'daily_checkin',
+      referenceId: '2026-03-29',
+      note: 'Daily check-in reward',
+    });
+
+    expect(mocks.queueOfflineReward).toHaveBeenCalledTimes(1);
+    expect(mocks.earn).not.toHaveBeenCalled();
+    expect(mocks.appendServerEarn).not.toHaveBeenCalled();
   });
 });

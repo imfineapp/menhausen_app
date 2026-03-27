@@ -84,8 +84,9 @@ export async function earnPoints(
           ...(meta?.payload || {}),
         },
       })
+      return
     } catch (error) {
-      console.warn('Server reward grant failed, using local fallback', error)
+      console.warn('Server reward grant failed, queued for retry', error)
       queueOfflineReward({
         eventType,
         referenceId,
@@ -95,6 +96,7 @@ export async function earnPoints(
           ...(meta?.payload || {}),
         },
       })
+      return
     }
   }
 
