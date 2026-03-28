@@ -4,8 +4,11 @@ import type { AppScreen } from '@/types/userState'
 
 import { checkAndShowAchievements } from '@/src/stores/actions/achievement-display.actions'
 import { capture, AnalyticsEvent } from '@/src/effects/analytics.effects'
+import { $experimentVariant } from '@/src/stores/experiment.store'
 import { getPointsForLevel } from '@/src/domain/points.domain'
 import { getThemeIdFromCardId, getAllCardIdsFromTheme } from '@/src/domain/theme.domain'
+import { getTestTopicForTheme, getThemeMatchPercentage } from '@/utils/themeTestMapping'
+import { isTopicTestCompletedForTheme } from '@/utils/experiment/topicTestStorage'
 import { navigateTo, setNavigationState } from '@/src/stores/navigation.store'
 import { $language } from '@/src/stores/language.store'
 import {
@@ -26,6 +29,13 @@ import {
   markCardAsOpened,
   loadUserStats,
 } from '@/services/userStatsService'
+
+function stressThemeHasAnyCompletedCard(): boolean {
+  const theme = getThemeFromStore('stress')
+  if (!theme) return false
+  const ids = getAllCardIdsFromTheme(theme)
+  return ids.some((id) => (ThemeCardManager.getCompletedAttempts(id)?.length ?? 0) > 0)
+}
 
 export async function getCardData(cardId: string, language: string) {
   const ui = getCardUiStrings()
@@ -112,6 +122,21 @@ export function handleGoToTheme(themeId: string): void {
     return
   }
   patchScreenParams({ currentTheme: themeId })
+  const variant = $experimentVariant.get()
+  const psychTopic = getTestTopicForTheme(themeId)
+  const matchPct = getThemeMatchPercentage(themeId)
+  void capture(AnalyticsEvent.TOPIC_OPENED, {
+    theme_id: themeId,
+    is_premium: !!theme.isPremium,
+    has_match_percentage: matchPct !== null,
+    variant: variant ?? 'unknown',
+  })
+
+  if (variant === 'C' && psychTopic && !isTopicTestCompletedForTheme(themeId)) {
+    navigateTo('topic-test-intro')
+    return
+  }
+
   const allCardIds = getAllCardIdsFromTheme(theme)
   if (allCardIds.length === 0) {
     navigateTo('theme-home')
@@ -223,6 +248,14 @@ export function handleCompleteRating(
       ? `Card rated: ${rating} stars for card: ${currentCard.id}${textMessage ? ` with message: ${textMessage}` : ' without message'}`
       : `Card completion skipped (no rating) for card: ${currentCard.id}`
   )
+
+  const themeIdForFirst = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  if (themeIdForFirst === 'stress' && !stressThemeHasAnyCompletedCard()) {
+    void capture(AnalyticsEvent.FIRST_CARD_COMPLETED, {
+      card_id: currentCard.id,
+      theme_id: themeIdForFirst,
+    })
+  }
 
   capture(AnalyticsEvent.CARD_RATED, {
     cardId: currentCard.id,
@@ -338,12 +371,26 @@ export function handleCompleteRating(
 export function handleStartCardExercise(): void {
   const { currentCard } = $screenParams.get()
   console.log(`Starting exercise for card: ${currentCard.id}`)
+  const themeId = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  if (themeId === 'stress' && !stressThemeHasAnyCompletedCard()) {
+    void capture(AnalyticsEvent.FIRST_CARD_STARTED, {
+      card_id: currentCard.id,
+      theme_id: themeId,
+    })
+  }
   navigateTo('question-01')
 }
 
 export function handleOpenCardExercise(): void {
   const { currentCard } = $screenParams.get()
   console.log(`Opening exercise for card: ${currentCard.id}`)
+  const themeId = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  if (themeId === 'stress' && !stressThemeHasAnyCompletedCard()) {
+    void capture(AnalyticsEvent.FIRST_CARD_STARTED, {
+      card_id: currentCard.id,
+      theme_id: themeId,
+    })
+  }
   navigateTo('question-01')
 }
 

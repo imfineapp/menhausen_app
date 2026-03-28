@@ -266,6 +266,43 @@ async function syncCardProgress(supabase: any, telegramUserId: number, data: any
 /**
  * Sync referral data
  */
+async function syncExperimentAssignment(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object' || !data.variant) return;
+  const v = String(data.variant);
+  if (v !== 'A' && v !== 'B' && v !== 'C') return;
+  await supabase.from('experiment_assignments').upsert(
+    {
+      telegram_user_id: telegramUserId,
+      experiment_key: data.experimentKey || 'onboarding_flow_v1',
+      variant: v,
+      assigned_at: data.assignedAt || new Date().toISOString(),
+    },
+    {
+      onConflict: 'telegram_user_id,experiment_key',
+    },
+  );
+}
+
+async function syncTopicTestResults(supabase: any, telegramUserId: number, data: any): Promise<void> {
+  if (!data || typeof data !== 'object') return;
+  const rows = Object.keys(data).map((topicId) => ({
+    telegram_user_id: telegramUserId,
+    topic_id: topicId,
+    answers: data[topicId]?.answers ?? [],
+    score: data[topicId]?.score ?? 0,
+    percentage: data[topicId]?.percentage ?? 0,
+    completed_at: data[topicId]?.completedAt || new Date().toISOString(),
+  }));
+  if (rows.length === 0) return;
+  const { error } = await supabase.from('topic_test_results').upsert(rows, {
+    onConflict: 'telegram_user_id,topic_id',
+  });
+  if (error) {
+    console.error('[syncTopicTestResults]', error);
+    throw error;
+  }
+}
+
 async function syncReferralData(supabase: any, telegramUserId: number, data: any): Promise<void> {
   if (!data || typeof data !== 'object') return;
 
@@ -609,6 +646,14 @@ serve(async (req) => {
         await syncReferralData(supabase, telegramUserId, data.referralData);
         await updateSyncMetadata(supabase, telegramUserId, 'referralData');
         syncedTypes.push('referralData');
+      } else if (dataType === 'experimentAssignment' && data.experimentAssignment) {
+        await syncExperimentAssignment(supabase, telegramUserId, data.experimentAssignment);
+        await updateSyncMetadata(supabase, telegramUserId, 'experimentAssignment');
+        syncedTypes.push('experimentAssignment');
+      } else if (dataType === 'topicTestResults' && data.topicTestResults) {
+        await syncTopicTestResults(supabase, telegramUserId, data.topicTestResults);
+        await updateSyncMetadata(supabase, telegramUserId, 'topicTestResults');
+        syncedTypes.push('topicTestResults');
       } else {
         return new Response(
           JSON.stringify({
@@ -732,6 +777,18 @@ serve(async (req) => {
       await syncReferralData(supabase, telegramUserId, data.referralData);
       await updateSyncMetadata(supabase, telegramUserId, 'referralData');
       syncedTypes.push('referralData');
+    }
+
+    if (data.experimentAssignment) {
+      await syncExperimentAssignment(supabase, telegramUserId, data.experimentAssignment);
+      await updateSyncMetadata(supabase, telegramUserId, 'experimentAssignment');
+      syncedTypes.push('experimentAssignment');
+    }
+
+    if (data.topicTestResults) {
+      await syncTopicTestResults(supabase, telegramUserId, data.topicTestResults);
+      await updateSyncMetadata(supabase, telegramUserId, 'topicTestResults');
+      syncedTypes.push('topicTestResults');
     }
 
     // Note: language and hasShownFirstAchievement are stored in preferences/flowProgress

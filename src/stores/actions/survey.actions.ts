@@ -4,7 +4,8 @@ import { capture, AnalyticsEvent } from '@/src/effects/analytics.effects'
 import { $language } from '@/src/stores/language.store'
 import { navigateTo } from '@/src/stores/navigation.store'
 import { $surveyResults, setSurveyResultsForScreen, completeSurveyResults } from '@/src/stores/survey.store'
-import { completeSurvey } from '@/src/stores/app-flow.store'
+import { completeSurvey, completePsychTest } from '@/src/stores/app-flow.store'
+import { $experimentVariant } from '@/src/stores/experiment.store'
 import { getReferrerId, markReferralAsRegistered, addReferralToList } from '@/utils/referralUtils'
 import { getTelegramUserId } from '@/utils/telegramUserUtils'
 import { invalidateUserStateCache } from '@/src/domain/user.domain'
@@ -73,7 +74,11 @@ export function handleSurvey06Next(answers: string[]): void {
     })
   }
 
-  const nextScreen = 'psychological-test-preambula' as const
+  const variant = $experimentVariant.get()
+  if (variant === 'B' || variant === 'C') {
+    completePsychTest()
+  }
+  const nextScreen = variant === 'B' || variant === 'C' ? ('checkin' as const) : ('psychological-test-preambula' as const)
 
   if (saveSuccess) {
     console.log('Survey completed successfully')

@@ -31,6 +31,10 @@ export function transformToAPIFormat(type: SyncDataType, data: any): any {
       return transformCardProgress(data);
     case 'referralData':
       return transformReferralData(data);
+    case 'experimentAssignment':
+      return data;
+    case 'topicTestResults':
+      return data;
     case 'language':
       return transformLanguage(data);
     case 'hasShownFirstAchievement':
@@ -65,6 +69,10 @@ export function transformFromAPIFormat(type: SyncDataType, data: any): any {
       return transformCardProgressFromAPI(data);
     case 'referralData':
       return transformReferralDataFromAPI(data);
+    case 'experimentAssignment':
+      return data;
+    case 'topicTestResults':
+      return transformTopicTestResultsFromAPI(data);
     case 'language':
       return data; // String value
     case 'hasShownFirstAchievement':
@@ -343,6 +351,23 @@ function transformHasShownFirstAchievement(data: any): boolean {
     return data === 'true';
   }
   return false;
+}
+
+/** API topicTestResults json_object_agg → local map for saveTopicTestResultsMap */
+function transformTopicTestResultsFromAPI(data: any): Record<string, any> {
+  if (!data || typeof data !== 'object') return {}
+  const out: Record<string, any> = {}
+  Object.keys(data).forEach((themeId) => {
+    const v = data[themeId]
+    if (!v || typeof v !== 'object') return
+    out[themeId] = {
+      percentage: v.percentage ?? 0,
+      score: v.score ?? 0,
+      answers: Array.isArray(v.answers) ? v.answers : [],
+      completedAt: v.completedAt || new Date().toISOString(),
+    }
+  })
+  return out
 }
 
 /**

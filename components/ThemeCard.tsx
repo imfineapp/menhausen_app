@@ -2,10 +2,12 @@
 // Reusable theme card with progress and premium status
 
 import React, { useMemo } from 'react';
+import { useStore } from '@nanostores/react';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { UserAccountStatus } from './UserProfileComponents';
 import { useContent } from './ContentContext';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
+import { $topicTestVersion } from '@/src/stores/topic-test.store';
 import { cn } from './ui/utils';
 
 /**
@@ -77,6 +79,7 @@ export function ThemeCard({
   variant: _variant = 'default'
 }: ThemeCardProps) {
   const { content } = useContent();
+  const topicTestVersion = useStore($topicTestVersion);
   
   // Нормализуем прогресс в диапазон 0-100
   const normalizedProgress = Math.max(0, Math.min(100, progress ?? 0));
@@ -89,9 +92,11 @@ export function ThemeCard({
   
   // Получаем процент соответствия из результатов теста
   const matchPercentage = useMemo(() => {
+    // topicTestVersion: bump when embedded topic test completes — invalidates match % read from storage
+    void topicTestVersion
     if (!themeId) return null;
     return getThemeMatchPercentage(themeId);
-  }, [themeId]);
+  }, [themeId, topicTestVersion]);
   
   // Формируем текст с процентом, если он доступен
   const matchText = useMemo(() => {

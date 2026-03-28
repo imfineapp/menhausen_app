@@ -21,6 +21,9 @@ import { getValidJWTToken } from './authService';
 import { AnalyticsEvent, capture, captureException } from '../analytics/posthog';
 import { syncLog } from './syncLogger';
 import { loadSyncPayloadForType } from './buildSyncPayload';
+import { applyRemoteVariantIfStronger } from '../experiment/experimentAssignment';
+import { saveTopicTestResultsMap, type TopicTestResultStored } from '../experiment/topicTestStorage';
+import { bumpTopicTestVersion } from '@/src/stores/topic-test.store';
 
 /**
  * Supabase Sync Service Class
@@ -64,6 +67,8 @@ export class SupabaseSyncService {
     'psychologicalTest',
     'cardProgress',
     'referralData',
+    'experimentAssignment',
+    'topicTestResults',
   ];
 
   private parsePreferencesFromStorage(raw: string): Record<string, any> | null {
@@ -816,6 +821,24 @@ export class SupabaseSyncService {
           console.warn('[SyncService] mergeAndSave - Error restoring referral list to localStorage:', error);
         }
       }
+    }
+
+    if (remoteData.experimentAssignment) {
+      const merged = resolveConflict(
+        'experimentAssignment',
+        localData.experimentAssignment,
+        remoteData.experimentAssignment,
+      );
+      if (merged && typeof merged === 'object' && merged.variant) {
+        applyRemoteVariantIfStronger(merged as { variant: string; experimentKey?: string });
+      }
+    }
+
+    if (remoteData.topicTestResults) {
+      const merged = resolveConflict('topicTestResults', localData.topicTestResults, remoteData.topicTestResults);
+      const localFormat = transformFromAPIFormat('topicTestResults', merged);
+      saveTopicTestResultsMap(localFormat as Record<string, TopicTestResultStored>);
+      bumpTopicTestVersion();
     }
 
     if (remoteData.language) {

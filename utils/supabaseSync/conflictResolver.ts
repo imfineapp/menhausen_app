@@ -44,11 +44,35 @@ export function resolveConflict(
     
     case 'referralData':
       return mergeReferralData(localData, remoteData);
+
+    case 'experimentAssignment':
+      return remoteData || localData;
+
+    case 'topicTestResults':
+      return mergeTopicTestResults(localData, remoteData);
     
     default:
       // Default: remote wins
       return remoteData || localData;
   }
+}
+
+function mergeTopicTestResults(local: any, remote: any): any {
+  if (!remote) return local;
+  if (!local) return remote;
+  const merged: Record<string, any> = { ...local };
+  Object.keys(remote).forEach((k) => {
+    const r = remote[k];
+    const l = local[k];
+    if (!l) {
+      merged[k] = r;
+      return;
+    }
+    const rTime = r?.completedAt ? new Date(r.completedAt).getTime() : 0;
+    const lTime = l?.completedAt ? new Date(l.completedAt).getTime() : 0;
+    merged[k] = rTime >= lTime ? r : l;
+  });
+  return merged;
 }
 
 /**

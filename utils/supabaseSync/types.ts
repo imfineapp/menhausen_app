@@ -16,6 +16,8 @@ export type SyncDataType =
   | 'psychologicalTest'
   | 'cardProgress'
   | 'referralData'
+  | 'experimentAssignment'
+  | 'topicTestResults'
   | 'language'
   | 'hasShownFirstAchievement';
 
@@ -101,6 +103,11 @@ export interface UserDataFromAPI {
   psychologicalTest?: any;
   cardProgress?: Record<string, any>;
   referralData?: any;
+  experimentAssignment?: { experimentKey: string; variant: string; assignedAt?: string };
+  topicTestResults?: Record<
+    string,
+    { topicId: string; answers: number[]; score: number; percentage: number; completedAt?: string }
+  >;
   language?: string;
   hasShownFirstAchievement?: boolean;
   hasPremium?: boolean; // Premium subscription status

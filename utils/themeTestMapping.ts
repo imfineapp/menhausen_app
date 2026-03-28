@@ -1,6 +1,8 @@
 // Утилиты для маппинга тем к темам психологического теста
 
 import { PsychologicalTestTopic, PsychologicalTestPercentages } from '../types/psychologicalTest';
+import { $experimentVariant } from '@/src/stores/experiment.store';
+import { getTopicTestResultForTheme } from '@/utils/experiment/topicTestStorage';
 import { loadTestResults } from './psychologicalTestStorage';
 
 /**
@@ -46,29 +48,43 @@ export function getTestTopicForTheme(themeId: string): PsychologicalTestTopic | 
  * @returns процент (0-100) или null, если тест не пройден или тема не связана с тестом
  */
 export function getThemeMatchPercentage(themeId: string): number | null {
-  // Получаем тему теста для данной темы
+  const variant = $experimentVariant.get();
+
+  // Segment B: never show match on home list
+  if (variant === 'B') {
+    return null;
+  }
+
+  // Segment C: per-topic embedded test results only
+  if (variant === 'C') {
+    const testTopic = getTestTopicForTheme(themeId);
+    if (!testTopic) {
+      return null;
+    }
+    const topicResult = getTopicTestResultForTheme(themeId);
+    if (!topicResult) {
+      return null;
+    }
+    return topicResult.percentage;
+  }
+
+  // Segment A (or unknown / pre-init): full psychological test
   const testTopic = getTestTopicForTheme(themeId);
-  
-  // Если тема не связана с тестом (например, grief-loss), возвращаем null
+
   if (!testTopic) {
     return null;
   }
-  
-  // Загружаем результаты теста
+
   const testResults = loadTestResults();
-  
-  // Если тест не пройден, возвращаем null
+
   if (!testResults || !testResults.percentages) {
     return null;
   }
-  
-  // Получаем ключ для доступа к процентам (camelCase)
+
   const percentageKey = TEST_TOPIC_TO_PERCENTAGE_KEY[testTopic];
-  
-  // Получаем процент для соответствующей темы
+
   const percentage = testResults.percentages[percentageKey];
-  
-  // Возвращаем процент, если он определен
+
   return percentage !== undefined ? percentage : null;
 }
 
