@@ -93,7 +93,7 @@ export function ThemeCard({
   // Получаем процент соответствия из результатов теста
   const matchPercentage = useMemo(() => {
     if (!themeId) return null;
-    return getThemeMatchPercentage(themeId);
+    return getThemeMatchPercentage(themeId, topicTestVersion);
   }, [themeId, topicTestVersion]);
   
   // Формируем текст с процентом, если он доступен
