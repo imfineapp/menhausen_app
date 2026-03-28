@@ -23,7 +23,7 @@
     "test:e2e:report": "playwright show-report",
     "test:all": "npm run test:run && npm run test:e2e",
     "playwright:install": "playwright install",
-    "lighthouse": "lhci autorun",
+    "lighthouse": "npx @lhci/cli@latest autorun",
     "size:check": "node scripts/check-initial-js-size.cjs"
   },
   "dependencies": {
@@ -89,7 +89,6 @@
     "@eslint/compat": "^2.0.1",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
-    "@lhci/cli": "^0.15.1",
     "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@testing-library/jest-dom": "^6.1.0",

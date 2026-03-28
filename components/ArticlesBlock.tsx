@@ -2,8 +2,9 @@
 // Displays articles in a horizontal slider layout
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useStore } from '@nanostores/react';
 import { useContent, useArticles } from './ContentContext';
-import { useAchievements } from '../contexts/AchievementsContext';
+import { $pointsBalance } from '@/src/stores/points.store';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
 import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 	
@@ -145,7 +146,7 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
  */
 function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderProps) {
   const { content, getLocalizedText } = useContent();
-  const { totalXP } = useAchievements();
+  const pointsBalance = useStore($pointsBalance);
   // Тип контента может не содержать поля lockedBadge в типах — берём через any с запасной строкой
   const lockedBadgeText = getLocalizedText(((content.ui as any)?.articles?.lockedBadge) || 'Opens at {points}');
   const [_currentIndex, setCurrentIndex] = useState(0);
@@ -308,7 +309,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const order = article.order;
   const isPinned = (PINNED_ARTICLE_IDS as unknown as string[]).includes(article.id);
   const required = isPinned ? 0 : getRequiredPointsForArticle(order);
-  const locked = isPinned ? false : isArticleLocked(order, totalXP);
+  const locked = isPinned ? false : isArticleLocked(order, pointsBalance);
   return (
     <div
       key={article.id}

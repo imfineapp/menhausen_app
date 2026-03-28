@@ -2,6 +2,12 @@ import { atom, computed, onMount } from 'nanostores'
 
 import type { PointsTransaction } from '@/types/points'
 import { PointsManager } from '@/utils/PointsManager'
+import {
+  grantReward,
+  queueOfflineReward,
+  replayOfflineRewardQueue,
+  RewardEventType,
+} from '@/utils/supabaseSync/rewardService'
 
 function calculateNextLevelTarget(totalEarned: number, step = 1000): number {
   if (step <= 0) step = 1000
@@ -24,8 +30,77 @@ export function refreshPoints() {
   $pointsTransactions.set(PointsManager.getTransactions())
 }
 
-export function earnPoints(amount: number, meta?: { note?: string; correlationId?: string }) {
-  // PointsManager remains the single writer to localStorage.
+export async function earnPoints(
+  amount: number,
+  meta?: {
+    note?: string
+    correlationId?: string
+    eventType?: RewardEventType | string
+    referenceId?: string
+    payload?: Record<string, unknown>
+  },
+) {
+  const eventType = meta?.eventType
+  const referenceId = meta?.referenceId || meta?.correlationId
+
+  if (eventType && referenceId) {
+    try {
+      const granted = await grantReward({
+        eventType,
+        referenceId,
+        payload: {
+          points: amount,
+          note: meta?.note,
+          ...(meta?.payload || {}),
+        },
+      })
+
+      if (granted.success && granted.granted && granted.points && granted.balance !== undefined) {
+        const correlationId = `${eventType}:${referenceId}`
+        const txId = granted.transactionId || `srv_${Date.now()}_${Math.random().toString(36).slice(2)}`
+        PointsManager.appendServerEarn({
+          id: txId,
+          amount: granted.points,
+          timestamp: new Date().toISOString(),
+          note: meta?.note || `Reward granted: ${eventType}`,
+          correlationId,
+          balanceAfter: granted.balance,
+        })
+        refreshPoints()
+        return
+      }
+
+      // Server reached but reward was not granted: do not perform local fallback writes.
+      if (granted.success) {
+        return
+      }
+
+      queueOfflineReward({
+        eventType,
+        referenceId,
+        payload: {
+          points: amount,
+          note: meta?.note,
+          ...(meta?.payload || {}),
+        },
+      })
+      return
+    } catch (error) {
+      console.warn('Server reward grant failed, queued for retry', error)
+      queueOfflineReward({
+        eventType,
+        referenceId,
+        payload: {
+          points: amount,
+          note: meta?.note,
+          ...(meta?.payload || {}),
+        },
+      })
+      return
+    }
+  }
+
+  // Fallback for legacy flow and offline mode.
   PointsManager.earn(amount, meta)
   refreshPoints()
 }
@@ -37,5 +112,18 @@ export function spendPoints(amount: number, meta?: { note?: string; correlationI
 
 onMount($pointsBalance, () => {
   refreshPoints()
+  replayOfflineRewardQueue().catch((error) => {
+    console.warn('Failed to replay offline reward queue on mount', error)
+  })
+
+  const onOnline = () => {
+    replayOfflineRewardQueue().catch((error) => {
+      console.warn('Failed to replay offline reward queue on reconnect', error)
+    })
+  }
+  window.addEventListener('online', onOnline)
+  return () => {
+    window.removeEventListener('online', onOnline)
+  }
 })
 

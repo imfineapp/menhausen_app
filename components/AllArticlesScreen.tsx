@@ -2,10 +2,11 @@
 // Displays list of all available articles
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useStore } from '@nanostores/react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { BackButton } from './ui/back-button';
 import { useContent, useArticles } from './ContentContext';
-import { useAchievements } from '../contexts/AchievementsContext';
+import { $pointsBalance } from '@/src/stores/points.store';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
 import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
 	
@@ -92,7 +93,7 @@ function ArticleListItem({
 export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenProps) {
   const { content, getLocalizedText } = useContent();
   const articles = useArticles();
-  const { totalXP } = useAchievements();
+  const pointsBalance = useStore($pointsBalance);
   // Берём через any, т.к. тип ui.articles может не включать lockedBadge
   const lockedBadgeText = ((content.ui as any)?.articles?.lockedBadge) || 'Откроется за {points}';
   
@@ -169,7 +170,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
   const order = article.order;
   const isPinned = (PINNED_ARTICLE_IDS as unknown as string[]).includes(article.id);
   const required = isPinned ? 0 : getRequiredPointsForArticle(order);
-  const locked = isPinned ? false : isArticleLocked(order, totalXP);
+  const locked = isPinned ? false : isArticleLocked(order, pointsBalance);
   return (
     <ArticleListItem 
       key={article.id}

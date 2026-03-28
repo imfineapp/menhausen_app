@@ -1,5 +1,7 @@
 import { PointsManager } from './PointsManager';
 import { earnPoints } from '@/src/stores/points.store';
+import { RewardEventType } from '@/utils/supabaseSync/rewardService';
+import { AnalyticsEvent, capture } from './analytics/posthog';
 
 /**
  * DailyCheckinManager - Utility class for managing daily check-in logic
@@ -82,7 +84,8 @@ export class DailyCheckinManager {
     try {
       const currentDayKey = this.getCurrentDayKey();
       const storageKey = this.getStorageKey(currentDayKey);
-      
+      const prior = this.getCheckin(currentDayKey);
+
       const fullCheckinData: CheckinData = {
         ...checkinData,
         id: `checkin_${currentDayKey}_${Date.now()}`,
@@ -93,6 +96,15 @@ export class DailyCheckinManager {
 
       localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
 
+      if (!prior?.completed) {
+        void capture(AnalyticsEvent.DAILY_CHECKIN_COMPLETED, {
+          date_key: currentDayKey,
+          mood: checkinData.mood,
+          mood_value: checkinData.value,
+          checkin_streak: this.getCheckinStreak(),
+        });
+      }
+
       // Award daily check-in points once per day
       try {
         const correlationId = `checkin_${currentDayKey}`;
@@ -101,9 +113,14 @@ export class DailyCheckinManager {
           .some(t => t.correlationId === correlationId && t.type === 'earn' && t.amount === this.CHECKIN_REWARD);
 
         if (!alreadyAwarded) {
-          earnPoints(this.CHECKIN_REWARD, {
+          void earnPoints(this.CHECKIN_REWARD, {
             correlationId,
-            note: 'Daily check-in reward'
+            note: 'Daily check-in reward',
+            eventType: RewardEventType.DAILY_CHECKIN,
+            referenceId: currentDayKey,
+            payload: {
+              dateKey: currentDayKey,
+            },
           });
         }
       } catch (awardError) {

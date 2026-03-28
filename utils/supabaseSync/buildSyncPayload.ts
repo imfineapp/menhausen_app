@@ -6,7 +6,6 @@ import type { SyncDataType } from './types';
 import { transformToAPIFormat } from './dataTransformers';
 import { loadUserStats } from '../../services/userStatsService';
 import { loadUserAchievements } from '../../services/achievementStorage';
-import { PointsManager } from '../PointsManager';
 import { loadTestResults } from '../psychologicalTestStorage';
 import { DailyCheckinManager } from '../DailyCheckinManager';
 import { ThemeCardManager } from '../ThemeCardManager';
@@ -79,17 +78,8 @@ export function loadSyncPayloadForType(
       }
 
     case 'points':
-      try {
-        const balance = PointsManager.getBalance();
-        const transactions = PointsManager.getTransactions();
-        if (balance > 0 || transactions.length > 0) {
-          return transformToAPIFormat('points', { balance, transactions });
-        }
-        return undefined;
-      } catch (e) {
-        console.warn('Error loading points:', e);
-        return undefined;
-      }
+      // points are now server-authoritative via grant-reward
+      return undefined;
 
     case 'preferences':
       try {

@@ -17,6 +17,7 @@ import {
 import { getThemeFromStore, getCardUiStrings } from '@/src/stores/contentSelectors'
 import { ThemeCardManager } from '@/utils/ThemeCardManager'
 import { earnPoints } from '@/src/stores/points.store'
+import { RewardEventType } from '@/utils/supabaseSync/rewardService'
 import {
   incrementCardsOpened,
   addTopicCompleted,
@@ -288,7 +289,18 @@ export function handleCompleteRating(
       const amount = getPointsForLevel(level)
       if (amount > 0) {
         const note = `Card ${currentCard.id} completed (level ${level}, theme ${tid})`
-        earnPoints(amount, { correlationId: attemptId, note })
+        const eventType = `card_complete_level_${Math.max(1, Math.min(5, level))}` as RewardEventType
+        void earnPoints(amount, {
+          correlationId: attemptId,
+          note,
+          eventType,
+          referenceId: attemptId,
+          payload: {
+            cardId: currentCard.id,
+            level,
+            themeId: tid,
+          },
+        })
       }
     } catch (earnError) {
       console.warn('Failed to award points for card completion', earnError)

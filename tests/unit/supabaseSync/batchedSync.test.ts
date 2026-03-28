@@ -10,9 +10,8 @@ describe('SupabaseSyncService batched sync', () => {
     vi.useRealTimers();
   });
 
-  it('queues points and preferences within debounce window and sends one POST with both types', async () => {
+  it('queues preferences within debounce window and sends one POST without points payload', async () => {
     vi.useFakeTimers();
-    localStorage.setItem('menhausen_points_balance', '10');
     localStorage.setItem('menhausen-language', 'en');
 
     const { getSyncService } = await import('@/utils/supabaseSync/supabaseSyncService');
@@ -26,7 +25,6 @@ describe('SupabaseSyncService batched sync', () => {
     internal.syncStatus.isOnline = true;
     const syncSpy = vi.spyOn(internal, 'syncToSupabase').mockResolvedValue({ success: true, syncedTypes: [] });
 
-    svc.queueSync('points');
     svc.queueSync('preferences');
 
     await vi.advanceTimersByTimeAsync(500);
@@ -34,7 +32,7 @@ describe('SupabaseSyncService batched sync', () => {
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
     const payload = syncSpy.mock.calls[0][0] as Record<string, unknown>;
-    expect(payload).toHaveProperty('points');
     expect(payload).toHaveProperty('preferences');
+    expect(payload).not.toHaveProperty('points');
   });
 });

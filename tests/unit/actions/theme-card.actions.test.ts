@@ -45,7 +45,7 @@ vi.mock('@/utils/ThemeCardManager', () => ({
     shouldShowWelcomeScreen: vi.fn(() => false),
   },
 }))
-vi.mock('@/utils/PointsManager', () => ({ PointsManager: { earn: mocks.earn } }))
+vi.mock('@/src/stores/points.store', () => ({ earnPoints: mocks.earn }))
 vi.mock('@/services/userStatsService', () => ({
   incrementCardsOpened: vi.fn(),
   addTopicCompleted: mocks.addTopicCompleted,

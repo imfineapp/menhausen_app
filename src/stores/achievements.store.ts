@@ -2,6 +2,7 @@ import { atom, computed, onMount } from 'nanostores'
 
 import type { UserAchievement, UserAchievementsState } from '@/types/achievements'
 import { earnPoints } from '@/src/stores/points.store'
+import { RewardEventType } from '@/utils/supabaseSync/rewardService'
 import { loadUserAchievements, saveUserAchievements, updateAchievement } from '@/services/achievementStorage'
 import { checkAchievementCondition } from '@/services/achievementChecker'
 import { loadUserStats } from '@/services/userStatsService'
@@ -18,9 +19,15 @@ export const $unlockedCount = computed($achievementsState, (state) => state.unlo
 function awardAchievementXP(achievementId: string, xp: number) {
   if (xp <= 0) return
   const correlationId = `achievement_${achievementId}`
-  earnPoints(xp, {
+  void earnPoints(xp, {
     correlationId,
-    note: `Achievement unlocked: ${achievementId}`
+    note: `Achievement unlocked: ${achievementId}`,
+    eventType: RewardEventType.ACHIEVEMENT_XP,
+    referenceId: achievementId,
+    payload: {
+      achievementId,
+      points: xp,
+    },
   })
 }
 
