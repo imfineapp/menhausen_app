@@ -182,6 +182,7 @@ export const AnalyticsEvent = {
   PAYMENT_FAILED: 'payment_failed',
   PAYMENT_CANCELLED: 'payment_cancelled',
   SYNC_COMPLETE_TTI: 'sync_complete_tti',
+  DAILY_CHECKIN_COMPLETED: 'daily_checkin_completed',
 } as const
 
 export type AnalyticsEventName = (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent]

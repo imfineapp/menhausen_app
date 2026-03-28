@@ -1,6 +1,7 @@
 import { PointsManager } from './PointsManager';
 import { earnPoints } from '@/src/stores/points.store';
 import { RewardEventType } from '@/utils/supabaseSync/rewardService';
+import { AnalyticsEvent, capture } from './analytics/posthog';
 
 /**
  * DailyCheckinManager - Utility class for managing daily check-in logic
@@ -83,7 +84,8 @@ export class DailyCheckinManager {
     try {
       const currentDayKey = this.getCurrentDayKey();
       const storageKey = this.getStorageKey(currentDayKey);
-      
+      const prior = this.getCheckin(currentDayKey);
+
       const fullCheckinData: CheckinData = {
         ...checkinData,
         id: `checkin_${currentDayKey}_${Date.now()}`,
@@ -93,6 +95,15 @@ export class DailyCheckinManager {
       };
 
       localStorage.setItem(storageKey, JSON.stringify(fullCheckinData));
+
+      if (!prior?.completed) {
+        void capture(AnalyticsEvent.DAILY_CHECKIN_COMPLETED, {
+          date_key: currentDayKey,
+          mood: checkinData.mood,
+          mood_value: checkinData.value,
+          checkin_streak: this.getCheckinStreak(),
+        });
+      }
 
       // Award daily check-in points once per day
       try {
