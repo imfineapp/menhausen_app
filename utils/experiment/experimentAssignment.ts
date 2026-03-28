@@ -3,7 +3,7 @@ import type { ExperimentVariantType } from '@/src/stores/experiment.store'
 import { $experimentVariant } from '@/src/stores/experiment.store'
 
 /** Deterministic bucket from user id (even distribution). */
-function fnv1aHash(str: string): number {
+export function fnv1aHash(str: string): number {
   let hash = 0x811c9dc5
   for (let i = 0; i < str.length; i++) {
     hash ^= str.charCodeAt(i)
@@ -22,8 +22,8 @@ export function readVariantFromStorage(): ExperimentVariantType | null {
   try {
     const v = localStorage.getItem(EXPERIMENT.STORAGE_VARIANT)
     if (v === 'A' || v === 'B' || v === 'C') return v
-  } catch {
-    void 0
+  } catch (err) {
+    if (import.meta.env?.DEV) console.warn('[experiment] readVariantFromStorage localStorage error:', err)
   }
   return null
 }
@@ -39,8 +39,8 @@ export function writeVariantToStorage(variant: ExperimentVariantType): void {
       assignedAt: new Date().toISOString(),
     }
     localStorage.setItem(SYNC_PAYLOAD_KEY, JSON.stringify(payload))
-  } catch {
-    void 0
+  } catch (err) {
+    if (import.meta.env?.DEV) console.warn('[experiment] writeVariantToStorage localStorage error:', err)
   }
 }
 

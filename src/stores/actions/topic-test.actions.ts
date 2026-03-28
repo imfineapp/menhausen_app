@@ -12,6 +12,8 @@ import { ThemeCardManager } from '@/utils/ThemeCardManager'
 import {
   calculateTopicScoreAndPercentage,
   getQuestionsForAppTheme,
+  TOPIC_TEST_LAST_INDEX,
+  TOPIC_TEST_QUESTIONS_COUNT,
   type PsychologicalTestQuestionContent,
 } from '@/utils/experiment/topicTestCalculator'
 import {
@@ -36,7 +38,7 @@ export async function handleTopicTestIntroNext(): Promise<void> {
   const lang = $language.get() === 'ru' ? 'ru' : 'en'
   const questions = await loadPsychQuestions(lang)
   const five = getQuestionsForAppTheme(questions, themeId)
-  if (!five || five.length !== 5) {
+  if (!five || five.length !== TOPIC_TEST_QUESTIONS_COUNT) {
     console.warn('[topic-test] No 5 questions for theme, skipping embedded test')
     proceedToThemeWelcomeOrHome()
     return
@@ -49,7 +51,7 @@ export async function handleTopicTestIntroNext(): Promise<void> {
   let restoredAnswers: LikertScaleAnswer[] = []
   if (partial?.answers?.length) {
     const firstGap = partial.answers.findIndex((a) => a === undefined)
-    startIndex = firstGap === -1 ? 4 : firstGap
+    startIndex = firstGap === -1 ? TOPIC_TEST_LAST_INDEX : firstGap
     restoredAnswers = partial.answers.filter((a): a is LikertScaleAnswer => a !== undefined)
   }
 
@@ -82,7 +84,7 @@ export function handleTopicTestQuestionAnswer(answer: LikertScaleAnswer): void {
   const themeId = currentTheme
   const orders = topicTestQuestionOrders
   const idx = topicTestQuestionIndex
-  if (!themeId || orders.length !== 5 || idx < 0 || idx > 4) return
+  if (!themeId || orders.length !== TOPIC_TEST_QUESTIONS_COUNT || idx < 0 || idx > TOPIC_TEST_LAST_INDEX) return
 
   const nextAnswers = [...(topicTestAnswers ?? []), answer]
   patchScreenParams({ topicTestAnswers: nextAnswers })
@@ -93,7 +95,7 @@ export function handleTopicTestQuestionAnswer(answer: LikertScaleAnswer): void {
     startedAt: new Date().toISOString(),
   }
   const slot: (LikertScaleAnswer | undefined)[] = [...partial.answers]
-  while (slot.length < 5) slot.push(undefined)
+  while (slot.length < TOPIC_TEST_QUESTIONS_COUNT) slot.push(undefined)
   slot[idx] = answer
   saveTopicTestPartial(themeId, { ...partial, answers: slot })
 
@@ -103,7 +105,7 @@ export function handleTopicTestQuestionAnswer(answer: LikertScaleAnswer): void {
     variant: $experimentVariant.get() ?? 'unknown',
   })
 
-  if (idx >= 4) {
+  if (idx >= TOPIC_TEST_LAST_INDEX) {
     const { score, percentage } = calculateTopicScoreAndPercentage(nextAnswers as LikertScaleAnswer[])
     saveTopicTestResultForTheme(themeId, {
       score,
@@ -174,6 +176,18 @@ export function proceedToThemeWelcomeOrHome(): void {
 }
 
 export function handleBackFromTopicTestIntro(): void {
+  const themeId = $screenParams.get().currentTheme
+  if (themeId) {
+    const partial = loadTopicTestPartial(themeId)
+    if (partial) {
+      capture(AnalyticsEvent.TEST_DROPPED, {
+        test_type: 'topic_test',
+        topic_id: themeId,
+        drop_reason: 'back_from_intro',
+        variant: $experimentVariant.get() ?? 'unknown',
+      })
+    }
+  }
   patchScreenParams({
     topicTestQuestionOrders: [],
     topicTestQuestionIndex: 0,
@@ -186,6 +200,14 @@ export function handleBackFromTopicTestIntro(): void {
 export function handleBackFromTopicTestQuestion(): void {
   const { currentTheme, topicTestQuestionIndex } = $screenParams.get()
   if (topicTestQuestionIndex <= 0) {
+    if (currentTheme) {
+      capture(AnalyticsEvent.TEST_DROPPED, {
+        test_type: 'topic_test',
+        topic_id: currentTheme,
+        drop_reason: 'back_to_intro',
+        variant: $experimentVariant.get() ?? 'unknown',
+      })
+    }
     navigateTo('topic-test-intro')
     return
   }

@@ -45,10 +45,9 @@ export function getTestTopicForTheme(themeId: string): PsychologicalTestTopic | 
 /**
  * Получает процент соответствия темы из результатов психологического теста
  * @param themeId - ID темы
- * @param _topicTestRevision - опционально: инкремент из стора при обновлении per-topic теста (сброс мемо в UI)
  * @returns процент (0-100) или null, если тест не пройден или тема не связана с тестом
  */
-export function getThemeMatchPercentage(themeId: string, _topicTestRevision?: number): number | null {
+export function getThemeMatchPercentage(themeId: string): number | null {
   const variant = $experimentVariant.get();
 
   // Segment B: never show match on home list

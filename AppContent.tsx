@@ -135,6 +135,7 @@ function AppContent() {
       if (!progress.surveyCompleted) {
         return 'survey01'
       }
+      // Optimistic navigation runs before assignVariant(); variant may still be null, so B/C psych-test skip applies only after the corrected pass post-sync.
       const variant = $experimentVariant.get()
       const skipFullPsych = variant === 'B' || variant === 'C'
       if (!skipFullPsych && !hasTestBeenCompleted()) {

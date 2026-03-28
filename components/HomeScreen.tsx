@@ -1,5 +1,5 @@
 // Импортируем необходимые хуки и SVG пути
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
@@ -11,6 +11,7 @@ import { useContent } from './ContentContext';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { useStore } from '@nanostores/react';
 import { $currentLevel } from '@/src/stores/points.store';
+import { $topicTestVersion } from '@/src/stores/topic-test.store';
 import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
@@ -277,15 +278,18 @@ function CheckInButton({ onClick }: { onClick: () => void }) {
  */
 function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
   const { content } = useContent();
+  const topicTestVersion = useStore($topicTestVersion);
 
-  // Берём все темы из контента; если пусто — создаём безопасный плейсхолдер
-  const themeList = Object.values(content.themes || {});
-  const source = themeList.length > 0
-    ? themeList
-    : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
+  const worries: ThemeWorry[] = useMemo(() => {
+    // topicTestVersion: bump when embedded topic test completes — refresh match % on list
+    void topicTestVersion
+    // Берём все темы из контента; если пусто — создаём безопасный плейсхолдер
+    const themeList = Object.values(content.themes || {});
+    const source = themeList.length > 0
+      ? themeList
+      : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
 
-  const worries: ThemeWorry[] = source
-    .map((theme: any) => {
+    return source.map((theme: any) => {
       const allCardIds: string[] = Array.isArray(theme.cards)
         ? theme.cards.map((c: any) => c.id)
         : Array.isArray(theme.cardIds)
@@ -300,7 +304,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
       const totalCards = allCardIds.length;
       const progress = totalCards > 0 ? Math.round((attemptedCardsCount / totalCards) * 100) : 0;
 
-      // Получаем процент соответствия из результатов психологического теста
+      // Получаем процент соответствия из результатов психологического теста (topicTestVersion сбрасывает мемо после embedded topic test)
       const matchPercentage = getThemeMatchPercentage(theme.id);
 
       return {
@@ -313,7 +317,9 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
         order: theme.order || 999, // Используем порядок из файла, если не указан - в конец
         matchPercentage: matchPercentage ?? -1, // Используем -1 для тем без соответствия, чтобы они шли в конец
       };
-    })
+    });
+  }, [content.themes, content.ui.themes?.welcome?.title, content.ui.home.quickHelpTitle, userHasPremium, topicTestVersion]);
+
   const sortedWorries = sortWorries(worries)
 
   const handleThemeClick = (themeId: string, _isAvailable: boolean) => {

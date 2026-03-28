@@ -4,6 +4,7 @@ import { TopicTestIntroScreen } from '@/components/TopicTestIntroScreen'
 import { TopicTestQuestionScreen } from '@/components/TopicTestQuestionScreen'
 import { TopicTestResultsScreen } from '@/components/TopicTestResultsScreen'
 import { getTopicTestResultForTheme } from '@/utils/experiment/topicTestStorage'
+import { TOPIC_TEST_LAST_INDEX, TOPIC_TEST_QUESTIONS_COUNT } from '@/utils/experiment/topicTestCalculator'
 
 import type { RouteContext } from './types'
 
@@ -38,7 +39,7 @@ export function renderTopicTestRoutes(ctx: RouteContext): React.ReactNode | null
   if (currentScreen === 'topic-test-question') {
     const orders = topicTestQuestionOrders
     const idx = topicTestQuestionIndex
-    if (!orders || orders.length !== 5 || idx < 0 || idx > 4) {
+    if (!orders || orders.length !== TOPIC_TEST_QUESTIONS_COUNT || idx < 0 || idx > TOPIC_TEST_LAST_INDEX) {
       return wrapScreen(withSuspense(<LoadingScreen />))
     }
     const qOrder = orders[idx]

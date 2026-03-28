@@ -129,6 +129,7 @@ export function handleGoToTheme(themeId: string): void {
     theme_id: themeId,
     is_premium: !!theme.isPremium,
     has_match_percentage: matchPct !== null,
+    variant: variant ?? 'unknown',
   })
 
   if (variant === 'C' && psychTopic && !isTopicTestCompletedForTheme(themeId)) {

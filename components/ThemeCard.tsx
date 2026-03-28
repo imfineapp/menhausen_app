@@ -92,8 +92,10 @@ export function ThemeCard({
   
   // Получаем процент соответствия из результатов теста
   const matchPercentage = useMemo(() => {
+    // topicTestVersion: bump when embedded topic test completes — invalidates match % read from storage
+    void topicTestVersion
     if (!themeId) return null;
-    return getThemeMatchPercentage(themeId, topicTestVersion);
+    return getThemeMatchPercentage(themeId);
   }, [themeId, topicTestVersion]);
   
   // Формируем текст с процентом, если он доступен

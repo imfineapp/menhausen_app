@@ -2,7 +2,14 @@ import type { LikertScaleAnswer, PsychologicalTestTopic } from '@/types/psycholo
 
 import { getTestTopicForTheme } from '@/utils/themeTestMapping'
 
-const MAX_SCORE_TOPIC = 20
+/** Embedded topic test: number of Likert questions per theme. */
+export const TOPIC_TEST_QUESTIONS_COUNT = 5
+
+/** Max sum of Likert answers (5 questions × 4). */
+export const TOPIC_TEST_MAX_SCORE = TOPIC_TEST_QUESTIONS_COUNT * 4
+
+/** Last zero-based question index. */
+export const TOPIC_TEST_LAST_INDEX = TOPIC_TEST_QUESTIONS_COUNT - 1
 
 export type PsychologicalTestQuestionContent = {
   id: string
@@ -30,14 +37,14 @@ export function getQuestionsForAppTheme(
   const psych = getTestTopicForTheme(appThemeId)
   if (!psych) return null
   const list = getQuestionsForPsychTopic(questions, psych)
-  return list.length === 5 ? list : null
+  return list.length === TOPIC_TEST_QUESTIONS_COUNT ? list : null
 }
 
 export function calculateTopicScoreAndPercentage(answers: LikertScaleAnswer[]): { score: number; percentage: number } {
-  if (answers.length !== 5) {
-    throw new Error(`Expected 5 answers for topic test, got ${answers.length}`)
+  if (answers.length !== TOPIC_TEST_QUESTIONS_COUNT) {
+    throw new Error(`Expected ${TOPIC_TEST_QUESTIONS_COUNT} answers for topic test, got ${answers.length}`)
   }
   const score = answers.reduce((s: number, a) => s + Number(a), 0)
-  const percentage = Math.round((score / MAX_SCORE_TOPIC) * 100)
+  const percentage = Math.round((score / TOPIC_TEST_MAX_SCORE) * 100)
   return { score, percentage }
 }
