@@ -29,6 +29,12 @@ export function handlePsychologicalTestQuestionNext(questionNumber: number, answ
   newAnswers[questionNumber - 1] = answer
   setPsychologicalTestAnswers(newAnswers)
 
+  void capture(AnalyticsEvent.TEST_QUESTION_ANSWERED, {
+    test_type: 'full',
+    question_number: questionNumber,
+    variant: $experimentVariant.get() ?? 'unknown',
+  })
+
   if (questionNumber === 30) {
     const { scores, percentages } = calculateTestResults(newAnswers)
     saveTestResults(scores, percentages)

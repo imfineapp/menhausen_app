@@ -202,6 +202,7 @@ export const AnalyticsEvent = {
   DAILY_CHECKIN_COMPLETED: 'daily_checkin_completed',
   EXPERIMENT_ASSIGNED: 'experiment_assigned',
   TEST_STARTED: 'test_started',
+  TEST_QUESTION_ANSWERED: 'test_question_answered',
   TEST_COMPLETED: 'test_completed',
   TEST_DROPPED: 'test_dropped',
   TOPIC_OPENED: 'topic_opened',
