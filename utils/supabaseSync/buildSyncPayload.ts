@@ -12,6 +12,8 @@ import { ThemeCardManager } from '../ThemeCardManager';
 import { getReferrerId, isReferralRegistered, getReferralList } from '../referralUtils';
 import { getTelegramUserId } from '../telegramUserUtils';
 import { syncLog } from './syncLogger';
+import { loadExperimentAssignmentSyncPayload } from '../experiment/experimentAssignment';
+import { loadTopicTestResultsMap } from '../experiment/topicTestStorage';
 
 export function loadSyncPayloadForType(
   type: SyncDataType,
@@ -167,6 +169,16 @@ export function loadSyncPayloadForType(
         console.warn('Error loading referral data:', e);
         return undefined;
       }
+
+    case 'experimentAssignment': {
+      const payload = loadExperimentAssignmentSyncPayload();
+      return payload ? transformToAPIFormat('experimentAssignment', payload) : undefined;
+    }
+
+    case 'topicTestResults': {
+      const map = loadTopicTestResultsMap();
+      return Object.keys(map).length > 0 ? transformToAPIFormat('topicTestResults', map) : undefined;
+    }
 
     case 'language':
     case 'hasShownFirstAchievement':

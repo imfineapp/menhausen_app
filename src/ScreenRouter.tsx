@@ -22,6 +22,7 @@ import * as psychTestActions from '@/src/stores/actions/psych-test.actions'
 import * as articleActions from '@/src/stores/actions/article.actions'
 import * as profileActions from '@/src/stores/actions/profile.actions'
 import * as themeCardActions from '@/src/stores/actions/theme-card.actions'
+import * as topicTestActions from '@/src/stores/actions/topic-test.actions'
 import { renderOnboardingRoutes } from '@/src/screen-routes/onboarding.routes'
 import { renderSurveyRoutes } from '@/src/screen-routes/survey.routes'
 import { renderPsychTestRoutes } from '@/src/screen-routes/psych-test.routes'
@@ -29,6 +30,7 @@ import { renderThemeCardRoutes } from '@/src/screen-routes/theme-card.routes'
 import { renderProfileRoutes } from '@/src/screen-routes/profile.routes'
 import { renderArticleRoutes } from '@/src/screen-routes/article.routes'
 import { renderMiscRoutes } from '@/src/screen-routes/misc.routes'
+import { renderTopicTestRoutes } from '@/src/screen-routes/topic-test.routes'
 import type { RouteContext } from '@/src/screen-routes/types'
 
 const handlers = {
@@ -38,6 +40,7 @@ const handlers = {
   ...articleActions,
   ...profileActions,
   ...themeCardActions,
+  ...topicTestActions,
 }
 
 export type ScreenRouterProps = {
@@ -76,8 +79,18 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
   const navigationHistory = useStore($navigationHistory)
   const currentLanguage = useStore($language)
   const screenParams = useStore($screenParams)
-  const { currentTheme, currentCard, currentCheckin, currentArticle, currentFeatureName, earnedAchievementIds, userAnswers } =
-    screenParams
+  const {
+    currentTheme,
+    currentCard,
+    currentCheckin,
+    currentArticle,
+    currentFeatureName,
+    earnedAchievementIds,
+    userAnswers,
+    topicTestQuestionOrders,
+    topicTestQuestionIndex,
+    topicTestAnswers,
+  } = screenParams
 
   const isMountedRef = useRef(true)
   const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -162,6 +175,9 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
       earnedAchievementIds,
       navigationHistory,
       userAnswers,
+      topicTestQuestionOrders,
+      topicTestQuestionIndex,
+      topicTestAnswers,
       surveyResults,
       psychologicalTestAnswers,
       getTheme,
@@ -195,6 +211,9 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
       psychologicalTestAnswers,
       setEarnedAchievementIdsForArticle,
       surveyResults,
+      topicTestAnswers,
+      topicTestQuestionIndex,
+      topicTestQuestionOrders,
       userAnswers,
       userHasPremium,
       wrapScreen,
@@ -205,6 +224,7 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
     renderOnboardingRoutes(routeContext) ??
     renderSurveyRoutes(routeContext) ??
     renderPsychTestRoutes(routeContext) ??
+    renderTopicTestRoutes(routeContext) ??
     renderThemeCardRoutes(routeContext) ??
     renderProfileRoutes(routeContext) ??
     renderArticleRoutes(routeContext) ??

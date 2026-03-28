@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { $screenParams } from '@/src/stores/screen-params.store';
-import { AnalyticsEvent } from '@/src/effects/analytics.effects';
+import { $experimentVariant } from '@/src/stores/experiment.store';
+import { AnalyticsEvent, capture } from '@/src/effects/analytics.effects';
 import { usePostHog } from '@/src/hooks/usePostHogAnalytics';
 import svgPaths from "../imports/svg-4zkt7ew0xn";
 import { BottomFixedButton } from './BottomFixedButton';
@@ -725,6 +726,12 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
         source: 'web',
         plan_type: selectedPlan,
         price_stars: getPlanPrice(selectedPlan),
+      })
+
+      capture(AnalyticsEvent.PURCHASE_ATTEMPT, {
+        plan_type: selectedPlan,
+        trigger_source: $screenParams.get().paywallSource || 'profile',
+        variant: $experimentVariant.get() ?? 'unknown',
       })
 
       // Создаём инвойс и открываем его в Telegram

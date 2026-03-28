@@ -7,6 +7,8 @@
 import { getTelegramUserId } from './telegramUserUtils';
 import { getValidJWTToken } from './supabaseSync/authService';
 import { AnalyticsEvent, capture, captureException } from './analytics/posthog';
+import { $screenParams } from '@/src/stores/screen-params.store';
+import { $experimentVariant } from '@/src/stores/experiment.store';
 
 /**
  * Get Telegram initData for authentication
@@ -123,6 +125,11 @@ class TelegramStarsPaymentService {
   ): Promise<void> {
     if (status === 'paid') {
       void capture(AnalyticsEvent.PAYMENT_SUCCESS, { plan_type: planType });
+      void capture(AnalyticsEvent.PURCHASE_COMPLETED, {
+        plan_type: planType,
+        trigger_source: $screenParams.get().paywallSource || 'profile',
+        variant: $experimentVariant.get() ?? 'unknown',
+      });
       // Update premium status locally
       localStorage.setItem('user-premium-status', 'true');
       localStorage.setItem('user-premium-plan', planType);

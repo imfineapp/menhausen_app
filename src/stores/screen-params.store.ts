@@ -1,6 +1,7 @@
 import { map } from 'nanostores'
 
 import type { AppScreen } from '@/types/userState'
+import type { LikertScaleAnswer } from '@/types/psychologicalTest'
 
 const FIRST_ACHIEVEMENT_KEY = 'has-shown-first-achievement'
 
@@ -23,7 +24,7 @@ export type ScreenUserAnswers = {
   question2?: string
 }
 
-export type PaywallSource = 'profile' | 'theme' | 'home' | 'article' | ''
+export type PaywallSource = 'profile' | 'theme' | 'home' | 'article' | 'topic-test-result' | ''
 
 export type ScreenParamsState = {
   currentFeatureName: string
@@ -41,6 +42,11 @@ export type ScreenParamsState = {
   cardCompletionCounts: Record<string, number>
   earnedAchievementIds: string[]
   hasShownFirstAchievement: boolean
+  /** Embedded topic test (Segment C) — global question orders from psychologicalTest.json */
+  topicTestQuestionOrders: number[]
+  topicTestQuestionIndex: number
+  topicTestAnswers: LikertScaleAnswer[]
+  topicTestStartedAtMs: number
 }
 
 function loadHasShownFirstAchievement(): boolean {
@@ -69,6 +75,10 @@ export const $screenParams = map<ScreenParamsState>({
   cardCompletionCounts: {},
   earnedAchievementIds: [],
   hasShownFirstAchievement: loadHasShownFirstAchievement(),
+  topicTestQuestionOrders: [],
+  topicTestQuestionIndex: 0,
+  topicTestAnswers: [],
+  topicTestStartedAtMs: 0,
 })
 
 export function setHasShownFirstAchievementFlag(value: boolean): void {

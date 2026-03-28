@@ -22,6 +22,7 @@ type CurrentCheckin = {
 
 type ThemeData = {
   isPremium?: boolean
+  title?: string
 }
 
 export type RouteContext = {
@@ -38,6 +39,9 @@ export type RouteContext = {
   navigationHistory: AppScreen[]
   userAnswers: UserAnswers
   surveyResults: Partial<SurveyResults>
+  topicTestQuestionOrders: number[]
+  topicTestQuestionIndex: number
+  topicTestAnswers: LikertScaleAnswer[]
   psychologicalTestAnswers: LikertScaleAnswer[]
   getTheme: (themeId: string) => ThemeData | undefined
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>

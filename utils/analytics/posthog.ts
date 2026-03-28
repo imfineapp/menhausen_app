@@ -1,6 +1,10 @@
 import posthog from 'posthog-js'
 import type { PostHogConfig } from 'posthog-js'
 
+import { $experimentVariant } from '@/src/stores/experiment.store'
+import { EXPERIMENT } from '@/utils/experiment/experimentKeys'
+import { getTelegramUserId } from '@/utils/telegramUserUtils'
+
 /** Singleton used by PostHogProvider (`client={posthog}`) and non-React code (stores, services). */
 export { posthog }
 
@@ -64,7 +68,14 @@ export function capture(eventName: string, properties?: Record<string, any>): vo
   if (!isAnalyticsEnabled()) return
   try {
     const defaultEventProps = { source: 'web' }
-    posthog.capture(eventName, { ...defaultEventProps, ...(properties || {}) })
+    const uid = getTelegramUserId()
+    const variant = $experimentVariant.get()
+    posthog.capture(eventName, {
+      ...defaultEventProps,
+      ...(uid ? { user_id: uid } : {}),
+      ...(variant ? { variant } : {}),
+      ...(properties || {}),
+    })
   } catch {
     // Swallow analytics errors to avoid breaking UX
   }
@@ -108,6 +119,12 @@ export function identify(distinctId: string, properties?: Record<string, any>): 
       }
     } catch {
       void 0
+    }
+
+    const ev = $experimentVariant.get()
+    if (ev) {
+      defaultProps.experiment_variant = ev
+      defaultProps.experiment_key = EXPERIMENT.KEY_ONBOARDING_FLOW_V1
     }
 
     const mergedProps = { ...defaultProps, ...(properties || {}) }
@@ -183,6 +200,18 @@ export const AnalyticsEvent = {
   PAYMENT_CANCELLED: 'payment_cancelled',
   SYNC_COMPLETE_TTI: 'sync_complete_tti',
   DAILY_CHECKIN_COMPLETED: 'daily_checkin_completed',
+  EXPERIMENT_ASSIGNED: 'experiment_assigned',
+  TEST_STARTED: 'test_started',
+  TEST_COMPLETED: 'test_completed',
+  TEST_DROPPED: 'test_dropped',
+  TOPIC_OPENED: 'topic_opened',
+  TOPIC_TEST_STARTED: 'topic_test_started',
+  TOPIC_TEST_QUESTION_ANSWERED: 'topic_test_question_answered',
+  TOPIC_TEST_COMPLETED: 'topic_test_completed',
+  FIRST_CARD_STARTED: 'first_card_started',
+  FIRST_CARD_COMPLETED: 'first_card_completed',
+  PURCHASE_ATTEMPT: 'purchase_attempt',
+  PURCHASE_COMPLETED: 'purchase_completed',
 } as const
 
 export type AnalyticsEventName = (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent]

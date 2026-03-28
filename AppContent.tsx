@@ -16,6 +16,10 @@ import { getTelegramUserId } from './utils/telegramUserUtils'
 import { processReferralCode, updateReferrerStatsFromList } from './utils/referralUtils'
 import { hasTestBeenCompleted } from './utils/psychologicalTestStorage'
 import { AppScreen } from './types/userState'
+import { assignVariant } from '@/utils/experiment/experimentAssignment'
+import { EXPERIMENT } from '@/utils/experiment/experimentKeys'
+import { $experimentVariant } from '@/src/stores/experiment.store'
+import type { ExperimentVariantType } from '@/src/stores/experiment.store'
 
 import {
   $currentScreen,
@@ -27,6 +31,7 @@ import {
 } from './src/stores/navigation.store'
 
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
+import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
 import { $lastSyncTime, forceSync } from './src/stores/sync.store'
 import { setAuthState } from './src/stores/auth.store'
 import { getJWTExpiry } from './utils/supabaseSync/authService'
@@ -130,7 +135,9 @@ function AppContent() {
       if (!progress.surveyCompleted) {
         return 'survey01'
       }
-      if (!hasTestBeenCompleted()) {
+      const variant = $experimentVariant.get()
+      const skipFullPsych = variant === 'B' || variant === 'C'
+      if (!skipFullPsych && !hasTestBeenCompleted()) {
         return 'psychological-test-preambula'
       }
       const checkinStatus = DailyCheckinManager.getCurrentDayStatus()
@@ -219,7 +226,24 @@ function AppContent() {
 
       const userId = getTelegramUserId()
       if (userId && userId !== '111') {
+        const v: ExperimentVariantType = assignVariant(userId)
+        $experimentVariant.set(v)
+        const w = typeof window !== 'undefined' ? (window as any) : undefined
+        if (w && !w.__EXPERIMENT_ASSIGNED_SENT) {
+          w.__EXPERIMENT_ASSIGNED_SENT = true
+          void capture(AnalyticsEvent.EXPERIMENT_ASSIGNED, {
+            experiment_key: EXPERIMENT.KEY_ONBOARDING_FLOW_V1,
+            variant: v,
+          })
+        }
         void identify(userId)
+        try {
+          getSyncService().queueSync('experimentAssignment')
+        } catch {
+          void 0
+        }
+      } else {
+        $experimentVariant.set(null)
       }
 
       const syncStartTime = Date.now()
