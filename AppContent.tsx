@@ -135,7 +135,7 @@ function AppContent() {
       if (!progress.surveyCompleted) {
         return 'survey01'
       }
-      // Optimistic navigation runs before assignVariant(); variant may still be null, so B/C psych-test skip applies only after the corrected pass post-sync.
+      // If there is no Telegram user id, variant is still null here. Otherwise initializeApp has already called assignVariant().
       const variant = $experimentVariant.get()
       const skipFullPsych = variant === 'B' || variant === 'C'
       if (!skipFullPsych && !hasTestBeenCompleted()) {
@@ -207,23 +207,6 @@ function AppContent() {
     const initializeApp = async () => {
       if (cancelled) return
       const initStartTime = Date.now()
-      const hasLocalData = checkLocalData()
-      const optimisticProgress = loadFlowProgressFromLocalStorage()
-      const optimisticScreen = determineInitialScreen(optimisticProgress)
-      const optimisticDuration = Date.now() - initStartTime
-
-      console.log(
-        `[App] Showing optimistic screen after ${optimisticDuration}ms:`,
-        optimisticScreen,
-        `hasLocalData=${hasLocalData}`
-      )
-      setNavigationState(optimisticScreen, [optimisticScreen])
-      void capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
-        load_time_ms: optimisticDuration,
-        screen: optimisticScreen,
-        data_source: hasLocalData ? 'local' : 'optimistic',
-        has_local_data: hasLocalData,
-      })
 
       const userId = getTelegramUserId()
       if (userId && userId !== '111') {
@@ -246,6 +229,24 @@ function AppContent() {
       } else {
         $experimentVariant.set(null)
       }
+
+      const hasLocalData = checkLocalData()
+      const optimisticProgress = loadFlowProgressFromLocalStorage()
+      const optimisticScreen = determineInitialScreen(optimisticProgress)
+      const optimisticDuration = Date.now() - initStartTime
+
+      console.log(
+        `[App] Showing optimistic screen after ${optimisticDuration}ms:`,
+        optimisticScreen,
+        `hasLocalData=${hasLocalData}`
+      )
+      setNavigationState(optimisticScreen, [optimisticScreen])
+      void capture(AnalyticsEvent.FIRST_SCREEN_LOADED, {
+        load_time_ms: optimisticDuration,
+        screen: optimisticScreen,
+        data_source: hasLocalData ? 'local' : 'optimistic',
+        has_local_data: hasLocalData,
+      })
 
       const syncStartTime = Date.now()
       await loadAllUserData()
