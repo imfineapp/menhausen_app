@@ -2,10 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
+import { readFileSync } from 'node:fs'
 import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vitejs.dev/config/
 const analyzeBundle = process.env.ANALYZE === 'true'
+const appVersion = JSON.parse(
+  readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8')
+).version as string
 
 export default defineConfig({
   plugins: [
@@ -130,6 +134,7 @@ export default defineConfig({
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    '__APP_VERSION__': JSON.stringify(appVersion),
   },
   esbuild: {
     target: 'esnext',

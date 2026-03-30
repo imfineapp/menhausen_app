@@ -59,6 +59,11 @@ function AppInfoSection({ content }: { content: any }) {
             {content?.about?.description ?? ''}
           </p>
         </div>
+        <div className="typography-caption text-tertiary text-left">
+          <p className="block">
+            {content?.about?.version} {__APP_VERSION__}
+          </p>
+        </div>
       </div>
     </div>
   );
