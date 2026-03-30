@@ -162,7 +162,6 @@ interface AppContent {
   emergencyCards: Record<string, EmergencyCardData>; // Crisis support
   onboarding: OnboardingContent;               // Onboarding screens
   survey: SurveyContent;                       // Survey system
-  ui: UITexts;                                 // Interface text
 }
 ```
 
