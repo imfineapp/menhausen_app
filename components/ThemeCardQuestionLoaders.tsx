@@ -23,7 +23,6 @@ export function QuestionScreen01WithLoader({
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>
   currentLanguage: string
 }) {
-  const cards = useStore(cardsMessages)
   const [questions, setQuestions] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -76,7 +75,6 @@ export function QuestionScreen02WithLoader({
   currentLanguage: string
   previousAnswer: string
 }) {
-  const cards = useStore(cardsMessages)
   const [questions, setQuestions] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 

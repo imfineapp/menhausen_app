@@ -45,7 +45,7 @@ export function ArticleScreen({
   earnedAchievementIds = [],
   setEarnedAchievementIds
 }: ArticleScreenProps) {
-  const { content, getLocalizedText, getTheme } = useContent();
+  const { getLocalizedText, getTheme } = useContent();
   const articlesUi = useStore(articlesMessages);
   const nav = useStore(navigationMessages);
   const article = useArticle(articleId);

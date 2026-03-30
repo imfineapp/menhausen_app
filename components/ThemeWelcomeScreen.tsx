@@ -63,7 +63,7 @@ export function ThemeWelcomeScreen({
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {
-  const { getTheme, getLocalizedText } = useContent();
+  const { getTheme } = useContent();
   const home = useStore(homeMessages);
   const themes = useStore(themesMessages);
   

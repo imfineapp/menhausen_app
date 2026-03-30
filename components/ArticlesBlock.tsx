@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import { useContent, useArticles } from './ContentContext';
+import { useArticles } from './ContentContext';
 import { articlesMessages } from '@/src/i18n/messages/articles';
 import { $pointsBalance } from '@/src/stores/points.store';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';

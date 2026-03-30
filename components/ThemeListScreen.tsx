@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
 import { LoadingScreen } from './LoadingScreen';
 import { useStore } from '@nanostores/react';
@@ -25,11 +25,7 @@ export default function ThemeListScreen() {
   const common = useStore(commonMessages);
   const profile = useStore(profileMessages);
 
-  useEffect(() => {
-    loadThemes();
-  }, []);
-
-  const loadThemes = async () => {
+  const loadThemes = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -42,7 +38,11 @@ export default function ThemeListScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [language, errors.themeListLoadingError]);
+
+  useEffect(() => {
+    void loadThemes();
+  }, [loadThemes]);
 
   const handleThemeClick = (themeId: string) => {
     // TODO: навигация к экрану темы

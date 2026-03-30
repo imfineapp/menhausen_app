@@ -1,7 +1,6 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
 import { settingsMessages } from '@/src/i18n/messages/settings';
 import React, { useState, useEffect, useMemo } from 'react';
-import { useContent } from './ContentContext';
 import { PointsTransaction } from '../types/points';
 import { useStore } from '@nanostores/react';
 import { $pointsTransactions } from '@/src/stores/points.store';
