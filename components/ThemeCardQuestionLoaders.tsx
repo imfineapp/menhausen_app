@@ -4,7 +4,9 @@ import { QuestionScreen01 } from '@/components/QuestionScreen01'
 import { QuestionScreen02 } from '@/components/QuestionScreen02'
 import { FinalCardMessageScreen } from '@/components/FinalCardMessageScreen'
 import { LoadingScreen } from '@/components/LoadingScreen'
-import { useContent } from '@/components/ContentContext'
+import { useStore } from '@nanostores/react'
+import { cardsMessages } from '@/src/i18n/messages/cards'
+import { commonMessages } from '@/src/i18n/messages/common'
 
 export function QuestionScreen01WithLoader({
   onBack,
@@ -21,7 +23,7 @@ export function QuestionScreen01WithLoader({
   getCardQuestions: (cardId: string, language: string) => Promise<string[]>
   currentLanguage: string
 }) {
-  const { getUI } = useContent()
+  const cards = useStore(cardsMessages)
   const [questions, setQuestions] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -44,7 +46,7 @@ export function QuestionScreen01WithLoader({
     return <LoadingScreen />
   }
 
-  const questionText = questions[0] || getUI().cards.questionNotFound
+  const questionText = questions[0] || ''
 
   return (
     <QuestionScreen01
@@ -74,7 +76,7 @@ export function QuestionScreen02WithLoader({
   currentLanguage: string
   previousAnswer: string
 }) {
-  const { getUI } = useContent()
+  const cards = useStore(cardsMessages)
   const [questions, setQuestions] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -97,7 +99,7 @@ export function QuestionScreen02WithLoader({
     return <LoadingScreen />
   }
 
-  const questionText = questions[1] || getUI().cards.questionNotFound
+  const questionText = questions[1] || ''
 
   return (
     <QuestionScreen02
@@ -133,7 +135,8 @@ export function FinalCardMessageScreenWithLoader({
   }>
   currentLanguage: string
 }) {
-  const { getUI } = useContent()
+  const cards = useStore(cardsMessages)
+  const common = useStore(commonMessages)
   const [messageData, setMessageData] = useState<{
     finalMessage: string
     practiceTask: string
@@ -149,16 +152,16 @@ export function FinalCardMessageScreenWithLoader({
       } catch (error) {
         console.error('Error loading message data:', error)
         setMessageData({
-          finalMessage: getUI().cards.techniqueNotFound ?? '',
-          practiceTask: getUI().cards.practiceTaskNotFound ?? '',
-          whyExplanation: getUI().cards.explanationNotFound ?? '',
+          finalMessage: cards.noAttempts ?? '',
+          practiceTask: cards.startExercise ?? '',
+          whyExplanation: '',
         })
       } finally {
         setLoading(false)
       }
     }
     void loadMessageData()
-  }, [cardId, currentLanguage, getCardMessageData, getUI])
+  }, [cardId, cards.noAttempts, cards.startExercise, currentLanguage, getCardMessageData])
 
   if (loading) {
     return <LoadingScreen />
@@ -168,7 +171,7 @@ export function FinalCardMessageScreenWithLoader({
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg text-red-400">{getUI().common.error}</div>
+          <div className="text-lg text-red-400">{common.error}</div>
         </div>
       </div>
     )

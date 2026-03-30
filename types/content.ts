@@ -608,14 +608,12 @@ export interface AppContent {
   onboarding: OnboardingContent;
   survey: SurveyContent;
   psychologicalTest: PsychologicalTestContent;
-  ui: UITexts;
   mentalTechniques: Record<string, MentalTechniqueData>;
   mentalTechniquesMenu: MentalTechniquesMenuData;
   about: AboutContent;
   badges: BadgesContent;
   activityData?: ActivityData;
   payments: PaymentsContent;
-  donations: DonationsContent;
   articles: ArticlesCollection;
   legal?: LegalContent;
 }
@@ -642,7 +640,6 @@ export interface ContentContextType {
   getMentalTechniques: () => MentalTechniqueData[];
   getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
-  getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
   getBadges: () => BadgesContent;
   getArticle: (articleId: string) => ArticleData | undefined;

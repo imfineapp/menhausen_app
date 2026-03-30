@@ -106,30 +106,6 @@ vi.mock('../../utils/achievementsMetadata', () => ({
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => ({
     content: {
-      ui: {
-        home: {
-          heroTitle: 'Welcome back!',
-          level: 'Level',
-          activity: {
-            streakLabel: {
-              singular: 'day',
-              plural: 'days'
-            },
-            progressLabel: 'Progress',
-            weeklyCheckins: 'Weekly check-ins'
-          },
-          use80PercentUsers: '80% of users',
-          whatWorriesYou: 'What worries you?',
-          checkInInfo: {
-            title: 'Check-in Info',
-            content: 'Check-in information'
-          }
-        },
-        profile: {
-          free: 'Free',
-          premium: 'Premium'
-        }
-      },
       themes: {
         theme1: {
           id: 'theme1',
@@ -144,31 +120,7 @@ vi.mock('../../components/ContentContext', () => ({
           isPremium: true
         }
       }
-    },
-    getUI: () => ({
-      home: {
-        heroTitle: 'Welcome back!',
-        level: 'Level',
-        activity: {
-          streakLabel: {
-            singular: 'day',
-            plural: 'days'
-          },
-          progressLabel: 'Progress',
-          weeklyCheckins: 'Weekly check-ins'
-        },
-        use80PercentUsers: '80% of users',
-        whatWorriesYou: 'What worries you?',
-        checkInInfo: {
-          title: 'Check-in Info',
-          content: 'Check-in information'
-        }
-      },
-      profile: {
-        free: 'Free',
-        premium: 'Premium'
-      }
-    })
+    }
   })
 }));
 
@@ -323,7 +275,7 @@ describe('HomeScreen', () => {
 
       // Find and click profile button - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
-      expect(profileButton).toHaveTextContent('Welcome back! #111'); // Development fallback (user ID 111)
+      expect(profileButton).toHaveTextContent('Hero #111'); // Development fallback (user ID 111)
       fireEvent.click(profileButton);
 
       expect(mockOnGoToProfile).toHaveBeenCalled();
@@ -423,7 +375,7 @@ describe('HomeScreen', () => {
 
       // Check for accessibility attributes - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
-      expect(profileButton).toHaveTextContent('Welcome back! #111'); // Development fallback (user ID 111)
+      expect(profileButton).toHaveTextContent('Hero #111'); // Development fallback (user ID 111)
     });
 
     it('should support keyboard navigation', () => {
@@ -451,7 +403,7 @@ describe('HomeScreen', () => {
 
       // Test that interactive elements are present - now displays dynamic user ID
       const profileButton = screen.getByLabelText('Open user profile');
-      expect(profileButton).toHaveTextContent('Welcome back! #111'); // Development fallback (user ID 111)
+      expect(profileButton).toHaveTextContent('Hero #111'); // Development fallback (user ID 111)
       expect(profileButton).toBeInTheDocument();
     });
   });

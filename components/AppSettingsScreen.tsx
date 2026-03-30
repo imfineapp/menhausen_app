@@ -1,6 +1,9 @@
+import { settingsMessages } from '@/src/i18n/messages/settings';
+import { languageModalMessages } from '@/src/i18n/messages/languageModal';
+import { useStore } from '@nanostores/react';
 // Главный компонент страницы настроек приложения
 import { useState } from 'react';
-import { useLanguage, useTranslation } from './LanguageContext';
+import { useLanguage } from './LanguageContext';
 import { LanguageModal } from './LanguageModal';
 // Импортируем иконки
 import { 
@@ -43,7 +46,8 @@ export function AppSettingsScreen({
   
   // Хуки для управления языком
   const { language, openLanguageModal } = useLanguage();
-  const { t } = useTranslation();
+  const msgs = useStore(settingsMessages);
+  const languageMsgs = useStore(languageModalMessages);
 
   /**
    * Обработчики для различных действий настроек
@@ -111,14 +115,14 @@ export function AppSettingsScreen({
             
             {/* Секция "Settings" */}
             <div className="flex flex-col gap-4 sm:gap-5 w-full">
-              <h2 className="typography-h2 text-[#e1ff00] text-left">{t('settings')}</h2>
+              <h2 className="typography-h2 text-[#e1ff00] text-left">{msgs.settings}</h2>
               <div className="flex flex-col w-full">
                 <SettingsItem
                   icon={<LanguageIcon />}
-                  title={t('language')}
+                  title={languageMsgs.language}
                   rightElement={
                     <div className="typography-body text-[#ffffff] text-right">
-                      <p className="block">{language === 'en' ? t('english') : t('russian')}</p>
+                      <p className="block">{language === 'en' ? languageMsgs.english : languageMsgs.russian}</p>
                     </div>
                   }
                   onClick={handleLanguage}
@@ -126,7 +130,7 @@ export function AppSettingsScreen({
                 {/* Скрыто: настройки уведомлений */}
                 {/* <SettingsItem
                   icon={<ReminderIcon />}
-                  title={t('daily_reminder')}
+                  title={msgs.dailyReminder}
                   rightElement={
                     <Switch 
                       checked={notificationsEnabled} 
@@ -138,32 +142,32 @@ export function AppSettingsScreen({
                 {/* Скрыто: настройки PIN */}
                 {/* <SettingsItem
                   icon={<SecurityIcon />}
-                  title={t('security_pin')}
+                  title={msgs.securityPin}
                   onClick={handleSecurityPin}
                 /> */}
                 <SettingsItem
                   icon={<InfoIcon />}
-                  title={t('about_app')}
+                  title={msgs.aboutApp}
                   onClick={handleAboutApp}
                 />
                 <SettingsItem
                   icon={<DonationIcon />}
-                  title={t('make_donation')}
+                  title={msgs.makeDonation}
                   onClick={handleDonation}
                 />
                 <SettingsItem
                   icon={<PrivacyIcon />}
-                  title={t('privacy_policy')}
+                  title={msgs.privacyPolicy}
                   onClick={handlePrivacyPolicy}
                 />
                 <SettingsItem
                   icon={<TermsIcon />}
-                  title={t('terms_of_use')}
+                  title={msgs.termsOfUse}
                   onClick={handleTermsOfUse}
                 />
                 <SettingsItem
                   icon={<DeleteIcon />}
-                  title={t('delete_account')}
+                  title={msgs.deleteAccount}
                   onClick={handleDeleteAccount}
                   isHighlighted={true}
                 />

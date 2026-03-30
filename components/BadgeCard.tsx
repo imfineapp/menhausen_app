@@ -1,6 +1,9 @@
 import React from 'react';
 import { CheckCircle, Lock } from 'lucide-react';
 import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+
+import { badgesMessages } from '@/src/i18n/messages/badges';
 
 interface CircularProgressProps {
   progress: number; // от 0 до 100
@@ -76,6 +79,7 @@ export function BadgeCard({
   xp = 500
 }: BadgeCardProps) {
   const { getLocalizedBadges } = useContent();
+  const badges = useStore(badgesMessages)
   return (
     <div
       className={`
@@ -157,7 +161,7 @@ export function BadgeCard({
                    +{xp || 500}
                  </div>
                  <div className="text-xs text-gray-400">
-                   баллов за открытие
+                   {badges.points} {badges.forOpening}
                  </div>
                </div>
              )}
@@ -169,7 +173,7 @@ export function BadgeCard({
                    +{xp || 500}
                  </div>
                  <div className="text-xs text-gray-500">
-                   баллов за награду
+                   {badges.points} {badges.forReward}
                  </div>
                </div>
              )}

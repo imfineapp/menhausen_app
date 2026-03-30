@@ -1,10 +1,11 @@
+import { mentalTechniquesMessages } from '@/src/i18n/messages/mentalTechniques';
+import { useStore } from '@nanostores/react';
 // ========================================================================================
 // КОМПОНЕНТ: Техника заземления 5-4-3-2-1
 // ========================================================================================
 
 import React, { useState } from 'react';
 import { useContent } from '../ContentContext';
-import { useTranslation } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import { StripedProgressBar } from '../ui/StripedProgressBar';
@@ -56,7 +57,7 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [value, setValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -106,7 +107,7 @@ function InteractiveInput({
           }
         `}
       >
-        {t('done')}
+        {msgs.done}
       </button>
     </div>
   );
@@ -117,7 +118,7 @@ function InteractiveInput({
  */
 export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
@@ -133,13 +134,13 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_not_found')}
+              {msgs.techniqueNotFound}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {t('back')}
+              {msgs.back}
             </button>
           </div>
         </div>
@@ -166,10 +167,10 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_data_error')}
+              {msgs.techniqueDataError}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {t('technique_data_load_failed')}
+              {msgs.techniqueDataLoadFailed}
             </p>
           </div>
         </div>
@@ -186,10 +187,10 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           {/* Заголовок завершения */}
           <div className="text-center">
             <h1 className="typography-h1 text-[#e1ff00] mb-2">
-              {t('technique_completed')}
+              {msgs.techniqueCompleted}
             </h1>
             <p className="typography-body text-[#cfcfcf]">
-              {t('grounding_54321_success')}
+              {msgs.grounding54321Success}
             </p>
           </div>
 
@@ -197,7 +198,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
             <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
             <div className="flex flex-col gap-3">
-              <h3 className="typography-h3 text-[#e1ff00]">{t('your_responses')}</h3>
+              <h3 className="typography-h3 text-[#e1ff00]">{msgs.yourResponses}</h3>
               {responses.map((response, index) => (
                 <div key={index} className="flex items-start gap-3">
                   <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
@@ -213,7 +214,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
             <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
             <div className="flex flex-col gap-4">
-              <h3 className="typography-h3 text-[#e1ff00]">{t('about_technique')}</h3>
+              <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
               <MentalTechniqueAccordion 
                 items={technique.accordionItems.map(item => ({
                   title: getLocalizedText(item.title),
@@ -256,7 +257,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="typography-h3 text-[#e1ff00] mb-2">
-              {t('step')} {currentStep + 1} {t('of_word')} {technique.steps.length}
+              {msgs.step} {currentStep + 1} {msgs.of} {technique.steps.length}
             </h3>
             <p className="typography-body text-[#cfcfcf] mb-4">
               {getLocalizedText(currentStepData.instruction)}
@@ -274,7 +275,7 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="typography-h3 text-[#e1ff00]">{t('about_technique')}</h3>
+            <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

@@ -1,8 +1,9 @@
+import { settingsMessages } from '@/src/i18n/messages/settings';
+import { useStore } from '@nanostores/react';
 // Импортируем необходимые хуки и SVG пути
 // import { useState } from 'react';
-import { useTranslation } from './LanguageContext';
 import { BottomFixedButton } from "./BottomFixedButton";
-import { useContent } from './ContentContext';
+import { cardsMessages } from '@/src/i18n/messages/cards';
 import { FormScreenLayout } from './FormScreenLayout';
 
 // Типы для пропсов компонента
@@ -31,7 +32,7 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
   practiceTask: string; 
   whyExplanation: string; 
 }) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -55,7 +56,7 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
         
         {/* Объяснение "Почему" */}
         <p className="typography-body">
-          <span className="text-[#e1ff00]">{content.ui.cards.final.why}</span>
+          <span className="text-[#e1ff00]">{cards.final.why}</span>
           <span> {whyExplanation}</span>
         </p>
       </div>
@@ -78,7 +79,7 @@ export function FinalCardMessageScreen({
   practiceTask, 
   whyExplanation 
 }: FinalCardMessageScreenProps) {
-  const { t } = useTranslation();
+  const msgs = useStore(settingsMessages);
   
   // Сообщения по умолчанию, если не переданы
   const defaultFinalMessage = "Awareness of expectations reduces the automaticity of emotional reactions.";
@@ -108,7 +109,7 @@ export function FinalCardMessageScreen({
       dataName="Final card message"
       bottomActions={
         <BottomFixedButton onClick={handleNext}>
-          {t('next')}
+          {msgs.next}
         </BottomFixedButton>
       }
     >

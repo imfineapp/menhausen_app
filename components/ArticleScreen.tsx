@@ -4,7 +4,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { BackButton } from './ui/back-button';
+import { useStore } from '@nanostores/react';
 import { useContent, useArticle } from './ContentContext';
+import { articlesMessages } from '@/src/i18n/messages/articles';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 import { markArticleRead } from '../services/userStatsService';
 import { ThemeCard } from './ThemeCard';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
@@ -43,6 +46,8 @@ export function ArticleScreen({
   setEarnedAchievementIds
 }: ArticleScreenProps) {
   const { content, getLocalizedText, getTheme } = useContent();
+  const articlesUi = useStore(articlesMessages);
+  const nav = useStore(navigationMessages);
   const article = useArticle(articleId);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [logoOpacity, setLogoOpacity] = useState(1);
@@ -173,7 +178,7 @@ export function ArticleScreen({
             <div className="max-w-[351px] mx-auto">
               <div className="text-center py-12">
                 <div className="typography-body text-[#8a8a8a]">
-                  {content.ui.articles?.noArticles}
+                  {articlesUi.noArticles}
                 </div>
               </div>
             </div>
@@ -232,7 +237,7 @@ export function ArticleScreen({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  aria-label={content.ui.navigation.previous}
+                  aria-label={nav.previous}
                   onClick={() => handleArticleFontSizeChange(-1)}
                   disabled={articleFontStep <= ARTICLE_FONT_STEP_MIN}
                   className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
@@ -241,7 +246,7 @@ export function ArticleScreen({
                 </button>
                 <button
                   type="button"
-                  aria-label={content.ui.navigation.next}
+                  aria-label={nav.next}
                   onClick={() => handleArticleFontSizeChange(1)}
                   disabled={articleFontStep >= ARTICLE_FONT_STEP_MAX}
                   className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
@@ -317,7 +322,7 @@ export function ArticleScreen({
               return (
                 <div className="mt-8 pt-6 border-t border-[#212121]">
                   <p className="typography-body text-[#8a8a8a] mb-6">
-                    {content.ui.articles?.relatedThemes}
+                    {articlesUi.relatedThemes}
                   </p>
                   <div className="flex flex-col gap-8 sm:gap-10">
                     {themeCards.map((card) => (

@@ -1,9 +1,9 @@
 import React from 'react';
 import { ProgressRow } from './ProgressRow';
 import { LevelIcon } from './UserProfileIcons';
-import { useContent } from './ContentContext';
 import { useStore } from '@nanostores/react';
 import { $currentLevel, $nextLevelTarget, $pointsBalance } from '@/src/stores/points.store';
+import { levelsMessages } from '@/src/i18n/messages/levels';
 
 interface ProgressBlockProps {
   onBadgesClick?: () => void;
@@ -14,8 +14,7 @@ interface ProgressBlockProps {
  * Содержит две строки: достижения и уровень
  */
 export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockProps) {
-  const { getUI } = useContent();
-  const ui = getUI();
+  const levels = useStore(levelsMessages);
   const totalEarned = useStore($pointsBalance);
   const nextTarget = useStore($nextLevelTarget);
   const level = useStore($currentLevel);
@@ -42,7 +41,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
                   <span className="text-[#e1ff00] text-3xl font-bold">{level.toLocaleString()}</span>
-                  <span className="text-gray-400 text-sm">{ui.levels.yourLevel}</span>
+                  <span className="text-gray-400 text-sm">{levels.yourLevel}</span>
                 </div>
               </div>
             </div>
@@ -52,7 +51,7 @@ export function ProgressBlock({ onBadgesClick: _onBadgesClick }: ProgressBlockPr
               <div className="bg-black/50 rounded-lg p-3 w-full min-h-[44px] min-w-[44px]">
                 <div className="flex flex-col items-center text-center">
                   <span className="text-white text-2xl font-semibold">{totalEarned.toLocaleString()}/{nextTarget.toLocaleString()}</span>
-                  <span className="text-gray-400 text-sm">{ui.levels.toNextLevel}</span>
+                  <span className="text-gray-400 text-sm">{levels.toNextLevel}</span>
                 </div>
               </div>
             </div>

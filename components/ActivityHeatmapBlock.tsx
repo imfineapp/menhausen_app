@@ -1,6 +1,7 @@
 import React from 'react';
 import { useStore } from '@nanostores/react';
-import { useContent } from './ContentContext';
+import { profileMessages } from '@/src/i18n/messages/profile';
+import { $language } from '@/src/stores/language.store';
 import { getActivityDataForLastMonths, ActivityType } from '../utils/ActivityDataManager';
 import { $pointsBalance } from '@/src/stores/points.store';
 import { $totalCheckins } from '@/src/stores/checkin.store';
@@ -17,8 +18,8 @@ interface ActivityHeatmapBlockProps {
  * Дни недели по вертикали, недели по горизонтали
  */
 export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockProps) {
-  const { getUI } = useContent();
-  const ui = getUI();
+  const profile = useStore(profileMessages);
+  const language = useStore($language);
 
   useStore($pointsBalance)
   useStore($totalCheckins) // triggers updates when checkins change
@@ -62,11 +63,12 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
   };
 
   // Получаем заголовок
-  const title = ui.profile?.yourActivity;
+  const title = profile.yourActivity;
 
   // Форматирование даты для tooltip
   const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('ru-RU', { 
+    const locale = language === 'ru' ? 'ru-RU' : 'en-US';
+    return date.toLocaleDateString(locale, { 
       day: '2-digit', 
       month: '2-digit', 
       year: 'numeric' 
@@ -78,7 +80,7 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
     if (!day) return '';
     
     const dateStr = formatDate(day.date);
-    const heatmap = ui.profile?.heatmap;
+    const heatmap = profile.heatmap;
     
     switch (day.activityType) {
       case ActivityType.CHECKIN_AND_EXERCISE: {
@@ -147,7 +149,7 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
             </div>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-              {'Нет данных для отображения'}
+              {profile.heatmap?.noActivity ?? ''}
             </div>
           )}
         </div>

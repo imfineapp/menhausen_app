@@ -1,7 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { checkinMessages } from '@/src/i18n/messages/checkin';
 import { saveCheckin } from '@/src/stores/checkin.store';
 
 interface CheckInScreenProps {
@@ -53,7 +54,7 @@ function Light() {
 }
 
 function SendButton({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
-  const { content } = useContent();
+  const checkin = useStore(checkinMessages);
   
   return (
     <BottomFixedButton 
@@ -61,13 +62,13 @@ function SendButton({ onClick, disabled }: { onClick: () => void; disabled: bool
       disabled={disabled}
       ariaLabel="Submit check-in"
     >
-      {content.ui.checkin.send}
+      {checkin.send}
     </BottomFixedButton>
   );
 }
 
 function HeroBlockQuestion() {
-  const { content } = useContent();
+  const checkin = useStore(checkinMessages);
   
   return (
     <div
@@ -75,10 +76,10 @@ function HeroBlockQuestion() {
       data-name="Hero_block_question"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <h1 className="block">{content.ui.checkin.title}</h1>
+        <h1 className="block">{checkin.title}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{content.ui.checkin.subtitle}</p>
+        <p className="block">{checkin.subtitle}</p>
       </div>
     </div>
   );
@@ -251,16 +252,16 @@ function ContentContainer({
 }
 
 export function CheckInScreen({ onSubmit, onBack: _onBack }: CheckInScreenProps) {
-  const { content } = useContent();
+  const checkin = useStore(checkinMessages);
   const [selectedMood, setSelectedMood] = useState<number | null>(2);
 
   // Создаем MOOD_OPTIONS с переводами и обновляем глобальную переменную
   const moodOptions: MoodOption[] = [
-    { id: 'down', label: content.ui.checkin.moodOptions.down, value: 0, color: '#666666' },
-    { id: 'anxious', label: content.ui.checkin.moodOptions.anxious, value: 1, color: '#ff6b6b' },
-    { id: 'neutral', label: content.ui.checkin.moodOptions.neutral, value: 2, color: '#ffd93d' },
-    { id: 'energized', label: content.ui.checkin.moodOptions.energized, value: 3, color: '#6bcf7f' },
-    { id: 'happy', label: content.ui.checkin.moodOptions.happy, value: 4, color: '#4ecdc4' }
+    { id: 'down', label: checkin.moodOptions.down, value: 0, color: '#666666' },
+    { id: 'anxious', label: checkin.moodOptions.anxious, value: 1, color: '#ff6b6b' },
+    { id: 'neutral', label: checkin.moodOptions.neutral, value: 2, color: '#ffd93d' },
+    { id: 'energized', label: checkin.moodOptions.energized, value: 3, color: '#6bcf7f' },
+    { id: 'happy', label: checkin.moodOptions.happy, value: 4, color: '#4ecdc4' }
   ];
 
 

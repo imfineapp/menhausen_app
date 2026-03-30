@@ -29,19 +29,7 @@ Object.defineProperty(window, 'localStorage', {
 // Mock content context
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => ({
-    content: {
-      ui: {
-        cards: {
-          final: {
-            why: 'Why?'
-          },
-          startExercise: 'Ready to start the exercise?'
-        },
-        navigation: {
-          continue: 'Continue'
-        }
-      }
-    },
+    content: {},
     getLocalizedText: (text: string) => text,
     getCard: (cardId: string) => ({
       id: cardId,

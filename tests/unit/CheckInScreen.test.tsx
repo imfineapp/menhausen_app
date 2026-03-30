@@ -15,28 +15,6 @@ vi.mock('../../utils/DailyCheckinManager', () => ({
   }
 }));
 
-// Mock the ContentContext
-vi.mock('../../components/ContentContext', () => ({
-  useContent: () => ({
-    content: {
-      ui: {
-        checkin: {
-          title: 'How are you feeling?',
-          subtitle: 'Select your current mood',
-          moodOptions: {
-            down: 'Down',
-            anxious: 'Anxious',
-            neutral: 'Neutral',
-            energized: 'Energized',
-            happy: 'Happy'
-          },
-          submitButton: 'Submit'
-        }
-      }
-    }
-  })
-}));
-
 describe('CheckInScreen', () => {
   const mockOnSubmit = vi.fn();
   const mockOnBack = vi.fn();
@@ -50,8 +28,8 @@ describe('CheckInScreen', () => {
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
 
       // Check for main elements
-      expect(screen.getByText('How are you feeling?')).toBeInTheDocument();
-      expect(screen.getByText('Select your current mood')).toBeInTheDocument();
+      expect(screen.getByText('How are you?')).toBeInTheDocument();
+      expect(screen.getByText(/Check in with yourself/)).toBeInTheDocument();
     });
 
     it('should render submit button', () => {
@@ -70,7 +48,7 @@ describe('CheckInScreen', () => {
 
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
-      const submitButton = screen.getByRole('button', { name: /submit/i }) || screen.getByText('Submit');
+      const submitButton = screen.getByRole('button', { name: /submit check-in/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -90,7 +68,7 @@ describe('CheckInScreen', () => {
 
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
-      const submitButton = screen.getByRole('button', { name: /submit/i }) || screen.getByText('Submit');
+      const submitButton = screen.getByRole('button', { name: /submit check-in/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -129,13 +107,13 @@ describe('CheckInScreen', () => {
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
       // Component should render without errors
-      expect(screen.getByText('How are you feeling?')).toBeInTheDocument();
+      expect(screen.getByText('How are you?')).toBeInTheDocument();
     });
 
     it('should reset state when component unmounts and remounts', () => {
       const { unmount } = render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
-      expect(screen.getByText('How are you feeling?')).toBeInTheDocument();
+      expect(screen.getByText('How are you?')).toBeInTheDocument();
       
       unmount();
       
@@ -153,7 +131,7 @@ describe('CheckInScreen', () => {
         rerender(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       }
       
-      expect(screen.getByText('How are you feeling?')).toBeInTheDocument();
+      expect(screen.getByText('How are you?')).toBeInTheDocument();
     });
   });
 });

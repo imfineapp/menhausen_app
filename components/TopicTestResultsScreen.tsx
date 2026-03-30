@@ -1,7 +1,10 @@
 import { BottomFixedButton } from './BottomFixedButton'
 import { MiniStripeLogo } from './ProfileLayoutComponents'
 import { Light } from './ProfileLayoutComponents'
+import { useStore } from '@nanostores/react'
 import { useContent } from './ContentContext'
+import { homeMessages } from '@/src/i18n/messages/home'
+import { navigationMessages } from '@/src/i18n/messages/navigation'
 
 type TopicTestResultsScreenProps = {
   themeTitle: string
@@ -12,7 +15,9 @@ type TopicTestResultsScreenProps = {
 
 export function TopicTestResultsScreen({ themeTitle, percentage, onContinue, onBack }: TopicTestResultsScreenProps) {
   const { content } = useContent()
-  const template = content.ui.home.themeMatchPercentage
+  const home = useStore(homeMessages)
+  const nav = useStore(navigationMessages)
+  const template = home.themeMatchPercentage
   const line = template.replace('{percentage}', String(Math.round(percentage)))
 
   return (
@@ -28,7 +33,7 @@ export function TopicTestResultsScreen({ themeTitle, percentage, onContinue, onB
               onClick={onBack}
               className="typography-body text-[#8a8a8a] mb-8 hover:text-white min-h-[44px] self-start"
             >
-              ← {content.ui.navigation.back}
+              ← {nav.back}
             </button>
             <h1 className="typography-h1 text-white mb-4">{themeTitle}</h1>
             <p className="typography-h2 text-[#e1ff00] mb-6">{line}</p>
@@ -38,7 +43,7 @@ export function TopicTestResultsScreen({ themeTitle, percentage, onContinue, onB
       </div>
 
       <BottomFixedButton onClick={onContinue} dataName="Topic test continue" ariaLabel="Continue">
-        {content.psychologicalTest?.results?.buttonText ?? content.ui.navigation.next}
+        {content.psychologicalTest?.results?.buttonText ?? nav.next}
       </BottomFixedButton>
     </div>
   )

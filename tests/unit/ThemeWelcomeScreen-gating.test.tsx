@@ -6,9 +6,9 @@ import { ThemeCardManager } from '../../utils/ThemeCardManager';
 
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => ({
-    content: { ui: { themes: { welcome: { start: 'Start', subtitle: 'Welcome' } } } },
+    content: {},
     getLocalizedText: (t: string) => t,
-    getTheme: (id: string) => ({ id, title: 'Theme', description: 'Desc', isPremium: false, cards: [ { id: 'STRESS-01' }, { id: 'STRESS-02' } ] })
+    getTheme: (id: string) => ({ id, title: 'Theme', description: 'Desc', welcomeMessage: 'Welcome', isPremium: false, cards: [ { id: 'STRESS-01' }, { id: 'STRESS-02' } ] })
   })
 }));
 

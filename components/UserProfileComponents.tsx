@@ -1,7 +1,8 @@
 // Компоненты для отображения информации пользователя в профиле
 import svgPaths from "../imports/svg-x18dvlov3w";
 import { ArrowIcon } from './UserProfileIcons';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { profileMessages } from '@/src/i18n/messages/profile';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 
 /**
@@ -24,8 +25,7 @@ export function UserAvatar() {
  * Адаптивный статус аккаунта
  */
 export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
-  const { getUI } = useContent();
-  const ui = getUI();
+  const profile = useStore(profileMessages);
   return (
     <div
       className={`flex items-center justify-center px-3 py-1 rounded-xl ${
@@ -37,7 +37,7 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
         isPremium ? 'text-[#2d2b2b]' : 'text-[#8a8a8a]'
       }`}>
         <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px] whitespace-pre">
-          {isPremium ? ui.profile.premium : ui.profile.free}
+          {isPremium ? profile.premium : profile.free}
         </p>
       </div>
     </div>
@@ -48,10 +48,10 @@ export function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }
  * Адаптивная информация о пользователе
  */
 export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
-  const { getUI } = useContent();
+  const profile = useStore(profileMessages);
   const userDisplayId = getUserDisplayId();
   // Extract text part without any ID and combine with dynamic user ID
-  const heroTitle = getUI().profile?.heroTitle;
+  const heroTitle = profile.heroTitle;
   const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
   const displayText = `${textPart} ${userDisplayId}`;
   

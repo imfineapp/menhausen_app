@@ -25,75 +25,6 @@ const mockStressTheme = {
   ],
 };
 
-function buildUiForLanguage(lang: string) {
-  const isRu = lang === 'ru';
-  return {
-    language: 'Language',
-    english: 'English',
-    russian: 'Russian',
-    navigation: {
-      back: isRu ? 'Назад' : 'Back',
-      next: isRu ? 'Далее' : 'Next',
-    },
-    common: {
-      loading: isRu ? 'Загрузка...' : 'Loading...',
-    },
-    home: {
-      greeting: isRu ? 'Доброе утро' : 'Good morning',
-      whatWorriesYou: isRu ? 'Что вас беспокоит?' : 'What worries you?',
-      activity: {
-        streakLabel: 'days',
-        weeklyCheckins: 'Check-ins',
-        points: 'points',
-        target: 'target',
-      },
-    },
-    profile: {
-      yourStatus: 'Your status',
-      settings: 'Settings',
-      premium: 'Premium',
-      free: 'Free',
-      title: isRu ? 'Профиль' : 'Profile',
-    },
-    about: {
-      title: isRu ? 'О приложении' : 'About Menhausen',
-      description: 'Menhausen is your personal mental health companion',
-      keyFeatures: 'Key Features',
-      features: {
-        moodTracking: 'Daily mood tracking',
-        exercises: 'Personalized exercises',
-        progress: 'Progress tracking',
-        privacy: 'Secure and private',
-        telegram: 'Built for Telegram',
-      },
-      developmentTeam: 'Development Team',
-      teamDescription: 'Created with care',
-      madeWithLove: 'Made with ❤️',
-      copyright: '© 2024 Menhausen Team',
-      technicalInformation: 'Technical Information',
-      importantNote: 'Important Note',
-      disclaimer: 'Disclaimer text',
-      emergency: 'Emergency text',
-      version: 'Version:',
-      platform: 'Platform:',
-      builtWith: 'Built with:',
-      lastUpdated: 'Last updated:',
-      betaVersion: 'Beta Version 1.0.0',
-    },
-    levels: {
-      title: 'Levels',
-      yourLevel: 'Your Level',
-      toNextLevel: 'To Next Level',
-      pointsHistory: 'Points History',
-      actions: {
-        dailyCheckin: 'Daily Check-in',
-        exerciseComplete: 'Exercise Complete',
-        achievementEarned: 'Achievement Earned',
-      },
-    },
-  };
-}
-
 /** Global ContentContext mock: must stay in sync with `useContent()` surface used in tests. */
 vi.mock('../../components/ContentContext', () => ({
   ContentLoadingGate: ({ children }: { children: React.ReactNode }) =>
@@ -101,12 +32,9 @@ vi.mock('../../components/ContentContext', () => ({
   useContent: () => {
     const lang = useStore($language) as string;
 
-    const getUI = () => buildUiForLanguage(lang);
-
     return {
       currentLanguage: lang === 'ru' ? 'ru' : 'en',
       content: {
-        ui: buildUiForLanguage(lang),
         payments: {
           freePlanDetails: '',
           currentPlan: 'Current',
@@ -179,7 +107,6 @@ vi.mock('../../components/ContentContext', () => ({
       },
       setLanguage: vi.fn(),
       getLocalizedText: vi.fn((key: string) => key),
-      getUI,
       getTheme: (themeId: string) => (themeId === 'stress' ? mockStressTheme : undefined),
       getCard: vi.fn(),
       getSurvey: vi.fn(),

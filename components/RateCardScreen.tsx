@@ -1,6 +1,7 @@
 // Импортируем необходимые хуки и SVG пути
 import React, { useState, useRef, useEffect } from 'react';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { cardsMessages } from '@/src/i18n/messages/cards';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 
@@ -33,7 +34,7 @@ interface RateCardScreenProps {
  * Адаптивный компонент заголовка рейтинга
  */
 function RatingTextContainer() {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -41,10 +42,10 @@ function RatingTextContainer() {
       data-name="Rating text container"
     >
       <div className="typography-h2 text-[#e1ff00] w-full">
-        <h2 className="block">{content.ui.cards.rating.title}</h2>
+        <h2 className="block">{cards.rating.title}</h2>
       </div>
       <div className="typography-body mt-[35px] sm:mt-[37px] md:mt-[39px] text-[#ffffff] w-full">
-        <p className="block">{content.ui.cards.rating.subtitle}</p>
+        <p className="block">{cards.rating.subtitle}</p>
       </div>
     </div>
   );
@@ -110,7 +111,7 @@ function TextMessageBlock({
   textMessage: string; 
   onTextMessageChange: (value: string) => void;
 }) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -120,7 +121,7 @@ function TextMessageBlock({
       <InputTextMessageBlock 
         value={textMessage}
         onChange={onTextMessageChange}
-        placeholder={content.ui.cards.rating.placeholder}
+        placeholder={cards.rating.placeholder}
       />
     </div>
   );
@@ -217,7 +218,7 @@ function RatingCardContainer({
   textMessage: string;
   onTextMessageChange: (value: string) => void;
 }) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   return (
     <div
       className="box-border content-stretch flex flex-col gap-5 items-stretch justify-start w-full"
@@ -229,7 +230,7 @@ function RatingCardContainer({
         <div
           className="typography-body w-full text-[#ffffff] text-center"
         >
-          <p className="block">{content?.ui?.cards?.rating?.thankYou}</p>
+          <p className="block">{cards.rating.thankYou}</p>
         </div>
       )}
       <div className="mt-5">
@@ -249,7 +250,7 @@ function RatingCardContainer({
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }: RateCardScreenProps) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   // Состояние для хранения выбранного рейтинга (по умолчанию 5, как в дизайне)
   const [selectedRating, setSelectedRating] = useState(5);
   
@@ -327,7 +328,7 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
 
             <div className="w-full flex flex-col gap-4 items-center justify-start">
               <SkipRatingButton onClick={handleSkipRating}>
-                {content.ui.cards.rating.skipRating}
+                {cards.rating.skipRating}
               </SkipRatingButton>
               <button
                 onClick={handleNext}
@@ -336,7 +337,7 @@ export function RateCardScreen({ onBack, onNext, cardId, cardTitle: _cardTitle }
               >
                 <div className="typography-button text-[#2d2b2b] text-center text-nowrap tracking-[-0.43px]">
                   <p className="adjustLetterSpacing block leading-[16px] whitespace-pre">
-                    {content.ui.cards.rating.submit}
+                    {cards.rating.submit}
                   </p>
                 </div>
               </button>

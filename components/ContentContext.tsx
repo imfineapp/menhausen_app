@@ -4,7 +4,7 @@
 
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { useStore } from '@nanostores/react';
-import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, UITexts, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
+import { ContentContextType, SupportedLanguage, LocalizedContent, ThemeData, CardData, EmergencyCardData, SurveyScreenData, SurveyContent, MentalTechniqueData, MentalTechniquesMenuData, AppContent, BadgesContent, ArticleData, PsychologicalTestContent } from '../types/content';
 import { LoadingScreen } from './LoadingScreen';
 import { $language, setLanguage as setLanguageFromStore } from '@/src/stores/language.store';
 import { $content, $contentError, $isContentLoading, loadContentForLanguage } from '@/src/stores/content.store';
@@ -129,13 +129,6 @@ export function useContent(): ContentContextType {
         }
       }
     };
-  }, [content]);
-
-  /**
-   * Получение UI текстов
-   */
-  const getUI = useCallback((): UITexts => {
-    return content?.ui ?? ({} as UITexts);
   }, [content]);
 
   /**
@@ -283,7 +276,6 @@ export function useContent(): ContentContextType {
     getMentalTechniques,
     getMentalTechniquesByCategory,
     getMentalTechniquesMenu,
-    getUI,
     getAllThemes,
     getBadges,
     getArticle,
@@ -325,53 +317,6 @@ export function ContentLoadingGate({ children }: { children: ReactNode }) {
   }
 
   return <>{children}</>;
-}
-
-/**
- * Удобный хук для получения UI текстов
- */
-export function useUIText() {
-  const { content, getLocalizedText } = useContent();
-  
-  return {
-    navigation: {
-      back: getLocalizedText(content.ui.navigation.back),
-      next: getLocalizedText(content.ui.navigation.next),
-      skip: getLocalizedText(content.ui.navigation.skip),
-      complete: getLocalizedText(content.ui.navigation.complete),
-      continue: getLocalizedText(content.ui.navigation.continue)
-    },
-    common: {
-      loading: getLocalizedText(content.ui.common.loading),
-      error: getLocalizedText(content.ui.common.error),
-      tryAgain: getLocalizedText(content.ui.common.tryAgain),
-      save: getLocalizedText(content.ui.common.save),
-      cancel: getLocalizedText(content.ui.common.cancel),
-      delete: getLocalizedText(content.ui.common.delete),
-      edit: getLocalizedText(content.ui.common.edit)
-    },
-    home: {
-      greeting: getLocalizedText(content.ui.home.greeting),
-      checkInPrompt: getLocalizedText(content.ui.home.checkInPrompt),
-      quickHelpTitle: getLocalizedText(content.ui.home.quickHelpTitle),
-      themesTitle: getLocalizedText(content.ui.home.themesTitle)
-    },
-    profile: {
-      title: getLocalizedText(content.ui.profile.title),
-      aboutApp: getLocalizedText(content.ui.profile.aboutApp),
-      privacy: getLocalizedText(content.ui.profile.privacy),
-      terms: getLocalizedText(content.ui.profile.terms),
-      deleteAccount: getLocalizedText(content.ui.profile.deleteAccount),
-      payments: getLocalizedText(content.ui.profile.payments),
-      openProfile: getLocalizedText(content.ui.profile.openProfile || '')
-    },
-    survey: {
-      progress: getLocalizedText(content.ui.survey.progress),
-      selectAtLeastOne: getLocalizedText(content.ui.survey.selectAtLeastOne),
-      optional: getLocalizedText(content.ui.survey.optional),
-      required: getLocalizedText(content.ui.survey.required)
-    }
-  };
 }
 
 /**

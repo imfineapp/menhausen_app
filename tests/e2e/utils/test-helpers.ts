@@ -3,6 +3,21 @@ import { skipOnboarding, skipSurvey, skipRewardScreen, skipPsychologicalTest } f
 
 const CHECKIN_HEADING_SELECTOR = 'text=/^(How are you\\?|Как дела\\?)/i';
 
+function pad2(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
+/**
+ * App uses local time for `YYYY-MM-DD` day keys.
+ * (DailyCheckinManager.getCurrentDayKey is based on local Date, not UTC.)
+ */
+function getLocalDayKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  return `${year}-${month}-${day}`;
+}
+
 /**
  * Быстрая навигация на домашнюю страницу
  * Оптимизированная версия с использованием domcontentloaded вместо networkidle
@@ -279,8 +294,13 @@ export async function seedCheckinHistory(
       }
 
       const checkinHistory = history.map((seed, index) => {
-        const timestamp = new Date(seed.iso).getTime();
-        const dateKey = seed.iso.split('T')[0];
+        const seedDate = new Date(seed.iso);
+        const timestamp = seedDate.getTime();
+        const pad2 = (v) => String(v).padStart(2, '0');
+        const year = seedDate.getFullYear();
+        const month = pad2(seedDate.getMonth() + 1);
+        const day = pad2(seedDate.getDate());
+        const dateKey = `${year}-${month}-${day}`;
         const entry = {
           id: `checkin_${dateKey}_${timestamp + index}`,
           date: dateKey,
@@ -323,7 +343,12 @@ export async function clearTodayCheckinAfterSync(page: Page): Promise<void> {
   await page.waitForTimeout(5000).catch(() => {});
   // Удаляем чекин на сегодня после синхронизации
   await page.evaluate(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const d = new Date();
+    const pad2 = (v) => String(v).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad2(d.getMonth() + 1);
+    const day = pad2(d.getDate());
+    const today = `${year}-${month}-${day}`;
     localStorage.removeItem(`daily_checkin_${today}`);
     const progressRaw = localStorage.getItem('app-flow-progress');
     if (progressRaw) {
@@ -390,7 +415,15 @@ export async function waitForHomeScreen(page: Page, timeout = 5000): Promise<voi
         try {
           await page.evaluate(() => {
             // Проверяем, есть ли чекин на сегодня
-            const today = new Date().toISOString().split('T')[0];
+            // App storage keys are local-date based (YYYY-MM-DD).
+            const today = (() => {
+              const d = new Date();
+              const pad2 = (v) => String(v).padStart(2, '0');
+              const year = d.getFullYear();
+              const month = pad2(d.getMonth() + 1);
+              const day = pad2(d.getDate());
+              return `${year}-${month}-${day}`;
+            })();
             const checkinKey = `daily_checkin_${today}`;
             const checkinData = localStorage.getItem(checkinKey);
             
@@ -488,7 +521,14 @@ export async function waitForCheckinScreen(page: Page, timeout = 30000): Promise
       // Если мы на home screen, возможно чекин был добавлен синхронизацией с Supabase
       // Проверяем, есть ли чекин на сегодня в localStorage
       const hasTodayCheckin = await page.evaluate(() => {
-        const today = new Date().toISOString().split('T')[0];
+        const today = (() => {
+          const d = new Date();
+          const pad2 = (v) => String(v).padStart(2, '0');
+          const year = d.getFullYear();
+          const month = pad2(d.getMonth() + 1);
+          const day = pad2(d.getDate());
+          return `${year}-${month}-${day}`;
+        })();
         return localStorage.getItem(`daily_checkin_${today}`) !== null;
       });
       if (hasTodayCheckin) {
@@ -581,7 +621,9 @@ export async function completeCheckin(page: Page): Promise<void> {
     return;
   }
   
-  const sendButton = page.getByRole('button', { name: /Send|Отправить/i }).or(page.locator('text=/^(Send|Отправить)$/i'));
+  // `CheckInScreen` sets `ariaLabel="Submit check-in"` on the button.
+  // Use the attribute selector to avoid brittle visible-text selectors.
+  const sendButton = page.locator('button[aria-label="Submit check-in"]:not([disabled])').first();
   await expect(sendButton).toBeVisible({ timeout: 5000 });
   // Даем время для стабилизации элемента перед кликом
   await page.waitForTimeout(200).catch(() => {});

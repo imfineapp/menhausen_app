@@ -1,10 +1,11 @@
+import { mentalTechniquesMessages } from '@/src/i18n/messages/mentalTechniques';
+import { useStore } from '@nanostores/react';
 // ========================================================================================
 // КОМПОНЕНТ: Квадратное дыхание
 // ========================================================================================
 
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../ContentContext';
-import { useTranslation } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import { getSquareBreathingDotPosition } from '@/src/domain/squareBreathing.domain';
@@ -56,7 +57,7 @@ function BreathingTimer({
   onToggle: () => void;
   onComplete: () => void;
 }) {
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   return (
     <div className="text-center space-y-4">
@@ -64,14 +65,14 @@ function BreathingTimer({
         onClick={onToggle}
         className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg typography-button hover:bg-[#d4e600] transition-colors"
       >
-        {isRunning ? t('pause') : t('start')}
+        {isRunning ? msgs.pause : msgs.start}
       </button>
       
       <button
         onClick={onComplete}
         className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg typography-button hover:bg-[#444] transition-colors"
       >
-        {t('reset')}
+        {msgs.reset}
       </button>
     </div>
   );
@@ -82,13 +83,13 @@ function BreathingTimer({
  */
 function AdditionalInfo({ technique }: { technique: any }) {
   const { getLocalizedText } = useContent();
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   return (
     <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
       <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
       <div className="space-y-4">
-        <h3 className="typography-h3 text-[#e1ff00]">{t('about_technique')}</h3>
+        <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
         <MentalTechniqueAccordion 
           items={technique?.accordionItems?.map((item: any) => ({
             title: getLocalizedText(item.title),
@@ -105,7 +106,7 @@ function AdditionalInfo({ technique }: { technique: any }) {
  */
 export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   // Получаем данные техники из системы контента
   const technique = getMentalTechnique('breathing-square');
@@ -149,13 +150,13 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_not_found')}
+              {msgs.techniqueNotFound}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {t('back')}
+              {msgs.back}
             </button>
           </div>
         </div>
@@ -191,7 +192,7 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <p className="typography-body text-white mb-2">
-              {t('cycle')} {Math.floor(position / 4) + 1} - {t('step')} {position + 1} {t('of_word')} 4
+              {msgs.cycle} {Math.floor(position / 4) + 1} - {msgs.step} {position + 1} {msgs.of} 4
             </p>
           </div>
         </div>

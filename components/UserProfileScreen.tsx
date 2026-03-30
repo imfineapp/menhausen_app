@@ -1,10 +1,12 @@
 // Главный компонент экрана профиля пользователя с поддержкой Premium статуса
+import { settingsMessages } from '@/src/i18n/messages/settings';
 import React, { useState, useEffect, useMemo } from 'react';
-import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
 import { PointsTransaction } from '../types/points';
 import { useStore } from '@nanostores/react';
 import { $pointsTransactions } from '@/src/stores/points.store';
+import { levelsMessages } from '@/src/i18n/messages/levels';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 
 // Импортируем выделенные компоненты
 import { 
@@ -41,11 +43,9 @@ export function UserProfileScreen({
   onShowSettings,
   userHasPremium 
 }: UserProfileScreenProps) {
-  const { t } = useTranslation();
-  const { getUI } = useContent();
-  
-  // Получаем переводы UI
-  const ui = getUI();
+  const msgs = useStore(settingsMessages);
+  const levels = useStore(levelsMessages);
+  const navigation = useStore(navigationMessages);
   
   const pointsTransactions = useStore($pointsTransactions);
   const pointsHistory = useMemo(
@@ -78,7 +78,7 @@ export function UserProfileScreen({
   
   // Получаем локализованные тексты для действий
   const getLocalizedAction = (transaction: PointsTransaction) => {
-    const actions = ui.levels.actions;
+    const actions = levels.actions;
     switch (transaction.correlationId?.split('_')[0]) {
       case 'checkin':
         return actions.dailyCheckin;
@@ -137,7 +137,7 @@ export function UserProfileScreen({
                 onClick={onShowSettings}
                 className="absolute top-0 right-0 flex items-center justify-center min-h-[44px] min-w-[44px] cursor-pointer hover:opacity-80 transition-opacity"
                 data-name="Settings icon button"
-                aria-label={t('settings')}
+                aria-label={msgs.settings}
               >
                 <SettingsIcon />
               </button>
@@ -202,7 +202,7 @@ export function UserProfileScreen({
                 
                 {/* Контент блока */}
                 <div className="relative z-10">
-                  <h3 className="text-white text-lg font-semibold mb-4">{ui.levels.pointsHistory}</h3>
+                  <h3 className="text-white text-lg font-semibold mb-4">{levels.pointsHistory}</h3>
                   <div className="space-y-3">
                     {currentPageItems.length > 0 ? (
                       currentPageItems.map((tx, index) => (
@@ -216,7 +216,7 @@ export function UserProfileScreen({
                       ))
                     ) : (
                       <div className="text-gray-400 text-sm text-center py-4">
-                        {t('no_points_history')}
+                        {msgs.noPointsHistory}
                       </div>
                     )}
                   </div>
@@ -228,25 +228,25 @@ export function UserProfileScreen({
                         onClick={handlePreviousPage}
                         disabled={currentPage === 1}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px]"
-                        aria-label={ui.navigation.previous}
+                        aria-label={navigation.previous}
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                        <span className="hidden sm:inline">{ui.navigation.previous}</span>
+                        <span className="hidden sm:inline">{navigation.previous}</span>
                       </button>
                       
                       <span className="text-gray-400 text-sm">
-                        {t('page')} {currentPage} {t('of')} {totalPages}
+                        {msgs.page} {currentPage} {msgs.of} {totalPages}
                       </span>
                       
                       <button
                         onClick={handleNextPage}
                         disabled={currentPage === totalPages}
                         className="flex items-center gap-2 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] min-w-[44px]"
-                        aria-label={ui.navigation.next}
+                        aria-label={navigation.next}
                       >
-                        <span className="hidden sm:inline">{ui.navigation.next}</span>
+                        <span className="hidden sm:inline">{navigation.next}</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>

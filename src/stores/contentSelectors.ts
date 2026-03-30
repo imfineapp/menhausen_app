@@ -1,5 +1,8 @@
 import type { ThemeData } from '@/types/content'
 
+import { cardsMessages } from '@/src/i18n/messages/cards'
+import { commonMessages } from '@/src/i18n/messages/common'
+
 import { $content } from './content.store'
 
 export function getThemeFromStore(themeId: string): ThemeData | undefined {
@@ -7,18 +10,19 @@ export function getThemeFromStore(themeId: string): ThemeData | undefined {
 }
 
 export function getCardUiStrings() {
-  const ui = $content.get()?.ui
+  const c = (cardsMessages.get() ?? {}) as Record<string, unknown>
+  const co = (commonMessages.get() ?? {}) as Record<string, unknown>
   return {
-    fallbackTitle: ui?.cards.fallbackTitle ?? 'Card',
-    fallbackDescription: ui?.cards.fallbackDescription ?? 'Card description will be available soon.',
-    techniqueNotFound: ui?.cards.techniqueNotFound ?? 'Technique not found',
-    practiceTaskNotFound: ui?.cards.practiceTaskNotFound ?? 'Practice task not found',
-    explanationNotFound: ui?.cards.explanationNotFound ?? 'Explanation not found',
-    questionNotFound: ui?.cards.questionNotFound ?? 'Question not found',
-    loadingQuestions: ui?.common.loadingQuestions ?? 'Please wait...',
-    loadingFinalMessage: ui?.common.loadingFinalMessage ?? 'Please wait...',
-    loading: ui?.common.loading ?? 'Please wait...',
-    error: ui?.common.error ?? 'Error',
-    errorLoadingMessageData: ui?.common.errorLoadingMessageData ?? 'Error',
+    fallbackTitle: (c?.fallbackTitle as string) ?? 'Card',
+    fallbackDescription: (c?.fallbackDescription as string) ?? 'Card description will be available soon.',
+    techniqueNotFound: (c?.techniqueNotFound as string) ?? 'Technique not found',
+    practiceTaskNotFound: (c?.practiceTaskNotFound as string) ?? 'Practice task not found',
+    explanationNotFound: (c?.explanationNotFound as string) ?? 'Explanation not found',
+    questionNotFound: (c?.questionNotFound as string) ?? 'Question not found',
+    loadingQuestions: (co?.loadingQuestions as string) ?? 'Please wait...',
+    loadingFinalMessage: (co?.loadingFinalMessage as string) ?? 'Please wait...',
+    loading: (co?.loading as string) ?? 'Please wait...',
+    error: (co?.error as string) ?? 'Error',
+    errorLoadingMessageData: (co?.errorLoadingMessageData as string) ?? 'Error',
   }
 }

@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { useStore } from '@nanostores/react';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { UserAccountStatus } from './UserProfileComponents';
-import { useContent } from './ContentContext';
+import { homeMessages } from '@/src/i18n/messages/home';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { $topicTestVersion } from '@/src/stores/topic-test.store';
 import { cn } from './ui/utils';
@@ -78,7 +78,7 @@ export function ThemeCard({
   showProgress = true,
   variant: _variant = 'default'
 }: ThemeCardProps) {
-  const { content } = useContent();
+  const home = useStore(homeMessages);
   const topicTestVersion = useStore($topicTestVersion);
   
   // Нормализуем прогресс в диапазон 0-100
@@ -101,9 +101,9 @@ export function ThemeCard({
   // Формируем текст с процентом, если он доступен
   const matchText = useMemo(() => {
     if (!showMatchPercentage || matchPercentage === null) return null;
-    const template = content.ui.home.themeMatchPercentage;
+    const template = home.themeMatchPercentage;
     return template.replace('{percentage}', String(Math.round(matchPercentage)));
-  }, [matchPercentage, content.ui.home.themeMatchPercentage, showMatchPercentage]);
+  }, [matchPercentage, home.themeMatchPercentage, showMatchPercentage]);
 
   // Генерируем уникальные ID для доступности
   const cardId = themeId ? `theme-card-${themeId}` : `theme-card-${title.toLowerCase().replace(/\s+/g, '-')}`;
@@ -115,13 +115,13 @@ export function ThemeCard({
   const ariaLabel = useMemo(() => {
     const parts = [title, description];
     if (shouldShowProgress && normalizedProgress > 0) {
-      parts.push(`${content.ui.home.activity.progressLabel}: ${normalizedProgress}%`);
+      parts.push(`${home.activity.progressLabel}: ${normalizedProgress}%`);
     }
     if (matchText) {
       parts.push(matchText);
     }
     return parts.join('. ');
-  }, [title, description, normalizedProgress, matchText, shouldShowProgress]);
+  }, [title, description, normalizedProgress, matchText, shouldShowProgress, home.activity.progressLabel]);
 
   // Обработчик клика с проверкой состояний
   const handleClick = () => {
@@ -209,7 +209,7 @@ export function ThemeCard({
             aria-valuenow={normalizedProgress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`${content.ui.home.activity.progressLabel}: ${normalizedProgress}%`}
+            aria-label={`${home.activity.progressLabel}: ${normalizedProgress}%`}
             id={progressId}
           >
             <StripedProgressBar 
@@ -219,7 +219,7 @@ export function ThemeCard({
               showBackground={true}
             />
             <div className="absolute typography-caption top-1/2 left-0 right-0 -translate-y-1/2 text-[var(--theme-card-text-secondary)] text-right pr-2 pointer-events-none">
-              <p className="block">{content.ui.home.activity.progressLabel}</p>
+              <p className="block">{home.activity.progressLabel}</p>
             </div>
           </div>
         )}

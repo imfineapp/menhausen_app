@@ -2,7 +2,9 @@
 import { useState, useRef, useEffect } from 'react';
 import svgPaths from "../imports/svg-c5dzwxr04w";
 import { BottomFixedButton } from "./BottomFixedButton";
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { cardsMessages } from '@/src/i18n/messages/cards';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 import { FormScreenLayout } from './FormScreenLayout';
 
 // Типы для пропсов компонента
@@ -40,7 +42,7 @@ function LockShieldFilled() {
  * Адаптивный блок информации о шифровании
  */
 function EncryptInfoBlock() {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -49,7 +51,7 @@ function EncryptInfoBlock() {
     >
       <LockShieldFilled />
       <div className="typography-caption text-[#8a8a8a] text-left flex-1">
-        <p className="block">{content.ui.cards.question.encryption}</p>
+        <p className="block">{cards.question.encryption}</p>
       </div>
     </div>
   );
@@ -105,7 +107,7 @@ function InputAnswerBlock({ value, onChange, placeholder }: {
  * Адаптивный блок ответа с полем ввода и информацией о шифровании
  */
 function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChange: (value: string) => void }) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -115,7 +117,7 @@ function AnswerBlock({ answer, onAnswerChange }: { answer: string; onAnswerChang
       <InputAnswerBlock 
         value={answer}
         onChange={onAnswerChange}
-        placeholder={content.ui.cards.question.placeholder}
+        placeholder={cards.question.placeholder}
       />
       <EncryptInfoBlock />
     </div>
@@ -150,7 +152,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle, questionText }: QuestionScreen01Props) {
-  const { content } = useContent();
+  const nav = useStore(navigationMessages);
   
   // Состояние для хранения ответа пользователя
   const [answer, setAnswer] = useState('');
@@ -192,7 +194,7 @@ export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle
           onClick={handleNext}
           disabled={!answer.trim()}
         >
-          {content?.ui?.navigation?.next}
+          {nav.next}
         </BottomFixedButton>
       }
     >

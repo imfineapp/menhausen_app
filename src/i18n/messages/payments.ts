@@ -1,0 +1,54 @@
+import { i18n } from '../setup'
+
+export const paymentsMessages = i18n('payments', {
+  currentPlan: "Your current plan",
+  freePlan: "Free",
+  freePlanDetails: ["10 free cards on Stress Management", "Limited progress"],
+  premiumTitle: "Premium",
+  benefitsTitle: "Unlock all themes and cards",
+  premiumIntro: "70 premium cards from practicing psychologists that help with daily crises in topics such as:",
+  premiumProgress: "Unlimited progress: unlock levels, revisit techniques, and track changes in your condition.",
+  keyBenefits: ["All themes and cards unlocked", "Daily check-ins and progress", "Guided techniques and exercises", "Personalized recommendations", "Priority updates"],
+  premiumThemes: ["Relationships", "Self-esteem and identity", "Anger and irritability", "Depressive states", "Loss of a loved one", "Emotional state", "Anxiety and insecurity"],
+  benefits: {
+    angry: "Anger",
+    sadness: "Sadness and apathy",
+    anxiety: "Anxiety",
+    confidence: "Lack and self-confidence",
+    relationships: "Relationships and family"
+  },
+  starsInfo: "Payments are made in Telegram Stars (⭐). This is a one-time payment with no auto-renewal.",
+  plans: {
+    monthly: "Monthly",
+    annually: "Annually",
+    lifetime: "Lifetime",
+    perMonth: "/ month",
+    perYear: "/ year",
+    perLifetime: "forever",
+    savingsBadge: "Save 16%",
+    mostPopularBadge: "Most popular"
+  },
+  cta: {
+    buy: "Buy Premium",
+    processing: "Processing..."
+  },
+  messages: {
+    successWithPlan: "Premium successfully activated!",
+    error: "An error occurred while processing your purchase. Please try again.",
+    telegramNotAvailable: "Telegram WebApp API not available. Please open this app in Telegram."
+  },
+  legal: {
+    disclaimer: "Payments are made in Telegram Stars. This is a one-time payment with no automatic renewals. See Terms and Privacy Policy for details.",
+    termsText: "Terms of Use",
+    privacyText: "Privacy Policy",
+    termsHref: "/terms",
+    privacyHref: "/privacy"
+  },
+  promo: {
+    havePromoLink: "I have a promo code",
+    placeholder: "Promo code",
+    apply: "Apply",
+    applied: "Promo applied",
+    invalid: "Invalid promo code"
+  }
+} as any)

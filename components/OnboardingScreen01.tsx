@@ -2,7 +2,8 @@
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { onboardingMessages } from '@/src/i18n/messages/onboarding';
 
 // Типы для пропсов компонента
 interface OnboardingScreen01Props {
@@ -22,11 +23,11 @@ interface OnboardingScreen01Props {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function NextButton({ onClick }: { onClick: () => void }) {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <BottomFixedButton onClick={onClick} dataName="Next button" ariaLabel="Next">
-      {content.ui.onboarding.screen01.buttonText}
+      {ob.screen01.buttonText}
     </BottomFixedButton>
   );
 }
@@ -36,7 +37,7 @@ function NextButton({ onClick }: { onClick: () => void }) {
  * Содержит текст о принятии условий с кликабельными ссылками
  */
 function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () => void; onShowTerms: () => void }) {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -45,7 +46,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
     >
       <div className="typography-body text-[#ffffff] text-center w-full">
         <p className="block">
-          <span>{content.ui.onboarding.screen01.agreementText} </span>
+          <span>{ob.screen01.agreementText} </span>
           <a
             href="#"
             onClick={(e) => {
@@ -54,7 +55,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
             }}
             className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] typography-body cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
-            {content.ui.onboarding.screen01.termsText}
+            {ob.screen01.termsText}
           </a>
           <span className="typography-body"> и</span>
           <a
@@ -65,7 +66,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
             }}
             className="[text-decoration-line:underline] [text-decoration-style:solid] [text-underline-position:from-font] typography-body cursor-pointer hover:text-[#e1ff00] text-[#ffffff] min-h-[44px] min-w-[44px] inline transition-colors duration-200"
           >
-            {` ${content.ui.onboarding.screen01.privacyText}`}
+            {` ${ob.screen01.privacyText}`}
           </a>
         </p>
       </div>
@@ -78,7 +79,7 @@ function AgreementTextBlock({ onShowPrivacy, onShowTerms }: { onShowPrivacy: () 
  * Содержит заголовок и описание приложения
  */
 function MainContent() {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -86,10 +87,10 @@ function MainContent() {
       data-name="main_content"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <h1 className="block">{content.ui.onboarding.screen01.title}</h1>
+        <h1 className="block">{ob.screen01.title}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{content.ui.onboarding.screen01.subtitle}</p>
+        <p className="block">{ob.screen01.subtitle}</p>
       </div>
     </div>
   );

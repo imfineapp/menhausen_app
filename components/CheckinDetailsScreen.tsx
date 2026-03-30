@@ -4,7 +4,12 @@ import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
 import { LoadingScreen } from './LoadingScreen';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
+import { cardsMessages } from '@/src/i18n/messages/cards';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
+import { errorsMessages } from '@/src/i18n/messages/errors';
+import { commonMessages } from '@/src/i18n/messages/common';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { ThemeLoader } from '../utils/ThemeLoader';
 
@@ -108,7 +113,7 @@ function InputAnswerBlock({ answer, height = 85 }: { answer: string; height?: nu
  * Адаптивный основной контейнер с вопросами и ответами
  */
 function MainContent({ checkinData }: { checkinData: CheckinData }) {
-  const { content, getLocalizedText } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
@@ -133,7 +138,7 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
           {checkinData.practiceTask}
         </p>
         <p className="block">
-          <span className="text-[#e1ff00]">{getLocalizedText(content.ui.cards.final.why)}</span>
+          <span className="text-[#e1ff00]">{cards.final.why}</span>
           <span> {checkinData.whyNote}</span>
         </p>
       </div>
@@ -145,11 +150,11 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
  * Кнопка для страницы деталей чекина
  */
 function CheckinDetailsBottomButton({ onClick }: { onClick: () => void }) {
-  const { content, getLocalizedText } = useContent();
+  const nav = useStore(navigationMessages);
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getLocalizedText(content.ui.navigation.continue)}
+      {nav.continue}
     </BottomFixedButton>
   );
 }
@@ -158,12 +163,12 @@ function CheckinDetailsBottomButton({ onClick }: { onClick: () => void }) {
  * Компонент для отображения приглашения к началу упражнения
  */
 function StartExerciseInvitation() {
-  const { content, getLocalizedText } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
       <div className="typography-body text-[#e1ff00] text-center w-full">
-        <p className="block">{getLocalizedText(content.ui.cards.startExercise)}</p>
+        <p className="block">{cards.startExercise}</p>
       </div>
     </div>
   );
@@ -174,6 +179,8 @@ function StartExerciseInvitation() {
  */
 export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", checkinDate }: CheckinDetailsScreenProps) {
   const { currentLanguage } = useContent();
+  const errors = useStore(errorsMessages)
+  const common = useStore(commonMessages)
   const [checkinData, setCheckinData] = useState<CheckinData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -221,7 +228,7 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
       // Форматируем дату
       const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('ru-RU', { 
+        return date.toLocaleDateString(currentLanguage === 'ru' ? 'ru-RU' : 'en-US', { 
           day: '2-digit', 
           month: '2-digit', 
           year: 'numeric' 
@@ -258,14 +265,14 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
         setCheckinData(data);
       } catch (err) {
         console.error('Error loading checkin data:', err);
-        setError('Ошибка загрузки данных');
+        setError(errors.loadingDataError);
       } finally {
         setLoading(false);
       }
     };
     
     loadData();
-  }, [checkinId, currentLanguage, getCheckinData]);
+  }, [checkinId, currentLanguage, getCheckinData, errors.loadingDataError]);
 
   // Показываем загрузку
   if (loading) {
@@ -291,7 +298,7 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
                   onClick={() => window.location.reload()} 
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >
-                  Попробовать снова
+                  {common.tryAgain}
                 </button>
               </div>
             </div>

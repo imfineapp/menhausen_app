@@ -1,10 +1,11 @@
+import { mentalTechniquesMessages } from '@/src/i18n/messages/mentalTechniques';
+import { useStore } from '@nanostores/react';
 // ========================================================================================
 // КОМПОНЕНТ: Техника якоря
 // ========================================================================================
 
 import React, { useState } from "react";
 import { useContent } from "../ContentContext";
-import { useTranslation } from "../LanguageContext";
 import { MiniStripeLogo } from "../ProfileLayoutComponents";
 import { MentalTechniqueAccordion } from "../ui/accordion-mental-technique";
 import { getNextStepOrComplete, isGroundingStepCompleted } from '@/src/domain/grounding.domain';
@@ -21,13 +22,13 @@ function AnchorVisualization({
 }: { 
   currentStep: number; 
 }) {
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   const steps = [
-    { icon: "", text: t('mt_feet_on_floor') },
-    { icon: "", text: t('mt_three_deep_breaths') },
-    { icon: "", text: t('mt_safety_phrase') },
-    { icon: "", text: t('mt_look_around') }
+    { icon: "", text: msgs.feetOnFloor },
+    { icon: "", text: msgs.threeDeepBreaths },
+    { icon: "", text: msgs.safetyPhrase },
+    { icon: "", text: msgs.lookAround }
   ];
   
   return (
@@ -66,7 +67,7 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -116,7 +117,7 @@ function InteractiveInput({
           }
         `}
       >
-        {t('done')}
+        {msgs.done}
       </button>
     </div>
   );
@@ -177,7 +178,7 @@ function ConfirmationCheckbox({
  */
 export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { t } = useTranslation();
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
@@ -193,13 +194,13 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_not_found')}
+              {msgs.techniqueNotFound}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {t('back')}
+              {msgs.back}
             </button>
           </div>
         </div>
@@ -232,10 +233,10 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_data_error')}
+              {msgs.techniqueDataError}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {t('technique_data_load_failed')}
+              {msgs.techniqueDataLoadFailed}
             </p>
           </div>
         </div>
@@ -252,10 +253,10 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
           {/* Заголовок завершения */}
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {t('technique_completed')}
+              {msgs.techniqueCompleted}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {t('grounding_anchor_success')}
+              {msgs.groundingAnchorSuccess}
             </p>
           </div>
 
@@ -264,7 +265,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
             <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
               <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
               <div className="flex flex-col gap-3">
-                <h3 className="text-[#e1ff00] text-lg font-semibold">{t('your_responses')}</h3>
+                <h3 className="text-[#e1ff00] text-lg font-semibold">{msgs.yourResponses}</h3>
                 {responses.map((response, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
@@ -310,7 +311,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="typography-h3 text-[#e1ff00] mb-2">
-              {t('step')} {currentStep + 1} {t('of_word')} {technique.steps.length}
+              {msgs.step} {currentStep + 1} {msgs.of} {technique.steps.length}
             </h3>
             <p className="typography-body text-[#cfcfcf] mb-4">
               {getLocalizedText(currentStepData.instruction)}
@@ -332,7 +333,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         ) : (
           <div className="text-center">
             <p className="typography-caption text-[#cfcfcf]">
-              {t('follow_instruction_above')}
+              {msgs.followInstructionAbove}
             </p>
           </div>
         )}
@@ -341,7 +342,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="typography-h3 text-[#e1ff00]">{t('about_technique')}</h3>
+            <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

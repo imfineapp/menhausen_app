@@ -2,7 +2,10 @@
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
+import { homeMessages } from '@/src/i18n/messages/home';
+import { themesMessages } from '@/src/i18n/messages/themes';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
@@ -33,14 +36,14 @@ function ActionButton({
   isLocked: boolean; 
   buttonText: string; 
 }) {
-  const { content } = useContent();
+  const themes = useStore(themesMessages);
   
   return (
     <BottomFixedButton 
       onClick={onClick}
       className={isLocked ? 'bg-yellow-500 hover:bg-yellow-600' : ''}
     >
-      {isLocked ? content.ui.themes.welcome.unlock : content.ui.themes.welcome.start}
+      {isLocked ? themes.welcome.unlock : themes.welcome.start}
     </BottomFixedButton>
   );
 }
@@ -60,7 +63,9 @@ export function ThemeWelcomeScreen({
   isPremiumTheme = false, 
   userHasPremium = false 
 }: ThemeWelcomeScreenProps) {
-  const { content, getTheme, getLocalizedText } = useContent();
+  const { getTheme, getLocalizedText } = useContent();
+  const home = useStore(homeMessages);
+  const themes = useStore(themesMessages);
   
   // Получаем данные темы
   const themeData = themeTitle ? getTheme(themeTitle) : null;
@@ -75,7 +80,7 @@ export function ThemeWelcomeScreen({
     : [];
 
   // Проверяем, должна ли показываться приветственная страница
-  const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || content.ui.home.themesTitle, allCardIds);
+  const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || home.themesTitle, allCardIds);
   
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;
@@ -92,7 +97,7 @@ export function ThemeWelcomeScreen({
   const handleButtonClick = isThemeLocked ? onUnlock : onStart;
   
   // Получаем приветственное сообщение темы или используем общий текст
-  const welcomeMessage = themeData?.welcomeMessage || getLocalizedText(content.ui.themes.welcome.subtitle);
+  const welcomeMessage = themeData?.welcomeMessage || themes.welcome.subtitle;
   
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-bg-primary flex flex-col">
@@ -114,7 +119,7 @@ export function ThemeWelcomeScreen({
               </h1>
               <p className="typography-body text-white">
                 {isThemeLocked 
-                  ? getLocalizedText(content.ui.themes.welcome.lockedSubtitle ?? content.ui.themes.welcome.subtitle) 
+                  ? (themes.welcome.lockedSubtitle ?? themes.welcome.subtitle) 
                   : welcomeMessage}
               </p>
             </div>

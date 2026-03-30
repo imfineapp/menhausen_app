@@ -1,5 +1,6 @@
+import { shareMessages } from '@/src/i18n/messages/share';
+import { useStore } from '@nanostores/react';
 // Утилиты для функциональности шаринга в профиле пользователя
-import { useTranslation } from './LanguageContext';
 import { generateReferralLink } from '../utils/referralUtils';
 import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
@@ -7,7 +8,7 @@ import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } fro
  * Хук для функциональности шаринга приложения
  */
 export function useAppShare() {
-  const { t } = useTranslation();
+  const msgs = useStore(shareMessages);
 
   /**
    * Главная функция шаринга
@@ -20,7 +21,7 @@ export function useAppShare() {
       try {
         // Генерируем реферальную ссылку (или обычную, если нет User ID)
         const appUrl = generateReferralLink();
-        const shareText = `${t('share_text_telegram')} ${appUrl}`;
+        const shareText = `${msgs.textTelegram} ${appUrl}`;
         
         // Используем метод Telegram для отправки текста
         // Этот метод откроет диалог выбора чата для отправки сообщения
@@ -51,11 +52,11 @@ export function useAppShare() {
   const fallbackShare = () => {
     // Используем реферальную ссылку, если доступна
     const appUrl = generateReferralLink();
-    const shareText = t('share_text_general');
+    const shareText = msgs.textGeneral;
     
     if (navigator.share) {
       navigator.share({
-        title: t('share_title'),
+        title: msgs.title,
         text: shareText,
         url: appUrl,
       }).then(() => {
@@ -103,7 +104,7 @@ export function useAppShare() {
       showShareSuccessMessage();
     } catch (error) {
       console.error('Fallback copy failed:', error);
-      alert(t('share_error') + window.location.href);
+      alert(msgs.error + window.location.href);
     }
     
     document.body.removeChild(textArea);
@@ -115,7 +116,7 @@ export function useAppShare() {
   const showShareSuccessMessage = () => {
     // Создаем простое toast уведомление
     const toast = document.createElement('div');
-    toast.textContent = t('share_copied');
+    toast.textContent = msgs.copied;
     toast.style.cssText = `
       position: fixed;
       top: 20px;

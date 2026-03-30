@@ -1,4 +1,7 @@
 import React from 'react';
+import { useStore } from '@nanostores/react';
+
+import { errorsMessages } from '@/src/i18n/messages/errors';
 
 interface ErrorFallbackProps {
   error: Error;
@@ -11,6 +14,7 @@ interface ErrorFallbackProps {
  * Used by PostHogErrorBoundary to show a user-friendly error message
  */
 export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
+  const errors = useStore(errorsMessages)
   const handleReload = () => {
     window.location.reload();
   };
@@ -19,9 +23,9 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
     <div className="w-full h-screen flex items-center justify-center bg-[#111111] px-4">
       <div className="text-white text-center max-w-md">
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold mb-2">Something went wrong</h1>
+          <h1 className="text-2xl font-semibold mb-2">{errors.somethingWentWrong}</h1>
           <p className="text-[#d4d4d4] text-sm">
-            We're sorry, but something unexpected happened. Please try reloading the app.
+            {errors.unexpected}
           </p>
         </div>
         
@@ -43,7 +47,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
             onClick={handleReload}
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
           >
-            Reload App
+            {errors.reloadApp}
           </button>
           
           {resetError && (
@@ -51,7 +55,7 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
               onClick={resetError}
               className="px-6 py-3 bg-[#2a2a2a] hover:bg-[#3a3a3a] text-white rounded-lg font-medium transition-colors"
             >
-              Try Again
+              {errors.tryAgain}
             </button>
           )}
         </div>

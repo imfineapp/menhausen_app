@@ -3,7 +3,9 @@
 // ========================================================================================
 
 import { useState, useEffect, useRef } from 'react';
-import { useSurveyScreen, useUIText } from './ContentContext';
+import { useSurveyScreen } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { surveyMessages } from '@/src/i18n/messages/survey';
 import { BottomFixedButton } from './BottomFixedButton';
 import { SurveyContent } from '../types/content';
 import { Light } from './ProfileLayoutComponents';
@@ -31,7 +33,7 @@ export function SurveyScreenTemplate({
   // ХУКИ И СОСТОЯНИЕ
   // =====================================================================================
   const surveyData = useSurveyScreen(screenId);
-  const uiText = useUIText();
+  const surveyUi = useStore(surveyMessages);
   
   const [selectedOptions, setSelectedOptions] = useState<string[]>(initialSelections);
   const [textInput, setTextInput] = useState<string>('');
@@ -245,7 +247,7 @@ export function SurveyScreenTemplate({
             {showError && (
               <div className="mb-6 p-4 bg-red-900/20 border border-red-500 rounded-xl">
                 <p className="typography-caption text-red-400 text-center">
-                  {uiText.survey.selectAtLeastOne}
+                  {surveyUi.selectAtLeastOne}
                 </p>
               </div>
             )}

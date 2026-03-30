@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { useStore } from '@nanostores/react';
 import { Light } from './Light';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
-import { useContent } from './ContentContext';
+import { donationsMessages } from '@/src/i18n/messages/donations';
 import { hapticNotificationOccurred } from '@/src/effects/telegram.effects';
 
 interface DonationsScreenProps {
@@ -10,17 +11,7 @@ interface DonationsScreenProps {
 
 export function DonationsScreen({ onBack: _onBack }: DonationsScreenProps) {
 	const [copied, setCopied] = useState(false);
-    const { content } = useContent();
-
-	// Получаем переводы с fallback значениями
-	const donationsContent = content?.donations || {
-		title: 'Поддержать проект',
-		description: 'Если вам нравится приложение и вы хотите поддержать его развитие, вы можете сделать донат:',
-		currency_ton: 'TON',
-		currency_usdt_ton: 'USDT (TON)',
-		copy: 'Копировать',
-		copied: 'Скопировано'
-	};
+	const donationsContent = useStore(donationsMessages);
 
 	// Адреса кошельков
 	const tonAddress = 'UQDbAzauqW8a6eAmbIhl6G5VuvC_op6PVAkhJ6hcZC6epLbk';

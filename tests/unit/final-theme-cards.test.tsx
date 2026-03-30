@@ -5,17 +5,23 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { useStore } from '@nanostores/react';
 import { useLanguage } from '../../components/LanguageContext';
 import { useContent } from '../../components/ContentContext';
 import { setLanguage } from '../../src/stores/language.store';
+import { homeMessages } from '../../src/i18n/messages/home';
+import { navigationMessages } from '../../src/i18n/messages/navigation';
+import { commonMessages } from '../../src/i18n/messages/common';
+import { profileMessages } from '../../src/i18n/messages/profile';
+import { aboutMessages } from '../../src/i18n/messages/about';
 
 // Простой компонент для тестирования
 const TestComponent = () => {
-  const { getAllThemes, getUI } = useContent();
+  const { getAllThemes } = useContent();
   const { language, setLanguage } = useLanguage();
+  const home = useStore(homeMessages);
   
   const themes = getAllThemes();
-  const ui = getUI();
   
   const handleThemeClick = (themeId: string) => {
     console.log(`Theme clicked: ${themeId} in language: ${language}`);
@@ -25,7 +31,7 @@ const TestComponent = () => {
     <div>
       <div data-testid="current-language">{language}</div>
       <div data-testid="themes-count">{themes.length}</div>
-      <div data-testid="ui-text">{ui.home.whatWorriesYou}</div>
+      <div data-testid="ui-text">{home.whatWorriesYou}</div>
       <button 
         data-testid="change-language" 
         onClick={() => setLanguage(language === 'en' ? 'ru' : 'en')}
@@ -49,19 +55,19 @@ const TestComponent = () => {
 
 // Компонент для тестирования карточек
 const TestCardComponent = () => {
-  const { getTheme, getThemeCards, getUI } = useContent();
+  const { getTheme, getThemeCards } = useContent();
+  const nav = useStore(navigationMessages);
   
   // Используем существующую тему из новой архитектуры
   const theme = getTheme('stress');
   const cards = getThemeCards('stress');
-  const ui = getUI();
   
   return (
     <div>
       <div data-testid="theme-title">{theme?.title || 'Loading...'}</div>
       <div data-testid="theme-description">{theme?.description || 'Loading...'}</div>
       <div data-testid="cards-count">{cards?.length || 0}</div>
-      <div data-testid="ui-navigation">{ui.navigation.back}</div>
+      <div data-testid="ui-navigation">{nav.back}</div>
       <div data-testid="cards-list">
         {cards?.map((card) => (
           <div key={card.id} data-testid={`card-${card.id}`}>
@@ -76,17 +82,20 @@ const TestCardComponent = () => {
 
 // Компонент для тестирования UI текстов
 const TestUIComponent = () => {
-  const { getUI } = useContent();
-  const ui = getUI();
+  const nav = useStore(navigationMessages);
+  const common = useStore(commonMessages);
+  const home = useStore(homeMessages);
+  const profile = useStore(profileMessages);
+  const about = useStore(aboutMessages);
   
   return (
     <div>
-      <div data-testid="navigation-back">{ui.navigation.back}</div>
-      <div data-testid="navigation-next">{ui.navigation.next}</div>
-      <div data-testid="common-loading">{ui.common.loading}</div>
-      <div data-testid="home-greeting">{ui.home.greeting}</div>
-      <div data-testid="profile-title">{ui.profile.title}</div>
-      <div data-testid="about-title">{ui.about.title}</div>
+      <div data-testid="navigation-back">{nav.back}</div>
+      <div data-testid="navigation-next">{nav.next}</div>
+      <div data-testid="common-loading">{common.loading}</div>
+      <div data-testid="home-greeting">{home.greeting}</div>
+      <div data-testid="profile-title">{profile.title}</div>
+      <div data-testid="about-title">{about.title}</div>
     </div>
   );
 };
@@ -180,23 +189,25 @@ describe('Theme Cards Integration Tests', () => {
   it('should load UI texts in Russian when language is switched', async () => {
     // Создаем компонент, который переключает язык на русский
     const TestRussianComponent = () => {
-      const { getUI } = useContent();
+      const nav = useStore(navigationMessages);
+      const common = useStore(commonMessages);
+      const home = useStore(homeMessages);
+      const profile = useStore(profileMessages);
+      const about = useStore(aboutMessages);
       const { setLanguage } = useLanguage();
       
       React.useEffect(() => {
         setLanguage('ru');
       }, [setLanguage]);
       
-      const ui = getUI();
-      
       return (
         <div>
-          <div data-testid="navigation-back">{ui.navigation.back}</div>
-          <div data-testid="navigation-next">{ui.navigation.next}</div>
-          <div data-testid="common-loading">{ui.common.loading}</div>
-          <div data-testid="home-greeting">{ui.home.greeting}</div>
-          <div data-testid="profile-title">{ui.profile.title}</div>
-          <div data-testid="about-title">{ui.about.title}</div>
+          <div data-testid="navigation-back">{nav.back}</div>
+          <div data-testid="navigation-next">{nav.next}</div>
+          <div data-testid="common-loading">{common.loading}</div>
+          <div data-testid="home-greeting">{home.greeting}</div>
+          <div data-testid="profile-title">{profile.title}</div>
+          <div data-testid="about-title">{about.title}</div>
         </div>
       );
     };
