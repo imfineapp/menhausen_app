@@ -505,6 +505,42 @@ export interface AboutContent {
   lastUpdated: LocalizedContent;
 }
 
+export interface LegalSection {
+  title: LocalizedContent;
+  paragraphs: LocalizedContent[];
+  bullets?: LocalizedContent[];
+}
+
+export interface LegalContent {
+  privacyPolicy: {
+    title: LocalizedContent;
+    effectiveDate: LocalizedContent;
+    lastUpdated: LocalizedContent;
+    intro: LocalizedContent[];
+    sections: {
+      noPii: LegalSection;
+      dataCollection: LegalSection;
+      telegramIntegration: LegalSection;
+      contact: LegalSection;
+    };
+    closing: LocalizedContent;
+  };
+  termsOfUse: {
+    title: LocalizedContent;
+    lastUpdated: LocalizedContent;
+    warning: LocalizedContent;
+    intro: LocalizedContent;
+    sections: {
+      legalDisclaimer: LegalSection;
+      noWarranty: LegalSection;
+      eligibility: LegalSection;
+      privacy: LegalSection;
+      contact: LegalSection;
+    };
+    closing: LocalizedContent;
+  };
+}
+
 /**
  * Данные статьи
  */
@@ -581,6 +617,7 @@ export interface AppContent {
   payments: PaymentsContent;
   donations: DonationsContent;
   articles: ArticlesCollection;
+  legal?: LegalContent;
 }
 
 /**

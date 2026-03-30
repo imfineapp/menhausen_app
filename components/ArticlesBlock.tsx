@@ -134,7 +134,7 @@ function ViewAllCard({ onClick, checkIfSwiped }: { onClick: () => void; checkIfS
       {/* Content */}
       <div className="relative z-10 box-border content-stretch flex flex-col gap-2 sm:gap-2.5 items-center justify-center p-0 shrink-0 w-full">
         <div className="typography-h2 text-brand-primary text-center w-full">
-          <h2 className="block">{content.ui.articles?.viewAll || 'Все статьи'}</h2>
+          <h2 className="block">{content.ui.articles?.viewAll}</h2>
         </div>
       </div>
     </button>
@@ -148,7 +148,7 @@ function ArticlesSlider({ articles, onArticleClick, onViewAll }: ArticlesSliderP
   const { content, getLocalizedText } = useContent();
   const pointsBalance = useStore($pointsBalance);
   // Тип контента может не содержать поля lockedBadge в типах — берём через any с запасной строкой
-  const lockedBadgeText = getLocalizedText(((content.ui as any)?.articles?.lockedBadge) || 'Opens at {points}');
+  const lockedBadgeText = getLocalizedText(((content.ui as any)?.articles?.lockedBadge) ?? '');
   const [_currentIndex, setCurrentIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
@@ -360,7 +360,7 @@ export function ArticlesBlock({ onArticleClick, onViewAll }: ArticlesBlockProps)
         data-name="Articles container"
       >
         <div className="typography-body text-tertiary text-center w-full py-8">
-          <p className="block">{content.ui.articles?.noArticles || 'Статьи скоро появятся'}</p>
+          <p className="block">{content.ui.articles?.noArticles}</p>
         </div>
       </div>
     );

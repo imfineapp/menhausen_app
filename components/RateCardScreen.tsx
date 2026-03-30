@@ -229,7 +229,7 @@ function RatingCardContainer({
         <div
           className="typography-body w-full text-[#ffffff] text-center"
         >
-          <p className="block">{content?.ui?.cards?.rating?.thankYou || 'Спасибо!'}</p>
+          <p className="block">{content?.ui?.cards?.rating?.thankYou}</p>
         </div>
       )}
       <div className="mt-5">

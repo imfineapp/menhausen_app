@@ -93,7 +93,7 @@ export function CardWelcomeScreen({ onBack, onNext, cardId: _cardId, cardTitle: 
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton onClick={handleNext}>
-        {content?.ui?.themes?.welcome?.start || 'Начать'}
+        {content?.ui?.themes?.welcome?.start}
       </BottomFixedButton>
     </div>
   );

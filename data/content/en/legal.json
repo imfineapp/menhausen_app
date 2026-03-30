@@ -1,0 +1,112 @@
+{
+  "privacyPolicy": {
+    "title": "Privacy policy",
+    "effectiveDate": "Effective Date: August 2, 2025",
+    "lastUpdated": "Last Updated: August 2, 2025",
+    "intro": [
+      "Menhausen (\"we,\" \"us,\" or \"our\") respects your privacy and is committed to protecting the anonymity of users (\"you\") who access our mental well-being mini-application via Telegram (the \"Service\").",
+      "This Privacy Policy outlines what data we collect (if any), how we use it, and your rights regarding that data."
+    ],
+    "sections": {
+      "noPii": {
+        "title": "1. No Personally Identifiable Information (PII)",
+        "paragraphs": [
+          "We designed Menhausen with anonymity as a core value. By default, we do not collect or store any personally identifiable information (PII) such as your name, email address, phone number, or IP address."
+        ],
+        "bullets": [
+          "No sign-up is required to use the Service.",
+          "You are identified only by a random session token (non-persistent) within the Telegram environment.",
+          "You may optionally choose to connect a TON wallet or donate using crypto or fiat. This is strictly optional and anonymized to the extent possible."
+        ]
+      },
+      "dataCollection": {
+        "title": "2. Data We May Collect (Anonymous Only)",
+        "paragraphs": [
+          "To improve your experience and app functionality, we may collect and process the following non-personal and aggregated information:",
+          "All such data is collected without linkage to any identity and is stored securely using industry standards."
+        ],
+        "bullets": [
+          "Anonymous interaction history (e.g., which cards you've opened)",
+          "Mood check-in data (non-identifying)",
+          "Session events (e.g., clicks, duration)",
+          "Device/browser type",
+          "Encrypted TON wallet address (if connected)"
+        ]
+      },
+      "telegramIntegration": {
+        "title": "3. Telegram Integration",
+        "paragraphs": [
+          "As a Telegram Mini App, Menhausen operates within the Telegram ecosystem."
+        ],
+        "bullets": [
+          "Telegram may process basic metadata (user ID, app usage time), subject to their Privacy Policy.",
+          "We do not share any collected user data with Telegram or third parties unless required by law.",
+          "We do not access your Telegram messages, contacts, or phone number."
+        ]
+      },
+      "contact": {
+        "title": "4. Contact Information",
+        "paragraphs": [
+          "For questions or concerns about this Privacy Policy, please contact: support@menhausen.com"
+        ]
+      }
+    },
+    "closing": "By using Menhausen, you acknowledge that you have read, understood, and agreed to this Privacy Policy."
+  },
+  "termsOfUse": {
+    "title": "Terms of use",
+    "lastUpdated": "Last updated: August 2, 2025",
+    "warning": "PLEASE READ THESE TERMS CAREFULLY BEFORE USING THIS SERVICE.",
+    "intro": "These Terms of Use (\"Terms\") govern your access to and use of Menhausen (the \"Service\"), a self-help digital platform designed to support mental well-being. By accessing or using the Service, you agree to be bound by these Terms. If you do not agree with these Terms, please do not use the Service.",
+    "sections": {
+      "legalDisclaimer": {
+        "title": "1. Legal Disclaimer — No Medical Advice",
+        "paragraphs": [
+          "Menhausen is not a medical or psychiatric service. The content provided through the Service, including interactive cards, mood tracking, and exercises, is intended for informational and self-reflective purposes only.",
+          "Use of the Service is at your own risk."
+        ],
+        "bullets": [
+          "The Service does not diagnose, treat, or cure any mental health condition.",
+          "We are not licensed therapists, clinicians, or healthcare providers.",
+          "If you are experiencing a mental health crisis, suicidal thoughts, or any other medical emergency, please seek immediate help from a qualified healthcare professional or call emergency services."
+        ]
+      },
+      "noWarranty": {
+        "title": "2. No Warranty or Guarantee of Outcomes",
+        "paragraphs": [
+          "Menhausen makes no representations or warranties about the effectiveness, accuracy, or outcomes of using the Service. We do not guarantee:",
+          "All materials are provided \"as is\", without warranties of any kind, express or implied."
+        ],
+        "bullets": [
+          "any improvement in your mental or emotional state,",
+          "any relief from psychological distress,",
+          "any behavioral or lifestyle change."
+        ]
+      },
+      "eligibility": {
+        "title": "3. Eligibility",
+        "paragraphs": [
+          "To use the Service, you must:"
+        ],
+        "bullets": [
+          "be at least 18 years old;",
+          "reside in a jurisdiction where the use of such services is legally permitted;",
+          "not use the Service in violation of any applicable law or regulation."
+        ]
+      },
+      "privacy": {
+        "title": "4. Privacy and Anonymity",
+        "paragraphs": [
+          "We respect your privacy. We do not collect personally identifiable information unless explicitly provided by you. The Service is designed to operate anonymously."
+        ]
+      },
+      "contact": {
+        "title": "5. Contact Information",
+        "paragraphs": [
+          "For questions or concerns about these Terms, please contact: support@menhausen.com"
+        ]
+      }
+    },
+    "closing": "By using Menhausen, you acknowledge that you have read, understood, and agreed to these Terms of Use."
+  }
+}

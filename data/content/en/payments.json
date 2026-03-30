@@ -1,8 +1,14 @@
 {
   "currentPlan": "Your current plan",
   "freePlan": "Free",
+  "freePlanDetails": [
+    "10 free cards on Stress Management",
+    "Limited progress"
+  ],
   "premiumTitle": "Premium",
   "benefitsTitle": "Unlock all themes and cards",
+  "premiumIntro": "70 premium cards from practicing psychologists that help with daily crises in topics such as:",
+  "premiumProgress": "Unlimited progress: unlock levels, revisit techniques, and track changes in your condition.",
   "keyBenefits": [
     "All themes and cards unlocked",
     "Daily check-ins and progress",
@@ -43,7 +49,8 @@
   },
   "messages": {
     "successWithPlan": "Premium successfully activated!",
-    "error": "An error occurred while processing your purchase. Please try again."
+    "error": "An error occurred while processing your purchase. Please try again.",
+    "telegramNotAvailable": "Telegram WebApp API not available. Please open this app in Telegram."
   },
   "legal": {
     "disclaimer": "Payments are made in Telegram Stars. This is a one-time payment with no automatic renewals. See Terms and Privacy Policy for details.",

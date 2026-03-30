@@ -315,7 +315,7 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
     });
     
     if (attemptedCards.length === allCardIds.length) {
-      const txt = content.ui.themes?.home?.allCardsAttempted || 'All cards attempted!';
+      const txt = content.ui.themes?.home?.allCardsAttempted ?? '';
       return getLocalizedText(txt);
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;

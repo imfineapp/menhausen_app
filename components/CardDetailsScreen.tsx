@@ -89,7 +89,7 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
         <div className="typography-caption text-[#ffffff] mt-1 space-y-1">
           {Object.entries(attempt.answers).map(([questionKey, answer]) => (
             <p key={questionKey} className="break-words">
-              {answer || 'No answer provided'}
+              {answer || ''}
             </p>
           ))}
         </div>

@@ -72,7 +72,7 @@ function UserInfo() {
   const { content } = useContent();
   const userDisplayId = getUserDisplayId();
   // Extract text part without any ID and combine with dynamic user ID
-  const heroTitle = content.ui?.home?.heroTitle || 'Welcome back! #MNHSNDEV';
+  const heroTitle = content.ui?.home?.heroTitle;
   const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
   const displayText = `${textPart} ${userDisplayId}`;
   
@@ -172,7 +172,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
         onClick={onClick}
         className="relative z-10 box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-between w-full cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80 transition-opacity"
         data-name="User frame info block"
-        aria-label={content.ui.profile.openProfile || 'Open user profile'}
+        aria-label={content.ui.profile.openProfile || content.ui.profile.title}
       >
         <div className="flex flex-row gap-4 sm:gap-5 items-center justify-start">
           <UserAvatar />
@@ -287,7 +287,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
     const themeList = Object.values(content.themes || {});
     const source = themeList.length > 0
       ? themeList
-      : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
+      : [{ id: 'demo', title: content.ui.themes?.welcome?.title || content.ui.home.themesTitle, description: content.ui.home.quickHelpTitle, isPremium: false } as any];
 
     return source.map((theme: any) => {
       const allCardIds: string[] = Array.isArray(theme.cards)

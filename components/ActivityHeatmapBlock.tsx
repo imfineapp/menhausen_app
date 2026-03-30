@@ -62,7 +62,7 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
   };
 
   // Получаем заголовок
-  const title = ui.profile?.yourActivity || 'Твоя активность';
+  const title = ui.profile?.yourActivity;
 
   // Форматирование даты для tooltip
   const formatDate = (date: Date): string => {
@@ -83,15 +83,15 @@ export function ActivityHeatmapBlock({ weeksCount = 14 }: ActivityHeatmapBlockPr
     switch (day.activityType) {
       case ActivityType.CHECKIN_AND_EXERCISE: {
         const exerciseText = day.exerciseCount === 1 
-          ? (heatmap?.checkinAndExercise || 'Чекин + {count} упражнение').replace('{count}', day.exerciseCount.toString())
-          : (heatmap?.checkinAndExercisePlural || 'Чекин + {count} упражнений').replace('{count}', day.exerciseCount.toString());
+          ? (heatmap?.checkinAndExercise ?? '').replace('{count}', day.exerciseCount.toString())
+          : (heatmap?.checkinAndExercisePlural ?? '').replace('{count}', day.exerciseCount.toString());
         return `${dateStr} ∙ ${exerciseText}`;
       }
       case ActivityType.CHECKIN_ONLY:
-        return `${dateStr} ∙ ${heatmap?.checkinOnly || 'Только чекин'}`;
+        return `${dateStr} ∙ ${heatmap?.checkinOnly ?? ''}`;
       case ActivityType.NONE:
       default:
-        return `${dateStr} ∙ ${heatmap?.noActivity || 'Нет активности'}`;
+        return `${dateStr} ∙ ${heatmap?.noActivity ?? ''}`;
     }
   };
 

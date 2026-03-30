@@ -149,9 +149,9 @@ export function FinalCardMessageScreenWithLoader({
       } catch (error) {
         console.error('Error loading message data:', error)
         setMessageData({
-          finalMessage: getUI().cards.techniqueNotFound || 'Technique not found',
-          practiceTask: getUI().cards.practiceTaskNotFound || 'Practice task not found',
-          whyExplanation: getUI().cards.explanationNotFound || 'Explanation not found',
+          finalMessage: getUI().cards.techniqueNotFound ?? '',
+          practiceTask: getUI().cards.practiceTaskNotFound ?? '',
+          whyExplanation: getUI().cards.explanationNotFound ?? '',
         })
       } finally {
         setLoading(false)
@@ -168,7 +168,7 @@ export function FinalCardMessageScreenWithLoader({
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#111111]">
         <div className="text-white text-center">
-          <div className="text-lg text-red-400">{getUI().common.error || 'Error'}</div>
+          <div className="text-lg text-red-400">{getUI().common.error}</div>
         </div>
       </div>
     )

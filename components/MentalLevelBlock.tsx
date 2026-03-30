@@ -26,7 +26,7 @@ export function MentalLevelBlock() {
   }, [checkins]);
 
   // Получаем заголовок
-  const title = ui.profile?.mentalLevel || 'Твои чекины';
+  const title = ui.profile?.mentalLevel;
 
   return (
     <div 

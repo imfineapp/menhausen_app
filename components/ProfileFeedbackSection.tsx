@@ -1,17 +1,13 @@
 // Компонент секции обратной связи для профиля пользователя
 import { FeedbackIcon } from './UserProfileIcons';
-import { useTranslation, useLanguage } from './LanguageContext';
+import { useTranslation } from './LanguageContext';
 import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
 
 /**
  * Адаптивная кнопка обратной связи
  */
 function FeedbackButton({ onClick }: { onClick?: () => void }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   return (
     <button
@@ -21,7 +17,7 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
     >
       <div className="flex items-center justify-center w-full h-full px-4">
         <div className="typography-caption text-[#2d2b2b] text-center">
-          <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">{getText('Присоединиться к каналу', 'Join Channel')}</p>
+          <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">{t('feedback_join_button')}</p>
         </div>
       </div>
     </button>
@@ -32,12 +28,7 @@ function FeedbackButton({ onClick }: { onClick?: () => void }) {
  * Адаптивная секция обратной связи
  */
 export function FeedbackSection() {
-  const { t: _t } = useTranslation();
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   const handleFeedback = () => {
     console.log('Opening Telegram channel for feedback');
@@ -106,7 +97,7 @@ export function FeedbackSection() {
         <div className="flex items-start gap-4 mb-4">
           <FeedbackIcon />
           <div className="typography-body text-[#cfcfcf] text-left flex-1">
-            <p className="block leading-none">{getText('Присоединяйтесь к нашему Telegram каналу, чтобы делиться отзывами, получать обновления и общаться с нашим сообществом.', 'Join our Telegram channel to share feedback, get updates, and connect with our community.')}</p>
+            <p className="block leading-none">{t('feedback_description')}</p>
           </div>
         </div>
         <FeedbackButton onClick={handleFeedback} />

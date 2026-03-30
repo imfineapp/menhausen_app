@@ -46,7 +46,9 @@
                                   "description":  "Only by doing exercises regularly will you achieve results.",
                                   "streakLabel":  {
                                                       "singular":  "day",
-                                                      "plural":  "days"
+                                                      "plural":  "days",
+                                                      "few": "days",
+                                                      "many": "days"
                                                   },
                                   "progressLabel":  "Progress",
                                   "weeklyCheckins":  "Check-ins",

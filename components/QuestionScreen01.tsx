@@ -192,7 +192,7 @@ export function QuestionScreen01({ onBack, onNext, cardId, cardTitle: _cardTitle
           onClick={handleNext}
           disabled={!answer.trim()}
         >
-          {content?.ui?.navigation?.next || 'Далее'}
+          {content?.ui?.navigation?.next}
         </BottomFixedButton>
       }
     >

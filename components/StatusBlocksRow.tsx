@@ -59,7 +59,7 @@ export function StatusBlocksRow({
       <div className="flex-1 flex">
         <StatusBlock
           icon={<div className="text-[#e1ff00]"><MentalStatusIcon /></div>}
-          title={ui.profile.points || 'Points'}
+          title={ui.profile.points || t('status')}
           value={totalEarned.toString()}
           subtitle=""
           onClick={undefined}

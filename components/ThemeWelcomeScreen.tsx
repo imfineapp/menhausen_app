@@ -75,7 +75,7 @@ export function ThemeWelcomeScreen({
     : [];
 
   // Проверяем, должна ли показываться приветственная страница
-  const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || "Stress", allCardIds);
+  const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeTitle || content.ui.home.themesTitle, allCardIds);
   
   // Определяем, заблокирована ли тема для пользователя
   const isThemeLocked = isPremiumTheme && !userHasPremium;

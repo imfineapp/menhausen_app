@@ -3,7 +3,7 @@ import svgPaths from "../imports/svg-bamg6d8zx5";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useLanguage } from './LanguageContext';
+import { useTranslation } from './LanguageContext';
 import { hapticImpactOccurred } from '@/src/effects/telegram.effects';
 
 /**
@@ -27,15 +27,11 @@ interface UnderConstructionScreenProps {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function Button({ onBack }: { onBack: () => void }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   return (
     <BottomFixedButton onClick={onBack}>
-      {getText('Понятно', 'Got it')}
+      {t('under_construction_button')}
     </BottomFixedButton>
   );
 }
@@ -90,11 +86,7 @@ function Icon() {
  * Блок с заголовком и описанием "Under Construction"
  */
 function HeroBlockQuestion({ featureName }: { featureName?: string }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   return (
     <div
@@ -102,14 +94,14 @@ function HeroBlockQuestion({ featureName }: { featureName?: string }) {
       data-name="Hero_block_question"
     >
       <div className="typography-h1 text-[#e1ff00] w-full">
-        <h1 className="block">{getText('В разработке', 'Under Construction')}</h1>
+        <h1 className="block">{t('under_construction_title')}</h1>
       </div>
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block leading-none">
           {featureName 
-            ? getText(`Функция "${featureName}"`, `"${featureName}" feature`)
-            : getText('Эта функция', 'This feature')
-          } {getText('в настоящее время разрабатывается нашей командой. Мы усердно работаем, чтобы предоставить вам лучший опыт.', 'is currently being developed by our team. We\'re working hard to bring you the best experience possible.')}
+            ? t('under_construction_feature_template').replace('{feature}', featureName)
+            : t('under_construction_this_feature')
+          } {t('under_construction_suffix')}
         </p>
       </div>
     </div>

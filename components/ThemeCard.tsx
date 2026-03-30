@@ -101,7 +101,7 @@ export function ThemeCard({
   // Формируем текст с процентом, если он доступен
   const matchText = useMemo(() => {
     if (!showMatchPercentage || matchPercentage === null) return null;
-    const template = content.ui.home.themeMatchPercentage || 'Подходит тебе на {percentage}%';
+    const template = content.ui.home.themeMatchPercentage;
     return template.replace('{percentage}', String(Math.round(matchPercentage)));
   }, [matchPercentage, content.ui.home.themeMatchPercentage, showMatchPercentage]);
 
@@ -115,7 +115,7 @@ export function ThemeCard({
   const ariaLabel = useMemo(() => {
     const parts = [title, description];
     if (shouldShowProgress && normalizedProgress > 0) {
-      parts.push(`Прогресс: ${normalizedProgress}%`);
+      parts.push(`${content.ui.home.activity.progressLabel}: ${normalizedProgress}%`);
     }
     if (matchText) {
       parts.push(matchText);
@@ -209,7 +209,7 @@ export function ThemeCard({
             aria-valuenow={normalizedProgress}
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-label={`Прогресс прохождения темы: ${normalizedProgress}%`}
+            aria-label={`${content.ui.home.activity.progressLabel}: ${normalizedProgress}%`}
             id={progressId}
           >
             <StripedProgressBar 

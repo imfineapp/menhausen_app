@@ -4,7 +4,7 @@
 
 import React, { useState } from "react";
 import { useContent } from "../ContentContext";
-import { useLanguage } from "../LanguageContext";
+import { useTranslation } from "../LanguageContext";
 import { MiniStripeLogo } from "../ProfileLayoutComponents";
 import { MentalTechniqueAccordion } from "../ui/accordion-mental-technique";
 import { getNextStepOrComplete, isGroundingStepCompleted } from '@/src/domain/grounding.domain';
@@ -21,17 +21,13 @@ function AnchorVisualization({
 }: { 
   currentStep: number; 
 }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   const steps = [
-    { icon: "", text: getText("Ноги на пол", "Feet on floor") },
-    { icon: "", text: getText("3 глубоких вдоха", "3 deep breaths") },
-    { icon: "", text: getText("Фраза безопасности", "Safety phrase") },
-    { icon: "", text: getText("Оглянись вокруг", "Look around") }
+    { icon: "", text: t('mt_feet_on_floor') },
+    { icon: "", text: t('mt_three_deep_breaths') },
+    { icon: "", text: t('mt_safety_phrase') },
+    { icon: "", text: t('mt_look_around') }
   ];
   
   return (
@@ -70,11 +66,7 @@ function InteractiveInput({
   onComplete: (value: string) => void; 
   maxLength?: number; 
 }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -124,7 +116,7 @@ function InteractiveInput({
           }
         `}
       >
-        {getText('Готово', 'Done')}
+        {t('done')}
       </button>
     </div>
   );
@@ -185,11 +177,7 @@ function ConfirmationCheckbox({
  */
 export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { t } = useTranslation();
   
   const [currentStep, setCurrentStep] = useState(0);
   const [responses, setResponses] = useState<string[]>([]);
@@ -205,13 +193,13 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getText('Техника не найдена', 'Technique not found')}
+              {t('technique_not_found')}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {getText('Назад', 'Back')}
+              {t('back')}
             </button>
           </div>
         </div>
@@ -244,10 +232,10 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getText('Ошибка данных техники', 'Technique data error')}
+              {t('technique_data_error')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}
+              {t('technique_data_load_failed')}
             </p>
           </div>
         </div>
@@ -264,10 +252,10 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
           {/* Заголовок завершения */}
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getText('Техника завершена', 'Technique completed')}
+              {t('technique_completed')}
             </h1>
             <p className="text-[#cfcfcf] text-lg">
-              {getText('Вы успешно выполнили технику якоря', 'You have successfully completed the anchor technique')}
+              {t('grounding_anchor_success')}
             </p>
           </div>
 
@@ -276,7 +264,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
             <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
               <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
               <div className="flex flex-col gap-3">
-                <h3 className="text-[#e1ff00] text-lg font-semibold">{getText('Ваши ответы', 'Your responses')}</h3>
+                <h3 className="text-[#e1ff00] text-lg font-semibold">{t('your_responses')}</h3>
                 {responses.map((response, index) => (
                   <div key={index} className="flex items-start gap-3">
                     <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
@@ -322,7 +310,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="typography-h3 text-[#e1ff00] mb-2">
-              {getText('Шаг', 'Step')} {currentStep + 1} {getText('из', 'of')} {technique.steps.length}
+              {t('step')} {currentStep + 1} {t('of_word')} {technique.steps.length}
             </h3>
             <p className="typography-body text-[#cfcfcf] mb-4">
               {getLocalizedText(currentStepData.instruction)}
@@ -344,7 +332,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         ) : (
           <div className="text-center">
             <p className="typography-caption text-[#cfcfcf]">
-              {getText('Выполните инструкцию выше', 'Follow the instruction above')}
+              {t('follow_instruction_above')}
             </p>
           </div>
         )}
@@ -353,7 +341,7 @@ export function GroundingAnchorScreen({ onBack }: GroundingAnchorScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="typography-h3 text-[#e1ff00]">{getText('О технике', 'About the technique')}</h3>
+            <h3 className="typography-h3 text-[#e1ff00]">{t('about_technique')}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

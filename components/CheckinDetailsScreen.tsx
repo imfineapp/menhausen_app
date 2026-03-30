@@ -212,11 +212,11 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
       }
       
       // Получаем переведенные вопросы и рекомендации из карточки
-      const question1 = cardData.questions?.[0] || "Question 1";
-      const question2 = cardData.questions?.[1] || "Question 2";
-      const instructions = cardData.technique || "Technique";
-      const practiceTask = cardData.recommendation || "Practice task";
-      const whyNote = cardData.mechanism || "Mechanism";
+      const question1 = cardData.questions?.[0] || "";
+      const question2 = cardData.questions?.[1] || "";
+      const instructions = cardData.technique || "";
+      const practiceTask = cardData.recommendation || "";
+      const whyNote = cardData.mechanism || "";
 
       // Форматируем дату
       const formatDate = (dateStr: string) => {
@@ -234,9 +234,9 @@ export function CheckinDetailsScreen({ onBack, checkinId, cardTitle = "Stress", 
         date: completedAttempt.date,
         formattedDate: formatDate(completedAttempt.date),
         question1,
-        answer1: completedAttempt.answers['question1'] || "No answer provided yet.",
+        answer1: completedAttempt.answers['question1'] || "",
         question2,
-        answer2: completedAttempt.answers['question2'] || "No answer provided yet.",
+        answer2: completedAttempt.answers['question2'] || "",
         instructions,
         practiceTask,
         whyNote,

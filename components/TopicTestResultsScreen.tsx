@@ -12,7 +12,7 @@ type TopicTestResultsScreenProps = {
 
 export function TopicTestResultsScreen({ themeTitle, percentage, onContinue, onBack }: TopicTestResultsScreenProps) {
   const { content } = useContent()
-  const template = content.ui.home.themeMatchPercentage || 'Matches you {percentage}%'
+  const template = content.ui.home.themeMatchPercentage
   const line = template.replace('{percentage}', String(Math.round(percentage)))
 
   return (

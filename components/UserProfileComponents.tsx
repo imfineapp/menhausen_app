@@ -51,7 +51,7 @@ export function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
   const { getUI } = useContent();
   const userDisplayId = getUserDisplayId();
   // Extract text part without any ID and combine with dynamic user ID
-  const heroTitle = getUI().profile?.heroTitle || 'Welcome back! #MNHSNDEV';
+  const heroTitle = getUI().profile?.heroTitle;
   const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
   const displayText = `${textPart} ${userDisplayId}`;
   

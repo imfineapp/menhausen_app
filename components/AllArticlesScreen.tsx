@@ -95,7 +95,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
   const articles = useArticles();
   const pointsBalance = useStore($pointsBalance);
   // Берём через any, т.к. тип ui.articles может не включать lockedBadge
-  const lockedBadgeText = ((content.ui as any)?.articles?.lockedBadge) || 'Откроется за {points}';
+  const lockedBadgeText = (content.ui as any)?.articles?.lockedBadge ?? '';
   
   const [logoOpacity, setLogoOpacity] = useState<number>(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -150,10 +150,10 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
             {/* Header */}
             <div className="mb-8">
               <h1 className="typography-h1 text-brand-primary mb-4">
-                {content.ui.articles?.viewAll || 'Все статьи'}
+                {content.ui.articles?.viewAll}
               </h1>
               <p className="typography-body text-tertiary">
-                {content.ui.articles?.description || 'Полезные статьи для улучшения психического здоровья'}
+                {content.ui.articles?.description}
               </p>
             </div>
             
@@ -161,7 +161,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
             {articles.length === 0 ? (
               <div className="text-center py-12">
                 <div className="typography-body text-tertiary">
-                  {content.ui.articles?.noArticles || 'Статьи скоро появятся'}
+                  {content.ui.articles?.noArticles}
                 </div>
               </div>
             ) : (

@@ -1,34 +1,40 @@
 import { atom, onMount } from 'nanostores'
 
-import { getInitialLanguage, saveLanguage, getSavedLanguage } from '@/utils/languageDetector'
+import { locale, localeSetting } from '@/src/i18n/setup'
+import { getSavedLanguage } from '@/utils/languageDetector'
 import type { SupportedLanguage } from '@/types/content'
 
 export type Language = SupportedLanguage
 
-export const $language = atom<Language>(getInitialLanguage())
+export const $language = atom<Language>(locale.get().startsWith('ru') ? 'ru' : 'en')
 export const $isLanguageModalOpen = atom<boolean>(false)
 
-export function initLanguage() {
-  $language.set(getInitialLanguage())
-}
+locale.listen((value) => {
+  const normalized: Language = value.startsWith('ru') ? 'ru' : 'en'
+  if ($language.get() !== normalized) {
+    $language.set(normalized)
+  }
+})
 
 onMount($language, () => {
-  // After fastSyncCriticalData potentially writes language to localStorage,
-  // sync the store once so content loading uses the updated language.
   const timeoutId = setTimeout(() => {
     const saved = getSavedLanguage()
     if (saved && saved !== $language.get()) {
-      $language.set(saved)
+      localeSetting.set(saved)
     }
   }, 100)
 
   return () => clearTimeout(timeoutId)
 })
 
+export function initLanguage() {
+  const savedLanguage = getSavedLanguage()
+  localeSetting.set(savedLanguage ?? $language.get())
+}
+
 export function setLanguage(lang: Language) {
   if (lang === $language.get()) return
-  $language.set(lang)
-  saveLanguage(lang)
+  localeSetting.set(lang)
 }
 
 export function openLanguageModal() {

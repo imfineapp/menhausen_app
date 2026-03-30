@@ -196,7 +196,7 @@ export function SurveyScreenTemplate({
         <textarea
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
-          placeholder={localizedScreen.placeholder || 'Type your answer here...'}
+          placeholder={localizedScreen.placeholder || ''}
           className="w-full min-h-[120px] px-4 py-3 rounded-xl border-2 border-[#3a3a3a] bg-[#2a2a2a] text-white placeholder-[#888888] resize-none focus:border-[#e1ff00] focus:outline-none transition-colors duration-200"
           maxLength={500}
         />

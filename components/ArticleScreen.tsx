@@ -173,7 +173,7 @@ export function ArticleScreen({
             <div className="max-w-[351px] mx-auto">
               <div className="text-center py-12">
                 <div className="typography-body text-[#8a8a8a]">
-                  {content.ui.articles?.noArticles || 'Статья не найдена'}
+                  {content.ui.articles?.noArticles}
                 </div>
               </div>
             </div>
@@ -232,7 +232,7 @@ export function ArticleScreen({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  aria-label="Уменьшить размер текста"
+                  aria-label={content.ui.navigation.previous}
                   onClick={() => handleArticleFontSizeChange(-1)}
                   disabled={articleFontStep <= ARTICLE_FONT_STEP_MIN}
                   className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
@@ -241,7 +241,7 @@ export function ArticleScreen({
                 </button>
                 <button
                   type="button"
-                  aria-label="Увеличить размер текста"
+                  aria-label={content.ui.navigation.next}
                   onClick={() => handleArticleFontSizeChange(1)}
                   disabled={articleFontStep >= ARTICLE_FONT_STEP_MAX}
                   className="min-w-[36px] h-9 rounded-md border border-[#333] bg-[#1a1a1a] text-[#e1ff00] text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#252525] transition-colors"
@@ -317,7 +317,7 @@ export function ArticleScreen({
               return (
                 <div className="mt-8 pt-6 border-t border-[#212121]">
                   <p className="typography-body text-[#8a8a8a] mb-6">
-                    {content.ui.articles?.relatedThemes || 'Связанные темы:'}
+                    {content.ui.articles?.relatedThemes}
                   </p>
                   <div className="flex flex-col gap-8 sm:gap-10">
                     {themeCards.map((card) => (

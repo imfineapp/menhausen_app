@@ -716,7 +716,7 @@ export function PaymentsScreen({ onBack: _onBack, onPurchaseComplete: _onPurchas
 
       // Проверяем доступность Telegram WebApp API
       if (!isTelegramOpenInvoiceAvailable()) {
-        throw new Error(content.payments.messages.telegramNotAvailable || 'Telegram WebApp API not available. Please open this app in Telegram.');
+        throw new Error(content.payments.messages.telegramNotAvailable || content.payments.messages.error);
       }
 
       // Тактильная обратная связь

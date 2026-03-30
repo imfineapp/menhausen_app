@@ -77,7 +77,7 @@ export function RegularExerciseNotification() {
         
         {/* Текст уведомления */}
         <p className="text-[#111111] text-sm sm:text-base font-medium leading-relaxed flex-1">
-          {ui.profile?.regularExerciseNotification || t('regularExerciseNotification') || 'Только регулярно выполняя упражнения, ты добьешься результатов'}
+          {ui.profile?.regularExerciseNotification || t('regularExerciseNotification')}
         </p>
         
         {/* Кнопка закрытия с иконкой крестика */}
