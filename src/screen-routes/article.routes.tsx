@@ -1,10 +1,12 @@
 import React, { Suspense } from 'react'
+import { openPage } from '@nanostores/router'
 import { LoadingScreen } from '@/components/LoadingScreen'
 const AllArticlesScreen = React.lazy(() =>
   import('@/components/AllArticlesScreen').then((m) => ({ default: m.AllArticlesScreen })),
 )
 const ArticleScreen = React.lazy(() => import('@/components/ArticleScreen').then((m) => ({ default: m.ArticleScreen })))
-import { navigateTo } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
+import type { AppScreen } from '@/types/userState'
 
 import type { RouteContext } from './types'
 
@@ -20,6 +22,9 @@ export function renderArticleRoutes(ctx: RouteContext): React.ReactNode | null {
     setEarnedAchievementIdsForArticle,
   } = ctx
   const withSuspense = (screen: React.ReactNode) => <Suspense fallback={<LoadingScreen />}>{screen}</Suspense>
+  const navigateToByLegacyScreen = (screen: AppScreen) => {
+    if (screen === 'reward') openPage($router, 'reward')
+  }
 
   switch (currentScreen) {
     case 'all-articles':
@@ -34,7 +39,7 @@ export function renderArticleRoutes(ctx: RouteContext): React.ReactNode | null {
           onGoToTheme={handlers.handleGoToTheme}
           userHasPremium={userHasPremium}
           checkAndShowAchievements={checkAndShowAchievementsBound}
-          navigateTo={navigateTo}
+          navigateTo={navigateToByLegacyScreen}
           earnedAchievementIds={earnedAchievementIds}
           setEarnedAchievementIds={setEarnedAchievementIdsForArticle}
         />,

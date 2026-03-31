@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
-  navigateTo: vi.fn(),
-  setNavigationState: vi.fn(),
+  openPage: vi.fn(),
+  redirectPage: vi.fn(),
   earn: vi.fn(),
   addTopicCompleted: vi.fn(),
   getThemeFromStore: vi.fn(),
@@ -20,9 +20,12 @@ vi.mock('@/src/domain/theme.domain', () => ({
   getThemeIdFromCardId: vi.fn(() => 'stress'),
   getAllCardIdsFromTheme: vi.fn(() => ['c1']),
 }))
-vi.mock('@/src/stores/navigation.store', () => ({
-  navigateTo: mocks.navigateTo,
-  setNavigationState: mocks.setNavigationState,
+vi.mock('@nanostores/router', () => ({
+  openPage: mocks.openPage,
+  redirectPage: mocks.redirectPage,
+}))
+vi.mock('@/src/stores/router.store', () => ({
+  $router: {},
 }))
 vi.mock('@/src/stores/language.store', () => ({ $language: { get: () => 'en' } }))
 vi.mock('@/src/stores/contentSelectors', () => ({
@@ -79,7 +82,7 @@ describe('theme-card.actions', () => {
       expect.objectContaining({ note: expect.stringContaining('Card c1 completed') })
     )
     expect(resetCardExerciseAnswers).toBeTypeOf('function')
-    expect(mocks.setNavigationState).toHaveBeenCalledWith('theme-home', ['home', 'theme-home'])
+    expect(mocks.redirectPage).toHaveBeenCalledWith(expect.anything(), 'themeHome', { themeId: 'stress' })
   })
 })
 

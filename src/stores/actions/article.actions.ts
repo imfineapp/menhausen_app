@@ -1,35 +1,36 @@
-import { $currentScreen, navigateTo } from '@/src/stores/navigation.store'
+import { openPage } from '@nanostores/router'
+
+import { $router } from '@/src/stores/router.store'
 import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.store'
 import { AnalyticsEvent, capture } from '@/src/effects/analytics.effects'
 
 export function handleOpenArticle(articleId: string): void {
   console.log(`Opening article: ${articleId}`)
-  const currentScreen = $currentScreen.get()
-  const originScreen = currentScreen === 'all-articles' ? 'all-articles' : 'home'
+  const originScreen = $router.get()?.route === 'allArticles' ? 'all-articles' : 'home'
   patchScreenParams({ articleReturnScreen: originScreen, currentArticle: articleId })
   void capture(AnalyticsEvent.ARTICLE_OPENED, {
     article_id: articleId,
     origin_screen: originScreen,
   })
-  navigateTo('article')
+  openPage($router, 'article', { articleId })
 }
 
 export function handleGoToAllArticles(): void {
   console.log('Navigating to all articles screen')
-  navigateTo('all-articles')
+  openPage($router, 'allArticles')
 }
 
 export function handleBackFromArticle(): void {
   const { articleReturnScreen } = $screenParams.get()
   patchScreenParams({ currentArticle: '' })
   if (articleReturnScreen === 'all-articles') {
-    navigateTo('all-articles')
+    openPage($router, 'allArticles')
   } else {
-    navigateTo('home')
+    openPage($router, 'home')
   }
 }
 
 export function handleBackToHomeFromArticles(): void {
   patchScreenParams({ currentArticle: '' })
-  navigateTo('home')
+  openPage($router, 'home')
 }

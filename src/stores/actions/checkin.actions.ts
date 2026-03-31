@@ -1,7 +1,8 @@
 import type { MutableRefObject } from 'react'
+import { openPage } from '@nanostores/router'
 
 import { invalidateUserStateCache } from '@/src/domain/user.domain'
-import { navigateTo } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $flowProgress } from '@/src/stores/app-flow.store'
 import { markFirstCheckinDone, markFirstRewardShown } from '@/src/stores/app-flow.store'
 import {
@@ -28,7 +29,7 @@ export function handleCheckInSubmit(
     setEarnedAchievementIds(['newcomer'])
     setHasShownFirstAchievementFlag(true)
     markFirstRewardShown()
-    navigateTo('reward')
+    openPage($router, 'reward')
     return
   }
 
@@ -47,12 +48,12 @@ export function handleCheckInSubmit(
         return
       }
       if ($screenParams.get().earnedAchievementIds.length === 0) {
-        navigateTo('home')
+        openPage($router, 'home')
       }
     } catch (error) {
       console.error('Error checking achievements after check-in:', error)
       if (isMounted()) {
-        navigateTo('home')
+        openPage($router, 'home')
       }
     } finally {
       checkInTimeoutRef.current = null

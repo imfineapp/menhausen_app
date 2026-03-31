@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const mocks = vi.hoisted(() => ({
   deleteUserDataFromSupabase: vi.fn(),
   clearJWTToken: vi.fn(),
-  setNavigationState: vi.fn(),
+  redirectPage: vi.fn(),
   setAuthState: vi.fn(),
   patchScreenParams: vi.fn(),
   setPremium: vi.fn(),
@@ -18,9 +18,16 @@ vi.mock('@/utils/supabaseSync', () => ({
   clearJWTToken: mocks.clearJWTToken,
 }))
 
+vi.mock('@nanostores/router', () => ({
+  openPage: vi.fn(),
+  redirectPage: mocks.redirectPage,
+}))
+vi.mock('@/src/stores/router.store', () => ({
+  $router: {},
+}))
+
 vi.mock('@/src/stores/navigation.store', () => ({
-  navigateTo: vi.fn(),
-  setNavigationState: mocks.setNavigationState,
+  goBack: vi.fn(),
 }))
 
 vi.mock('@/src/stores/screen-params.store', () => ({
@@ -73,7 +80,7 @@ describe('profile.actions handleDeleteAccount', () => {
     expect(mocks.setAuthState).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'unauthenticated', telegramUserId: null, jwtExpiresAt: null })
     )
-    expect(mocks.setNavigationState).toHaveBeenCalledWith('onboarding1', ['onboarding1'])
+    expect(mocks.redirectPage).toHaveBeenCalledWith(expect.anything(), 'onboarding', { step: '1' })
   })
 
   it('returns serverDeleted false but still clears locally when server fails', async () => {
@@ -81,7 +88,7 @@ describe('profile.actions handleDeleteAccount', () => {
     const result = await handleDeleteAccount()
     expect(result).toEqual({ serverDeleted: false })
     expect(mocks.clearJWTToken).toHaveBeenCalled()
-    expect(mocks.setNavigationState).toHaveBeenCalledWith('onboarding1', ['onboarding1'])
+    expect(mocks.redirectPage).toHaveBeenCalledWith(expect.anything(), 'onboarding', { step: '1' })
   })
 
   it('returns serverDeleted false when delete throws', async () => {

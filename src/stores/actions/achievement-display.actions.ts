@@ -7,7 +7,6 @@ import {
   shouldShowRewardImmediately,
 } from '@/src/domain/achievements.domain'
 import { checkAndUnlockAchievements } from '@/src/stores/achievements.store'
-import { $currentScreen } from '@/src/stores/navigation.store'
 import { $router } from '@/src/stores/router.store'
 import { $screenParams, setEarnedAchievementIds } from '@/src/stores/screen-params.store'
 import { loadUserStats } from '@/services/userStatsService'
@@ -19,7 +18,14 @@ export async function checkAndShowAchievements(
 ): Promise<void> {
   const { isMounted } = options
   const earnedAchievementIds = $screenParams.get().earnedAchievementIds
-  const currentScreen = $currentScreen.get()
+  const routeToLegacy: Record<string, AppScreen> = {
+    home: 'home',
+    checkin: 'checkin',
+    cardDetails: 'card-details',
+    themeHome: 'theme-home',
+    article: 'article',
+  }
+  const currentScreen = routeToLegacy[$router.get()?.route ?? ''] ?? 'home'
 
   if (!forceCheck && earnedAchievementIds.length > 0) {
     console.log('[Achievements] Skipping check - already have achievements to show:', earnedAchievementIds)

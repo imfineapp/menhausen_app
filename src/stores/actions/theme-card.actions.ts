@@ -1,6 +1,5 @@
 import type { MutableRefObject } from 'react'
-
-import type { AppScreen } from '@/types/userState'
+import { openPage, redirectPage } from '@nanostores/router'
 
 import { checkAndShowAchievements } from '@/src/stores/actions/achievement-display.actions'
 import { capture, AnalyticsEvent } from '@/src/effects/analytics.effects'
@@ -9,7 +8,7 @@ import { getPointsForLevel } from '@/src/domain/points.domain'
 import { getThemeIdFromCardId, getAllCardIdsFromTheme } from '@/src/domain/theme.domain'
 import { getTestTopicForTheme, getThemeMatchPercentage } from '@/utils/themeTestMapping'
 import { isTopicTestCompletedForTheme } from '@/utils/experiment/topicTestStorage'
-import { navigateTo, setNavigationState } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $language } from '@/src/stores/language.store'
 import {
   $screenParams,
@@ -35,6 +34,13 @@ function stressThemeHasAnyCompletedCard(): boolean {
   if (!theme) return false
   const ids = getAllCardIdsFromTheme(theme)
   return ids.some((id) => (ThemeCardManager.getCompletedAttempts(id)?.length ?? 0) > 0)
+}
+
+function getThemeAndCardIds() {
+  const { currentTheme, currentCard } = $screenParams.get()
+  const cardId = currentCard.id
+  const themeId = currentTheme || currentCard.themeId || (cardId ? getThemeIdFromCardId(cardId) : 'stress')
+  return { themeId, cardId }
 }
 
 export async function getCardData(cardId: string, language: string) {
@@ -133,53 +139,64 @@ export function handleGoToTheme(themeId: string): void {
   })
 
   if (variant === 'C' && psychTopic && !isTopicTestCompletedForTheme(themeId)) {
-    navigateTo('topic-test-intro')
+    openPage($router, 'topicTestIntro')
     return
   }
 
   const allCardIds = getAllCardIdsFromTheme(theme)
   if (allCardIds.length === 0) {
-    navigateTo('theme-home')
+    openPage($router, 'themeHome', { themeId })
     return
   }
   const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeId, allCardIds)
-  navigateTo(shouldShowWelcome ? 'theme-welcome' : 'theme-home')
+  if (shouldShowWelcome) {
+    openPage($router, 'themeWelcome', { themeId })
+  } else {
+    openPage($router, 'themeHome', { themeId })
+  }
 }
 
 export function handleBackToHomeFromTheme(): void {
   patchScreenParams({ currentTheme: '' })
-  navigateTo('home')
+  openPage($router, 'home')
 }
 
 export function handleStartTheme(): void {
-  console.log(`Starting theme: ${$screenParams.get().currentTheme}`)
-  setNavigationState('theme-home', ['home', 'theme-home'])
+  const { currentTheme } = $screenParams.get()
+  console.log(`Starting theme: ${currentTheme}`)
+  openPage($router, 'themeHome', { themeId: currentTheme || 'stress' })
 }
 
 export function handleBackToThemeHome(): void {
   patchScreenParams({ currentCard: { id: '' } })
-  navigateTo('theme-home')
+  const { themeId } = getThemeAndCardIds()
+  openPage($router, 'themeHome', { themeId })
 }
 
 export function handleBackToCardDetails(): void {
   patchScreenParams({ currentCheckin: { id: '' } })
-  navigateTo('card-details')
+  const { themeId, cardId } = getThemeAndCardIds()
+  openPage($router, 'cardDetails', { themeId, cardId })
 }
 
 export function handleBackToCardDetailsFromWelcome(): void {
-  navigateTo('card-details')
+  const { themeId, cardId } = getThemeAndCardIds()
+  openPage($router, 'cardDetails', { themeId, cardId })
 }
 
 export function handleBackToQuestion01(): void {
-  navigateTo('question-01')
+  const { themeId, cardId } = getThemeAndCardIds()
+  openPage($router, 'question01', { themeId, cardId })
 }
 
 export function handleBackToQuestion02(): void {
-  navigateTo('question-02')
+  const { themeId, cardId } = getThemeAndCardIds()
+  openPage($router, 'question02', { themeId, cardId })
 }
 
 export function handleBackToFinalMessage(): void {
-  navigateTo('final-message')
+  const { themeId, cardId } = getThemeAndCardIds()
+  openPage($router, 'finalMessage', { themeId, cardId })
 }
 
 export function handleNextQuestion(answer: string): void {
@@ -191,7 +208,7 @@ export function handleNextQuestion(answer: string): void {
     theme_id: themeId,
   })
   patchScreenParams({ userAnswers: { ...$screenParams.get().userAnswers, question1: answer } })
-  navigateTo('question-02')
+  openPage($router, 'question02', { themeId, cardId: currentCard.id })
 }
 
 export function handleCompleteExercise(answer: string): void {
@@ -220,13 +237,14 @@ export function handleCompleteExercise(answer: string): void {
     console.log(`[Card] Card ${currentCard.id} was already opened before, skipping increment`)
   }
 
-  navigateTo('final-message')
+  openPage($router, 'finalMessage', { themeId: themeIdForQ2, cardId: currentCard.id })
 }
 
 export function handleCompleteFinalMessage(): void {
   const { currentCard } = $screenParams.get()
   console.log(`Final message completed for card: ${currentCard.id}`)
-  navigateTo('rate-card')
+  const themeId = (currentCard as { themeId?: string }).themeId ?? getThemeIdFromCardId(currentCard.id)
+  openPage($router, 'rateCard', { themeId, cardId: currentCard.id })
 }
 
 export function handleCompleteRating(
@@ -352,7 +370,7 @@ export function handleCompleteRating(
 
   resetCardExerciseAnswers()
   patchScreenParams({ currentCard: { id: '' } })
-  setNavigationState('theme-home', ['home', 'theme-home'])
+  redirectPage($router, 'themeHome', { themeId: currentTheme || 'stress' })
 
   if (timerCtx) {
     const { cardExerciseTimeoutRef, isMountedRef } = timerCtx
@@ -378,7 +396,7 @@ export function handleStartCardExercise(): void {
       theme_id: themeId,
     })
   }
-  navigateTo('question-01')
+  openPage($router, 'question01', { themeId, cardId: currentCard.id })
 }
 
 export function handleOpenCardExercise(): void {
@@ -391,7 +409,7 @@ export function handleOpenCardExercise(): void {
       theme_id: themeId,
     })
   }
-  navigateTo('question-01')
+  openPage($router, 'question01', { themeId, cardId: currentCard.id })
 }
 
 export function handleOpenCheckin(checkinId: string, cardTitle: string, date: string): void {
@@ -403,7 +421,10 @@ export function handleOpenCheckin(checkinId: string, cardTitle: string, date: st
       date,
     },
   })
-  navigateTo('checkin-details')
+  const { currentCard, currentTheme } = $screenParams.get()
+  const themeId = currentTheme || currentCard.themeId || (currentCard.id ? getThemeIdFromCardId(currentCard.id) : 'stress')
+  const cardId = currentCard.id || '1'
+  openPage($router, 'checkinDetails', { themeId, cardId, checkinId })
 }
 
 export async function handleThemeCardClick(cardId: string): Promise<void> {
@@ -416,7 +437,7 @@ export async function handleThemeCardClick(cardId: string): Promise<void> {
     theme_id: themeId,
   })
   patchScreenParams({ currentCard: cardData })
-  navigateTo('card-details')
+  openPage($router, 'cardDetails', { themeId, cardId })
 }
 
 export async function handleOpenNextLevel(): Promise<void> {
@@ -438,15 +459,15 @@ export async function handleOpenNextLevel(): Promise<void> {
       theme_id: themeId,
     })
     patchScreenParams({ currentCard: cardData })
-    navigateTo('card-details')
+    openPage($router, 'cardDetails', { themeId, cardId: nextCard })
   } else {
     console.log('All cards have been completed! Navigating to home.')
-    navigateTo('home')
+    openPage($router, 'home')
   }
 }
 
 export function handleShowUnderConstruction(featureName: string): void {
   console.log(`Navigating to Under Construction for: ${featureName}`)
   patchScreenParams({ currentFeatureName: featureName })
-  navigateTo('under-construction' as AppScreen)
+  openPage($router, 'underConstruction')
 }

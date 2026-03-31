@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
-  navigateTo: vi.fn(),
+  openPage: vi.fn(),
   markFirstCheckinDone: vi.fn(),
   markFirstRewardShown: vi.fn(),
   setEarnedAchievementIds: vi.fn(),
@@ -15,8 +15,11 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/src/domain/user.domain', () => ({
   invalidateUserStateCache: mocks.invalidateUserStateCache,
 }))
-vi.mock('@/src/stores/navigation.store', () => ({
-  navigateTo: mocks.navigateTo,
+vi.mock('@nanostores/router', () => ({
+  openPage: mocks.openPage,
+}))
+vi.mock('@/src/stores/router.store', () => ({
+  $router: {},
 }))
 vi.mock('@/src/stores/app-flow.store', () => ({
   $flowProgress: { get: mocks.flowGet },
@@ -54,7 +57,7 @@ describe('checkin.actions', () => {
     expect(mocks.markFirstCheckinDone).toHaveBeenCalled()
     expect(mocks.setEarnedAchievementIds).toHaveBeenCalledWith(['newcomer'])
     expect(mocks.markFirstRewardShown).toHaveBeenCalled()
-    expect(mocks.navigateTo).toHaveBeenCalledWith('reward')
+    expect(mocks.openPage).toHaveBeenCalledWith(expect.anything(), 'reward')
   })
 
   it('subsequent checkin checks achievements then goes home when none', async () => {
@@ -71,7 +74,7 @@ describe('checkin.actions', () => {
     await vi.runAllTimersAsync()
 
     expect(checkAndShowAchievements).toHaveBeenCalledWith(300, true)
-    expect(mocks.navigateTo).toHaveBeenCalledWith('home')
+    expect(mocks.openPage).toHaveBeenCalledWith(expect.anything(), 'home')
   })
 })
 

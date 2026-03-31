@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useStore } from '@nanostores/react'
+import { openPage } from '@nanostores/router'
 
-import { $isNavigatingForward, $navigationHistory, navigateTo } from './stores/navigation.store'
+import { $isNavigatingForward, $navigationHistory } from './stores/navigation.store'
 import { $router } from '@/src/stores/router.store'
 import type { AppScreen } from '@/types/userState'
 import { calculateTestResults } from '@/utils/psychologicalTestCalculator'
@@ -205,7 +206,7 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
       window.history.back()
       return
     }
-    navigateTo('home')
+    openPage($router, 'home')
   }, [])
 
   const getTheme = useCallback((themeId: string) => getThemeFromStore(themeId), [])

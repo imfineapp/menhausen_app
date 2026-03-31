@@ -1,7 +1,8 @@
 import type { LikertScaleAnswer } from '@/types/psychologicalTest'
+import { openPage } from '@nanostores/router'
 
 import { capture, AnalyticsEvent } from '@/src/effects/analytics.effects'
-import { navigateTo } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.store'
 import { $language } from '@/src/stores/language.store'
 import { $experimentVariant } from '@/src/stores/experiment.store'
@@ -31,6 +32,14 @@ async function loadPsychQuestions(lang: 'en' | 'ru'): Promise<PsychologicalTestQ
   }
   const m = await import('../../../data/content/en/psychologicalTest.json')
   return (m.default as { questions: PsychologicalTestQuestionContent[] }).questions
+}
+
+function openThemeLanding(themeId: string, showWelcome: boolean): void {
+  if (showWelcome) {
+    openPage($router, 'themeWelcome', { themeId })
+  } else {
+    openPage($router, 'themeHome', { themeId })
+  }
 }
 
 export async function handleTopicTestIntroNext(): Promise<void> {
@@ -70,7 +79,7 @@ export async function handleTopicTestIntroNext(): Promise<void> {
     topic_id: themeId,
     variant: $experimentVariant.get() ?? 'unknown',
   })
-  navigateTo('topic-test-question')
+  openPage($router, 'topicTestQuestion')
 }
 
 export function handleTopicTestQuestionAnswer(answer: LikertScaleAnswer): void {
@@ -131,7 +140,7 @@ export function handleTopicTestQuestionAnswer(answer: LikertScaleAnswer): void {
       duration_ms: durationMs,
       variant: $experimentVariant.get() ?? 'unknown',
     })
-    navigateTo('topic-test-results')
+    openPage($router, 'topicTestResults')
     return
   }
 
@@ -149,7 +158,7 @@ export function handleTopicTestResultsContinue(userHasPremium: boolean): void {
       trigger_source: 'topic_test_result',
       variant: $experimentVariant.get() ?? 'unknown',
     })
-    navigateTo('payments')
+    openPage($router, 'payments')
     return
   }
   proceedToThemeWelcomeOrHome()
@@ -158,21 +167,21 @@ export function handleTopicTestResultsContinue(userHasPremium: boolean): void {
 export function proceedToThemeWelcomeOrHome(): void {
   const themeId = $screenParams.get().currentTheme
   if (!themeId) {
-    navigateTo('home')
+    openPage($router, 'home')
     return
   }
   const theme = getThemeFromStore(themeId)
   if (!theme) {
-    navigateTo('home')
+    openPage($router, 'home')
     return
   }
   const allCardIds = getAllCardIdsFromTheme(theme)
   if (allCardIds.length === 0) {
-    navigateTo('theme-home')
+    openPage($router, 'themeHome', { themeId })
     return
   }
   const shouldShowWelcome = ThemeCardManager.shouldShowWelcomeScreen(themeId, allCardIds)
-  navigateTo(shouldShowWelcome ? 'theme-welcome' : 'theme-home')
+  openThemeLanding(themeId, shouldShowWelcome)
 }
 
 export function handleBackFromTopicTestIntro(): void {
@@ -194,7 +203,7 @@ export function handleBackFromTopicTestIntro(): void {
     topicTestAnswers: [],
     currentTheme: '',
   })
-  navigateTo('home')
+  openPage($router, 'home')
 }
 
 export function handleBackFromTopicTestQuestion(): void {
@@ -208,7 +217,7 @@ export function handleBackFromTopicTestQuestion(): void {
         variant: $experimentVariant.get() ?? 'unknown',
       })
     }
-    navigateTo('topic-test-intro')
+    openPage($router, 'topicTestIntro')
     return
   }
   const nextIdx = topicTestQuestionIndex - 1
@@ -226,5 +235,5 @@ export function handleBackFromTopicTestQuestion(): void {
 }
 
 export function handleBackFromTopicTestResults(): void {
-  navigateTo('home')
+  openPage($router, 'home')
 }
