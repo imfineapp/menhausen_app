@@ -111,7 +111,7 @@ describe('Achievement System Tests', () => {
         iconName: 'check-circle',
         conditionType: 'topic_completed',
         category: 'Free Topic',
-        conditionValue: 10
+        conditionValue: 1
       };
 
       const stats: UserStats = {
@@ -134,14 +134,8 @@ describe('Achievement System Tests', () => {
       expect(result.unlocked).toBe(false);
       expect(result.progress).toBe(0);
 
-      // 5 завершенных тем в бесплатной теме (но нужно 10)
-      stats.topicsCompleted = Array(5).fill('stress');
-      result = checkAchievementCondition(achievement, stats);
-      expect(result.unlocked).toBe(false);
-      expect(result.progress).toBe(50);
-
-      // 10 завершенных тем - разблокировано
-      stats.topicsCompleted = Array(10).fill('stress');
+      // Одна завершенная бесплатная тема (stress) - разблокировано
+      stats.topicsCompleted = ['stress'];
       result = checkAchievementCondition(achievement, stats);
       expect(result.unlocked).toBe(true);
       expect(result.progress).toBe(100);

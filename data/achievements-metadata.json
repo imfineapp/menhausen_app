@@ -37,7 +37,7 @@
     "iconName": "check-circle",
     "conditionType": "topic_completed",
     "category": "Free Topic",
-    "conditionValue": 10
+    "conditionValue": 1
   },
   {
     "id": "basic_reader",
