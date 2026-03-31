@@ -1,3 +1,4 @@
+import { openPage } from '@nanostores/router'
 import type { AppScreen } from '@/types/userState'
 
 import {
@@ -6,7 +7,8 @@ import {
   shouldShowRewardImmediately,
 } from '@/src/domain/achievements.domain'
 import { checkAndUnlockAchievements } from '@/src/stores/achievements.store'
-import { $currentScreen, navigateTo } from '@/src/stores/navigation.store'
+import { $currentScreen } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $screenParams, setEarnedAchievementIds } from '@/src/stores/screen-params.store'
 import { loadUserStats } from '@/services/userStatsService'
 
@@ -64,7 +66,7 @@ export async function checkAndShowAchievements(
 
       if (!BLOCKED_SCREENS_FOR_REWARD.includes(currentScreen as AppScreen) && shouldShowImmediately) {
         console.log('[Achievements] Navigating to reward screen')
-        navigateTo('reward')
+        openPage($router, 'reward')
       } else {
         if (buckets.cardRelated.length > 0 && (currentScreen === 'card-details' || currentScreen === 'theme-home')) {
           console.log('[Achievements] Not showing immediately - will show on theme-home')

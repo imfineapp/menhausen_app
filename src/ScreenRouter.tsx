@@ -2,7 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useStore } from '@nanostores/react'
 
-import { $currentScreen, $isNavigatingForward, $navigationHistory, navigateTo } from './stores/navigation.store'
+import { $isNavigatingForward, $navigationHistory, navigateTo } from './stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import type { AppScreen } from '@/types/userState'
 import { calculateTestResults } from '@/utils/psychologicalTestCalculator'
 import { loadTestResults } from '@/utils/psychologicalTestStorage'
@@ -70,8 +71,67 @@ function getPsychologicalTestPercentages(psychologicalTestAnswers: LikertScaleAn
   }
 }
 
+function resolveScreenFromRoute(route?: string, params?: Record<string, string>): AppScreen {
+  if (!route) return 'loading'
+  if (route === 'onboarding') return params?.step === '2' ? 'onboarding2' : 'onboarding1'
+  if (route === 'survey') return (`survey${(params?.step || '01').padStart(2, '0')}` as AppScreen)
+  if (route === 'psychTestQuestion') {
+    return (`psychological-test-question-${(params?.num || '01').padStart(2, '0')}` as AppScreen)
+  }
+
+  const routeMap: Record<string, AppScreen> = {
+    loading: 'loading',
+    psychTestPreambula: 'psychological-test-preambula',
+    psychTestInstruction: 'psychological-test-instruction',
+    psychTestResults: 'psychological-test-results',
+    topicTestIntro: 'topic-test-intro',
+    topicTestQuestion: 'topic-test-question',
+    topicTestResults: 'topic-test-results',
+    home: 'home',
+    checkin: 'checkin',
+    themeWelcome: 'theme-welcome',
+    themeHome: 'theme-home',
+    cardDetails: 'card-details',
+    checkinDetails: 'checkin-details',
+    cardWelcome: 'card-welcome',
+    question01: 'question-01',
+    question02: 'question-02',
+    finalMessage: 'final-message',
+    rateCard: 'rate-card',
+    profile: 'profile',
+    about: 'about',
+    appSettings: 'app-settings',
+    pinSettings: 'pin-settings',
+    pin: 'pin',
+    deleteAccount: 'delete',
+    payments: 'payments',
+    donations: 'donations',
+    underConstruction: 'under-construction',
+    privacy: 'privacy',
+    terms: 'terms',
+    breathing478: 'breathing-4-7-8',
+    breathingSquare: 'breathing-square',
+    grounding54321: 'grounding-5-4-3-2-1',
+    groundingAnchor: 'grounding-anchor',
+    allArticles: 'all-articles',
+    article: 'article',
+    badges: 'badges',
+    reward: 'reward',
+  }
+
+  return routeMap[route] ?? 'home'
+}
+
 export default function ScreenRouter(props: ScreenRouterProps = {}) {
-  const currentScreen = useStore($currentScreen)
+  const routerPage = useStore($router)
+  const currentScreen = useMemo(
+    () =>
+      resolveScreenFromRoute(
+        routerPage?.route as string | undefined,
+        (routerPage?.params as Record<string, string> | undefined) ?? undefined,
+      ),
+    [routerPage],
+  )
   const isNavigatingForward = useStore($isNavigatingForward)
   const surveyResults = useStore($surveyResults)
   const psychologicalTestAnswers = useStore($psychologicalTestAnswers)
@@ -91,6 +151,17 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
     topicTestQuestionIndex,
     topicTestAnswers,
   } = screenParams
+  const routeParams = (routerPage?.params as Record<string, string | undefined> | undefined) ?? {}
+  const currentThemeFromRoute = routeParams.themeId || currentTheme
+  const currentCardFromRoute = useMemo(
+    () => (routeParams.cardId ? { ...currentCard, id: routeParams.cardId, themeId: routeParams.themeId } : currentCard),
+    [currentCard, routeParams.cardId, routeParams.themeId],
+  )
+  const currentCheckinFromRoute = useMemo(
+    () => (routeParams.checkinId ? { ...currentCheckin, id: routeParams.checkinId } : currentCheckin),
+    [currentCheckin, routeParams.checkinId],
+  )
+  const currentArticleFromRoute = routeParams.articleId || currentArticle
 
   const isMountedRef = useRef(true)
   const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -130,12 +201,12 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
 
   const onRewardDone = useCallback(() => {
     setEarnedAchievementIds([])
-    const previousScreen = navigationHistory.length >= 2 ? navigationHistory[navigationHistory.length - 2] : 'home'
-    let returnScreen: AppScreen = 'home'
-    if (previousScreen === 'theme-home') returnScreen = 'theme-home'
-    if (previousScreen === 'all-articles') returnScreen = 'all-articles'
-    navigateTo(returnScreen)
-  }, [navigationHistory])
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back()
+      return
+    }
+    navigateTo('home')
+  }, [])
 
   const getTheme = useCallback((themeId: string) => getThemeFromStore(themeId), [])
 
@@ -167,10 +238,10 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
       wrapScreen,
       userHasPremium,
       currentLanguage,
-      currentTheme,
-      currentCard,
-      currentCheckin,
-      currentArticle,
+      currentTheme: currentThemeFromRoute,
+      currentCard: currentCardFromRoute,
+      currentCheckin: currentCheckinFromRoute,
+      currentArticle: currentArticleFromRoute,
       currentFeatureName,
       earnedAchievementIds,
       navigationHistory,
@@ -196,13 +267,13 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
     [
       checkAndShowAchievementsBound,
       completeRatingHandler,
-      currentArticle,
-      currentCard,
-      currentCheckin,
+      currentArticleFromRoute,
+      currentCardFromRoute,
+      currentCheckinFromRoute,
       currentFeatureName,
       currentLanguage,
       currentScreen,
-      currentTheme,
+      currentThemeFromRoute,
       earnedAchievementIds,
       getTheme,
       navigationHistory,

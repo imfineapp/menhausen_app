@@ -1,4 +1,4 @@
-import { $currentScreen } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { AnalyticsEvent, capture, isAnalyticsEnabled } from '@/utils/analytics/posthog'
 
 let previousScreen: string | null = null
@@ -20,8 +20,9 @@ export function initScreenViewTracking(): () => void {
 
   previousScreen = null
 
-  unsubscribe = $currentScreen.subscribe((screen) => {
-    if (screen === 'loading') return
+  unsubscribe = $router.subscribe((page) => {
+    const screen = page?.route
+    if (!screen || screen === 'loading') return
     void capture(AnalyticsEvent.SCREEN_VIEW, {
       screen_name: screen,
       previous_screen: previousScreen,
