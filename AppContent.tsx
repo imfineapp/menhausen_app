@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useStore } from '@nanostores/react'
+import { openPage } from '@nanostores/router'
 
 import ScreenRouter from './src/ScreenRouter'
 import { BackButton } from './components/ui/back-button'
@@ -26,9 +27,9 @@ import {
   $navigationHistory,
   resetNavigation,
   setNavigationState,
-  navigateTo,
   goBack,
 } from './src/stores/navigation.store'
+import { $router } from './src/stores/router.store'
 
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
@@ -343,7 +344,7 @@ function AppContent() {
 
   useEffect(() => {
     if (currentScreen === 'home' && earnedAchievementIds.length > 0) {
-      navigateTo('reward')
+      openPage($router, 'reward')
     }
   }, [currentScreen, earnedAchievementIds.length])
 
@@ -358,7 +359,7 @@ function AppContent() {
         if (result.shouldNavigate && result.achievementsToShow.length > 0) {
           markAchievementsAsShown(result.achievementsToShow, 'home')
           setEarnedAchievementIds(result.achievementsToShow)
-          navigateTo('reward')
+          openPage($router, 'reward')
         }
       }, 200)
       return () => clearTimeout(timeoutId)
@@ -376,7 +377,7 @@ function AppContent() {
         if (result.shouldNavigate && result.achievementsToShow.length > 0) {
           markAchievementsAsShown(result.achievementsToShow, 'profile')
           setEarnedAchievementIds(result.achievementsToShow)
-          navigateTo('reward')
+          openPage($router, 'reward')
         }
       }, 200)
       return () => clearTimeout(timeoutId)
@@ -416,7 +417,7 @@ function AppContent() {
           if (result.shouldNavigate && result.achievementsToShow.length > 0) {
             markAchievementsAsShown(result.achievementsToShow, 'theme-home')
             setEarnedAchievementIds(result.achievementsToShow)
-            setTimeout(() => navigateTo('reward'), 0)
+            setTimeout(() => openPage($router, 'reward'), 0)
           } else {
             themeHomeProcessingRef.current = false
           }

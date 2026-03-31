@@ -1,8 +1,8 @@
-import type { AppScreen } from '@/types/userState'
 import type { LikertScaleAnswer } from '@/types/psychologicalTest'
+import { openPage } from '@nanostores/router'
 
 import { capture, AnalyticsEvent } from '@/src/effects/analytics.effects'
-import { navigateTo } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $psychologicalTestAnswers, setPsychologicalTestAnswers } from '@/src/stores/survey.store'
 import { completePsychTest } from '@/src/stores/app-flow.store'
 import { $experimentVariant } from '@/src/stores/experiment.store'
@@ -16,12 +16,12 @@ export function handlePsychologicalTestPreambulaNext(): void {
     test_type: 'full',
     variant: $experimentVariant.get() ?? 'unknown',
   })
-  navigateTo('psychological-test-instruction')
+  openPage($router, 'psychTestInstruction')
 }
 
 export function handlePsychologicalTestInstructionNext(): void {
   fullPsychTestStartedAtMs = Date.now()
-  navigateTo('psychological-test-question-01')
+  openPage($router, 'psychTestQuestion', { num: '01' })
 }
 
 export function handlePsychologicalTestQuestionNext(questionNumber: number, answer: LikertScaleAnswer): void {
@@ -46,14 +46,13 @@ export function handlePsychologicalTestQuestionNext(questionNumber: number, answ
       duration_ms: durationMs,
       variant: $experimentVariant.get() ?? 'unknown',
     })
-    navigateTo('psychological-test-results')
+    openPage($router, 'psychTestResults')
   } else {
     const nextQuestionNumber = questionNumber + 1
-    const nextScreen = `psychological-test-question-${String(nextQuestionNumber).padStart(2, '0')}` as AppScreen
-    navigateTo(nextScreen)
+    openPage($router, 'psychTestQuestion', { num: String(nextQuestionNumber).padStart(2, '0') })
   }
 }
 
 export function handlePsychologicalTestResultsNext(): void {
-  navigateTo('checkin')
+  openPage($router, 'checkin')
 }

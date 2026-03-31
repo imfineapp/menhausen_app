@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useStore } from '@nanostores/react'
+import { openPage } from '@nanostores/router'
 
-import { $currentScreen, $isNavigatingForward, $navigationHistory, navigateTo } from './stores/navigation.store'
-import type { AppScreen } from '@/types/userState'
+import { $isNavigatingForward, $navigationHistory } from './stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
+import { resolveScreenFromRoute } from '@/src/utils/route-screen-map'
 import { calculateTestResults } from '@/utils/psychologicalTestCalculator'
 import { loadTestResults } from '@/utils/psychologicalTestStorage'
 import type { LikertScaleAnswer, PsychologicalTestPercentages } from '@/types/psychologicalTest'
@@ -71,7 +73,15 @@ function getPsychologicalTestPercentages(psychologicalTestAnswers: LikertScaleAn
 }
 
 export default function ScreenRouter(props: ScreenRouterProps = {}) {
-  const currentScreen = useStore($currentScreen)
+  const routerPage = useStore($router)
+  const currentScreen = useMemo(
+    () =>
+      resolveScreenFromRoute(
+        routerPage?.route as string | undefined,
+        (routerPage?.params as Record<string, string> | undefined) ?? undefined,
+      ),
+    [routerPage],
+  )
   const isNavigatingForward = useStore($isNavigatingForward)
   const surveyResults = useStore($surveyResults)
   const psychologicalTestAnswers = useStore($psychologicalTestAnswers)
@@ -91,6 +101,17 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
     topicTestQuestionIndex,
     topicTestAnswers,
   } = screenParams
+  const routeParams = (routerPage?.params as Record<string, string | undefined> | undefined) ?? {}
+  const currentThemeFromRoute = routeParams.themeId || currentTheme
+  const currentCardFromRoute = useMemo(
+    () => (routeParams.cardId ? { ...currentCard, id: routeParams.cardId, themeId: routeParams.themeId } : currentCard),
+    [currentCard, routeParams.cardId, routeParams.themeId],
+  )
+  const currentCheckinFromRoute = useMemo(
+    () => (routeParams.checkinId ? { ...currentCheckin, id: routeParams.checkinId } : currentCheckin),
+    [currentCheckin, routeParams.checkinId],
+  )
+  const currentArticleFromRoute = routeParams.articleId || currentArticle
 
   const isMountedRef = useRef(true)
   const checkInTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -130,12 +151,12 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
 
   const onRewardDone = useCallback(() => {
     setEarnedAchievementIds([])
-    const previousScreen = navigationHistory.length >= 2 ? navigationHistory[navigationHistory.length - 2] : 'home'
-    let returnScreen: AppScreen = 'home'
-    if (previousScreen === 'theme-home') returnScreen = 'theme-home'
-    if (previousScreen === 'all-articles') returnScreen = 'all-articles'
-    navigateTo(returnScreen)
-  }, [navigationHistory])
+    if (currentThemeFromRoute) {
+      openPage($router, 'themeHome', { themeId: currentThemeFromRoute })
+      return
+    }
+    openPage($router, 'home')
+  }, [currentThemeFromRoute])
 
   const getTheme = useCallback((themeId: string) => getThemeFromStore(themeId), [])
 
@@ -164,13 +185,14 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
   const routeContext: RouteContext = useMemo(
     () => ({
       currentScreen,
+      routeName: routerPage?.route,
       wrapScreen,
       userHasPremium,
       currentLanguage,
-      currentTheme,
-      currentCard,
-      currentCheckin,
-      currentArticle,
+      currentTheme: currentThemeFromRoute,
+      currentCard: currentCardFromRoute,
+      currentCheckin: currentCheckinFromRoute,
+      currentArticle: currentArticleFromRoute,
       currentFeatureName,
       earnedAchievementIds,
       navigationHistory,
@@ -196,13 +218,14 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
     [
       checkAndShowAchievementsBound,
       completeRatingHandler,
-      currentArticle,
-      currentCard,
-      currentCheckin,
+      currentArticleFromRoute,
+      currentCardFromRoute,
+      currentCheckinFromRoute,
       currentFeatureName,
       currentLanguage,
       currentScreen,
-      currentTheme,
+      routerPage?.route,
+      currentThemeFromRoute,
       earnedAchievementIds,
       getTheme,
       navigationHistory,

@@ -1,4 +1,6 @@
-import { navigateTo, setCurrentScreenOnly, setNavigationState } from '@/src/stores/navigation.store'
+import { openPage, redirectPage } from '@nanostores/router'
+
+import { $router } from '@/src/stores/router.store'
 import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.store'
 import { setPremium } from '@/src/stores/premium.store'
 import { initSurveyState } from '@/src/stores/survey.store'
@@ -9,68 +11,68 @@ import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
 export function handleShowAboutApp(): void {
-  navigateTo('about')
+  openPage($router, 'about')
 }
 
 export function handleShowAppSettings(): void {
-  navigateTo('app-settings')
+  openPage($router, 'appSettings')
 }
 
 export function handleBackToProfile(): void {
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleBackToProfileFromSettings(): void {
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleShowPinSettings(): void {
-  navigateTo('pin-settings')
+  openPage($router, 'pinSettings')
 }
 
 export function handleCompletePinSettings(): void {
   console.log('PIN settings updated')
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleSkipPinSettings(): void {
   console.log('PIN settings skipped')
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleShowPrivacy(): void {
-  navigateTo('privacy')
+  openPage($router, 'privacy')
 }
 
 export function handleShowTerms(): void {
-  navigateTo('terms')
+  openPage($router, 'terms')
 }
 
 export function handleShowPrivacyFromProfile(): void {
-  navigateTo('privacy')
+  openPage($router, 'privacy')
 }
 
 export function handleShowTermsFromProfile(): void {
-  navigateTo('terms')
+  openPage($router, 'terms')
 }
 
 export function handleBackToHome(): void {
-  navigateTo('home')
+  openPage($router, 'home')
 }
 
 export function handleShowDeleteAccount(): void {
-  navigateTo('delete')
+  openPage($router, 'deleteAccount')
 }
 
 export function handleBackToProfileFromDelete(): void {
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleShowPayments(
   source: 'profile' | 'theme' | 'home' | 'article' | 'topic-test-result' = 'profile',
 ): void {
   patchScreenParams({ paywallSource: source })
-  navigateTo('payments')
+  openPage($router, 'payments')
 }
 
 export function handlePurchaseComplete(): void {
@@ -78,42 +80,42 @@ export function handlePurchaseComplete(): void {
   setPremium(true, { source: 'telegramEvent' })
   const { currentTheme } = $screenParams.get()
   if (currentTheme) {
-    navigateTo('theme-home')
+    openPage($router, 'themeHome', { themeId: currentTheme })
   } else {
-    navigateTo('profile')
+    openPage($router, 'profile')
   }
 }
 
 export function handleBackToProfileFromPayments(): void {
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleShowDonations(): void {
   console.log('Opening donations screen')
-  setCurrentScreenOnly('donations')
+  redirectPage($router, 'donations')
 }
 
 export function handleBackToProfileFromDonations(): void {
   console.log('Returning to profile from donations')
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleBackToProfileFromUnderConstruction(): void {
   console.log('Returning to profile from Under Construction')
   patchScreenParams({ currentFeatureName: '' })
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleBackFromMentalTechnique(): void {
-  navigateTo('home')
+  openPage($router, 'home')
 }
 
 export function handleGoToProfile(): void {
-  navigateTo('profile')
+  openPage($router, 'profile')
 }
 
 export function handleGoToBadges(): void {
-  navigateTo('badges')
+  openPage($router, 'badges')
 }
 
 export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }> {
@@ -192,7 +194,7 @@ export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }>
     lastError: null,
   })
 
-  setNavigationState('onboarding1', ['onboarding1'])
+  redirectPage($router, 'onboarding', { step: '1' })
 
   return { serverDeleted }
 }

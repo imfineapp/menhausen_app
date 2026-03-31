@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
   capture: vi.fn(),
-  navigateTo: vi.fn(),
+  openPage: vi.fn(),
   setSurveyResultsForScreen: vi.fn(),
 }))
 
@@ -13,8 +13,12 @@ vi.mock('@/src/effects/analytics.effects', () => ({
   },
 }))
 
-vi.mock('@/src/stores/navigation.store', () => ({
-  navigateTo: mocks.navigateTo,
+vi.mock('@nanostores/router', () => ({
+  openPage: mocks.openPage,
+}))
+
+vi.mock('@/src/stores/router.store', () => ({
+  $router: {},
 }))
 
 vi.mock('@/src/stores/survey.store', () => ({
@@ -48,7 +52,7 @@ describe('survey.actions', () => {
 
     expect(mocks.setSurveyResultsForScreen).toHaveBeenCalledWith('screen01', answers)
     expect(mocks.capture).toHaveBeenCalledWith('ONBOARDING_ANSWERED', expect.objectContaining({ step: 'survey01' }))
-    expect(mocks.navigateTo).toHaveBeenCalledWith('survey02')
+    expect(mocks.openPage).toHaveBeenCalledWith(expect.anything(), 'survey', { step: '02' })
   })
 })
 

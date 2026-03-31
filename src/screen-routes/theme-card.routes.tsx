@@ -80,7 +80,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'checkin-details':
       return wrapScreen(withSuspense(
         <CheckinDetailsScreen
-          onBack={handlers.handleBackToCardDetails}
+          onBack={handlers.handleBackToThemeHome}
           checkinId={currentCheckin.id}
           cardTitle={currentCheckin.cardTitle}
           checkinDate={currentCheckin.date}
@@ -89,7 +89,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'card-welcome':
       return wrapScreen(withSuspense(
         <CardWelcomeScreen
-          onBack={handlers.handleBackToCardDetailsFromWelcome}
+          onBack={handlers.handleBackToThemeHome}
           onNext={handlers.handleStartCardExercise}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}
@@ -99,7 +99,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'question-01':
       return wrapScreen(withSuspense(
         <QuestionScreen01WithLoader
-          onBack={handlers.handleBackToCardDetails}
+          onBack={handlers.handleBackToThemeHome}
           onNext={handlers.handleNextQuestion}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}
@@ -110,7 +110,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'question-02':
       return wrapScreen(withSuspense(
         <QuestionScreen02WithLoader
-          onBack={handlers.handleBackToQuestion01}
+          onBack={handlers.handleBackToThemeHome}
           onNext={handlers.handleCompleteExercise}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}
@@ -122,7 +122,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'final-message':
       return wrapScreen(withSuspense(
         <FinalCardMessageScreenWithLoader
-          onBack={handlers.handleBackToQuestion02}
+          onBack={handlers.handleBackToThemeHome}
           onNext={handlers.handleCompleteFinalMessage}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}
@@ -133,7 +133,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
     case 'rate-card':
       return wrapScreen(withSuspense(
         <RateCardScreen
-          onBack={handlers.handleBackToFinalMessage}
+          onBack={handlers.handleBackToThemeHome}
           onNext={handlers.handleCompleteRating}
           cardId={currentCard.id}
           cardTitle={currentCard.title || ''}

@@ -19,6 +19,7 @@ import {
 } from '@/src/stores/navigation.store'
 
 describe('navigation.store', () => {
+  // These tests intentionally cover the legacy facade API kept for compatibility.
   beforeEach(() => {
     resetNavigation()
   })
@@ -32,6 +33,13 @@ describe('navigation.store', () => {
 
   it('goBack pops history and sets previous screen', () => {
     setNavigationState('profile', ['home', 'profile'])
+    goBack()
+    expect($currentScreen.get()).toBe('home')
+    expect($navigationHistory.get()).toEqual(['home'])
+  })
+
+  it('goBack from theme-home always returns to home', () => {
+    setNavigationState('theme-home', ['home', 'theme-home'])
     goBack()
     expect($currentScreen.get()).toBe('home')
     expect($navigationHistory.get()).toEqual(['home'])

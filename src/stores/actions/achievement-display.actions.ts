@@ -1,3 +1,4 @@
+import { openPage } from '@nanostores/router'
 import type { AppScreen } from '@/types/userState'
 
 import {
@@ -6,8 +7,9 @@ import {
   shouldShowRewardImmediately,
 } from '@/src/domain/achievements.domain'
 import { checkAndUnlockAchievements } from '@/src/stores/achievements.store'
-import { $currentScreen, navigateTo } from '@/src/stores/navigation.store'
+import { $router } from '@/src/stores/router.store'
 import { $screenParams, setEarnedAchievementIds } from '@/src/stores/screen-params.store'
+import { resolveScreenFromRoute } from '@/src/utils/route-screen-map'
 import { loadUserStats } from '@/services/userStatsService'
 
 export async function checkAndShowAchievements(
@@ -17,7 +19,11 @@ export async function checkAndShowAchievements(
 ): Promise<void> {
   const { isMounted } = options
   const earnedAchievementIds = $screenParams.get().earnedAchievementIds
-  const currentScreen = $currentScreen.get()
+  const page = $router.get()
+  const currentScreen = resolveScreenFromRoute(
+    page?.route,
+    (page?.params as Record<string, string> | undefined) ?? undefined,
+  )
 
   if (!forceCheck && earnedAchievementIds.length > 0) {
     console.log('[Achievements] Skipping check - already have achievements to show:', earnedAchievementIds)
@@ -64,7 +70,7 @@ export async function checkAndShowAchievements(
 
       if (!BLOCKED_SCREENS_FOR_REWARD.includes(currentScreen as AppScreen) && shouldShowImmediately) {
         console.log('[Achievements] Navigating to reward screen')
-        navigateTo('reward')
+        openPage($router, 'reward')
       } else {
         if (buckets.cardRelated.length > 0 && (currentScreen === 'card-details' || currentScreen === 'theme-home')) {
           console.log('[Achievements] Not showing immediately - will show on theme-home')
