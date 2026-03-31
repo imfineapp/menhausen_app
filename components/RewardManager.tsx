@@ -20,11 +20,18 @@ export function RewardManager({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [achievements, setAchievements] = useState<any[]>([]);
   const onCompleteRef = useRef(onComplete);
+  const isCompletingRef = useRef(false);
 
   // Обновляем ref при изменении onComplete
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+
+  const completeOnce = () => {
+    if (isCompletingRef.current) return;
+    isCompletingRef.current = true;
+    onCompleteRef.current();
+  };
 
   // Фильтруем только полученные достижения
   useEffect(() => {
@@ -43,8 +50,10 @@ export function RewardManager({
       }));
     
     if (earnedAchievements.length === 0) {
-      onCompleteRef.current();
+      completeOnce();
     } else {
+      isCompletingRef.current = false;
+      setCurrentIndex(0);
       setAchievements(earnedAchievements);
     }
   }, [earnedAchievementIds, createAchievementData]);
@@ -55,7 +64,7 @@ export function RewardManager({
       setCurrentIndex(prev => prev + 1);
     } else {
       // Все достижения показаны, завершаем
-      onComplete();
+      completeOnce();
     }
   };
 
