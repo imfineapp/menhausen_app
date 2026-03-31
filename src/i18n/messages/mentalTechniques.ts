@@ -1,0 +1,24 @@
+import { i18n } from '../setup'
+
+export const mentalTechniquesMessages = i18n('mentalTechniques', {
+  techniqueNotFound: "Technique not found",
+  techniqueDataError: "Technique data error",
+  techniqueDataLoadFailed: "Failed to load technique data",
+  techniqueCompleted: "Technique completed",
+  yourResponses: "Your responses",
+  aboutTechnique: "About the technique",
+  step: "Step",
+  followInstructionAbove: "Follow the instruction above",
+  pause: "Pause",
+  start: "Start",
+  reset: "Reset",
+  cycle: "Cycle",
+  of: "of",
+  groundingAnchorSuccess: "You have successfully completed the anchor technique",
+  grounding54321Success: "You have successfully completed the grounding exercise",
+  feetOnFloor: "Feet on floor",
+  threeDeepBreaths: "3 deep breaths",
+  safetyPhrase: "Safety phrase",
+  lookAround: "Look around",
+  squareBreathingDescription: "Square breathing technique to help you relax and focus."
+} as any)

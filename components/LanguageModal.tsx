@@ -1,6 +1,8 @@
+import { languageModalMessages } from '@/src/i18n/messages/languageModal';
+import { useStore } from '@nanostores/react';
 // Импортируем необходимые хуки и компоненты
 import { useState } from 'react';
-import { useLanguage, useTranslation, Language } from './LanguageContext';
+import { useLanguage, Language } from './LanguageContext';
 
 /**
  * Адаптивная кнопка выбора языка
@@ -97,7 +99,7 @@ function ActionButtons({ onCancel, onConfirm, cancelLabel, confirmLabel }: Actio
  */
 export function LanguageModal() {
   const { language, setLanguage, isLanguageModalOpen, closeLanguageModal } = useLanguage();
-  const { t } = useTranslation();
+  const msgs = useStore(languageModalMessages);
 
   // Локальное состояние для выбранного языка (до подтверждения)
   const [selectedLanguage, setSelectedLanguage] = useState<Language>(language);
@@ -146,10 +148,10 @@ export function LanguageModal() {
             {/* Заголовок */}
             <div className="flex flex-col gap-2 mb-6 sm:mb-8" data-name="Modal header">
               <div className="typography-h2 text-[#e1ff00] text-center">
-                <h2 className="block">{t('change_language_title')}</h2>
+                <h2 className="block">{msgs.changeLanguageTitle}</h2>
               </div>
               <div className="typography-body text-[#cfcfcf] text-center">
-                <p className="block">{t('change_language_description')}</p>
+                <p className="block">{msgs.changeLanguageDescription}</p>
               </div>
             </div>
 
@@ -159,7 +161,7 @@ export function LanguageModal() {
                 language="en"
                 isSelected={selectedLanguage === 'en'}
                 onSelect={setSelectedLanguage}
-                label={t('english')}
+                label={msgs.english}
                 nativeLabel="English"
               />
               
@@ -167,7 +169,7 @@ export function LanguageModal() {
                 language="ru"
                 isSelected={selectedLanguage === 'ru'}
                 onSelect={setSelectedLanguage}
-                label={t('russian')}
+                label={msgs.russian}
                 nativeLabel="Русский"
               />
             </div>
@@ -176,8 +178,8 @@ export function LanguageModal() {
             <ActionButtons
               onCancel={handleCancel}
               onConfirm={handleConfirm}
-              cancelLabel={t('cancel')}
-              confirmLabel={t('confirm')}
+              cancelLabel={msgs.cancel}
+              confirmLabel={msgs.confirm}
             />
           </div>
         </div>

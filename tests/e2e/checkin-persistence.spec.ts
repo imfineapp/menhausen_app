@@ -40,6 +40,17 @@ const readCheckins = async (page: Page): Promise<StoredCheckin[]> => {
   });
 };
 
+function pad2(value: number): string {
+  return String(value).padStart(2, '0');
+}
+
+function getLocalDayKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  return `${year}-${month}-${day}`;
+}
+
 test.describe('Check-in Data Persistence', () => {
   test('should persist check-in data in localStorage', async ({ page }) => {
     await seedCheckinHistory(page, [], { firstCheckinDone: false, firstRewardShown: false });
@@ -53,15 +64,13 @@ test.describe('Check-in Data Persistence', () => {
 
     const entries = await readCheckins(page);
     expect(entries.length).toBeGreaterThan(0);
-    // Используем UTC дату для избежания проблем с часовыми поясами
-    const todayUTC = new Date().toISOString().split('T')[0];
+    // App stores checkin day keys using local time (YYYY-MM-DD).
+    const todayLocal = getLocalDayKey(new Date());
     const entryDate = entries[entries.length - 1].date;
-    // Проверяем, что дата соответствует сегодняшней или вчерашней (с учетом часового пояса)
-    // Создаем массив возможных дат (сегодня и вчера UTC)
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayUTC = yesterday.toISOString().split('T')[0];
-    expect([todayUTC, yesterdayUTC]).toContain(entryDate);
+    const yesterdayLocal = getLocalDayKey(yesterday);
+    expect([todayLocal, yesterdayLocal]).toContain(entryDate);
   });
 
   test('should maintain data after browser restart', async ({ browser }) => {

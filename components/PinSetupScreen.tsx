@@ -2,7 +2,8 @@
 import { useState } from 'react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { pinSetupMessages } from '@/src/i18n/messages/pinSetup';
 
 // Типы для пропсов компонента
 interface PinSetupScreenProps {
@@ -25,7 +26,7 @@ type PinMode = 'create' | 'confirm';
  * Текстовая кнопка без фона и рамки
  */
 function TextButton({ onSkip }: { onSkip: () => void }) {
-  const { content } = useContent();
+  const pin = useStore(pinSetupMessages);
   
   return (
     <button
@@ -36,7 +37,7 @@ function TextButton({ onSkip }: { onSkip: () => void }) {
                 min-h-[44px] min-w-[44px] cursor-pointer"
       data-name="Skip Button"
     >
-      {content.ui.pinSetup.skip}
+      {pin.skip}
     </button>
   );
 }
@@ -159,7 +160,7 @@ function PinSetup({
   showError: boolean; 
   mode: PinMode;
 }) {
-  const { content } = useContent();
+  const pin = useStore(pinSetupMessages);
   
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-[351px] mx-auto px-4 sm:px-6 md:px-8 lg:px-0" data-name="Pin setup">
@@ -172,8 +173,8 @@ function PinSetup({
           <div className={`typography-body text-center w-full ${showError ? 'text-[#e1ff00]' : 'text-[#ffffff]'}`}>
             <p className="block">
               {showError 
-                ? content.ui.pinSetup.pinMismatch
-                : content.ui.pinSetup.confirmPin
+                ? pin.pinMismatch
+                : pin.confirmPin
               }
             </p>
           </div>
@@ -189,7 +190,7 @@ function PinSetup({
  * Управляет состоянием ввода, валидацией и навигацией
  */
 export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetupScreenProps) {
-  const { content } = useContent();
+  const pin = useStore(pinSetupMessages);
   // Состояние для текущего пин-кода
   const [currentPin, setCurrentPin] = useState<string>('');
   // Состояние для сохраненного пин-кода (при подтверждении)
@@ -266,10 +267,10 @@ export function PinSetupScreen({ onComplete, onSkip, onBack: _onBack }: PinSetup
             {/* Заголовок */}
             <div className="text-center mb-12">
               <h1 className="typography-h1 text-white mb-6">
-                {content.ui.pinSetup.title}
+                {pin.title}
               </h1>
               <p className="typography-body text-white">
-                {content.ui.pinSetup.subtitle}
+                {pin.subtitle}
               </p>
             </div>
             

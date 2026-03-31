@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from './ui/chart';
-import { useContent } from './ContentContext';
+import { profileMessages } from '@/src/i18n/messages/profile';
+import { commonMessages } from '@/src/i18n/messages/common';
 import { DailyCheckinManager, CheckinData } from '../utils/DailyCheckinManager';
 import { buildMentalLevelChartData } from '@/src/domain/mentalLevel.domain';
 import { useStore } from '@nanostores/react';
@@ -12,8 +13,8 @@ import { $totalCheckins } from '@/src/stores/checkin.store';
  * Визуализация в виде area chart с желтым акцентным цветом
  */
 export function MentalLevelBlock() {
-  const { getUI } = useContent();
-  const ui = getUI();
+  const profile = useStore(profileMessages);
+  const common = useStore(commonMessages);
   const containerRef = useRef<HTMLDivElement>(null);
   useStore($totalCheckins)
 
@@ -26,7 +27,7 @@ export function MentalLevelBlock() {
   }, [checkins]);
 
   // Получаем заголовок
-  const title = ui.profile?.mentalLevel || 'Твои чекины';
+  const title = profile.mentalLevel;
 
   return (
     <div 
@@ -59,7 +60,7 @@ export function MentalLevelBlock() {
             <ChartContainer
               config={{
                 value: {
-                  label: 'Value',
+                  label: common.value || 'Value',
                   color: '#e1ff00'
                 }
               }}
@@ -101,7 +102,7 @@ export function MentalLevelBlock() {
             </ChartContainer>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-gray-400 text-sm">
-              {'Нет данных для отображения'}
+              {profile.heatmap?.noActivity ?? ''}
             </div>
           )}
         </div>

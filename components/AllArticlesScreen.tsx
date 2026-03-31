@@ -5,7 +5,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { BackButton } from './ui/back-button';
-import { useContent, useArticles } from './ContentContext';
+import { useArticles } from './ContentContext';
+import { articlesMessages } from '@/src/i18n/messages/articles';
 import { $pointsBalance } from '@/src/stores/points.store';
 import { getRequiredPointsForArticle, isArticleLocked } from '../utils/articlesAccess';
 import { PINNED_ARTICLE_IDS } from '../utils/articlesList';
@@ -91,11 +92,10 @@ function ArticleListItem({
  * Main All Articles Screen Component
  */
 export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenProps) {
-  const { content, getLocalizedText } = useContent();
+  const articlesUi = useStore(articlesMessages);
   const articles = useArticles();
   const pointsBalance = useStore($pointsBalance);
-  // Берём через any, т.к. тип ui.articles может не включать lockedBadge
-  const lockedBadgeText = ((content.ui as any)?.articles?.lockedBadge) || 'Откроется за {points}';
+  const lockedBadgeText = articlesUi.lockedBadge;
   
   const [logoOpacity, setLogoOpacity] = useState<number>(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -150,10 +150,10 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
             {/* Header */}
             <div className="mb-8">
               <h1 className="typography-h1 text-brand-primary mb-4">
-                {content.ui.articles?.viewAll || 'Все статьи'}
+                {articlesUi.viewAll}
               </h1>
               <p className="typography-body text-tertiary">
-                {content.ui.articles?.description || 'Полезные статьи для улучшения психического здоровья'}
+                {articlesUi.description}
               </p>
             </div>
             
@@ -161,7 +161,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
             {articles.length === 0 ? (
               <div className="text-center py-12">
                 <div className="typography-body text-tertiary">
-                  {content.ui.articles?.noArticles || 'Статьи скоро появятся'}
+                  {articlesUi.noArticles}
                 </div>
               </div>
             ) : (
@@ -178,7 +178,7 @@ export function AllArticlesScreen({ onBack, onArticleClick }: AllArticlesScreenP
       onClick={() => { if (!locked) onArticleClick(article.id); }}
       locked={locked}
       requiredPoints={required}
-      badgeText={getLocalizedText(lockedBadgeText)}
+      badgeText={lockedBadgeText}
     />
   );
 })}

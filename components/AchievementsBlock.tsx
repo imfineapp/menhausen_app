@@ -1,5 +1,6 @@
+import { badgesMessages } from '@/src/i18n/messages/badges';
+import { useStore } from '@nanostores/react';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from './LanguageContext';
 import { useContent } from './ContentContext';
 import { useAchievements } from '../contexts/AchievementsContext';
 import { getAllAchievementsMetadata } from '../utils/achievementsMetadata';
@@ -69,7 +70,7 @@ const getIconColor = (unlocked: boolean, progress: number): string => {
  * Блок с сеткой всех достижений для страницы профиля пользователя
  */
 export function AchievementsBlock({ onClick }: AchievementsBlockProps) {
-  const { t } = useTranslation();
+  const msgs = useStore(badgesMessages);
   const { getLocalizedBadges } = useContent();
   const { achievements: userAchievements } = useAchievements();
   const [achievementIcons, setAchievementIcons] = useState<AchievementIcon[]>([]);
@@ -115,7 +116,7 @@ export function AchievementsBlock({ onClick }: AchievementsBlockProps) {
   }, [userAchievements, getLocalizedBadges]);
 
   // Получаем текст заголовка (приоритет: getLocalizedBadges, затем useTranslation)
-  const title = getLocalizedBadges().title || t('badges');
+  const title = getLocalizedBadges().title || msgs.title;
 
   return (
     <button

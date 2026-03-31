@@ -1,5 +1,6 @@
+import { settingsMessages } from '@/src/i18n/messages/settings';
+import { useStore } from '@nanostores/react';
 import React from 'react';
-import { useTranslation } from './LanguageContext';
 import { UnlockIcon } from './UserProfileIcons';
 
 interface PremiumUnlockBlockProps {
@@ -11,7 +12,7 @@ interface PremiumUnlockBlockProps {
  * Кликабельный блок с желтым фоном и иконкой замка
  */
 export function PremiumUnlockBlock({ onClick }: PremiumUnlockBlockProps) {
-  const { t } = useTranslation();
+  const msgs = useStore(settingsMessages);
 
   return (
     <button
@@ -43,7 +44,7 @@ export function PremiumUnlockBlock({ onClick }: PremiumUnlockBlockProps) {
         {/* Текст по центру горизонтально */}
         <div className="flex items-center justify-center text-center flex-1">
           <h3 className="text-[#111111] text-xl font-semibold leading-tight m-0 p-0">
-            {t('unlock_all_themes')}
+            {msgs.unlockAllThemes}
           </h3>
         </div>
       </div>

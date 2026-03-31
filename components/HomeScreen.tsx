@@ -8,6 +8,9 @@ import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { InfoModal } from './ui/InfoModal';
 import { ArticlesBlock } from './ArticlesBlock';
 import { useContent } from './ContentContext';
+import { homeMessages } from '@/src/i18n/messages/home';
+import { profileMessages } from '@/src/i18n/messages/profile';
+import { themesMessages } from '@/src/i18n/messages/themes';
 import { getUserDisplayId } from '../utils/telegramUserUtils';
 import { useStore } from '@nanostores/react';
 import { $currentLevel } from '@/src/stores/points.store';
@@ -40,7 +43,7 @@ interface MainPageContentBlockProps {
 // Emergency card interface removed - not currently used in implementation
 
 // Emergency cards data is now managed through the i18n content system
-// See data/content/en/ui.json and data/content/ru/ui.json for emergency help content
+// Emergency help copy lives in i18n message stores (e.g. homeMessages.emergencyHelp).
 
 /**
  * Адаптивный компонент световых эффектов для фона
@@ -69,10 +72,10 @@ function UserAvatar() {
  * Адаптивная инфо��мация о пользователе с именем
  */
 function UserInfo() {
-  const { content } = useContent();
+  const home = useStore(homeMessages);
   const userDisplayId = getUserDisplayId();
   // Extract text part without any ID and combine with dynamic user ID
-  const heroTitle = content.ui?.home?.heroTitle || 'Welcome back! #MNHSNDEV';
+  const heroTitle = home.heroTitle || 'Hero';
   const textPart = heroTitle.replace(/\s*#[A-Z0-9]+/, '').trim();
   const displayText = `${textPart} ${userDisplayId}`;
   
@@ -92,7 +95,7 @@ function UserInfo() {
  * Адаптивный статус аккаунта пользователя (Premium/Free)
  */
 function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
-  const { content } = useContent();
+  const profile = useStore(profileMessages);
   return (
     <div
       className={`box-border content-stretch flex flex-row h-[16px] sm:h-[17px] md:h-[18px] items-center justify-center px-[6px] sm:px-[7px] md:px-[8px] relative rounded-xl shrink-0 ${
@@ -108,7 +111,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
           : 'text-[#8a8a8a]'
       }`}>
         <p className="adjustLetterSpacing block whitespace-pre">
-          {isPremium ? content.ui.profile.premium : content.ui.profile.free}
+          {isPremium ? profile.premium : profile.free}
         </p>
       </div>
     </div>
@@ -119,7 +122,7 @@ function UserAccountStatus({ isPremium = false }: { isPremium?: boolean }) {
  * Адаптивный уровень пользователя и статус подписки
  */
 function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
-  const { content } = useContent();
+  const home = useStore(homeMessages);
   const displayLevel = useStore($currentLevel);
 
   return (
@@ -128,7 +131,7 @@ function UserLevelAndStatus({ userHasPremium }: { userHasPremium: boolean }) {
       data-name="User level and paid status"
     >
       <div className="typography-body text-[#8a8a8a] text-left text-nowrap">
-        <p className="block whitespace-pre">{content.ui.home.level} {displayLevel.toLocaleString()}</p>
+        <p className="block whitespace-pre">{home.level} {displayLevel.toLocaleString()}</p>
       </div>
       <UserAccountStatus isPremium={userHasPremium} />
     </div>
@@ -154,7 +157,8 @@ function UserInfoBlock({ userHasPremium }: { userHasPremium: boolean }) {
  * Адаптивный полный блок пользователя с аватаром и информацией
  */
 function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; userHasPremium: boolean }) {
-  const { content } = useContent();
+  const profile = useStore(profileMessages);
+  const profileAriaLabel = profile.openProfile || profile.title || 'Open user profile';
   return (
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
       {/* Фон блока */}
@@ -172,7 +176,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
         onClick={onClick}
         className="relative z-10 box-border content-stretch flex flex-row gap-4 sm:gap-5 items-center justify-between w-full cursor-pointer min-h-[44px] min-w-[44px] hover:opacity-80 transition-opacity"
         data-name="User frame info block"
-        aria-label={content.ui.profile.openProfile || 'Open user profile'}
+        aria-label={profileAriaLabel}
       >
         <div className="flex flex-row gap-4 sm:gap-5 items-center justify-start">
           <UserAvatar />
@@ -185,99 +189,12 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
 }
 
 /**
- * Адаптивная иконка информации для блока чекина - СКРЫТ ПО ТРЕБОВАНИЮ
- */
-/*
-function InfoIcon({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="relative shrink-0 size-10 sm:size-12 cursor-pointer hover:opacity-70 transition-opacity duration-200 p-2"
-      data-name="Info icon"
-      aria-label={content.ui.home.checkInInfo.title}
-    >
-      <svg className="block size-full" fill="none" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
-        <g id="Info icon">
-          <path
-            d={svgPaths.pace200}
-            id="Vector"
-            stroke="var(--stroke-0, #2D2B2B)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-          <path
-            d="M12 16V12"
-            id="Vector_2"
-            stroke="var(--stroke-0, #2D2B2B)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-          <path
-            d="M12 8H12.01"
-            id="Vector_3"
-            stroke="var(--stroke-0, #2D2B2B)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-          />
-        </g>
-      </svg>
-    </button>
-  );
-}
-*/
-
-/**
- * Адаптивный заголовок блока чекина - СКРЫТ ПО ТРЕБОВАНИЮ
- */
-/*
-function InfoGroup({ onInfoClick }: { onInfoClick: () => void }) {
-  return (
-    <div
-      className="box-border content-stretch flex flex-row items-center justify-between p-0 relative shrink-0 w-full"
-      data-name="Info_group"
-    >
-      <div className="typography-h2 text-[#2d2b2b] text-left text-nowrap">
-        <h2 className="block whitespace-pre">{content.ui.home.howAreYou}</h2>
-      </div>
-      <InfoIcon onClick={onInfoClick} />
-    </div>
-  );
-}
-*/
-
-/**
- * Адаптивный кнопка для перехода к чекину - СКРЫТ ПО ТРЕБОВАНИЮ
- */
-/*
-function CheckInButton({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="bg-[#2d2b2b] h-[44px] sm:h-[46px] relative rounded-xl shrink-0 w-full cursor-pointer min-h-[44px] min-w-[44px] hover:bg-[#3d3b3b]"
-      data-name="Start Mining"
-    >
-      <div className="flex flex-row items-center justify-center relative size-full">
-        <div className="box-border content-stretch flex flex-row gap-2.5 h-[44px] sm:h-[46px] items-center justify-center px-[20px] sm:px-[126px] py-[12px] sm:py-[15px] relative w-full">
-          <div className="typography-button text-[#8a8a8a] text-center text-nowrap tracking-[-0.43px]">
-            <p className="adjustLetterSpacing block whitespace-pre">{content.ui.home.checkInButton}</p>
-          </div>
-        </div>
-      </div>
-    </button>
-  );
-}
-*/
-
-
-
-/**
  * Адаптивный список проблем пользователя с обработкой кликов на доступные темы
  */
 function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
   const { content } = useContent();
+  const home = useStore(homeMessages);
+  const themes = useStore(themesMessages);
   const topicTestVersion = useStore($topicTestVersion);
 
   const worries: ThemeWorry[] = useMemo(() => {
@@ -287,7 +204,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
     const themeList = Object.values(content.themes || {});
     const source = themeList.length > 0
       ? themeList
-      : [{ id: 'demo', title: content.ui.themes?.welcome?.title || 'Theme', description: content.ui.home.quickHelpTitle, isPremium: false } as any];
+      : [{ id: 'demo', title: themes.welcome.title || home.themesTitle, description: home.quickHelpTitle, isPremium: false } as any];
 
     return source.map((theme: any) => {
       const allCardIds: string[] = Array.isArray(theme.cards)
@@ -318,7 +235,7 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
         matchPercentage: matchPercentage ?? -1, // Используем -1 для тем без соответствия, чтобы они шли в конец
       };
     });
-  }, [content.themes, content.ui.themes?.welcome?.title, content.ui.home.quickHelpTitle, userHasPremium, topicTestVersion]);
+  }, [content.themes, themes.welcome.title, home.themesTitle, home.quickHelpTitle, userHasPremium, topicTestVersion]);
 
   const sortedWorries = sortWorries(worries)
 
@@ -354,14 +271,14 @@ function WorriesList({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: s
  * Адаптивный контейнер блока "What worries you?"
  */
 function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (themeId: string) => void; userHasPremium: boolean }) {
-  const { content } = useContent();
+  const home = useStore(homeMessages);
   return (
     <div
       className="box-border content-stretch flex flex-col gap-[24px] sm:gap-[27px] md:gap-[30px] items-start justify-start p-0 relative shrink-0 w-full"
       data-name="Worries container"
     >
       <div className="typography-h2 text-[#e1ff00] text-left w-full">
-        <h2 className="block">{content.ui.home.whatWorriesYou}</h2>
+        <h2 className="block">{home.whatWorriesYou}</h2>
       </div>
       <WorriesList onGoToTheme={onGoToTheme} userHasPremium={userHasPremium} />
     </div>
@@ -407,7 +324,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
  */
 export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
-  const { content: _content } = useContent(); // Content system ready for future use
+  const home = useStore(homeMessages);
   
   // Автоматическая проверка достижений при изменении статистики
   useAchievementAutoCheck();
@@ -475,8 +392,8 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
       <InfoModal
         isOpen={isInfoModalOpen}
         onClose={handleCloseInfoModal}
-        title={_content.ui.home.checkInInfo.title}
-        content={_content.ui.home.checkInInfo.content}
+        title={home.checkInInfo.title}
+        content={home.checkInInfo.content}
       />
     </div>
   );

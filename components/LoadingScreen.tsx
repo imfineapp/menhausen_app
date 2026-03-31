@@ -1,12 +1,13 @@
 import React from 'react';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { commonMessages } from '@/src/i18n/messages/common';
 
 /**
  * LoadingScreen - Simple loading screen shown during app initialization
  */
 export const LoadingScreen: React.FC = () => {
-  const { getUI } = useContent();
-  const altText = typeof getUI === 'function' ? getUI()?.common?.loading || 'Menhausen' : 'Menhausen'
+  const common = useStore(commonMessages)
+  const altText = common.appName || 'Menhausen'
 
   return (
     <div className="w-full h-screen flex items-center justify-center bg-[#111111]">

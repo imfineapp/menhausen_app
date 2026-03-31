@@ -7,7 +7,8 @@ import {
 
 import { cn } from "./utils";
 import { Button, buttonVariants } from "./button";
-import { useContent } from "../ContentContext";
+import { useStore } from "@nanostores/react";
+import { navigationMessages } from "@/src/i18n/messages/navigation";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -70,7 +71,7 @@ function PaginationPrevious({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
-  const { content } = useContent();
+  const nav = useStore(navigationMessages);
   
   return (
     <PaginationLink
@@ -80,7 +81,7 @@ function PaginationPrevious({
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">{content.ui.navigation.previous}</span>
+      <span className="hidden sm:block">{nav.previous}</span>
     </PaginationLink>
   );
 }
@@ -89,7 +90,7 @@ function PaginationNext({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
-  const { content } = useContent();
+  const nav = useStore(navigationMessages);
   
   return (
     <PaginationLink
@@ -98,7 +99,7 @@ function PaginationNext({
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span className="hidden sm:block">{content.ui.navigation.next}</span>
+      <span className="hidden sm:block">{nav.next}</span>
       <ChevronRightIcon />
     </PaginationLink>
   );
@@ -108,7 +109,7 @@ function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">) {
-  const { content } = useContent();
+  const nav = useStore(navigationMessages);
   
   return (
     <span
@@ -118,7 +119,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">{content.ui.navigation.morePages}</span>
+      <span className="sr-only">{nav.morePages}</span>
     </span>
   );
 }

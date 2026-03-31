@@ -142,275 +142,6 @@ export interface SurveyResults {
 }
 
 /**
- * Общие UI тексты
- */
-export interface UITexts {
-  navigation: {
-    back: LocalizedContent;
-    next: LocalizedContent;
-    skip: LocalizedContent;
-    complete: LocalizedContent;
-    continue: LocalizedContent;
-    send: LocalizedContent;
-    start: LocalizedContent;
-    unlock: LocalizedContent;
-    previous: LocalizedContent;
-    morePages: LocalizedContent;
-    more: LocalizedContent;
-  };
-  common: {
-    loading: LocalizedContent;
-    error: LocalizedContent;
-    tryAgain: LocalizedContent;
-    save: LocalizedContent;
-    cancel: LocalizedContent;
-    delete: LocalizedContent;
-    edit: LocalizedContent;
-    close: LocalizedContent;
-    loadingQuestions?: LocalizedContent;
-    loadingFinalMessage?: LocalizedContent;
-    errorLoadingMessageData?: LocalizedContent;
-  };
-  home: {
-    greeting: LocalizedContent;
-    checkInPrompt: LocalizedContent;
-    quickHelpTitle: LocalizedContent;
-    themesTitle: LocalizedContent;
-    howAreYou: LocalizedContent;
-    checkInDescription: LocalizedContent;
-    checkInButton: LocalizedContent;
-    checkInInfo: {
-      title: LocalizedContent;
-      content: LocalizedContent;
-    };
-    whatWorriesYou: LocalizedContent;
-    heroTitle: LocalizedContent;
-    level: LocalizedContent;
-    progress: LocalizedContent;
-    use80PercentUsers: LocalizedContent;
-    themeMatchPercentage: LocalizedContent;
-    activity: {
-      title: LocalizedContent;
-      streak: LocalizedContent;
-      description: LocalizedContent;
-      streakLabel: LocalizedContent;
-      progressLabel: LocalizedContent;
-      weeklyCheckins: LocalizedContent;
-    };
-    emergencyHelp: {
-      breathing: {
-        title: LocalizedContent;
-        description: LocalizedContent;
-      };
-      meditation: {
-        title: LocalizedContent;
-        description: LocalizedContent;
-      };
-      grounding: {
-        title: LocalizedContent;
-        description: LocalizedContent;
-      };
-    };
-  };
-  profile: {
-    title: LocalizedContent;
-    aboutApp: LocalizedContent;
-    privacy: LocalizedContent;
-    terms: LocalizedContent;
-    deleteAccount: LocalizedContent;
-    payments: LocalizedContent;
-    heroTitle: LocalizedContent;
-    level: LocalizedContent;
-    premium: LocalizedContent;
-    free: LocalizedContent;
-    follow?: LocalizedContent;
-    openProfile?: LocalizedContent;
-    status?: LocalizedContent;
-    points?: LocalizedContent;
-    mentalLevel?: LocalizedContent;
-    yourActivity?: LocalizedContent;
-    regularExerciseNotification?: LocalizedContent;
-    heatmap?: {
-      checkinAndExercise: LocalizedContent;
-      checkinAndExercisePlural: LocalizedContent;
-      checkinOnly: LocalizedContent;
-      noActivity: LocalizedContent;
-    };
-  };
-  about: {
-    title: LocalizedContent;
-    description: LocalizedContent;
-    keyFeatures: LocalizedContent;
-    features: {
-      moodTracking: LocalizedContent;
-      exercises: LocalizedContent;
-      progress: LocalizedContent;
-      privacy: LocalizedContent;
-      telegram: LocalizedContent;
-    };
-    developmentTeam: LocalizedContent;
-    teamDescription: LocalizedContent;
-    madeWithLove: LocalizedContent;
-    copyright: LocalizedContent;
-    technicalInformation: LocalizedContent;
-    importantNote: LocalizedContent;
-    disclaimer: LocalizedContent;
-    emergency: LocalizedContent;
-    version: LocalizedContent;
-    platform: LocalizedContent;
-    builtWith: LocalizedContent;
-    lastUpdated: LocalizedContent;
-  };
-  survey: {
-    progress: LocalizedContent; // "Step {current} of {total}"
-    selectAtLeastOne: LocalizedContent;
-    optional: LocalizedContent;
-    required: LocalizedContent;
-  };
-  onboarding: {
-    screen01: {
-      title: LocalizedContent;
-      subtitle: LocalizedContent;
-      buttonText: LocalizedContent;
-      privacyText: LocalizedContent;
-      termsText: LocalizedContent;
-      agreementText: LocalizedContent;
-    };
-    screen02: {
-      title: LocalizedContent;
-      benefits: LocalizedContent[];
-      buttonText: LocalizedContent;
-      descriptions: LocalizedContent[];
-    };
-  };
-  pinSetup: {
-    title: LocalizedContent;
-    subtitle: LocalizedContent;
-    createPin: LocalizedContent;
-    confirmPin: LocalizedContent;
-    pinMismatch: LocalizedContent;
-    pinTooShort: LocalizedContent;
-    skip: LocalizedContent;
-    back: LocalizedContent;
-  };
-  checkin: {
-    title: LocalizedContent;
-    subtitle: LocalizedContent;
-    moodOptions: {
-      down: LocalizedContent;
-      anxious: LocalizedContent;
-      neutral: LocalizedContent;
-      energized: LocalizedContent;
-      happy: LocalizedContent;
-    };
-    send: LocalizedContent;
-    back: LocalizedContent;
-  };
-  themes: {
-    welcome: {
-      title: LocalizedContent;
-      subtitle: LocalizedContent;
-      lockedSubtitle?: LocalizedContent;
-      start: LocalizedContent;
-      unlock: LocalizedContent;
-      freeWarning: {
-        title: LocalizedContent;
-        text: LocalizedContent;
-      };
-    };
-    home: {
-      progress: LocalizedContent;
-      attempts: LocalizedContent;
-      attemptsCounter: LocalizedContent;
-      level: LocalizedContent;
-      nextLevel: LocalizedContent;
-      allCardsAttempted?: LocalizedContent;
-      startCard?: LocalizedContent;
-    };
-  };
-    cards: {
-      attempts: LocalizedContent;
-      noAttempts: LocalizedContent;
-      startExercise: LocalizedContent;
-    welcome: {
-      subtitle: LocalizedContent;
-    };
-    question: {
-      placeholder: LocalizedContent;
-      encryption: LocalizedContent;
-    };
-    final: {
-      why: LocalizedContent;
-    };
-    rating: {
-      title: LocalizedContent;
-      subtitle: LocalizedContent;
-      placeholder: LocalizedContent;
-      submit: LocalizedContent;
-      thankYou: LocalizedContent;
-      skipRating: LocalizedContent;
-    };
-    themeHome: {
-      card1: LocalizedContent;
-      card2: LocalizedContent;
-      card3: LocalizedContent;
-      card4: LocalizedContent;
-      card5: LocalizedContent;
-      card6: LocalizedContent;
-      card7: LocalizedContent;
-      card8: LocalizedContent;
-      card9: LocalizedContent;
-      card10: LocalizedContent;
-      level1: LocalizedContent;
-      level2: LocalizedContent;
-      level3: LocalizedContent;
-      level4: LocalizedContent;
-      level5: LocalizedContent;
-      description: LocalizedContent;
-    };
-    questionNotFound?: LocalizedContent;
-    techniqueNotFound?: LocalizedContent;
-    practiceTaskNotFound?: LocalizedContent;
-    explanationNotFound?: LocalizedContent;
-    fallbackTitle?: LocalizedContent;
-    fallbackDescription?: LocalizedContent;
-  };
-  levels: {
-    title: LocalizedContent;
-    yourLevel: LocalizedContent;
-    toNextLevel: LocalizedContent;
-    pointsHistory: LocalizedContent;
-    actions: {
-      dailyCheckin: LocalizedContent;
-      exerciseComplete: LocalizedContent;
-      achievementEarned: LocalizedContent;
-    };
-  };
-  articles?: {
-    title: LocalizedContent;
-    viewAll: LocalizedContent;
-    description: LocalizedContent;
-    relatedThemes: LocalizedContent;
-    noArticles: LocalizedContent;
-  };
-  deleteAccount?: {
-    title: LocalizedContent;
-    description: LocalizedContent;
-    warning: LocalizedContent;
-    button: LocalizedContent;
-    buttonDeleting: LocalizedContent;
-    confirmTitle: LocalizedContent;
-    confirmMessage: LocalizedContent;
-    successTitle: LocalizedContent;
-    successMessage: LocalizedContent;
-    /** Shown when local data was cleared but server DELETE failed or could not be confirmed */
-    serverDeleteFailedMessage?: LocalizedContent;
-    errorTitle: LocalizedContent;
-    errorMessage: LocalizedContent;
-  };
-}
-
-/**
  * Шаг ментальной техники
  */
 export interface TechniqueStep {
@@ -505,6 +236,42 @@ export interface AboutContent {
   lastUpdated: LocalizedContent;
 }
 
+export interface LegalSection {
+  title: LocalizedContent;
+  paragraphs: LocalizedContent[];
+  bullets?: LocalizedContent[];
+}
+
+export interface LegalContent {
+  privacyPolicy: {
+    title: LocalizedContent;
+    effectiveDate: LocalizedContent;
+    lastUpdated: LocalizedContent;
+    intro: LocalizedContent[];
+    sections: {
+      noPii: LegalSection;
+      dataCollection: LegalSection;
+      telegramIntegration: LegalSection;
+      contact: LegalSection;
+    };
+    closing: LocalizedContent;
+  };
+  termsOfUse: {
+    title: LocalizedContent;
+    lastUpdated: LocalizedContent;
+    warning: LocalizedContent;
+    intro: LocalizedContent;
+    sections: {
+      legalDisclaimer: LegalSection;
+      noWarranty: LegalSection;
+      eligibility: LegalSection;
+      privacy: LegalSection;
+      contact: LegalSection;
+    };
+    closing: LocalizedContent;
+  };
+}
+
 /**
  * Данные статьи
  */
@@ -572,15 +339,14 @@ export interface AppContent {
   onboarding: OnboardingContent;
   survey: SurveyContent;
   psychologicalTest: PsychologicalTestContent;
-  ui: UITexts;
   mentalTechniques: Record<string, MentalTechniqueData>;
   mentalTechniquesMenu: MentalTechniquesMenuData;
   about: AboutContent;
   badges: BadgesContent;
   activityData?: ActivityData;
   payments: PaymentsContent;
-  donations: DonationsContent;
   articles: ArticlesCollection;
+  legal?: LegalContent;
 }
 
 /**
@@ -605,7 +371,6 @@ export interface ContentContextType {
   getMentalTechniques: () => MentalTechniqueData[];
   getMentalTechniquesByCategory: (category: string) => MentalTechniqueData[];
   getMentalTechniquesMenu: () => MentalTechniquesMenuData;
-  getUI: () => UITexts;
   getAllThemes: () => ThemeData[];
   getBadges: () => BadgesContent;
   getArticle: (articleId: string) => ArticleData | undefined;

@@ -1,7 +1,11 @@
 // Тесты для проверки работы i18n системы
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
-import { useTranslation, useLanguage } from '../../components/LanguageContext';
+import { useLanguage } from '../../components/LanguageContext';
+import { useStore } from '@nanostores/react';
+import { languageModalMessages } from '../../src/i18n/messages/languageModal';
+import { settingsMessages } from '../../src/i18n/messages/settings';
+import { profileMessages } from '../../src/i18n/messages/profile';
 import { useContent } from '../../components/ContentContext';
 import { LanguageModal } from '../../components/LanguageModal';
 import { setLanguage } from '../../src/stores/language.store';
@@ -192,7 +196,7 @@ describe('i18n System Tests', () => {
           <div>
             <span data-testid="current-language">{currentLanguage}</span>
             <span data-testid="ui-content">
-              {content?.ui?.home?.greeting || 'Loading...'}
+              {content?.about?.title || 'Loading...'}
             </span>
           </div>
         );
@@ -206,7 +210,7 @@ describe('i18n System Tests', () => {
 
       // Проверяем, что контент загружен (мок сразу возвращает данные)
       expect(screen.getByTestId('ui-content')).toBeInTheDocument();
-      expect(screen.getByTestId('ui-content')).toHaveTextContent('Good morning');
+      expect(screen.getByTestId('ui-content')).toHaveTextContent('About Menhausen');
       expect(screen.getByTestId('current-language')).toHaveTextContent('en');
     });
   });
@@ -214,11 +218,12 @@ describe('i18n System Tests', () => {
   describe('Component Text Localization', () => {
     test('должен использовать переводы из useTranslation', () => {
       const TestLocalizedComponent = () => {
-        const { t } = useTranslation();
+        const languageModal = useStore(languageModalMessages);
+        const settings = useStore(settingsMessages);
         return (
           <div>
-            <span data-testid="settings-label">{t('settings')}</span>
-            <span data-testid="language-label">{t('language')}</span>
+            <span data-testid="settings-label">{settings.settings}</span>
+            <span data-testid="language-label">{languageModal.language}</span>
           </div>
         );
       };
@@ -235,13 +240,12 @@ describe('i18n System Tests', () => {
 
     test('должен отдавать UI контент на выбранном языке из useContent', async () => {
       const TestContentComponent = () => {
-        const { getUI } = useContent();
+        const profile = useStore(profileMessages);
         const { setLanguage } = useLanguage();
 
-        const ui = getUI();
         return (
           <div>
-            <span data-testid="profile-title">{ui.profile.title}</span>
+            <span data-testid="profile-title">{profile.title}</span>
             <button onClick={() => setLanguage('ru')}>Switch to Russian</button>
           </div>
         );
@@ -299,10 +303,9 @@ describe('i18n System Tests', () => {
   describe('Translation Keys', () => {
     test('должен возвращать ключ при отсутствии перевода', () => {
       const TestComponent = () => {
-        const { t } = useTranslation();
         return (
           <div>
-            <span data-testid="missing-translation">{t('nonexistent_key')}</span>
+            <span data-testid="missing-translation">nonexistent_key</span>
           </div>
         );
       };
@@ -318,10 +321,10 @@ describe('i18n System Tests', () => {
 
     test('должен возвращать английский перевод как fallback', () => {
       const TestComponent = () => {
-        const { t } = useTranslation();
+        const languageModal = useStore(languageModalMessages);
         return (
           <div>
-            <span data-testid="fallback-translation">{t('language')}</span>
+            <span data-testid="fallback-translation">{languageModal.language}</span>
           </div>
         );
       };

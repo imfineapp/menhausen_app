@@ -7,8 +7,7 @@ vi.mock('@/utils/languageDetector', () => ({
 }))
 
 vi.mock('@/utils/contentLoader', () => ({
-  loadContentWithCache: vi.fn(async (lang: string) => ({
-    ui: { home: { heroTitle: lang === 'ru' ? 'Привет' : 'Hello' } },
+  loadContentWithCache: vi.fn(async (_lang: string) => ({
     themes: {},
   })),
 }))

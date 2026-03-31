@@ -1,12 +1,12 @@
 import React from 'react';
 import { Flame } from 'lucide-react';
 import { ActivityData } from '../types/content';
-import { useContent } from './ContentContext';
 import { useLanguage } from './LanguageContext';
 import { getRussianDayForm, getEnglishDayForm } from '../utils/pluralization';  
 import { useStore } from '@nanostores/react';
 import { $nextLevelTarget, $pointsBalance } from '@/src/stores/points.store';
 import { $checkinStreak, $totalCheckins } from '@/src/stores/checkin.store';
+import { homeMessages } from '@/src/i18n/messages/home';
  
 import { getActivityDataForPeriod, ActivityType } from '../utils/ActivityDataManager';
 import { buildActivityDayCells, buildDaysOfWeekLabels, getCurrentWeekMonday } from '@/src/domain/activityBlockNew.domain';
@@ -16,7 +16,7 @@ interface ActivityBlockNewProps {
 }
 
 export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {     
-  const { getUI } = useContent();
+  const home = useStore(homeMessages);
   const { language } = useLanguage();
 
   const pointsBalance = useStore($pointsBalance);
@@ -153,7 +153,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
 
           {/* Подпись */}
           <div className="text-sm text-[#8a8a8a] text-center">
-            {getUI().home.activity.weeklyCheckins}
+            {home.activity?.weeklyCheckins}
           </div>
         </div>
 

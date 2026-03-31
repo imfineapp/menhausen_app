@@ -16,7 +16,7 @@ describe('content.store', () => {
   })
 
   it('loadContentForLanguage fetches and sets content', async () => {
-    const payload = { ui: { home: { greeting: 'Good morning' } } } as any
+    const payload = { themes: {}, about: { title: 'About' } } as any
     vi.mocked(loadContentWithCache).mockResolvedValue(payload)
 
     await loadContentForLanguage('en')

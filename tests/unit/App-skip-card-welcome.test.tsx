@@ -5,12 +5,7 @@ import { CardDetailsScreen } from '../../components/CardDetailsScreen';
 
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => ({
-    content: {
-      ui: {
-        themes: { welcome: { start: 'Start' } },
-        cards: { attempts: 'Attempts', noAttempts: 'No attempts yet' }
-      }
-    },
+    content: {},
     getLocalizedText: (t: string) => t
   })
 }));

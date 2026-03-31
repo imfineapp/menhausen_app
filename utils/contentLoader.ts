@@ -17,8 +17,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     
     // Загружаем все секции контента параллельно (кроме themes и cards - они загружаются через ThemeLoader)
     console.log(`loadContent: Starting parallel imports for language: ${language}`);
-    const [ui, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges, psychologicalTest] = await Promise.all([
-      import(`../data/content/${language}/ui.json`).then(m => { console.log(`loadContent: ui.json loaded`); return m; }),
+    const [about, mentalTechniques, mentalTechniquesMenu, survey, onboarding, emergencyCards, payments, badges, psychologicalTest, legal] = await Promise.all([
+      import(`../data/content/${language}/about.json`).then(m => { console.log(`loadContent: about.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques.json`).then(m => { console.log(`loadContent: mental-techniques.json loaded`); return m; }),
       import(`../data/content/${language}/mental-techniques-menu.json`).then(m => { console.log(`loadContent: mental-techniques-menu.json loaded`); return m; }),
       import(`../data/content/${language}/survey.json`).then(m => { console.log(`loadContent: survey.json loaded`); return m; }),
@@ -26,7 +26,8 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       import(`../data/content/${language}/emergency-cards.json`).then(m => { console.log(`loadContent: emergency-cards.json loaded`); return m; }),
       import(`../data/content/${language}/payments.json`).then(m => { console.log(`loadContent: payments.json loaded`); return m; }),
       import(`../data/content/${language}/badges.json`).then(m => { console.log(`loadContent: badges.json loaded`); return m; }),
-      import(`../data/content/${language}/psychologicalTest.json`).then(m => { console.log(`loadContent: psychologicalTest.json loaded`); return m; })
+      import(`../data/content/${language}/psychologicalTest.json`).then(m => { console.log(`loadContent: psychologicalTest.json loaded`); return m; }),
+      import(`../data/content/${language}/legal.json`).then(m => { console.log(`loadContent: legal.json loaded`); return m; })
     ]);
     
     // Загружаем статьи
@@ -71,7 +72,6 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
     const content: AppContent = {
       themes: themesRecord,
       cards: {}, // Пустой объект, так как карточки теперь загружаются через ThemeLoader
-      ui: ui.default,
       mentalTechniques: mentalTechniques.default,
       mentalTechniquesMenu: mentalTechniquesMenu.default,
       survey: survey.default,
@@ -79,21 +79,13 @@ export async function loadContent(language: SupportedLanguage): Promise<AppConte
       psychologicalTest: psychologicalTest.default,
       emergencyCards: emergencyCards.default,
       badges: badges.default,
-      about: ui.default.about,
+      about: about.default,
       payments: payments.default,
-      donations: ui.default.donations || {
-        title: 'Support the project',
-        description: 'If you like the app and want to support its development, you can make a donation:',
-        currency_ton: 'TON',
-        currency_usdt_ton: 'USDT (TON)',
-        copy: 'Copy',
-        copied: 'Copied'
-      },
-      articles: articlesRecord
+      articles: articlesRecord,
+      legal: legal.default
     };
     
     console.log(`loadContent: Content loaded successfully for language: ${language}`);
-    console.log(`loadContent: UI content:`, ui.default);
     console.log(`loadContent: About content:`, content.about);
     return content;
   } catch (error) {

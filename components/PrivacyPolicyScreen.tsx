@@ -2,7 +2,7 @@
 import svgPaths from "../imports/svg-e41m9aecp1";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useLanguage } from './LanguageContext';
+import { useContent } from './ContentContext';
 
 // Типы для пропсов компонента
 interface PrivacyPolicyScreenProps {
@@ -20,11 +20,9 @@ interface PrivacyPolicyScreenProps {
  * Содержит заголовок и весь текст политики на английском языке
  */
 function MainContent() {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const { content } = useContent();
+  const privacy = content.legal?.privacyPolicy;
+  if (!privacy) return null;
   
   return (
     <div
@@ -33,90 +31,63 @@ function MainContent() {
     >
       {/* Заголовок страницы */}
       <div className="typography-h2 text-[#e1ff00] text-center w-full">
-        <h2 className="block">{getText('Политика конфиденциальности', 'Privacy policy')}</h2>
+        <h2 className="block">{privacy.title}</h2>
       </div>
       
       {/* Контейнер для прокручиваемого контента */}
       <div className="typography-caption text-[#ffffff] text-left w-full overflow-y-auto pr-2 h-[calc(100vh-180px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
         <div className="space-y-4">
           <div className="space-y-1">
-            <p className="block leading-none mb-0">{getText('Дата вступления в силу: 2 августа 2025', 'Effective Date: August 2, 2025')}</p>
-            <p className="block leading-none mb-0">{getText('Последнее обновление: 2 августа 2025', 'Last Updated: August 2, 2025')}</p>
+            <p className="block leading-none mb-0">{privacy.effectiveDate}</p>
+            <p className="block leading-none mb-0">{privacy.lastUpdated}</p>
           </div>
-          
-          <p className="block leading-none mb-0">
-            {getText('Menhausen ("мы", "нас" или "наш") уважает вашу конфиденциальность и стремится защищать анонимность пользователей ("вы"), которые получают доступ к нашему мини-приложению для психического благополучия через Telegram (далее "Сервис").', 'Menhausen ("we," "us," or "our") respects your privacy and is committed to protecting the anonymity of users ("you") who access our mental well-being mini-application via Telegram (the "Service").')}
-          </p>
-          
-          <p className="block leading-none mb-0">
-            {getText('Эта Политика конфиденциальности описывает, какие данные мы собираем (если таковые имеются), как мы их используем, и ваши права в отношении этих данных.', 'This Privacy Policy outlines what data we collect (if any), how we use it, and your rights regarding that data.')}
-          </p>
+
+          {privacy.intro.map((item) => (
+            <p key={item} className="block leading-none mb-0">
+              {item}
+            </p>
+          ))}
 
           {/* Секция 1 - No PII */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">{getText('1. Отсутствие личной информации', '1. No Personally Identifiable Information (PII)')}</p>
-            <p className="block leading-none mb-0">
-              {getText('Мы разработали Menhausen с анонимностью как основной ценностью. По умолчанию мы не собираем и не храним никакой личной информации, такой как ваше имя, адрес электронной почты, номер телефона или IP-адрес.', 'We designed Menhausen with anonymity as a core value. By default, we do not collect or store any personally identifiable information (PII) such as your name, email address, phone number, or IP address.')}
-            </p>
+            <p className="block leading-none mb-0 font-medium">{privacy.sections.noPii.title}</p>
+            {privacy.sections.noPii.paragraphs.map((text) => (
+              <p key={text} className="block leading-none mb-0">
+                {text}
+              </p>
+            ))}
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">{getText('Для использования Сервиса регистрация не требуется.', 'No sign-up is required to use the Service.')}</li>
-              <li className="leading-none">
-                {getText('Вы идентифицируетесь только случайным токеном сессии (непостоянным) в среде Telegram.', 'You are identified only by a random session token (non-persistent) within the Telegram environment.')}
-              </li>
-              <li className="leading-none">
-                {getText('Вы можете по желанию подключить TON кошелек или делать пожертвования с помощью криптовалюты или фиата. Это строго добровольно и максимально анонимизировано.', 'You may optionally choose to connect a TON wallet or donate using crypto or fiat. This is strictly optional and anonymized to the extent possible.')}
-              </li>
+              {privacy.sections.noPii.bullets?.map((item) => <li key={item} className="leading-none">{item}</li>)}
             </ul>
           </div>
 
           {/* Секция 2 - Data Collection */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">{getText('2. Данные, которые мы можем собирать (только анонимные)', '2. Data We May Collect (Anonymous Only)')}</p>
-            <p className="block leading-none mb-0">
-              {getText('Для улучшения вашего опыта и функциональности приложения мы можем собирать и обрабатывать следующую неличную и агрегированную информацию:', 'To improve your experience and app functionality, we may collect and process the following non-personal and aggregated information:')}
-            </p>
+            <p className="block leading-none mb-0 font-medium">{privacy.sections.dataCollection.title}</p>
+            <p className="block leading-none mb-0">{privacy.sections.dataCollection.paragraphs[0]}</p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">{getText('Анонимная история взаимодействий (например, какие карточки вы открыли)', 'Anonymous interaction history (e.g., which cards you\'ve opened)')}</li>
-              <li className="leading-none">{getText('Данные проверки настроения (неидентифицирующие)', 'Mood check-in data (non-identifying)')}</li>
-              <li className="leading-none">{getText('События сессии (например, клики, продолжительность)', 'Session events (e.g., clicks, duration)')}</li>
-              <li className="leading-none">{getText('Тип устройства/браузера', 'Device/browser type')}</li>
-              <li className="leading-none">{getText('Зашифрованный адрес TON кошелька (если подключен)', 'Encrypted TON wallet address (if connected)')}</li>
+              {privacy.sections.dataCollection.bullets?.map((item) => <li key={item} className="leading-none">{item}</li>)}
             </ul>
-            <p className="block leading-none mb-0">
-              {getText('Все такие данные собираются без привязки к какой-либо личности и хранятся безопасно с использованием отраслевых стандартов.', 'All such data is collected without linkage to any identity and is stored securely using industry standards.')}
-            </p>
+            <p className="block leading-none mb-0">{privacy.sections.dataCollection.paragraphs[1]}</p>
           </div>
 
           {/* Секция 3 - Telegram Integration */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">{getText('3. Интеграция с Telegram', '3. Telegram Integration')}</p>
-            <p className="block leading-none mb-0">
-              {getText('Как Telegram Mini App, Menhausen работает в экосистеме Telegram.', 'As a Telegram Mini App, Menhausen operates within the Telegram ecosystem.')}
-            </p>
+            <p className="block leading-none mb-0 font-medium">{privacy.sections.telegramIntegration.title}</p>
+            <p className="block leading-none mb-0">{privacy.sections.telegramIntegration.paragraphs[0]}</p>
             <ul className="list-disc ml-5 space-y-1">
-              <li className="leading-none">
-                {getText('Telegram может обрабатывать базовые метаданные (ID пользователя, время использования приложения) в соответствии с их Политикой конфиденциальности.', 'Telegram may process basic metadata (user ID, app usage time), subject to their Privacy Policy.')}
-              </li>
-              <li className="leading-none">
-                {getText('Мы не передаем собранные пользовательские данные в Telegram или третьим лицам, если это не требуется по закону.', 'We do not share any collected user data with Telegram or third parties unless required by law.')}
-              </li>
-              <li className="leading-none">
-                {getText('Мы не получаем доступ к вашим сообщениям Telegram, контактам или номеру телефона.', 'We do not access your Telegram messages, contacts, or phone number.')}
-              </li>
+              {privacy.sections.telegramIntegration.bullets?.map((item) => <li key={item} className="leading-none">{item}</li>)}
             </ul>
           </div>
 
           {/* Секция 4 - Contact */}
           <div className="space-y-2">
-            <p className="block leading-none mb-0 font-medium">{getText('4. Контактная информация', '4. Contact Information')}</p>
-            <p className="leading-none mb-0">
-              <span>{getText('По вопросам или проблемам, связанным с этой Политикой конфиденциальности, обращайтесь: ', 'For questions or concerns about this Privacy Policy, please contact: ')}</span>
-              <span className="text-[#e1ff00]">support@menhausen.com</span>
-            </p>
+            <p className="block leading-none mb-0 font-medium">{privacy.sections.contact.title}</p>
+            <p className="leading-none mb-0">{privacy.sections.contact.paragraphs[0]}</p>
           </div>
           
           <p className="block leading-none">
-            {getText('Используя Menhausen, вы подтверждаете, что прочитали, поняли и согласились с этой Политикой конфиденциальности.', 'By using Menhausen, you acknowledge that you have read, understood, and agreed to this Privacy Policy.')}
+            {privacy.closing}
           </p>
         </div>
       </div>

@@ -5,7 +5,9 @@
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './ProfileLayoutComponents';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 import { LoadingScreen } from './LoadingScreen';
 
 interface PsychologicalTestPreambulaScreenProps {
@@ -34,6 +36,7 @@ function BigLogo() {
  */
 export function PsychologicalTestPreambulaScreen({ onNext }: PsychologicalTestPreambulaScreenProps) {
   const { content } = useContent();
+  const nav = useStore(navigationMessages);
   const testContent = content.psychologicalTest;
 
   if (!testContent) {
@@ -69,7 +72,7 @@ export function PsychologicalTestPreambulaScreen({ onNext }: PsychologicalTestPr
         dataName="Next button"
         ariaLabel="Next"
       >
-        {content.ui.navigation.next}
+        {nav.next}
       </BottomFixedButton>
     </div>
   );

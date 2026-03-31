@@ -1,6 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
 import { LoadingScreen } from './LoadingScreen';
+import { useStore } from '@nanostores/react';
+import { useLanguage } from './LanguageContext';
+
+import { themeListMessages } from '@/src/i18n/messages/themeList';
+import { errorsMessages } from '@/src/i18n/messages/errors';
+import { commonMessages } from '@/src/i18n/messages/common';
+import { profileMessages } from '@/src/i18n/messages/profile';
+
+import { pluralizeEnglish, pluralizeRussian } from '../utils/pluralization';
 
 /**
  * Экран со списком всех доступных тем
@@ -10,27 +19,30 @@ export default function ThemeListScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadThemes();
-  }, []);
+  const { language } = useLanguage();
+  const themeList = useStore(themeListMessages);
+  const errors = useStore(errorsMessages);
+  const common = useStore(commonMessages);
+  const profile = useStore(profileMessages);
 
-  const loadThemes = async () => {
+  const loadThemes = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Получаем текущий язык (можно расширить логику)
-      const currentLanguage = 'ru'; // TODO: получать из контекста языка
-      
-      const loadedThemes = await ThemeLoader.loadThemes(currentLanguage);
+
+      const loadedThemes = await ThemeLoader.loadThemes(language);
       setThemes(loadedThemes);
     } catch (err) {
       console.error('Error loading themes:', err);
-      setError('Ошибка загрузки тем');
+      setError(errors.themeListLoadingError);
     } finally {
       setLoading(false);
     }
-  };
+  }, [language, errors.themeListLoadingError]);
+
+  useEffect(() => {
+    void loadThemes();
+  }, [loadThemes]);
 
   const handleThemeClick = (themeId: string) => {
     // TODO: навигация к экрану темы
@@ -49,7 +61,7 @@ export default function ThemeListScreen() {
           onClick={loadThemes}
           className="ml-4 px-4 py-2 bg-blue-500 text-white rounded"
         >
-          Попробовать снова
+          {common.tryAgain}
         </button>
       </div>
     );
@@ -59,17 +71,28 @@ export default function ThemeListScreen() {
     <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">
-          Темы для развития
+          {themeList.title}
         </h1>
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {themes.map((theme) => (
-            <ThemeCard 
-              key={theme.id} 
-              theme={theme} 
-              onClick={() => handleThemeClick(theme.id)}
-            />
-          ))}
+          {themes.map((theme) => {
+            const cardsCount = theme.cards.length;
+            const forms = themeList.cardsCount as { singular: string; few: string; many: string };
+            const cardsWord =
+              language === 'ru'
+                ? pluralizeRussian(cardsCount, [forms.singular, forms.few, forms.many])
+                : pluralizeEnglish(cardsCount, forms.singular, forms.many);
+
+            return (
+              <ThemeCard
+                key={theme.id}
+                theme={theme}
+                onClick={() => handleThemeClick(theme.id)}
+                cardsCountLabel={`${cardsCount} ${cardsWord}`}
+                premiumLabel={profile.premium}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
@@ -79,7 +102,17 @@ export default function ThemeListScreen() {
 /**
  * Карточка темы
  */
-function ThemeCard({ theme, onClick }: { theme: ThemeData; onClick: () => void }) {
+function ThemeCard({
+  theme,
+  onClick,
+  cardsCountLabel,
+  premiumLabel,
+}: {
+  theme: ThemeData;
+  onClick: () => void;
+  cardsCountLabel: string;
+  premiumLabel: string;
+}) {
   const isPremium = theme.isPremium;
   
   return (
@@ -97,7 +130,7 @@ function ThemeCard({ theme, onClick }: { theme: ThemeData; onClick: () => void }
       {/* Premium badge */}
       {isPremium && (
         <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded text-xs font-bold">
-          PREMIUM
+          {premiumLabel}
         </div>
       )}
       
@@ -112,7 +145,7 @@ function ThemeCard({ theme, onClick }: { theme: ThemeData; onClick: () => void }
         
         <div className="flex items-center justify-between">
           <span className="text-xs text-gray-400">
-            {theme.cards.length} карточек
+            {cardsCountLabel}
           </span>
           
           <div className="text-yellow-400">

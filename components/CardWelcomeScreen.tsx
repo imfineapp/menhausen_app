@@ -2,7 +2,9 @@
 import { BottomFixedButton } from "./BottomFixedButton";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { cardsMessages } from '@/src/i18n/messages/cards';
+import { themesMessages } from '@/src/i18n/messages/themes';
 
 // Типы для пропсов компонента
 interface CardWelcomeScreenProps {
@@ -54,10 +56,11 @@ function CardDescription({ description }: { description: string }) {
  * Адаптивный дизайн с поддержкой mobile-first подхода
  */
 export function CardWelcomeScreen({ onBack, onNext, cardId: _cardId, cardTitle: _cardTitle, cardDescription }: CardWelcomeScreenProps) {
-  const { content } = useContent();
+  const cards = useStore(cardsMessages);
+  const themes = useStore(themesMessages);
   
   // Используем переданное описание или fallback
-  const description = cardDescription || content.ui.cards.welcome.subtitle;
+  const description = cardDescription || cards.welcome.subtitle;
   
   /**
    * Функция для обработки кнопки "Next"
@@ -93,7 +96,7 @@ export function CardWelcomeScreen({ onBack, onNext, cardId: _cardId, cardTitle: 
       
       {/* Bottom Fixed CTA Button согласно Guidelines.md */}
       <BottomFixedButton onClick={handleNext}>
-        {content?.ui?.themes?.welcome?.start || 'Начать'}
+        {themes.welcome.start}
       </BottomFixedButton>
     </div>
   );

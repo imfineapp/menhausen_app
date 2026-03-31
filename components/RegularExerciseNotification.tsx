@@ -1,6 +1,6 @@
+import { settingsMessages } from '@/src/i18n/messages/settings';
+import { useStore } from '@nanostores/react';
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from './LanguageContext';
-import { useContent } from './ContentContext';
 import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects';
 
 const STORAGE_KEY = 'regularExerciseNotificationDismissed';
@@ -11,9 +11,7 @@ const STORAGE_KEY = 'regularExerciseNotificationDismissed';
  * Использует цветовую схему блока премиума
  */
 export function RegularExerciseNotification() {
-  const { t } = useTranslation();
-  const { getUI } = useContent();
-  const ui = getUI();
+  const msgs = useStore(settingsMessages);
   const [isVisible, setIsVisible] = useState(false);
 
   // Проверяем localStorage при монтировании
@@ -77,14 +75,14 @@ export function RegularExerciseNotification() {
         
         {/* Текст уведомления */}
         <p className="text-[#111111] text-sm sm:text-base font-medium leading-relaxed flex-1">
-          {ui.profile?.regularExerciseNotification || t('regularExerciseNotification') || 'Только регулярно выполняя упражнения, ты добьешься результатов'}
+          {msgs.regularExerciseNotification}
         </p>
         
         {/* Кнопка закрытия с иконкой крестика */}
         <button
           onClick={handleClose}
           className="text-[#111111] hover:opacity-70 transition-opacity duration-200 p-1 shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
-          aria-label={t('close')}
+          aria-label={msgs.close}
           data-name="Close notification button"
         >
           <svg 

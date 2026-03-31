@@ -3,7 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { LoadingScreen } from './LoadingScreen';
+import { useStore } from '@nanostores/react';
 import { useContent } from './ContentContext';
+import { cardsMessages } from '@/src/i18n/messages/cards';
+import { themesMessages } from '@/src/i18n/messages/themes';
 import { StripedProgressBar } from './ui/StripedProgressBar';
 import { ThemeCardManager, CardCompletionStatus } from '../utils/ThemeCardManager';
 import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
@@ -73,7 +76,7 @@ function _Light() {
  * Адаптивный компонент прогресс-бара темы с реальными данными
  */
 function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCardIds: string[] }) {
-  const { content, getLocalizedText } = useContent();
+  const themes = useStore(themesMessages);
   
   // Используем встроенный метод ThemeCardManager для расчета прогресса
   const progressPercentage = ThemeCardManager.getThemeProgressPercentage(allCardIds);
@@ -88,7 +91,7 @@ function ProgressTheme({ theme: _theme, allCardIds }: { theme: ThemeData; allCar
         showBackground={true}
       />
       <div className="absolute inset-[12.5%_4.56%_20.83%_4.56%] text-tertiary text-right">
-        <p className="typography-caption block">{getLocalizedText(content.ui.themes.home.progress)}</p>
+        <p className="typography-caption block">{themes.home.progress}</p>
       </div>
     </div>
   );
@@ -294,7 +297,7 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
   theme: ThemeData; 
   allCardIds: string[];
 }) {
-  const { content, getLocalizedText } = useContent();
+  const themes = useStore(themesMessages);
 
   const attemptedCards = allCardIds.filter(cardId => {
     const progress = ThemeCardManager.getCardProgress(cardId);
@@ -315,14 +318,12 @@ function OpenNextLevelButton({ onClick, theme: _theme, allCardIds }: {
     });
     
     if (attemptedCards.length === allCardIds.length) {
-      const txt = content.ui.themes?.home?.allCardsAttempted || 'All cards attempted!';
-      return getLocalizedText(txt);
+      return themes.home.allCardsAttempted;
     } else if (nextCardId) {
       const nextCardIndex = allCardIds.indexOf(nextCardId) + 1;
-      const template = content.ui.themes?.home?.startCard ?? 'Start Card #{number}';
-      return getLocalizedText(template).replace('{number}', String(nextCardIndex));
+      return themes.home.startCard.replace('{number}', String(nextCardIndex));
     } else {
-      return getLocalizedText(content.ui.themes.home.nextLevel);
+      return themes.home.nextLevel;
     }
   };
   
@@ -345,7 +346,8 @@ export function ThemeHomeScreen({
   userHasPremium = false,
   onUnlock
 }: ThemeHomeScreenProps) {
-  const { content, currentLanguage, getLocalizedText } = useContent();
+  const { content, currentLanguage } = useContent();
+  const cardsUi = useStore(cardsMessages);
   
   // Состояние для загрузки темы
   const [theme, setTheme] = useState<ThemeData | null>(null);
@@ -528,7 +530,7 @@ export function ThemeHomeScreen({
       const title = cardData.id;
       const levelNum = Math.min(5, Math.max(1, cardData.level));
       const levelKey = `level${levelNum}` as 'level1' | 'level2' | 'level3' | 'level4' | 'level5';
-      const level = getLocalizedText(content.ui.cards.themeHome[levelKey]);
+      const level = cardsUi.themeHome[levelKey];
       const description = cardData.shortDescription ?? cardData.introduction;
       
       return {
@@ -550,7 +552,7 @@ export function ThemeHomeScreen({
       return {
         id: cardData.id,
         title: cardData.introduction || `Card ${index + 1}`,
-        level: getLocalizedText(content.ui.cards.themeHome[fallbackLevelKey]),
+        level: cardsUi.themeHome[fallbackLevelKey],
         description: 'Card description',
         attempts: 0,
         isActive: isAvailable,

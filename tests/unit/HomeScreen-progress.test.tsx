@@ -85,20 +85,6 @@ vi.mock('../../utils/DailyCheckinManager', () => ({
 vi.mock('../../components/ContentContext', () => ({
   useContent: () => {
     const content = {
-      ui: {
-        home: {
-          activity: { 
-            progressLabel: 'Progress', 
-            streakLabel: {
-              singular: 'day',
-              plural: 'days'
-            }
-          },
-          checkInInfo: { title: 'Info', content: '...' },
-          whatWorriesYou: 'What worries you?'
-        },
-        profile: { premium: 'Premium', free: 'Free' }
-      },
       themes: {
         'stress-management': {
           id: 'stress-management',
@@ -110,8 +96,7 @@ vi.mock('../../components/ContentContext', () => ({
       }
     };
     return {
-      content,
-      getUI: () => content.ui
+      content
     };
   }
 }));

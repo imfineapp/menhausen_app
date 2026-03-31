@@ -3,7 +3,9 @@ import React from 'react';
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { cardsMessages } from '@/src/i18n/messages/cards';
+import { themesMessages } from '@/src/i18n/messages/themes';
 import { ThemeCardManager, CompletedAttempt } from '../utils/ThemeCardManager';
 
 // Типы для пропсов компонента
@@ -89,7 +91,7 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
         <div className="typography-caption text-[#ffffff] mt-1 space-y-1">
           {Object.entries(attempt.answers).map(([questionKey, answer]) => (
             <p key={questionKey} className="break-words">
-              {answer || 'No answer provided'}
+              {answer || ''}
             </p>
           ))}
         </div>
@@ -102,7 +104,7 @@ function CompletedAttemptItem({ attempt, onClick }: { attempt: CompletedAttempt;
  * Адаптивный контейнер списка завершенных подходов
  */
 function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: CompletedAttempt[]; onAttemptClick?: (attemptId: string) => void }) {
-  const { content, getLocalizedText } = useContent();
+  const cards = useStore(cardsMessages);
   
   return (
     <div
@@ -110,7 +112,7 @@ function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: Co
       data-name="Completed Attempts Container"
     >
       <div className="typography-h2 mb-[39px] text-[#e1ff00] text-left w-full">
-        <h2 className="block">{getLocalizedText(content.ui.cards.attempts)}</h2>
+        <h2 className="block">{cards.attempts}</h2>
       </div>
       <div
         className="flex flex-col gap-2.5 items-start justify-start relative w-full"
@@ -127,7 +129,7 @@ function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: Co
         ) : (
           <div className="w-full p-4 text-center">
             <p className="typography-body text-[#8a8a8a]">
-              {getLocalizedText(content.ui.cards.noAttempts)}
+              {cards.noAttempts}
             </p>
           </div>
         )}
@@ -140,11 +142,11 @@ function CompletedAttemptsContainer({ attempts, onAttemptClick }: { attempts: Co
  * Кнопка для страницы деталей карточки
  */
 function CardDetailsBottomButton({ onClick }: { onClick: () => void }) {
-  const { content, getLocalizedText } = useContent();
+  const themes = useStore(themesMessages);
   
   return (
     <BottomFixedButton onClick={onClick}>
-      {getLocalizedText(content.ui.themes.welcome.start)}
+      {themes.welcome.start}
     </BottomFixedButton>
   );
 }

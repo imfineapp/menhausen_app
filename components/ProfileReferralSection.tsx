@@ -1,6 +1,7 @@
+import { shareMessages } from '@/src/i18n/messages/share';
+import { useStore } from '@nanostores/react';
 // Компонент секции реферальной программы - приглашение друзей
 import { ShareIcon } from './UserProfileIcons';
-import { useTranslation, useLanguage } from './LanguageContext';
 import { generateReferralLink } from '../utils/referralUtils';
 import { getTelegramUserId } from '../utils/telegramUserUtils';
 import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } from '@/src/effects/telegram.effects';
@@ -9,11 +10,7 @@ import { hapticImpactOccurred, isTelegramWebAppAvailable, openTelegramLink } fro
  * Кнопка "Поделиться" для реферальной программы
  */
 function ReferralButton({ onClick }: { onClick?: () => void }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const msgs = useStore(shareMessages);
   
   return (
     <button
@@ -23,7 +20,7 @@ function ReferralButton({ onClick }: { onClick?: () => void }) {
     >
       <div className="flex items-center justify-center w-full h-full px-4">
         <div className="typography-caption text-[#2d2b2b] text-center">
-          <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">{getText('Поделиться ссылкой', 'Share Link')}</p>
+          <p className="adjustLetterSpacing block leading-[14px] sm:leading-[16px]">{msgs.referralShareButton}</p>
         </div>
       </div>
     </button>
@@ -34,12 +31,7 @@ function ReferralButton({ onClick }: { onClick?: () => void }) {
  * Компонент секции реферальной программы
  */
 export function ReferralSection() {
-  const { t: _t } = useTranslation();
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const msgs = useStore(shareMessages);
   
   const handleReferralShare = () => {
     console.log('Opening referral share');
@@ -56,10 +48,7 @@ export function ReferralSection() {
     const shareUrl = referralLink.includes('startapp=') ? referralLink : 'https://t.me/menhausen_app_bot/app';
     
     // Создаем текст для шаринга
-    const shareText = getText(
-      'Присоединяйся ко мне в Menhausen - приложении для заботы о ментальном здоровье!',
-      'Join me in Menhausen - a mental health care app!'
-    );
+    const shareText = msgs.referralShareText;
     
     // Формируем URL для шаринга через Telegram
     const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
@@ -126,7 +115,7 @@ export function ReferralSection() {
         <div className="flex items-start gap-4 mb-4">
           <ShareIcon />
           <div className="typography-body text-[#cfcfcf] text-left flex-1">
-            <p className="block leading-none">{getText('Пригласи друзей через реферальную ссылку и получи новые достижения, когда они присоединятся к приложению!', 'Invite friends via referral link and earn new achievements when they join the app!')}</p>
+            <p className="block leading-none">{msgs.referralShareDescription}</p>
           </div>
         </div>
         <ReferralButton onClick={handleReferralShare} />

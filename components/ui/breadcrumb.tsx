@@ -3,7 +3,8 @@ import { Slot } from "@radix-ui/react-slot";
 import { ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { cn } from "./utils";
-import { useContent } from "../ContentContext";
+import { useStore } from "@nanostores/react";
+import { navigationMessages } from "@/src/i18n/messages/navigation";
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
@@ -85,7 +86,7 @@ function BreadcrumbEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">) {
-  const { content } = useContent();
+  const nav = useStore(navigationMessages);
   
   return (
     <span
@@ -96,7 +97,7 @@ function BreadcrumbEllipsis({
       {...props}
     >
       <MoreHorizontal className="size-4" />
-      <span className="sr-only">{content.ui.navigation.more}</span>
+      <span className="sr-only">{nav.more}</span>
     </span>
   );
 }

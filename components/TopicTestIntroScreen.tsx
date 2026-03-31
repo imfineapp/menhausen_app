@@ -1,7 +1,9 @@
 import { BottomFixedButton } from './BottomFixedButton'
 import { MiniStripeLogo } from './ProfileLayoutComponents'
 import { Light } from './ProfileLayoutComponents'
+import { useStore } from '@nanostores/react'
 import { useContent } from './ContentContext'
+import { navigationMessages } from '@/src/i18n/messages/navigation'
 
 type TopicTestIntroScreenProps = {
   themeTitle: string
@@ -14,6 +16,7 @@ type TopicTestIntroScreenProps = {
  */
 export function TopicTestIntroScreen({ themeTitle, onNext, onBack }: TopicTestIntroScreenProps) {
   const { content } = useContent()
+  const nav = useStore(navigationMessages)
   return (
     <div className="w-full h-screen max-h-screen relative overflow-hidden bg-[#111111] flex flex-col">
       <Light />
@@ -27,7 +30,7 @@ export function TopicTestIntroScreen({ themeTitle, onNext, onBack }: TopicTestIn
               onClick={onBack}
               className="typography-body text-[#8a8a8a] mb-8 hover:text-white min-h-[44px]"
             >
-              ← {content.ui.navigation.back}
+              ← {nav.back}
             </button>
             <h1 className="typography-h1 text-white mb-6">{themeTitle}</h1>
             <p className="typography-body text-[#d4d4d4] whitespace-pre-line leading-relaxed">
@@ -39,7 +42,7 @@ export function TopicTestIntroScreen({ themeTitle, onNext, onBack }: TopicTestIn
       </div>
 
       <BottomFixedButton onClick={onNext} dataName="Topic test start" ariaLabel="Start">
-        {content.ui.navigation.next}
+        {nav.next}
       </BottomFixedButton>
     </div>
   )

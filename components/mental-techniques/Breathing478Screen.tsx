@@ -1,10 +1,11 @@
+import { mentalTechniquesMessages } from '@/src/i18n/messages/mentalTechniques';
+import { useStore } from '@nanostores/react';
 // ========================================================================================
 // КОМПОНЕНТ: Техника дыхания 4-7-8
 // ========================================================================================
 
 import React, { useState, useEffect } from 'react';
 import { useContent } from '../ContentContext';
-import { useLanguage } from '../LanguageContext';
 import { MiniStripeLogo } from '../ProfileLayoutComponents';
 import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import {
@@ -63,11 +64,7 @@ function InteractiveTimer({
   isRunning: boolean; 
   onToggle: () => void; 
 }) {
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [timeLeft, setTimeLeft] = useState(duration);
   const [progress, setProgress] = useState(0);
@@ -133,13 +130,13 @@ function InteractiveTimer({
           onClick={onToggle}
           className="px-6 py-2 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
         >
-          {isRunning ? getText('Пауза', 'Pause') : getText('Старт', 'Start')}
+          {isRunning ? msgs.pause : msgs.start}
         </button>
         <button
           onClick={reset}
           className="px-6 py-2 border border-[#e1ff00] text-[#e1ff00] rounded-lg font-semibold hover:bg-[#e1ff00] hover:text-[#2d2b2b] transition-colors"
         >
-          {getText('Сброс', 'Reset')}
+          {msgs.reset}
         </button>
       </div>
     </div>
@@ -151,11 +148,7 @@ function InteractiveTimer({
  */
 export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
   const { getMentalTechnique, getLocalizedText } = useContent();
-  const { language } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return language === 'ru' ? ruText : enText;
-  };
+  const msgs = useStore(mentalTechniquesMessages);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -172,13 +165,13 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {getText('Техника не найдена', 'Technique not found')}
+              {msgs.techniqueNotFound}
             </h1>
             <button
               onClick={onBack}
               className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
             >
-              {getText('Назад', 'Back')}
+              {msgs.back}
             </button>
           </div>
         </div>
@@ -210,10 +203,10 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
           <div className="text-center">
             <h1 className="typography-h1 text-[#e1ff00] mb-2">
-              {getText('Ошибка данных техники', 'Technique data error')}
+              {msgs.techniqueDataError}
             </h1>
             <p className="typography-body text-[#cfcfcf]">
-              {getText('Не удалось загрузить данные техники', 'Failed to load technique data')}
+              {msgs.techniqueDataLoadFailed}
             </p>
           </div>
         </div>
@@ -251,7 +244,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="text-center">
             <h3 className="typography-h3 text-[#e1ff00] mb-2">
-              {getText('Шаг', 'Step')} {currentStep + 1} {getText('из', 'of')} {technique.steps.length}
+              {msgs.step} {currentStep + 1} {msgs.of} {technique.steps.length}
             </h3>
             <p className="typography-body text-[#cfcfcf]">
               {getLocalizedText(currentStepData.instruction)}
@@ -271,7 +264,7 @@ export function Breathing478Screen({ onBack }: Breathing478ScreenProps) {
         <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
           <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
           <div className="flex flex-col gap-4">
-            <h3 className="typography-h3 text-[#e1ff00]">{getText('О технике', 'About the technique')}</h3>
+            <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
             <MentalTechniqueAccordion 
               items={technique.accordionItems.map(item => ({
                 title: getLocalizedText(item.title),

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import { MiniStripeLogo } from './ProfileLayoutComponents'
 import { Light } from './ProfileLayoutComponents'
+import { useStore } from '@nanostores/react'
 import { useContent } from './ContentContext'
+import { navigationMessages } from '@/src/i18n/messages/navigation'
 import { LikertScaleAnswer } from '../types/psychologicalTest'
 import { LoadingScreen } from './LoadingScreen'
 
@@ -23,6 +25,7 @@ export function TopicTestQuestionScreen({
   initialAnswer = null,
 }: TopicTestQuestionScreenProps) {
   const { content } = useContent()
+  const nav = useStore(navigationMessages)
   const testContent = content.psychologicalTest
   const [selectedAnswer, setSelectedAnswer] = useState<LikertScaleAnswer | null>(initialAnswer)
 
@@ -66,7 +69,7 @@ export function TopicTestQuestionScreen({
               onClick={onBack}
               className="typography-body text-[#8a8a8a] mb-8 hover:text-white min-h-[44px]"
             >
-              ← {content.ui.navigation.back}
+              ← {nav.back}
             </button>
 
             <div className="mb-8">

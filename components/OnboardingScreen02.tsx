@@ -3,7 +3,8 @@ import svgPaths from "../imports/svg-vn1j3wuqix";
 import { BottomFixedButton } from './BottomFixedButton';
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { useStore } from '@nanostores/react';
+import { onboardingMessages } from '@/src/i18n/messages/onboarding';
 
 // Типы для пропсов компонента
 interface OnboardingScreen02Props {
@@ -21,11 +22,11 @@ interface OnboardingScreen02Props {
  * Теперь использует стандартный компонент BottomFixedButton
  */
 function GetStartedButton({ onClick }: { onClick: () => void }) {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <BottomFixedButton onClick={onClick} dataName="Next button" ariaLabel="Get Started">
-      {content.ui.onboarding.screen02.buttonText}
+      {ob.screen02.buttonText}
     </BottomFixedButton>
   );
 }
@@ -68,7 +69,7 @@ function LockIcon() {
  * Описывает анонимность приложения
  */
 function NoLoginTextBlock() {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -77,11 +78,11 @@ function NoLoginTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="typography-h2 text-[#e1ff00] w-full">
-        <h2 className="block">{content.ui.onboarding.screen02.benefits[0]}</h2>
+        <h2 className="block">{ob.screen02.benefits[0]}</h2>
       </div>
       {/* Описание преимущества */}
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{content.ui.onboarding.screen02.descriptions[0]}</p>
+        <p className="block">{ob.screen02.descriptions[0]}</p>
       </div>
     </div>
   );
@@ -143,7 +144,7 @@ function ShieldIcon() {
  * Описывает защиту данных пользователя
  */
 function EncryptionTextBlock() {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -152,11 +153,11 @@ function EncryptionTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <h2 className="block">{content.ui.onboarding.screen02.benefits[1]}</h2>
+        <h2 className="block">{ob.screen02.benefits[1]}</h2>
       </div>
       {/* Описание шифрования */}
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{content.ui.onboarding.screen02.descriptions[1]}</p>
+        <p className="block">{ob.screen02.descriptions[1]}</p>
       </div>
     </div>
   );
@@ -218,7 +219,7 @@ function MobileIcon() {
  * Описывает доступность приложения
  */
 function AlwaysWithYouTextBlock() {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -227,11 +228,11 @@ function AlwaysWithYouTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <h2 className="block">{content.ui.onboarding.screen02.benefits[2]}</h2>
+        <h2 className="block">{ob.screen02.benefits[2]}</h2>
       </div>
       {/* Описание доступности */}
       <div className="typography-body text-[#ffffff] w-full">
-        <p className="block">{content.ui.onboarding.screen02.descriptions[2]}</p>
+        <p className="block">{ob.screen02.descriptions[2]}</p>
       </div>
     </div>
   );
@@ -341,7 +342,7 @@ function ScienceIcon() {
  * Самый подробный блок с описанием методологии
  */
 function ScienceTextBlock() {
-  const { content } = useContent();
+  const ob = useStore(onboardingMessages);
   
   return (
     <div
@@ -350,12 +351,12 @@ function ScienceTextBlock() {
     >
       {/* Заголовок преимущества */}
       <div className="[grid-area:1_/_1] typography-h2 ml-0 mt-0 text-[#e1ff00] w-[248px]">
-        <h2 className="block">{content.ui.onboarding.screen02.benefits[3]}</h2>
+        <h2 className="block">{ob.screen02.benefits[3]}</h2>
       </div>
       {/* Подробное описание методов */}
       <div className="typography-body text-[#ffffff] w-full">
         <p className="block">
-          {content.ui.onboarding.screen02.descriptions[3]}
+          {ob.screen02.descriptions[3]}
         </p>
       </div>
     </div>

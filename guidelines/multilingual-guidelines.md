@@ -3,15 +3,13 @@
 ## 📋 Общие принципы
 
 ### 1. **Структура переводов**
-- Все переводы хранятся в `data/content/{language}/` (ru, en)
-- Используется JSON-структура с вложенными объектами
-- Каждый ключ должен иметь переводы на всех поддерживаемых языках
+- UI строки хранятся в `src/i18n/messages/*.ts` (domain stores) и переводятся через `data/translations/ru.json` (en по умолчанию).
+- Контентные строки хранятся в `data/content/{language}/` и используются через `useContent()` (включая `about.json`).
+- Для UI и контента действует правило: каждый ключ/поле должен присутствовать на поддерживаемых языках (или компонент обязан иметь fallback).
 
 ### 2. **Типы контента**
-- **UI тексты**: `data/content/{language}/ui.json` - кнопки, заголовки, сообщения
-- **Контент карточек**: `data/content/{language}/cards.json` - вопросы, рекомендации
-- **Темы**: `data/content/{language}/themes.json` - названия тем, описания
-- **Ментальные техники**: `data/content/{language}/mental-techniques.json` - техники дыхания, заземления
+- **UI тексты**: domain stores в `src/i18n/messages/*.ts` (например `navigationMessages`, `homeMessages`, `cardsMessages`) и переводы в `data/translations/ru.json`.
+- **Контент**: файлы `data/content/{language}/*` (темы, карточки, mental-techniques, тесты, `about.json` и т.д.) — достаются через `useContent()`.
 
 ## 🔧 Технические правила
 
@@ -19,17 +17,13 @@
 
 #### ✅ ПРАВИЛЬНО - для UI текстов:
 ```typescript
-import { useLanguage } from '../LanguageContext';
+import { useStore } from '@nanostores/react';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 
-const { currentLanguage } = useLanguage();
-
-const getText = (ruText: string, enText: string) => {
-  return currentLanguage === 'ru' ? ruText : enText;
-};
+const nav = useStore(navigationMessages);
 
 // Использование:
-<h1>{getText('Заголовок', 'Title')}</h1>
-<button>{getText('Кнопка', 'Button')}</button>
+<button>{nav.next}</button>
 ```
 
 #### ✅ ПРАВИЛЬНО - для контента из JSON:
@@ -49,48 +43,18 @@ const { getLocalizedText } = useContent();
 {getLocalizedText({ ru: 'Текст', en: 'Text' })}
 
 // ❌ Прямое использование объекта
-{currentLanguage === 'ru' ? 'Текст' : 'Text'}
+// ❌ Прямое переключение текста вручную — используйте UI domain stores через `useStore(...)`
+{/* example omitted */ ''}
 ```
 
 ### 2. **Структура JSON файлов**
 
-#### `ui.json` - UI элементы:
-```json
-{
-  "navigation": {
-    "back": { "ru": "Назад", "en": "Back" },
-    "next": { "ru": "Далее", "en": "Next" },
-    "continue": { "ru": "Продолжить", "en": "Continue" }
-  },
-  "buttons": {
-    "save": { "ru": "Сохранить", "en": "Save" },
-    "cancel": { "ru": "Отмена", "en": "Cancel" }
-  },
-  "messages": {
-    "error": { "ru": "Ошибка", "en": "Error" },
-    "success": { "ru": "Успешно", "en": "Success" }
-  }
-}
-```
+#### `data/translations/ru.json` - переводы для UI domain stores
+Ключи должны соответствовать тому, как UI строки описаны в `src/i18n/messages/<domain>.ts`.
 
-#### `cards.json` - Контент карточек:
-```json
-{
-  "card-1": {
-    "title": { "ru": "Название карточки", "en": "Card Title" },
-    "questions": [
-      {
-        "question": { "ru": "Вопрос 1", "en": "Question 1" },
-        "placeholder": { "ru": "Введите ответ", "en": "Enter answer" }
-      }
-    ],
-    "finalMessage": {
-      "title": { "ru": "Рекомендация", "en": "Recommendation" },
-      "content": { "ru": "Текст рекомендации", "en": "Recommendation text" }
-    }
-  }
-}
-```
+#### `data/content/{language}/` - контент приложения
+Контентные JSON файлы подключаются через content-loader (используйте `useContent()` / `getLocalizedText()` там, где требуется).
+Для страницы "О приложении" используются `data/content/{language}/about.json`.
 
 ## 📝 Создание новых компонентов
 
@@ -99,7 +63,8 @@ const { getLocalizedText } = useContent();
 ```typescript
 import React from 'react';
 import { useContent } from '../ContentContext';
-import { useLanguage } from '../LanguageContext';
+import { useStore } from '@nanostores/react';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
 
 interface NewComponentProps {
   onBack: () => void;
@@ -107,18 +72,12 @@ interface NewComponentProps {
 
 export function NewComponent({ onBack }: NewComponentProps) {
   const { getLocalizedText } = useContent();
-  const { currentLanguage } = useLanguage();
-  
-  // Функция для UI текстов
-  const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
-  };
+  const nav = useStore(navigationMessages);
   
   return (
     <div>
-      {/* UI тексты - используем getText */}
-      <h1>{getText('Заголовок', 'Title')}</h1>
-      <button>{getText('Кнопка', 'Button')}</button>
+      {/* UI тексты - используем nanostores/i18n domain stores */}
+      <button onClick={onBack}>{nav.back}</button>
       
       {/* Контент из JSON - используем getLocalizedText */}
       <p>{getLocalizedText(someDataFromJSON.title)}</p>
@@ -128,52 +87,14 @@ export function NewComponent({ onBack }: NewComponentProps) {
 ```
 
 ### 2. **Добавление новых переводов**
+Для UI строк (nanostores/i18n):
+1. Добавьте базовую строку в `src/i18n/messages/<domain>.ts`.
+2. Добавьте перевод в `data/translations/ru.json` в нужном namespace (ключи должны совпадать с путями из `<domain>.ts`).
 
-#### Шаг 1: Добавить в `types/content.ts`
-```typescript
-export interface UITexts {
-  // ... существующие поля
-  newSection: {
-    title: LocalizedContent;
-    description: LocalizedContent;
-    button: LocalizedContent;
-  };
-}
-```
-
-#### Шаг 2: Добавить в `data/content/ru/ui.json`
-```json
-{
-  "newSection": {
-    "title": { "ru": "Новый раздел", "en": "New Section" },
-    "description": { "ru": "Описание", "en": "Description" },
-    "button": { "ru": "Кнопка", "en": "Button" }
-  }
-}
-```
-
-#### Шаг 3: Добавить в `data/content/en/ui.json`
-```json
-{
-  "newSection": {
-    "title": { "ru": "Новый раздел", "en": "New Section" },
-    "description": { "ru": "Описание", "en": "Description" },
-    "button": { "ru": "Кнопка", "en": "Button" }
-  }
-}
-```
-
-#### Шаг 4: Обновить fallback в `ContentContext.tsx`
-```typescript
-const fallbackUI: UITexts = {
-  // ... существующие поля
-  newSection: {
-    title: { ru: 'Новый раздел', en: 'New Section' },
-    description: { ru: 'Описание', en: 'Description' },
-    button: { ru: 'Кнопка', en: 'Button' }
-  }
-};
-```
+Для контента (data/content):
+1. Добавьте/обновите поле в `data/content/en/...`.
+2. Добавьте/обновите поле в `data/content/ru/...`.
+3. Убедитесь, что компонент использует `useContent()` и `getLocalizedText()` там, где требуется.
 
 ## 🚫 Частые ошибки и как их избежать
 
@@ -183,10 +104,8 @@ const fallbackUI: UITexts = {
 {getLocalizedText({ ru: 'Текст', en: 'Text' })}
 
 // ✅ ПРАВИЛЬНО
-const getText = (ruText: string, enText: string) => {
-  return currentLanguage === 'ru' ? ruText : enText;
-};
-{getText('Текст', 'Text')}
+const nav = useStore(navigationMessages);
+<button>{nav.next}</button>
 ```
 
 ### 2. **Неправильное использование getLocalizedText**
@@ -195,7 +114,8 @@ const getText = (ruText: string, enText: string) => {
 {getLocalizedText({ ru: 'Кнопка', en: 'Button' })}
 
 // ✅ ПРАВИЛЬНО - для UI текстов
-{getText('Кнопка', 'Button')}
+const nav = useStore(navigationMessages);
+<button>{nav.next}</button>
 
 // ✅ ПРАВИЛЬНО - для контента из JSON
 {getLocalizedText(technique.title)}
@@ -213,22 +133,17 @@ const getText = (ruText: string, enText: string) => {
 
 ### 1. **Простая страница с кнопками**
 ```typescript
+import { useStore } from '@nanostores/react';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
+
 function SimplePage({ onBack }: { onBack: () => void }) {
-  const { currentLanguage } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
-  };
-  
+  const nav = useStore(navigationMessages);
+
   return (
     <div>
-      <h1>{getText('Заголовок страницы', 'Page Title')}</h1>
-      <button onClick={onBack}>
-        {getText('Назад', 'Back')}
-      </button>
-      <button>
-        {getText('Сохранить', 'Save')}
-      </button>
+      <h1>{/* example */}</h1>
+      <button onClick={onBack}>{nav.back}</button>
+      <button>{/* save example */}</button>
     </div>
   );
 }
@@ -236,13 +151,12 @@ function SimplePage({ onBack }: { onBack: () => void }) {
 
 ### 2. **Страница с контентом из JSON**
 ```typescript
+import { useStore } from '@nanostores/react';
+import { navigationMessages } from '@/src/i18n/messages/navigation';
+
 function ContentPage({ onBack }: { onBack: () => void }) {
   const { getLocalizedText, getCard } = useContent();
-  const { currentLanguage } = useLanguage();
-  
-  const getText = (ruText: string, enText: string) => {
-    return currentLanguage === 'ru' ? ruText : enText;
-  };
+  const nav = useStore(navigationMessages);
   
   const cardData = getCard('card-1');
   
@@ -250,7 +164,7 @@ function ContentPage({ onBack }: { onBack: () => void }) {
     <div>
       {/* UI элементы */}
       <button onClick={onBack}>
-        {getText('Назад', 'Back')}
+        {nav.back}
       </button>
       
       {/* Контент из JSON */}
@@ -264,12 +178,10 @@ function ContentPage({ onBack }: { onBack: () => void }) {
 ## 🔍 Проверка качества
 
 ### 1. **Чек-лист для новых компонентов**
-- [ ] Все UI тексты используют `getText()`
+- [ ] Все UI тексты используют nanostores/i18n domain stores через `useStore(...)`
 - [ ] Весь контент из JSON использует `getLocalizedText()`
 - [ ] Нет передачи объектов `{ru: '...', en: '...'}` в JSX
-- [ ] Все переводы добавлены в оба языка (ru, en)
-- [ ] Типы обновлены в `types/content.ts`
-- [ ] Fallback обновлен в `ContentContext.tsx`
+- [ ] Переводы добавлены в правильные места: UI в `src/i18n/messages/*` + `data/translations/ru.json`, контент в `data/content/*`
 
 ### 2. **Тестирование**
 ```bash
@@ -285,7 +197,7 @@ npm run dev
 
 ## 📖 Дополнительные ресурсы
 
-- **Основные файлы локализации**: `components/ContentContext.tsx`, `components/LanguageContext.tsx`
+- **Основные файлы локализации**: `components/ContentContext.tsx`, `src/i18n/messages/*`
 - **Типы**: `types/content.ts`
 - **Контент**: `data/content/{language}/`
 - **Примеры**: `components/mental-techniques/`

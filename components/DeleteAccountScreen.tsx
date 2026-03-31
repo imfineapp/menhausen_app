@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useStore } from '@nanostores/react';
 // import WarningIcon from "../imports/Frame-6-24";
 import warningIconPaths from "../imports/svg-iawz1hhk6y";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
-import { useContent } from './ContentContext';
+import { deleteAccountMessages } from '@/src/i18n/messages/deleteAccount';
 import { hapticNotificationOccurred } from '@/src/effects/telegram.effects';
 
 /**
@@ -155,21 +156,16 @@ function MainContent({ title, description }: { title: string; description: strin
  */
 export function DeleteAccountScreen({ onBack: _onBack, onDeleteAccount }: DeleteAccountScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const { content, getLocalizedText } = useContent();
-
-  // Получаем переводы для экрана удаления аккаунта
-  const deleteAccountTexts = content?.ui?.deleteAccount;
-  const title = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.title) : 'Danger zone';
-  const description = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.description) : 'In this section you can delete all information about yourself and your account from the application';
-  const warning = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.warning) : 'By clicking the button I understand that all data about me will be deleted without the possibility of return';
-  const buttonText = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.button) : 'Delete';
-  const deletingText = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.buttonDeleting) : 'Deleting...';
-  const confirmMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.confirmMessage) : 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.';
-  const successMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.successMessage) : 'Your account has been successfully deleted. You will be redirected to the welcome screen.';
-  const serverDeleteFailedMessage = deleteAccountTexts?.serverDeleteFailedMessage
-    ? getLocalizedText(deleteAccountTexts.serverDeleteFailedMessage)
-    : 'Local data was cleared. We could not confirm deletion on the server — contact support if your account should be fully removed.';
-  const errorMessage = deleteAccountTexts ? getLocalizedText(deleteAccountTexts.errorMessage) : 'An error occurred while deleting your account. Please try again.';
+  const t = useStore(deleteAccountMessages);
+  const title = t.title;
+  const description = t.description;
+  const warning = t.warning;
+  const buttonText = t.button;
+  const deletingText = t.buttonDeleting;
+  const confirmMessage = t.confirmMessage;
+  const successMessage = t.successMessage;
+  const serverDeleteFailedMessage = t.serverDeleteFailedMessage;
+  const errorMessage = t.errorMessage;
 
   /**
    * Обработчик удаления аккаунта с подтверждением
