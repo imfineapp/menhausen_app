@@ -8,6 +8,7 @@ import { useContent } from './ContentContext';
 import { cardsMessages } from '@/src/i18n/messages/cards';
 import { themesMessages } from '@/src/i18n/messages/themes';
 import { StripedProgressBar } from './ui/StripedProgressBar';
+import { ParagraphText } from './ui/ParagraphText';
 import { ThemeCardManager, CardCompletionStatus } from '../utils/ThemeCardManager';
 import { ThemeLoader, ThemeData } from '../utils/ThemeLoader';
 
@@ -262,7 +263,7 @@ function ThemeCard({ card, onClick }: { card: Card; onClick: (cardId: string) =>
             <p className="block">{card.level}</p>
           </div>
           <div className={`typography-body ${getDescriptionStyles()} text-left w-full`}>
-            <p className="block break-words">{card.description}</p>
+            <ParagraphText text={card.description} paragraphClassName="block break-words" />
           </div>
           
           {/* Индикатор прогресса для карточки */}
@@ -611,9 +612,9 @@ export function ThemeHomeScreen({
             
             {/* Описание темы */}
             <div className="mb-6">
-              <p className="typography-body text-white text-center">
-                {theme.description}
-              </p>
+              <div className="typography-body text-white text-center">
+                <ParagraphText text={theme.description} paragraphClassName="block" />
+              </div>
             </div>
             
             {/* Прогресс темы */}

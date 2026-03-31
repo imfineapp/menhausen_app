@@ -5,6 +5,7 @@ import { Light } from './Light';
 import { useStore } from '@nanostores/react';
 import { cardsMessages } from '@/src/i18n/messages/cards';
 import { themesMessages } from '@/src/i18n/messages/themes';
+import { ParagraphText } from './ui/ParagraphText';
 
 // Типы для пропсов компонента
 interface CardWelcomeScreenProps {
@@ -45,7 +46,7 @@ function CardDescription({ description }: { description: string }) {
       data-name="Card Description"
     >
       <div className="typography-body h-auto min-h-[60px] sm:min-h-[70px] md:min-h-[89px] text-[#ffffff] text-center">
-        <p className="block">{description}</p>
+        <ParagraphText text={description} paragraphClassName="block" />
       </div>
     </div>
   );

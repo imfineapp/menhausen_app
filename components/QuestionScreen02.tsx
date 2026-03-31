@@ -6,6 +6,7 @@ import { useStore } from '@nanostores/react';
 import { cardsMessages } from '@/src/i18n/messages/cards';
 import { navigationMessages } from '@/src/i18n/messages/navigation';
 import { FormScreenLayout } from './FormScreenLayout';
+import { ParagraphText } from './ui/ParagraphText';
 
 // Типы для пропсов компонента
 interface QuestionScreen02Props {
@@ -139,7 +140,7 @@ function ContentBlock({ questionText, answer, onAnswerChange }: {
       data-name="Content block"
     >
       <div className="typography-body min-h-[40px] sm:min-h-[44px] text-[#ffffff] text-left w-full">
-        <p className="block">{questionText}</p>
+        <ParagraphText text={questionText} paragraphClassName="block" />
       </div>
       <AnswerBlock answer={answer} onAnswerChange={onAnswerChange} />
     </div>

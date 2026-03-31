@@ -12,6 +12,7 @@ import { errorsMessages } from '@/src/i18n/messages/errors';
 import { commonMessages } from '@/src/i18n/messages/common';
 import { ThemeCardManager } from '../utils/ThemeCardManager';
 import { ThemeLoader } from '../utils/ThemeLoader';
+import { ParagraphText } from './ui/ParagraphText';
 
 // Типы для пропсов компонента
 interface CheckinDetailsScreenProps {
@@ -119,28 +120,24 @@ function MainContent({ checkinData }: { checkinData: CheckinData }) {
     <div className="box-border content-stretch flex flex-col gap-[30px] items-start justify-start p-0 relative shrink-0 w-full">
       {/* Первый вопрос */}
       <div className="typography-body text-[#e1ff00] text-left w-full">
-        <p className="block">{checkinData.question1}</p>
+        <ParagraphText text={checkinData.question1} paragraphClassName="block" />
       </div>
       <InputAnswerBlock answer={checkinData.answer1} height={85} />
       
       {/* Второй вопрос */}
       <div className="typography-body text-[#e1ff00] text-left w-full">
-        <p className="block">{checkinData.question2}</p>
+        <ParagraphText text={checkinData.question2} paragraphClassName="block" />
       </div>
       <InputAnswerBlock answer={checkinData.answer2} height={83} />
       
       {/* Инструкции и пояснения */}
       <div className="typography-body text-[#ffffff] text-left w-full">
-        <p className="block mb-4">
-          {checkinData.instructions}
-        </p>
-        <p className="block mb-4">
-          {checkinData.practiceTask}
-        </p>
-        <p className="block">
-          <span className="text-[#e1ff00]">{cards.final.why}</span>
-          <span> {checkinData.whyNote}</span>
-        </p>
+        <ParagraphText text={checkinData.instructions} className="flex flex-col gap-3 mb-4" paragraphClassName="block" />
+        <ParagraphText text={checkinData.practiceTask} className="flex flex-col gap-3 mb-4" paragraphClassName="block" />
+        <div className="flex flex-col gap-3">
+          <p className="block text-[#e1ff00]">{cards.final.why}</p>
+          <ParagraphText text={checkinData.whyNote} paragraphClassName="block" />
+        </div>
       </div>
     </div>
   );

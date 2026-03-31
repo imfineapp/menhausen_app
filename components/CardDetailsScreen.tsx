@@ -7,6 +7,7 @@ import { useStore } from '@nanostores/react';
 import { cardsMessages } from '@/src/i18n/messages/cards';
 import { themesMessages } from '@/src/i18n/messages/themes';
 import { ThemeCardManager, CompletedAttempt } from '../utils/ThemeCardManager';
+import { ParagraphText } from './ui/ParagraphText';
 
 // Типы для пропсов компонента
 interface CardDetailsScreenProps {
@@ -37,7 +38,7 @@ function CardInfo({ cardTitle, cardDescription }: { cardTitle: string; cardDescr
       </div>
       {cardDescription && (
         <div className="typography-body text-[#cfcfcf] text-left w-full">
-          <p className="block">{cardDescription}</p>
+          <ParagraphText text={cardDescription} paragraphClassName="block" />
         </div>
       )}
       <div className="bg-[#ffffff] relative shrink-0 w-full" data-name="Separation Line">
