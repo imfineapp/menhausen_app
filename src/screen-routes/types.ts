@@ -1,6 +1,7 @@
 import type React from 'react'
 
 import type { AppScreen } from '@/types/userState'
+import type { RouteName } from '@/src/stores/router.store'
 import type { SupportedLanguage, SurveyResults } from '@/types/content'
 import type { LikertScaleAnswer } from '@/types/psychologicalTest'
 
@@ -26,7 +27,9 @@ type ThemeData = {
 }
 
 export type RouteContext = {
+  /** @deprecated Prefer routeName for new route-based logic. */
   currentScreen: AppScreen
+  routeName?: RouteName
   wrapScreen: (screen: React.ReactNode) => React.ReactNode
   userHasPremium: boolean
   currentLanguage: SupportedLanguage

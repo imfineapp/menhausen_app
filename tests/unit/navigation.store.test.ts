@@ -19,6 +19,7 @@ import {
 } from '@/src/stores/navigation.store'
 
 describe('navigation.store', () => {
+  // These tests intentionally cover the legacy facade API kept for compatibility.
   beforeEach(() => {
     resetNavigation()
   })

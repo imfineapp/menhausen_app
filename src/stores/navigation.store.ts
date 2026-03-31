@@ -6,14 +6,23 @@ import { isDirectLinkMode } from '@/utils/telegramUserUtils'
 import { browserBack, closeTelegramApp } from '@/src/effects/telegram.effects'
 import { $screenParams, patchScreenParams } from '@/src/stores/screen-params.store'
 import { $router } from '@/src/stores/router.store'
+import { resolveScreenFromRoute } from '@/src/utils/route-screen-map'
+
+/**
+ * Legacy navigation facade.
+ *
+ * All action files now call @nanostores/router directly (openPage / redirectPage).
+ * This module still exists because:
+ *  1. AppContent.tsx reads $currentScreen / $navigationHistory for animation + achievement logic.
+ *  2. goBack() centralizes the Telegram direct-link / closeTelegramApp fallback.
+ *  3. ScreenRouter reads $isNavigatingForward for slide direction.
+ *
+ * TODO: migrate remaining consumers off $currentScreen -> $router, then delete this file.
+ */
 
 type LegacyRoute = {
   route: string
   params?: Record<string, string>
-}
-
-function to2(num: string): string {
-  return num.padStart(2, '0')
 }
 
 function resolveRouteFromScreen(screen: AppScreen): LegacyRoute {
@@ -75,94 +84,9 @@ function resolveRouteFromScreen(screen: AppScreen): LegacyRoute {
   return staticRoutes[screen] ?? { route: 'home' }
 }
 
-function resolveScreenFromRoute(): AppScreen {
+function resolveCurrentScreenFromRouter(): AppScreen {
   const page = $router.get()
-  if (!page) return 'loading'
-
-  switch (page.route) {
-    case 'loading':
-      return 'loading'
-    case 'home':
-      return 'home'
-    case 'onboarding':
-      return page.params.step === '2' ? 'onboarding2' : 'onboarding1'
-    case 'survey':
-      return `survey${to2(page.params.step || '01')}` as AppScreen
-    case 'psychTestPreambula':
-      return 'psychological-test-preambula'
-    case 'psychTestInstruction':
-      return 'psychological-test-instruction'
-    case 'psychTestQuestion':
-      return `psychological-test-question-${to2(page.params.num || '01')}` as AppScreen
-    case 'psychTestResults':
-      return 'psychological-test-results'
-    case 'topicTestIntro':
-      return 'topic-test-intro'
-    case 'topicTestQuestion':
-      return 'topic-test-question'
-    case 'topicTestResults':
-      return 'topic-test-results'
-    case 'checkin':
-      return 'checkin'
-    case 'themeWelcome':
-      return 'theme-welcome'
-    case 'themeHome':
-      return 'theme-home'
-    case 'cardDetails':
-      return 'card-details'
-    case 'checkinDetails':
-      return 'checkin-details'
-    case 'cardWelcome':
-      return 'card-welcome'
-    case 'question01':
-      return 'question-01'
-    case 'question02':
-      return 'question-02'
-    case 'finalMessage':
-      return 'final-message'
-    case 'rateCard':
-      return 'rate-card'
-    case 'profile':
-      return 'profile'
-    case 'about':
-      return 'about'
-    case 'appSettings':
-      return 'app-settings'
-    case 'pinSettings':
-      return 'pin-settings'
-    case 'pin':
-      return 'pin'
-    case 'deleteAccount':
-      return 'delete'
-    case 'payments':
-      return 'payments'
-    case 'donations':
-      return 'donations'
-    case 'underConstruction':
-      return 'under-construction'
-    case 'privacy':
-      return 'privacy'
-    case 'terms':
-      return 'terms'
-    case 'breathing478':
-      return 'breathing-4-7-8'
-    case 'breathingSquare':
-      return 'breathing-square'
-    case 'grounding54321':
-      return 'grounding-5-4-3-2-1'
-    case 'groundingAnchor':
-      return 'grounding-anchor'
-    case 'allArticles':
-      return 'all-articles'
-    case 'article':
-      return 'article'
-    case 'badges':
-      return 'badges'
-    case 'reward':
-      return 'reward'
-    default:
-      return 'home'
-  }
+  return resolveScreenFromRoute(page?.route, page?.params as Record<string, string> | undefined)
 }
 
 function syncScreenParamsFromRoute(): void {
@@ -175,7 +99,7 @@ function syncScreenParamsFromRoute(): void {
   if (params.checkinId) patchScreenParams({ currentCheckin: { ...$screenParams.get().currentCheckin, id: params.checkinId } })
 }
 
-const initialScreen = resolveScreenFromRoute()
+const initialScreen = resolveCurrentScreenFromRouter()
 export const $currentScreen = atom<AppScreen>(initialScreen)
 export const $navigationHistory = atom<AppScreen[]>([initialScreen])
 export const $isNavigatingForward = atom<boolean>(true)
@@ -183,7 +107,7 @@ export const $isNavigatingForward = atom<boolean>(true)
 let isProgrammaticBack = false
 
 $router.listen(() => {
-  const next = resolveScreenFromRoute()
+  const next = resolveCurrentScreenFromRouter()
   syncScreenParamsFromRoute()
 
   const history = $navigationHistory.get()
@@ -208,6 +132,7 @@ export function resetNavigation() {
 }
 
 export function setNavigationState(screen: AppScreen, history: AppScreen[]) {
+  // Legacy API used by app bootstrap/tests to atomically set facade state.
   $isNavigatingForward.set(true)
   $navigationHistory.set(history.length > 0 ? history : [screen])
   $currentScreen.set(screen)
@@ -216,6 +141,7 @@ export function setNavigationState(screen: AppScreen, history: AppScreen[]) {
 }
 
 export function setCurrentScreenOnly(screen: AppScreen) {
+  // Legacy helper for tests/init paths that mutate only current screen.
   $isNavigatingForward.set(true)
   $currentScreen.set(screen)
   const route = resolveRouteFromScreen(screen)
@@ -223,6 +149,7 @@ export function setCurrentScreenOnly(screen: AppScreen) {
 }
 
 export function navigateTo(screen: AppScreen) {
+  // Legacy forward navigation wrapper kept for compatibility consumers.
   $isNavigatingForward.set(true)
   const route = resolveRouteFromScreen(screen)
   $navigationHistory.set([...$navigationHistory.get(), screen])
@@ -241,6 +168,10 @@ export function goBack() {
     return
   }
   if (typeof window !== 'undefined' && isDirectLinkMode()) {
+    // Direct-link mode detection only applies to explicit goBack() calls.
+    // @nanostores/router popstate handling is transparent -- if the user
+    // entered via deep link and presses browser back, the WebView closes
+    // via Telegram back-button integration in useTelegramBackButton.ts.
     closeTelegramApp()
     return
   }

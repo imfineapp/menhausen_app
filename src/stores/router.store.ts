@@ -1,6 +1,6 @@
 import { createRouter } from '@nanostores/router'
 
-export const $router = createRouter({
+const ROUTES = {
   loading: '/loading',
   onboarding: '/onboarding/:step',
   survey: '/survey/:step',
@@ -41,4 +41,8 @@ export const $router = createRouter({
   article: '/articles/:articleId',
   badges: '/badges',
   reward: '/reward',
-})
+} as const
+
+export type RouteName = keyof typeof ROUTES
+
+export const $router = createRouter(ROUTES)
