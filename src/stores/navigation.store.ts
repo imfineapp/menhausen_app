@@ -159,6 +159,18 @@ export function navigateTo(screen: AppScreen) {
 
 export function goBack() {
   $isNavigatingForward.set(false)
+  const page = $router.get()
+
+  // In theme card list, back should always return to app home,
+  // not to previously visited card flow steps kept in browser history.
+  if (page?.route === 'themeHome') {
+    patchScreenParams({ currentTheme: '', currentCard: { id: '' }, currentCheckin: { id: '' } })
+    $navigationHistory.set(['home'])
+    $currentScreen.set('home')
+    redirectPage($router, 'home')
+    return
+  }
+
   if ($navigationHistory.get().length > 1) {
     const newHistory = $navigationHistory.get().slice(0, -1)
     $navigationHistory.set(newHistory)

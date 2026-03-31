@@ -38,6 +38,13 @@ describe('navigation.store', () => {
     expect($navigationHistory.get()).toEqual(['home'])
   })
 
+  it('goBack from theme-home always returns to home', () => {
+    setNavigationState('theme-home', ['home', 'theme-home'])
+    goBack()
+    expect($currentScreen.get()).toBe('home')
+    expect($navigationHistory.get()).toEqual(['home'])
+  })
+
   it('resetNavigation clears to loading', () => {
     setNavigationState('home', ['home'])
     resetNavigation()
