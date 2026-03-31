@@ -5,6 +5,7 @@ import { useStore } from '@nanostores/react';
 import { BottomFixedButton } from "./BottomFixedButton";
 import { cardsMessages } from '@/src/i18n/messages/cards';
 import { FormScreenLayout } from './FormScreenLayout';
+import { ParagraphText } from './ui/ParagraphText';
 
 // Типы для пропсов компонента
 interface FinalCardMessageScreenProps {
@@ -47,18 +48,15 @@ function Container({ finalMessage, practiceTask, whyExplanation }: {
       </div>
       
       {/* Блок с задачами и объяснением */}
-      <div className="typography-body text-[#ffffff] w-full text-left break-words whitespace-pre-wrap">
+      <div className="typography-body text-[#ffffff] w-full text-left break-words">
         {/* Практическое задание */}
-        <p className="block mb-0 typography-body">
-          {practiceTask}
-        </p>
-        <p className="block mb-0 typography-body">&nbsp;</p>
+        <ParagraphText text={practiceTask} className="flex flex-col gap-3 mb-4" paragraphClassName="block typography-body" />
         
         {/* Объяснение "Почему" */}
-        <p className="typography-body">
-          <span className="text-[#e1ff00]">{cards.final.why}</span>
-          <span> {whyExplanation}</span>
-        </p>
+        <div className="flex flex-col gap-3">
+          <p className="typography-body block text-[#e1ff00]">{cards.final.why}</p>
+          <ParagraphText text={whyExplanation} paragraphClassName="block typography-body" />
+        </div>
       </div>
     </div>
   );
