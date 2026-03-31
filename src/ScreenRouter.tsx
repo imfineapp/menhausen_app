@@ -151,12 +151,12 @@ export default function ScreenRouter(props: ScreenRouterProps = {}) {
 
   const onRewardDone = useCallback(() => {
     setEarnedAchievementIds([])
-    if (typeof window !== 'undefined' && window.history.length > 1) {
-      window.history.back()
+    if (currentThemeFromRoute) {
+      openPage($router, 'themeHome', { themeId: currentThemeFromRoute })
       return
     }
     openPage($router, 'home')
-  }, [])
+  }, [currentThemeFromRoute])
 
   const getTheme = useCallback((themeId: string) => getThemeFromStore(themeId), [])
 

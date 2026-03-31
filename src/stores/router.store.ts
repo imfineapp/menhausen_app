@@ -1,4 +1,4 @@
-import { createRouter } from '@nanostores/router'
+import { createRouter, redirectPage } from '@nanostores/router'
 
 const ROUTES = {
   loading: '/loading',
@@ -46,3 +46,15 @@ const ROUTES = {
 export type RouteName = keyof typeof ROUTES
 
 export const $router = createRouter(ROUTES)
+
+function redirectUnknownRouteToHome(): void {
+  // Handle reloads/deep-links to unknown paths in Telegram WebView.
+  if (!$router.get()) {
+    redirectPage($router, 'home')
+  }
+}
+
+redirectUnknownRouteToHome()
+$router.listen(() => {
+  redirectUnknownRouteToHome()
+})

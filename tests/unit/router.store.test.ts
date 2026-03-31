@@ -71,4 +71,11 @@ describe('router.store', () => {
 
     expect($router.get()?.route).toBe('home')
   })
+
+  it('redirects unknown route to home', async () => {
+    $router.open('/xampp/stress')
+    await waitForRouterTick()
+
+    expect($router.get()?.route).toBe('home')
+  })
 })
