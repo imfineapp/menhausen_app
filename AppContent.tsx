@@ -28,7 +28,6 @@ import {
   setNavigationState,
   goBack,
 } from './src/stores/navigation.store'
-import { $router } from './src/stores/router.store'
 
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
