@@ -176,6 +176,18 @@ export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }>
   }
   checkinKeys.forEach((key) => localStorage.removeItem(key))
 
+  localStorage.removeItem('experiment_variant')
+  localStorage.removeItem('experiment-assignment-sync')
+  localStorage.removeItem('topic-test-results-by-theme')
+  const topicTestPartialKeys: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key && key.startsWith('topic-test-partial-')) {
+      topicTestPartialKeys.push(key)
+    }
+  }
+  topicTestPartialKeys.forEach((key) => localStorage.removeItem(key))
+
   try {
     localStorage.removeItem('supabase_sync_queue')
     localStorage.removeItem('premium-signature')

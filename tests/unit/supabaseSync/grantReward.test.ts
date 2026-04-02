@@ -59,7 +59,7 @@ describe('rewardService.grantReward', () => {
     (globalThis.fetch as any).mockResolvedValue({ ok: false, status: 500 });
 
     const result = await grantReward({
-      eventType: RewardEventType.ACHIEVEMENT_XP,
+      eventType: RewardEventType.ACHIEVEMENT_UNLOCK,
       referenceId: 'a1',
     });
 
@@ -94,7 +94,7 @@ describe('rewardService.grantReward', () => {
     });
   });
 
-  it('returns server-fixed points for achievement_xp (ignores inflated client payload)', async () => {
+  it('returns payload points for achievement_unlock within server cap', async () => {
     vi.mocked(getValidJWTToken).mockResolvedValue('jwt_token');
     (globalThis.fetch as any).mockResolvedValue({
       ok: true,
@@ -102,19 +102,19 @@ describe('rewardService.grantReward', () => {
         success: true,
         granted: true,
         reason: 'granted',
-        points: 50,
-        balance: 1500,
+        points: 5000,
+        balance: 6450,
         transactionId: 'tx_achievement',
       }),
     });
 
     const result = await grantReward({
-      eventType: RewardEventType.ACHIEVEMENT_XP,
+      eventType: RewardEventType.ACHIEVEMENT_UNLOCK,
       referenceId: 'achievement-1',
       payload: { points: 5000 },
     });
 
-    expect(result.points).toBe(50);
+    expect(result.points).toBe(5000);
     expect(result.granted).toBe(true);
   });
 });

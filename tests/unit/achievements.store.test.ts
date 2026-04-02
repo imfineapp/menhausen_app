@@ -48,7 +48,7 @@ describe('achievements.store', () => {
       unlockedCount: 0,
     })
     mocks.getAllAchievementsMetadata.mockReturnValue([
-      { id: 'ach_1', xp: 50, conditionType: 'streak' },
+      { id: 'ach_1', pointsReward: 50, conditionType: 'streak' },
     ])
   })
 

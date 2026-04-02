@@ -17,6 +17,26 @@ function getDefaultState(): UserAchievementsState {
   };
 }
 
+function normalizeAchievementPoints(state: UserAchievementsState): UserAchievementsState {
+  const achievements = Object.fromEntries(
+    Object.entries(state.achievements ?? {}).map(([achievementId, achievement]) => {
+      const typedAchievement = achievement as UserAchievement & { xp?: number }
+      if (typeof typedAchievement.pointsReward === 'number') {
+        return [achievementId, typedAchievement]
+      }
+      return [
+        achievementId,
+        {
+          ...typedAchievement,
+          pointsReward: typeof typedAchievement.xp === 'number' ? typedAchievement.xp : 0,
+        },
+      ]
+    }),
+  )
+
+  return { ...state, achievements }
+}
+
 /**
  * Загрузка достижений пользователя из localStorage
  */
@@ -27,10 +47,10 @@ export function loadUserAchievements(): UserAchievementsState {
     
     const state = JSON.parse(stored) as UserAchievementsState;
     if (state.version < STORAGE_VERSION) {
-      return migrateAchievements(state);
+      return normalizeAchievementPoints(migrateAchievements(state));
     }
-    
-    return state;
+
+    return normalizeAchievementPoints(state);
   } catch (error) {
     console.error('Error loading achievements:', error);
     return getDefaultState();
@@ -53,7 +73,7 @@ export function saveUserAchievements(state: UserAchievementsState): void {
  */
 export function updateAchievement(
   achievementId: string,
-  result: { unlocked: boolean; progress: number; xp: number }
+  result: { unlocked: boolean; progress: number; pointsReward: number }
 ): UserAchievementsState {
   const state = loadUserAchievements();
   const existing = state.achievements[achievementId];
@@ -66,7 +86,7 @@ export function updateAchievement(
       ? now 
       : (existing?.unlockedAt || null),
     progress: result.progress,
-    xp: result.xp,
+    pointsReward: result.pointsReward,
     lastChecked: now,
     // Сохраняем флаг shownOnThemeHome, если он был установлен ранее
     shownOnThemeHome: existing?.shownOnThemeHome ?? false,
@@ -86,7 +106,7 @@ export function updateAchievement(
   // Пересчет totalXP и unlockedCount
   const totalXP = Object.values(newAchievements)
     .filter(a => a.unlocked)
-    .reduce((sum, a) => sum + a.xp, 0);
+    .reduce((sum, a) => sum + a.pointsReward, 0);
   
   const unlockedCount = Object.values(newAchievements)
     .filter(a => a.unlocked).length;
@@ -115,9 +135,26 @@ export function getUserAchievement(achievementId: string): UserAchievement | und
  */
 function migrateAchievements(oldState: any): UserAchievementsState {
   const defaultState = getDefaultState();
+  const migratedAchievements = Object.fromEntries(
+    Object.entries(oldState?.achievements ?? {}).map(([achievementId, achievement]: [string, any]) => {
+      if (typeof achievement?.pointsReward === 'number') {
+        return [achievementId, achievement]
+      }
+      const legacyPointsReward = typeof achievement?.xp === 'number' ? achievement.xp : 0
+      return [
+        achievementId,
+        {
+          ...achievement,
+          pointsReward: legacyPointsReward,
+        },
+      ]
+    }),
+  )
+
   return {
     ...defaultState,
     ...oldState,
+    achievements: migratedAchievements,
     version: STORAGE_VERSION
   };
 }

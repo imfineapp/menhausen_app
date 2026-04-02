@@ -19,7 +19,7 @@ interface Badge {
   unlocked: boolean;
   unlockedAt: string | null;
   progress: number;
-  xp: number;
+  pointsReward: number;
 }
 
 interface BadgesScreenProps {
@@ -98,7 +98,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
             unlocked: userAchievement?.unlocked || false,
             unlockedAt: userAchievement?.unlockedAt ?? null,
             progress: userAchievement?.progress || 0,
-            xp: metadata.xp
+            pointsReward: metadata.pointsReward
           };
         }
 
@@ -110,7 +110,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
           unlocked: userAchievement?.unlocked || false,
           unlockedAt: userAchievement?.unlockedAt ?? null,
           progress: userAchievement?.progress || 0,
-          xp: metadata.xp
+          pointsReward: metadata.pointsReward
         };
       })
       .filter((badge): badge is Badge => badge !== null && badge.id !== undefined);

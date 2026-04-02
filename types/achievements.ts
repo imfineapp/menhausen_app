@@ -4,7 +4,7 @@
 
 export interface AchievementDefinition {
   id: string;
-  xp: number;
+  pointsReward: number;
   iconName: string;
   conditionType: string | string[];
   category: string;
@@ -37,7 +37,7 @@ export interface UserAchievement {
   unlocked: boolean;
   unlockedAt: string | null;
   progress: number; // 0-100
-  xp: number;
+  pointsReward: number;
   lastChecked: string;
   shownOnThemeHome?: boolean; // Флаг, указывающий, было ли достижение показано на theme-home
   shownOnArticleBack?: boolean; // Флаг, указывающий, было ли достижение показано при возврате из статьи

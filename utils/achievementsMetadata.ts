@@ -9,7 +9,13 @@ import metadata from '../data/achievements-metadata.json';
  * Загрузка всех метаданных достижений
  */
 export function getAllAchievementsMetadata(): AchievementDefinition[] {
-  return metadata as AchievementDefinition[];
+  return (metadata as Array<AchievementDefinition & { xp?: number }>).map((achievement) => ({
+    ...achievement,
+    pointsReward:
+      typeof achievement.pointsReward === 'number'
+        ? achievement.pointsReward
+        : (achievement.xp ?? 0),
+  }));
 }
 
 /**

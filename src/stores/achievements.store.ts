@@ -16,17 +16,17 @@ export const $achievements = computed($achievementsState, (state) => state.achie
 export const $totalXP = computed($achievementsState, (state) => state.totalXP)
 export const $unlockedCount = computed($achievementsState, (state) => state.unlockedCount)
 
-function awardAchievementXP(achievementId: string, xp: number) {
-  if (xp <= 0) return
+function awardAchievementPointsReward(achievementId: string, pointsReward: number) {
+  if (pointsReward <= 0) return
   const correlationId = `achievement_${achievementId}`
-  void earnPoints(xp, {
+  void earnPoints(pointsReward, {
     correlationId,
     note: `Achievement unlocked: ${achievementId}`,
-    eventType: RewardEventType.ACHIEVEMENT_XP,
+    eventType: RewardEventType.ACHIEVEMENT_UNLOCK,
     referenceId: achievementId,
     payload: {
       achievementId,
-      points: xp,
+      points: pointsReward,
     },
   })
 }
@@ -57,7 +57,7 @@ export async function checkAndUnlockAchievements(): Promise<string[]> {
 
       if (isNowUnlocked && !wasUnlocked) {
         newlyUnlocked.push(achievement.id)
-        awardAchievementXP(achievement.id, achievement.xp)
+        awardAchievementPointsReward(achievement.id, achievement.pointsReward)
       }
 
       const now = new Date().toISOString()
@@ -95,7 +95,7 @@ export async function checkAndUnlockAchievements(): Promise<string[]> {
         unlocked: result.unlocked,
         unlockedAt: isNowUnlocked && !wasUnlocked ? now : existing?.unlockedAt ?? null,
         progress: result.progress,
-        xp: achievement.xp,
+        pointsReward: achievement.pointsReward,
         lastChecked: now,
         shownOnThemeHome: shouldShowOnThemeHome ? false : currentShownOnThemeHome,
         shownOnArticleBack: shouldShowOnArticleBack ? false : currentShownOnArticleBack,
@@ -106,7 +106,7 @@ export async function checkAndUnlockAchievements(): Promise<string[]> {
 
     const totalXP = Object.values(updatedAchievements)
       .filter((a) => a.unlocked)
-      .reduce((sum, a) => sum + a.xp, 0)
+      .reduce((sum, a) => sum + a.pointsReward, 0)
 
     const unlockedCount = Object.values(updatedAchievements).filter((a) => a.unlocked).length
 
@@ -141,7 +141,7 @@ export function updateAchievementProgress(achievementId: string) {
     const updatedState = updateAchievement(achievementId, {
       unlocked: result.unlocked,
       progress: result.progress,
-      xp: achievement.xp
+      pointsReward: achievement.pointsReward
     })
 
     $achievementsState.set(updatedState)

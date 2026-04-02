@@ -27,7 +27,7 @@ describe('Achievement System Tests', () => {
     it('should check registration_checkin condition (newcomer)', () => {
       const achievement: AchievementDefinition = {
         id: 'newcomer',
-        xp: 50,
+        pointsReward: 50,
         iconName: 'user-plus',
         conditionType: 'registration_checkin',
         category: 'Onboarding',
@@ -64,7 +64,7 @@ describe('Achievement System Tests', () => {
     it('should check cards_opened condition for free topic (beginner)', () => {
       const achievement: AchievementDefinition = {
         id: 'beginner',
-        xp: 120,
+        pointsReward: 120,
         iconName: 'sprout',
         conditionType: 'cards_opened',
         category: 'Free Topic',
@@ -107,7 +107,7 @@ describe('Achievement System Tests', () => {
     it('should check topic_completed condition (topic_closer)', () => {
       const achievement: AchievementDefinition = {
         id: 'topic_closer',
-        xp: 400,
+        pointsReward: 400,
         iconName: 'check-circle',
         conditionType: 'topic_completed',
         category: 'Free Topic',
@@ -144,7 +144,7 @@ describe('Achievement System Tests', () => {
     it('should check articles_read condition (basic_reader)', () => {
       const achievement: AchievementDefinition = {
         id: 'basic_reader',
-        xp: 450,
+        pointsReward: 450,
         iconName: 'book-open',
         conditionType: 'articles_read',
         category: 'Articles',
@@ -187,7 +187,7 @@ describe('Achievement System Tests', () => {
     it('should check streak condition (first_chapter_hero)', () => {
       const achievement: AchievementDefinition = {
         id: 'first_chapter_hero',
-        xp: 800,
+        pointsReward: 800,
         iconName: 'award',
         conditionType: 'streak',
         category: 'Streak',
@@ -259,7 +259,7 @@ describe('Achievement System Tests', () => {
         expect(achievement).toBeDefined();
         expect(achievement?.unlocked).toBe(true);
         expect(achievement?.unlockedAt).not.toBeNull();
-        expect(achievement?.xp).toBe(50);
+        expect(achievement?.pointsReward).toBe(50);
         expect(achievement?.progress).toBe(100);
       });
 
@@ -267,7 +267,7 @@ describe('Achievement System Tests', () => {
       const achievement = getUserAchievement('newcomer');
       expect(achievement).toBeDefined();
       expect(achievement?.unlocked).toBe(true);
-      expect(achievement?.xp).toBe(50);
+      expect(achievement?.pointsReward).toBe(50);
     });
 
     it('should unlock beginner achievement after opening 3 stress cards', async () => {
@@ -297,7 +297,7 @@ describe('Achievement System Tests', () => {
         const achievement = getUserAchievement('beginner');
         expect(achievement).toBeDefined();
         expect(achievement?.unlocked).toBe(true);
-        expect(achievement?.xp).toBe(120);
+        expect(achievement?.pointsReward).toBe(120);
         
         // Если достижение не было разблокировано ранее, оно должно быть в списке новых
         if (!wasUnlockedBefore) {
@@ -332,7 +332,7 @@ describe('Achievement System Tests', () => {
         const achievement = getUserAchievement('seeker');
         expect(achievement).toBeDefined();
         expect(achievement?.unlocked).toBe(true);
-        expect(achievement?.xp).toBe(200);
+        expect(achievement?.pointsReward).toBe(200);
         
         // Если достижение не было разблокировано ранее, оно должно быть в списке новых
         if (!wasUnlockedBefore) {
@@ -444,7 +444,7 @@ describe('Achievement System Tests', () => {
         unlocked: true,
         unlockedAt: new Date().toISOString(),
         progress: 100,
-        xp: 100,
+        pointsReward: 100,
         lastChecked: new Date().toISOString()
       };
 
@@ -476,7 +476,7 @@ describe('Achievement System Tests', () => {
         unlocked: true,
         unlockedAt: new Date().toISOString(),
         progress: 100,
-        xp: 100,
+        pointsReward: 100,
         lastChecked: new Date().toISOString()
       };
 
@@ -505,7 +505,7 @@ describe('Achievement System Tests', () => {
       // Например, hero_secrets требует: cards_repeated + streak
       const achievement: AchievementDefinition = {
         id: 'hero_secrets',
-        xp: 500,
+        pointsReward: 500,
         iconName: 'key',
         conditionType: ['cards_repeated', 'streak'],
         category: 'Repetition & Streak',

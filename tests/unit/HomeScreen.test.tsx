@@ -53,7 +53,7 @@ vi.mock('../../services/achievementStorage', () => {
         unlocked: result.unlocked,
         unlockedAt: result.unlocked && !existing?.unlocked ? now : (existing?.unlockedAt || null),
         progress: result.progress,
-        xp: result.xp,
+        pointsReward: result.pointsReward,
         lastChecked: now
       };
       
@@ -64,7 +64,7 @@ vi.mock('../../services/achievementStorage', () => {
       
       const totalXP = Object.values(newAchievements)
         .filter((a: any) => a.unlocked)
-        .reduce((sum: number, a: any) => sum + a.xp, 0);
+        .reduce((sum: number, a: any) => sum + a.pointsReward, 0);
       
       const unlockedCount = Object.values(newAchievements)
         .filter((a: any) => a.unlocked).length;

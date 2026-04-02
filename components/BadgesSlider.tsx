@@ -9,7 +9,7 @@ interface Badge {
   unlocked: boolean;
   unlockedAt?: string | null;
   progress?: number; // прогресс для заблокированных карточек (0-100)
-  xp?: number;
+  pointsReward?: number;
 }
 
 interface BadgesSliderProps {
@@ -197,7 +197,7 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
             <BadgeCard
               {...badge}
               isActive={index === currentIndex}
-              xp={badge.xp}
+              pointsReward={badge.pointsReward}
             />
           </div>
         ))}
