@@ -13,7 +13,10 @@ export const $isAchievementsLoading = atom<boolean>(false)
 export const $achievementsError = atom<string | null>(null)
 
 export const $achievements = computed($achievementsState, (state) => state.achievements)
-export const $totalXP = computed($achievementsState, (state) => state.totalXP)
+export const $totalPointsFromAchievements = computed(
+  $achievementsState,
+  (state) => state.totalPointsFromAchievements,
+)
 export const $unlockedCount = computed($achievementsState, (state) => state.unlockedCount)
 
 function awardAchievementPointsReward(achievementId: string, pointsReward: number) {
@@ -104,7 +107,7 @@ export async function checkAndUnlockAchievements(): Promise<string[]> {
       }
     }
 
-    const totalXP = Object.values(updatedAchievements)
+    const totalPointsFromAchievements = Object.values(updatedAchievements)
       .filter((a) => a.unlocked)
       .reduce((sum, a) => sum + a.pointsReward, 0)
 
@@ -113,7 +116,7 @@ export async function checkAndUnlockAchievements(): Promise<string[]> {
     const finalState: UserAchievementsState = {
       ...currentState,
       achievements: updatedAchievements,
-      totalXP,
+      totalPointsFromAchievements,
       unlockedCount
     }
 

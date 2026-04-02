@@ -26,7 +26,7 @@ describe('achievementDisplayService', () => {
         a1: { achievementId: 'a1', unlocked: true, shownOnThemeHome: false },
         s1: { achievementId: 's1', unlocked: true, shownOnHomeAfterCheckin: false },
       },
-      totalXP: 0,
+      totalPointsFromAchievements: 0,
       unlockedCount: 0,
       lastSyncedAt: null,
     })

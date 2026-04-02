@@ -1,7 +1,7 @@
 [
   {
     "id": "newcomer",
-    "xp": 50,
+    "pointsReward": 50,
     "iconName": "user-plus",
     "conditionType": "registration_checkin",
     "category": "Onboarding",
@@ -9,7 +9,7 @@
   },
   {
     "id": "beginner",
-    "xp": 120,
+    "pointsReward": 120,
     "iconName": "sprout",
     "conditionType": "cards_opened",
     "category": "Free Topic",
@@ -17,7 +17,7 @@
   },
   {
     "id": "seeker",
-    "xp": 200,
+    "pointsReward": 200,
     "iconName": "search",
     "conditionType": "cards_opened",
     "category": "Free Topic",
@@ -25,7 +25,7 @@
   },
   {
     "id": "apprentice",
-    "xp": 300,
+    "pointsReward": 300,
     "iconName": "school",
     "conditionType": "cards_opened",
     "category": "Free Topic",
@@ -33,7 +33,7 @@
   },
   {
     "id": "topic_closer",
-    "xp": 400,
+    "pointsReward": 400,
     "iconName": "check-circle",
     "conditionType": "topic_completed",
     "category": "Free Topic",
@@ -41,7 +41,7 @@
   },
   {
     "id": "basic_reader",
-    "xp": 450,
+    "pointsReward": 450,
     "iconName": "book-open",
     "conditionType": "articles_read",
     "category": "Articles",
@@ -49,7 +49,7 @@
   },
   {
     "id": "hero_secrets",
-    "xp": 500,
+    "pointsReward": 500,
     "iconName": "key",
     "conditionType": [
       "cards_repeated",
@@ -61,7 +61,7 @@
   },
   {
     "id": "keeper_of_wisdom",
-    "xp": 650,
+    "pointsReward": 650,
     "iconName": "archive",
     "conditionType": [
       "topic_repeated",
@@ -73,7 +73,7 @@
   },
   {
     "id": "first_chapter_hero",
-    "xp": 800,
+    "pointsReward": 800,
     "iconName": "award",
     "conditionType": "streak",
     "category": "Streak",
@@ -81,7 +81,7 @@
   },
   {
     "id": "recruiter",
-    "xp": 500,
+    "pointsReward": 500,
     "iconName": "user-plus",
     "conditionType": "referral_invite",
     "category": "Referral",
@@ -89,7 +89,7 @@
   },
   {
     "id": "explorer",
-    "xp": 1000,
+    "pointsReward": 1000,
     "iconName": "compass",
     "conditionType": "cards_opened",
     "category": "Premium Topics",
@@ -97,7 +97,7 @@
   },
   {
     "id": "path_chooser",
-    "xp": 1200,
+    "pointsReward": 1200,
     "iconName": "map-pin",
     "conditionType": "topic_completed",
     "category": "Premium Topics",
@@ -105,7 +105,7 @@
   },
   {
     "id": "knowledge_lover",
-    "xp": 1300,
+    "pointsReward": 1300,
     "iconName": "book-heart",
     "conditionType": "articles_read",
     "category": "Articles",
@@ -113,7 +113,7 @@
   },
   {
     "id": "spreader",
-    "xp": 1500,
+    "pointsReward": 1500,
     "iconName": "share-2",
     "conditionType": "referral_invite",
     "category": "Referral",
@@ -121,7 +121,7 @@
   },
   {
     "id": "traveler",
-    "xp": 1400,
+    "pointsReward": 1400,
     "iconName": "globe",
     "conditionType": "cards_opened",
     "category": "Premium Topics",
@@ -129,7 +129,7 @@
   },
   {
     "id": "fear_conqueror",
-    "xp": 1600,
+    "pointsReward": 1600,
     "iconName": "shield-check",
     "conditionType": [
       "topic_completed",
@@ -140,7 +140,7 @@
   },
   {
     "id": "persistence_master",
-    "xp": 1800,
+    "pointsReward": 1800,
     "iconName": "repeat",
     "conditionType": [
       "streak",
@@ -152,7 +152,7 @@
   },
   {
     "id": "inspirer",
-    "xp": 2000,
+    "pointsReward": 2000,
     "iconName": "sparkles",
     "conditionType": "topic_repeated",
     "category": "Premium Topics",
@@ -160,7 +160,7 @@
   },
   {
     "id": "harmony_seeker",
-    "xp": 2200,
+    "pointsReward": 2200,
     "iconName": "scale",
     "conditionType": [
       "cards_opened",
@@ -173,7 +173,7 @@
   },
   {
     "id": "enlightened_mind",
-    "xp": 2400,
+    "pointsReward": 2400,
     "iconName": "lightbulb",
     "conditionType": "articles_read",
     "category": "Articles",
@@ -181,7 +181,7 @@
   },
   {
     "id": "ambassador",
-    "xp": 3000,
+    "pointsReward": 3000,
     "iconName": "users",
     "conditionType": [
       "referral_invite",
@@ -193,7 +193,7 @@
   },
   {
     "id": "sage",
-    "xp": 2500,
+    "pointsReward": 2500,
     "iconName": "brain",
     "conditionType": "streak",
     "category": "Streak",
@@ -201,7 +201,7 @@
   },
   {
     "id": "depth_explorer",
-    "xp": 2800,
+    "pointsReward": 2800,
     "iconName": "anchor",
     "conditionType": [
       "topic_completed",
@@ -213,7 +213,7 @@
   },
   {
     "id": "doubt_slayer",
-    "xp": 3100,
+    "pointsReward": 3100,
     "iconName": "sword",
     "conditionType": [
       "cards_repeated",
@@ -225,7 +225,7 @@
   },
   {
     "id": "mind_protector",
-    "xp": 3500,
+    "pointsReward": 3500,
     "iconName": "shield",
     "conditionType": "streak",
     "category": "Streak",
@@ -233,7 +233,7 @@
   },
   {
     "id": "mentor",
-    "xp": 3900,
+    "pointsReward": 3900,
     "iconName": "user-check",
     "conditionType": [
       "topic_completed",
@@ -245,7 +245,7 @@
   },
   {
     "id": "pathfinder",
-    "xp": 4300,
+    "pointsReward": 4300,
     "iconName": "map",
     "conditionType": [
       "cards_opened",
@@ -258,7 +258,7 @@
   },
   {
     "id": "chaos_conqueror",
-    "xp": 4800,
+    "pointsReward": 4800,
     "iconName": "zap-off",
     "conditionType": "topic_completed",
     "category": "Premium Topics",
@@ -266,7 +266,7 @@
   },
   {
     "id": "balance_keeper",
-    "xp": 5300,
+    "pointsReward": 5300,
     "iconName": "scale",
     "conditionType": [
       "topic_repeated",
@@ -278,7 +278,7 @@
   },
   {
     "id": "legendary_hero",
-    "xp": 6000,
+    "pointsReward": 6000,
     "iconName": "trophy",
     "conditionType": [
       "topic_completed",
@@ -290,14 +290,14 @@
   },
   {
     "id": "reading_master",
-    "xp": 6500,
+    "pointsReward": 6500,
     "iconName": "library",
     "conditionType": "articles_read",
     "category": "Articles"
   },
   {
     "id": "menhausen_master",
-    "xp": 7000,
+    "pointsReward": 7000,
     "iconName": "crown",
     "conditionType": [
       "topic_repeated",

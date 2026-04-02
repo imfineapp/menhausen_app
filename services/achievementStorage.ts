@@ -11,10 +11,23 @@ function getDefaultState(): UserAchievementsState {
   return {
     version: STORAGE_VERSION,
     achievements: {},
-    totalXP: 0,
+    totalPointsFromAchievements: 0,
     unlockedCount: 0,
     lastSyncedAt: null
   };
+}
+
+function normalizeStatePropertyNames(state: any): UserAchievementsState {
+  if (
+    state &&
+    typeof state === 'object' &&
+    typeof state.totalXP === 'number' &&
+    typeof state.totalPointsFromAchievements !== 'number'
+  ) {
+    const { totalXP, ...rest } = state
+    return { ...rest, totalPointsFromAchievements: totalXP } as UserAchievementsState
+  }
+  return state as UserAchievementsState
 }
 
 function normalizeAchievementPoints(state: UserAchievementsState): UserAchievementsState {
@@ -45,7 +58,7 @@ export function loadUserAchievements(): UserAchievementsState {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return getDefaultState();
     
-    const state = JSON.parse(stored) as UserAchievementsState;
+    const state = normalizeStatePropertyNames(JSON.parse(stored));
     if (state.version < STORAGE_VERSION) {
       return normalizeAchievementPoints(migrateAchievements(state));
     }
@@ -103,8 +116,8 @@ export function updateAchievement(
     [achievementId]: updated
   };
   
-  // Пересчет totalXP и unlockedCount
-  const totalXP = Object.values(newAchievements)
+  // Пересчет totalPointsFromAchievements и unlockedCount
+  const totalPointsFromAchievements = Object.values(newAchievements)
     .filter(a => a.unlocked)
     .reduce((sum, a) => sum + a.pointsReward, 0);
   
@@ -114,7 +127,7 @@ export function updateAchievement(
   const updatedState: UserAchievementsState = {
     ...state,
     achievements: newAchievements,
-    totalXP,
+    totalPointsFromAchievements,
     unlockedCount
   };
   

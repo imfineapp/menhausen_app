@@ -407,7 +407,7 @@ describe('Achievement System Tests', () => {
       expect(secondUnlockTime).toBe(firstUnlockTime);
     });
 
-    it('should calculate totalXP and unlockedCount correctly', async () => {
+    it('should calculate totalPointsFromAchievements and unlockedCount correctly', async () => {
       localStorage.clear();
 
       // Разблокируем несколько достижений
@@ -424,7 +424,7 @@ describe('Achievement System Tests', () => {
 
       await waitFor(() => {
         expect(result.current.unlockedCount).toBeGreaterThanOrEqual(2);
-        expect(result.current.totalXP).toBeGreaterThanOrEqual(170); // 50 + 120
+        expect(result.current.totalPointsFromAchievements).toBeGreaterThanOrEqual(170); // 50 + 120
       });
     });
   });
@@ -435,7 +435,7 @@ describe('Achievement System Tests', () => {
 
       const initialState = loadUserAchievements();
       expect(initialState.achievements).toEqual({});
-      expect(initialState.totalXP).toBe(0);
+      expect(initialState.totalPointsFromAchievements).toBe(0);
       expect(initialState.unlockedCount).toBe(0);
 
       // Создаем тестовое достижение
@@ -453,7 +453,7 @@ describe('Achievement System Tests', () => {
         achievements: {
           test_achievement: testAchievement
         },
-        totalXP: 100,
+        totalPointsFromAchievements: 100,
         unlockedCount: 1,
         lastSyncedAt: null
       };
@@ -464,7 +464,7 @@ describe('Achievement System Tests', () => {
       const loaded = loadUserAchievements();
       expect(loaded.achievements.test_achievement).toBeDefined();
       expect(loaded.achievements.test_achievement.unlocked).toBe(true);
-      expect(loaded.totalXP).toBe(100);
+      expect(loaded.totalPointsFromAchievements).toBe(100);
       expect(loaded.unlockedCount).toBe(1);
     });
 
@@ -485,7 +485,7 @@ describe('Achievement System Tests', () => {
         achievements: {
           test_achievement: testAchievement
         },
-        totalXP: 100,
+        totalPointsFromAchievements: 100,
         unlockedCount: 1,
         lastSyncedAt: null
       };

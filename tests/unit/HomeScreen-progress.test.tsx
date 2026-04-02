@@ -9,7 +9,7 @@ vi.mock('../../services/achievementStorage', () => {
   const mockLoad = vi.fn(() => ({
     version: 1,
     achievements: {},
-    totalXP: 0,
+    totalPointsFromAchievements: 0,
     unlockedCount: 0,
     lastSyncedAt: null
   }));
@@ -35,7 +35,7 @@ vi.mock('../../services/achievementStorage', () => {
         [id]: updated
       };
       
-      const totalXP = Object.values(newAchievements)
+      const totalPointsFromAchievements = Object.values(newAchievements)
         .filter((a: any) => a.unlocked)
         .reduce((sum: number, a: any) => sum + a.pointsReward, 0);
       
@@ -45,7 +45,7 @@ vi.mock('../../services/achievementStorage', () => {
       return {
         ...state,
         achievements: newAchievements,
-        totalXP,
+        totalPointsFromAchievements,
         unlockedCount
       };
     }),

@@ -48,7 +48,7 @@ export interface UserAchievement {
 export interface UserAchievementsState {
   version: number;
   achievements: Record<string, UserAchievement>;
-  totalXP: number;
+  totalPointsFromAchievements: number;
   unlockedCount: number;
   lastSyncedAt: string | null;
 }

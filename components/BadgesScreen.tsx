@@ -69,7 +69,7 @@ const ACHIEVEMENT_DISPLAY_ORDER = [
  */
 export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
   const { getLocalizedBadges } = useContent();
-  const { achievements: userAchievements, totalXP, refreshAchievements } = useAchievements();
+  const { achievements: userAchievements, totalPointsFromAchievements, refreshAchievements } = useAchievements();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const badges = useMemo<Badge[]>(() => {
@@ -251,7 +251,7 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
                   
                   <div className="relative z-10 flex flex-col items-center justify-center gap-2 sm:gap-3 w-full">
                     <div className="text-lg sm:text-xl font-bold text-white text-center leading-tight">
-                      {totalXP}
+                      {totalPointsFromAchievements}
                     </div>
                     
                     <div className="text-sm text-[#8a8a8a] text-center leading-tight">
