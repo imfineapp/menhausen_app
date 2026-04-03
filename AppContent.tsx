@@ -211,6 +211,8 @@ function AppContent() {
       if (userId && userId !== '111') {
         const v: ExperimentVariantType = assignVariant(userId)
         $experimentVariant.set(v)
+        // Identify before experiment_assigned so person.experiment_variant is set for person-level breakdowns
+        void identify(userId)
         const w = typeof window !== 'undefined' ? (window as any) : undefined
         if (w && !w.__EXPERIMENT_ASSIGNED_SENT) {
           w.__EXPERIMENT_ASSIGNED_SENT = true
@@ -219,7 +221,6 @@ function AppContent() {
             variant: v,
           })
         }
-        void identify(userId)
         try {
           getSyncService().queueSync('experimentAssignment')
         } catch {
