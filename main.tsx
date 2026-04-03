@@ -11,6 +11,7 @@ import { ErrorFallback } from './components/ErrorFallback'
 import { captureException } from './src/effects/analytics.effects'
 import { isTelegramWebAppAvailable } from './src/effects/telegram.effects'
 import { initStoreSyncSubscriptions } from './src/sync/storeSyncSubscriptions'
+import { initCrossTabSyncListener } from './src/sync/crossTabSync'
 
 // Ensure DOM is ready
 const root = document.getElementById('root')
@@ -75,6 +76,7 @@ if (isAnalyticsEnabled()) {
 }
 
 initStoreSyncSubscriptions()
+initCrossTabSyncListener()
 
 // Initialize React app
 const app = (

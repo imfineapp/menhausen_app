@@ -183,7 +183,6 @@ function AppContent() {
             jwtExpiresAt: getJWTExpiry(),
             lastError: null,
           })
-          refreshFlowProgress()
           try {
             const savedLanguage = localStorage.getItem('menhausen-language')
             if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {

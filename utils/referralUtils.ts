@@ -2,6 +2,8 @@
  * Утилиты для работы с реферальной системой
  */
 
+import { bumpReferralDataSyncVersion } from '@/src/stores/sync-triggers.store';
+
 import { getTelegramUserId, isTelegramEnvironment } from './telegramUserUtils';
 import { loadUserStats, saveUserStats } from '../services/userStatsService';
 
@@ -118,6 +120,7 @@ export function saveReferrerInfo(referrerId: string): void {
     // Сохранение реферального кода для истории
     const referralCode = `${REFERRAL_PREFIX}${referrerId}`;
     localStorage.setItem(REFERRAL_CODE_KEY, referralCode);
+    bumpReferralDataSyncVersion();
 
     console.log('Referrer info saved:', { referrerId, referralCode });
   } catch (error) {
@@ -217,6 +220,7 @@ export function generateReferralLink(): string {
 export function markReferralAsRegistered(): void {
   try {
     localStorage.setItem(REFERRAL_REGISTERED_KEY, 'true');
+    bumpReferralDataSyncVersion();
   } catch (error) {
     console.error('Error marking referral as registered:', error);
   }
@@ -286,6 +290,7 @@ export function saveReferralList(referralList: ReferralStorage): void {
   try {
     const key = `${REFERRAL_LIST_PREFIX}${referralList.referrerId}`;
     localStorage.setItem(key, JSON.stringify(referralList));
+    bumpReferralDataSyncVersion();
   } catch (error) {
     console.error('Error saving referral list:', error);
   }

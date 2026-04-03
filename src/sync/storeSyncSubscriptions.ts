@@ -11,6 +11,12 @@ import { $todayCheckin } from '@/src/stores/checkin.store'
 import { $language } from '@/src/stores/language.store'
 import { $surveyResults } from '@/src/stores/survey.store'
 import { $themeProgressVersion } from '@/src/stores/theme-progress.store'
+import { $topicTestVersion } from '@/src/stores/topic-test.store'
+import {
+  $userStatsVersion,
+  $psychologicalTestStorageVersion,
+  $referralDataVersion,
+} from '@/src/stores/sync-triggers.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
 import type { SyncDataType } from '@/utils/supabaseSync/types'
 
@@ -40,6 +46,10 @@ export function initStoreSyncSubscriptions(): void {
   onSet($achievementsState, () => queueIfNeeded('achievements'))
   onSet($language, () => queueIfNeeded('preferences'))
   onSet($themeProgressVersion, () => queueIfNeeded('cardProgress'))
+  onSet($userStatsVersion, () => queueIfNeeded('userStats'))
+  onSet($psychologicalTestStorageVersion, () => queueIfNeeded('psychologicalTest'))
+  onSet($referralDataVersion, () => queueIfNeeded('referralData'))
+  onSet($topicTestVersion, () => queueIfNeeded('topicTestResults'))
 
   if (typeof window !== 'undefined') {
     window.setTimeout(() => {
