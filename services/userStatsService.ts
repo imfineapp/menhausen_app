@@ -253,16 +253,6 @@ export function markCardAsOpened(cardId: string): UserStats {
 }
 
 /**
- * Увеличение количества прочитанных статей (устаревшее — оставлено для совместимости)
- */
-export function incrementArticlesRead(): UserStats {
-  return updateUserStats((current) => ({
-    ...current,
-    articlesRead: current.articlesRead + 1
-  }));
-}
-
-/**
  * Увеличить счетчик приглашенных пользователей
  */
 export function incrementReferralsInvited(): UserStats {

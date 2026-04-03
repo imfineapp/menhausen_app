@@ -11,10 +11,43 @@ function getDefaultState(): UserAchievementsState {
   return {
     version: STORAGE_VERSION,
     achievements: {},
-    totalXP: 0,
+    totalPointsFromAchievements: 0,
     unlockedCount: 0,
     lastSyncedAt: null
   };
+}
+
+function normalizeStatePropertyNames(state: any): UserAchievementsState {
+  if (
+    state &&
+    typeof state === 'object' &&
+    typeof state.totalXP === 'number' &&
+    typeof state.totalPointsFromAchievements !== 'number'
+  ) {
+    const { totalXP, ...rest } = state
+    return { ...rest, totalPointsFromAchievements: totalXP } as UserAchievementsState
+  }
+  return state as UserAchievementsState
+}
+
+function normalizeAchievementPoints(state: UserAchievementsState): UserAchievementsState {
+  const achievements = Object.fromEntries(
+    Object.entries(state.achievements ?? {}).map(([achievementId, achievement]) => {
+      const typedAchievement = achievement as UserAchievement & { xp?: number }
+      if (typeof typedAchievement.pointsReward === 'number') {
+        return [achievementId, typedAchievement]
+      }
+      return [
+        achievementId,
+        {
+          ...typedAchievement,
+          pointsReward: typeof typedAchievement.xp === 'number' ? typedAchievement.xp : 0,
+        },
+      ]
+    }),
+  )
+
+  return { ...state, achievements }
 }
 
 /**
@@ -25,12 +58,12 @@ export function loadUserAchievements(): UserAchievementsState {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) return getDefaultState();
     
-    const state = JSON.parse(stored) as UserAchievementsState;
+    const state = normalizeStatePropertyNames(JSON.parse(stored));
     if (state.version < STORAGE_VERSION) {
-      return migrateAchievements(state);
+      return normalizeAchievementPoints(migrateAchievements(state));
     }
-    
-    return state;
+
+    return normalizeAchievementPoints(state);
   } catch (error) {
     console.error('Error loading achievements:', error);
     return getDefaultState();
@@ -53,7 +86,7 @@ export function saveUserAchievements(state: UserAchievementsState): void {
  */
 export function updateAchievement(
   achievementId: string,
-  result: { unlocked: boolean; progress: number; xp: number }
+  result: { unlocked: boolean; progress: number; pointsReward: number }
 ): UserAchievementsState {
   const state = loadUserAchievements();
   const existing = state.achievements[achievementId];
@@ -66,7 +99,7 @@ export function updateAchievement(
       ? now 
       : (existing?.unlockedAt || null),
     progress: result.progress,
-    xp: result.xp,
+    pointsReward: result.pointsReward,
     lastChecked: now,
     // Сохраняем флаг shownOnThemeHome, если он был установлен ранее
     shownOnThemeHome: existing?.shownOnThemeHome ?? false,
@@ -83,10 +116,10 @@ export function updateAchievement(
     [achievementId]: updated
   };
   
-  // Пересчет totalXP и unlockedCount
-  const totalXP = Object.values(newAchievements)
+  // Пересчет totalPointsFromAchievements и unlockedCount
+  const totalPointsFromAchievements = Object.values(newAchievements)
     .filter(a => a.unlocked)
-    .reduce((sum, a) => sum + a.xp, 0);
+    .reduce((sum, a) => sum + a.pointsReward, 0);
   
   const unlockedCount = Object.values(newAchievements)
     .filter(a => a.unlocked).length;
@@ -94,7 +127,7 @@ export function updateAchievement(
   const updatedState: UserAchievementsState = {
     ...state,
     achievements: newAchievements,
-    totalXP,
+    totalPointsFromAchievements,
     unlockedCount
   };
   
@@ -115,9 +148,26 @@ export function getUserAchievement(achievementId: string): UserAchievement | und
  */
 function migrateAchievements(oldState: any): UserAchievementsState {
   const defaultState = getDefaultState();
+  const migratedAchievements = Object.fromEntries(
+    Object.entries(oldState?.achievements ?? {}).map(([achievementId, achievement]: [string, any]) => {
+      if (typeof achievement?.pointsReward === 'number') {
+        return [achievementId, achievement]
+      }
+      const legacyPointsReward = typeof achievement?.xp === 'number' ? achievement.xp : 0
+      return [
+        achievementId,
+        {
+          ...achievement,
+          pointsReward: legacyPointsReward,
+        },
+      ]
+    }),
+  )
+
   return {
     ...defaultState,
     ...oldState,
+    achievements: migratedAchievements,
     version: STORAGE_VERSION
   };
 }

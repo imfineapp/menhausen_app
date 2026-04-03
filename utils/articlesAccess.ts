@@ -14,7 +14,7 @@ export function getRequiredPointsForArticle(orderOrIndex: number): number {
 }
 
 /**
- * @param walletBalance — server-aligned balance from `PointsManager` / `$pointsBalance` (not achievement `totalXP`).
+ * @param walletBalance — server-aligned balance from `PointsManager` / `$pointsBalance` (not achievement `totalPointsFromAchievements`).
  * If `spendPoints` is ever used in production, consider gating on lifetime earned instead of current balance.
  */
 export function isArticleLocked(orderOrIndex: number, walletBalance: number): boolean {

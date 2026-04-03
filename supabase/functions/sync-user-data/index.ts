@@ -162,7 +162,7 @@ async function syncAchievements(supabase: any, telegramUserId: number, data: any
       telegram_user_id: telegramUserId,
       version: data.version || 1,
       achievements: data.achievements || {},
-      total_xp: data.totalXP || 0,
+      total_xp: data.totalPointsFromAchievements ?? data.totalXP ?? 0,
       unlocked_count: data.unlockedCount || 0,
       last_synced_at: new Date().toISOString(),
     }, {

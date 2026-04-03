@@ -189,7 +189,7 @@ async function fetchAllUserData(supabase: any, telegramUserId: number): Promise<
     data.achievements = {
       version: achievements.version || 1,
       achievements: achievements.achievements || {},
-      totalXP: achievements.total_xp || 0,
+      totalPointsFromAchievements: achievements.total_xp || 0,
       unlockedCount: achievements.unlocked_count || 0,
     };
   }

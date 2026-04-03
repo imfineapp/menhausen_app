@@ -7,7 +7,7 @@ import { useStore } from '@nanostores/react'
 
 import {
   $achievements,
-  $totalXP,
+  $totalPointsFromAchievements,
   $unlockedCount,
   $isAchievementsLoading,
   $achievementsError,
@@ -18,7 +18,7 @@ import {
 
 interface AchievementsContextType {
   achievements: Record<string, UserAchievement>
-  totalXP: number
+  totalPointsFromAchievements: number
   unlockedCount: number
   isLoading: boolean
   error: string | null
@@ -29,14 +29,14 @@ interface AchievementsContextType {
 
 export function useAchievements(): AchievementsContextType {
   const achievements = useStore($achievements)
-  const totalXP = useStore($totalXP)
+  const totalPointsFromAchievements = useStore($totalPointsFromAchievements)
   const unlockedCount = useStore($unlockedCount)
   const isLoading = useStore($isAchievementsLoading)
   const error = useStore($achievementsError)
 
   return {
     achievements,
-    totalXP,
+    totalPointsFromAchievements,
     unlockedCount,
     isLoading,
     error,

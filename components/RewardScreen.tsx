@@ -15,7 +15,7 @@ interface Badge {
   unlocked: boolean;
   unlockedAt: string | null;
   progress: number;
-  xp: number;
+  pointsReward: number;
 }
 
 interface RewardScreenProps {
@@ -128,7 +128,9 @@ export function RewardScreen({
               unlockedAt={achievements[displayedIndex]?.unlockedAt || currentAchievement.unlockedAt}
               isActive={true}
               progress={achievements[displayedIndex]?.progress || currentAchievement.progress}
-              xp={achievements[displayedIndex]?.xp || currentAchievement.xp}
+              pointsReward={
+                achievements[displayedIndex]?.pointsReward || currentAchievement.pointsReward
+              }
             />
           </div>
         </div>
@@ -195,7 +197,7 @@ export function useAchievementData() {
           unlocked: userAchievement?.unlocked || false,
           unlockedAt: userAchievement?.unlockedAt ?? null,
           progress: userAchievement?.progress || 0,
-          xp: metadata.xp
+          pointsReward: metadata.pointsReward
         };
       })
       .filter((badge): badge is Badge => badge !== null && badge.id !== undefined);

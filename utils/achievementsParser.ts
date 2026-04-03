@@ -8,7 +8,7 @@ interface CSVRow {
   titleEn: string;
   descriptionRu: string;
   descriptionEn: string;
-  xp: number;
+  pointsReward: number;
   iconName: string;
   conditionType: string;
   category: string;
@@ -20,7 +20,7 @@ interface ParsedAchievement {
   titleEn: string;
   description: string;
   descriptionEn: string;
-  xp: number;
+  pointsReward: number;
   iconName: string;
   conditionType: string | string[];
   category: string;
@@ -54,9 +54,9 @@ function parseCSVLine(line: string): CSVRow | null {
   }
   
   // Пропускаем первую колонку (номер), используем остальные
-  const [, id, titleRu, titleEn, descriptionRu, descriptionEn, xpStr, iconName, conditionType, category] = columns;
+  const [, id, titleRu, titleEn, descriptionRu, descriptionEn, pointsRewardStr, iconName, conditionType, category] = columns;
   
-  const xp = parseInt(xpStr, 10) || 0;
+  const pointsReward = parseInt(pointsRewardStr, 10) || 0;
   
   return {
     id: id.trim(),
@@ -64,7 +64,7 @@ function parseCSVLine(line: string): CSVRow | null {
     titleEn: titleEn.trim(),
     descriptionRu: descriptionRu.trim(),
     descriptionEn: descriptionEn.trim(),
-    xp,
+    pointsReward,
     iconName: iconName.trim(),
     conditionType: conditionType.trim(),
     category: category.trim()
@@ -117,7 +117,7 @@ export function parseAchievementsCSV(csvContent: string): ParsedAchievement[] {
       titleEn: row.titleEn,
       description: row.descriptionRu,
       descriptionEn: row.descriptionEn,
-      xp: row.xp,
+      pointsReward: row.pointsReward,
       iconName: row.iconName,
       conditionType: conditionTypes,
       category: row.category,
@@ -228,7 +228,7 @@ export function generateEnBadgesJSON(achievements: ParsedAchievement[]): any {
 export function generateAchievementsMetadata(achievements: ParsedAchievement[]): any {
   return achievements.map(achievement => ({
     id: achievement.id,
-    xp: achievement.xp,
+    pointsReward: achievement.pointsReward,
     iconName: achievement.iconName,
     conditionType: achievement.conditionType,
     category: achievement.category,

@@ -29,7 +29,7 @@ describe('achievementChecker additional cases', () => {
 
   it('reading_master unlocked only when all articles read (uses mocked total)', () => {
     const ach: AchievementDefinition = {
-      id: 'reading_master', xp: 100, iconName: 'library',
+      id: 'reading_master', pointsReward: 100, iconName: 'library',
       conditionType: 'articles_read', category: 'Articles', conditionAllArticles: true
     };
     const s1 = { ...baseStats, articlesRead: 6 };
@@ -45,7 +45,7 @@ describe('achievementChecker additional cases', () => {
 
   it('streak_repeat requires both streak and repeats (min progress)', () => {
     const ach: AchievementDefinition = {
-      id: 'combo', xp: 100, iconName: 'repeat', conditionType: 'streak_repeat', category: 'Combo',
+      id: 'combo', pointsReward: 100, iconName: 'repeat', conditionType: 'streak_repeat', category: 'Combo',
       conditionValue: 5, conditionRepeatValue: 3
     };
     const partial = { ...baseStats, checkinStreak: 5, cardsRepeated: { c1: 1 } };

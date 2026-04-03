@@ -33,7 +33,7 @@ vi.mock('@/src/stores/points.store', () => ({
 
 import {
   $achievementsError,
-  $totalXP,
+  $totalPointsFromAchievements,
   $unlockedCount,
   checkAndUnlockAchievements,
 } from '@/src/stores/achievements.store'
@@ -44,11 +44,11 @@ describe('achievements.store', () => {
     mocks.loadUserStats.mockReturnValue({})
     mocks.loadUserAchievements.mockReturnValue({
       achievements: {},
-      totalXP: 0,
+      totalPointsFromAchievements: 0,
       unlockedCount: 0,
     })
     mocks.getAllAchievementsMetadata.mockReturnValue([
-      { id: 'ach_1', xp: 50, conditionType: 'streak' },
+      { id: 'ach_1', pointsReward: 50, conditionType: 'streak' },
     ])
   })
 
@@ -60,7 +60,7 @@ describe('achievements.store', () => {
     expect(unlocked).toEqual(['ach_1'])
     expect(mocks.earn).toHaveBeenCalledWith(50, expect.objectContaining({ correlationId: 'achievement_ach_1' }))
     expect($unlockedCount.get()).toBe(1)
-    expect($totalXP.get()).toBe(50)
+    expect($totalPointsFromAchievements.get()).toBe(50)
   })
 
   it('sets error and returns empty array on failure', async () => {

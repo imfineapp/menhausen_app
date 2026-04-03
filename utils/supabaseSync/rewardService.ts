@@ -2,7 +2,7 @@ import { getValidJWTToken } from './authService';
 
 export enum RewardEventType {
   DAILY_CHECKIN = 'daily_checkin',
-  ACHIEVEMENT_XP = 'achievement_xp',
+  ACHIEVEMENT_UNLOCK = 'achievement_unlock',
   CARD_COMPLETE_LEVEL_1 = 'card_complete_level_1',
   CARD_COMPLETE_LEVEL_2 = 'card_complete_level_2',
   CARD_COMPLETE_LEVEL_3 = 'card_complete_level_3',

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { useStore } from '@nanostores/react'
-import { openPage } from '@nanostores/router'
 
 import ScreenRouter from './src/ScreenRouter'
 import { BackButton } from './components/ui/back-button'
@@ -29,7 +28,6 @@ import {
   setNavigationState,
   goBack,
 } from './src/stores/navigation.store'
-import { $router } from './src/stores/router.store'
 
 import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
@@ -37,9 +35,9 @@ import { $lastSyncTime, forceSync } from './src/stores/sync.store'
 import { setAuthState } from './src/stores/auth.store'
 import { getJWTExpiry } from './utils/supabaseSync/authService'
 import { shouldPullSyncOnForeground } from './src/utils/visibilitySync'
-import { $screenParams, setEarnedAchievementIds } from './src/stores/screen-params.store'
+import { $screenParams } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
-import { getAchievementsToShow, markAchievementsAsShown } from './services/achievementDisplayService'
+import { useRewardDisplayOrchestrator } from './hooks/useRewardDisplayOrchestrator'
 
 function AppContent() {
   const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage()
@@ -313,7 +311,6 @@ function AppContent() {
     expand?: ReturnType<typeof setTimeout>
     fullscreen?: ReturnType<typeof setTimeout>
   }>({})
-  const themeHomeProcessingRef = useRef<boolean>(false)
   const isMountedRef = useRef<boolean>(true)
 
   useEffect(() => {
@@ -342,95 +339,7 @@ function AppContent() {
     }
   }, [runAchievementCheck])
 
-  useEffect(() => {
-    if (currentScreen === 'home' && earnedAchievementIds.length > 0) {
-      openPage($router, 'reward')
-    }
-  }, [currentScreen, earnedAchievementIds.length])
-
-  useEffect(() => {
-    if (currentScreen === 'home') {
-      const timeoutId = setTimeout(() => {
-        const result = getAchievementsToShow({
-          screen: 'home',
-          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
-          excludeFromStorageCheck: earnedAchievementIds,
-        })
-        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
-          markAchievementsAsShown(result.achievementsToShow, 'home')
-          setEarnedAchievementIds(result.achievementsToShow)
-          openPage($router, 'reward')
-        }
-      }, 200)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [currentScreen, earnedAchievementIds])
-
-  useEffect(() => {
-    if (currentScreen === 'profile') {
-      const timeoutId = setTimeout(() => {
-        const result = getAchievementsToShow({
-          screen: 'profile',
-          earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
-          excludeFromStorageCheck: earnedAchievementIds,
-        })
-        if (result.shouldNavigate && result.achievementsToShow.length > 0) {
-          markAchievementsAsShown(result.achievementsToShow, 'profile')
-          setEarnedAchievementIds(result.achievementsToShow)
-          openPage($router, 'reward')
-        }
-      }, 200)
-      return () => clearTimeout(timeoutId)
-    }
-  }, [currentScreen, earnedAchievementIds])
-
-  useEffect(() => {
-    if (currentScreen === 'theme-home') {
-      const previousScreen =
-        navigationHistory.length >= 2 ? navigationHistory[navigationHistory.length - 2] : null
-
-      if (earnedAchievementIds.length === 0 && previousScreen === 'reward') {
-        return
-      }
-
-      if (earnedAchievementIds.length === 0 && themeHomeProcessingRef.current) {
-        return
-      }
-
-      if (earnedAchievementIds.length === 0) {
-        themeHomeProcessingRef.current = true
-      }
-
-      if (earnedAchievementIds.length > 0) {
-        themeHomeProcessingRef.current = false
-      }
-
-      const delay = earnedAchievementIds.length > 0 ? 200 : 800
-
-      const timeoutId = setTimeout(() => {
-        try {
-          const result = getAchievementsToShow({
-            screen: 'theme-home',
-            earnedAchievementIds: earnedAchievementIds.length > 0 ? earnedAchievementIds : undefined,
-            excludeFromStorageCheck: earnedAchievementIds,
-          })
-          if (result.shouldNavigate && result.achievementsToShow.length > 0) {
-            markAchievementsAsShown(result.achievementsToShow, 'theme-home')
-            setEarnedAchievementIds(result.achievementsToShow)
-            setTimeout(() => openPage($router, 'reward'), 0)
-          } else {
-            themeHomeProcessingRef.current = false
-          }
-        } catch (error) {
-          console.error('[Achievements] Error processing achievements on theme-home:', error)
-          themeHomeProcessingRef.current = false
-        }
-      }, delay)
-
-      return () => clearTimeout(timeoutId)
-    }
-    themeHomeProcessingRef.current = false
-  }, [currentScreen, earnedAchievementIds, navigationHistory])
+  useRewardDisplayOrchestrator({ currentScreen, earnedAchievementIds, navigationHistory })
 
   useEffect(() => {
     const telegramTimeouts = telegramTimeoutRefs.current
