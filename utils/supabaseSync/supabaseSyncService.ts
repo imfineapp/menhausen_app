@@ -27,6 +27,8 @@ import { bumpTopicTestVersion } from '@/src/stores/topic-test.store';
 import { refreshAllStoresFromStorage } from '../../src/sync/storeHydration';
 import { notifyCrossTabSyncComplete } from '../../src/sync/crossTabSync';
 import { setIncrementalSyncError, setPendingSyncQueueCount } from '@/src/stores/incremental-sync.store';
+import { ALL_SYNCABLE_TYPES } from './syncableTypes';
+import { dirtyTypesFromSignatures, signaturesFromPayload } from './dirtySignatures';
 
 /**
  * Supabase Sync Service Class
@@ -62,20 +64,6 @@ export class SupabaseSyncService {
   private pendingSyncTypes = new Set<SyncDataType>();
   private batchFlushTimer: number | null = null;
   private initializationPromise: Promise<void>;
-
-  private static readonly ALL_SYNCABLE_TYPES: SyncDataType[] = [
-    'surveyResults',
-    'dailyCheckins',
-    'userStats',
-    'achievements',
-    'preferences',
-    'flowProgress',
-    'psychologicalTest',
-    'cardProgress',
-    'referralData',
-    'experimentAssignment',
-    'topicTestResults',
-  ];
 
   private parsePreferencesFromStorage(raw: string): Record<string, any> | null {
     // Try legacy/plain JSON first.
@@ -465,31 +453,18 @@ export class SupabaseSyncService {
    */
   private getAllLocalStorageData(): Record<string, unknown> {
     syncLog.debug('[SyncService] getAllLocalStorageData - Starting data collection');
-    return this.getLocalStorageDataForTypes(new Set(SupabaseSyncService.ALL_SYNCABLE_TYPES));
+    return this.getLocalStorageDataForTypes(new Set(ALL_SYNCABLE_TYPES));
   }
 
   /** Stable JSON signatures per syncable type for dirty detection after merge. */
   private snapshotSyncedPayloadSignatures(): Record<string, string> {
     const data = this.getAllLocalStorageData();
-    const sig: Record<string, string> = {};
-    for (const t of SupabaseSyncService.ALL_SYNCABLE_TYPES) {
-      const v = data[t];
-      sig[t] = v === undefined ? '__absent__' : JSON.stringify(v);
-    }
-    return sig;
+    return signaturesFromPayload(data, ALL_SYNCABLE_TYPES);
   }
 
   private computeDirtyTypesAfterMerge(before: Record<string, string>): Set<SyncDataType> {
     const after = this.getAllLocalStorageData();
-    const dirty = new Set<SyncDataType>();
-    for (const t of SupabaseSyncService.ALL_SYNCABLE_TYPES) {
-      const v = after[t];
-      const afterSig = v === undefined ? '__absent__' : JSON.stringify(v);
-      if (before[t] !== afterSig) {
-        dirty.add(t);
-      }
-    }
-    return dirty;
+    return dirtyTypesFromSignatures(before, after, ALL_SYNCABLE_TYPES);
   }
 
   private enqueueOfflineBatch(types: SyncDataType[], payload: Record<string, unknown>): void {

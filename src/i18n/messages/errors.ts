@@ -8,5 +8,8 @@ export const errorsMessages = i18n('errors', {
   contentUnavailable: "Content is unavailable",
   themeNotFound: "Theme not found",
   themeListLoadingError: "Failed to load themes",
-  loadingDataError: "Failed to load data"
+  loadingDataError: "Failed to load data",
+  syncIncrementalErrorTitle: "Couldn't sync your latest changes",
+  syncIncrementalErrorHint: "We'll retry automatically. If this keeps happening, try reloading the app.",
+  syncIncrementalErrorDismiss: "Dismiss"
 } as any)

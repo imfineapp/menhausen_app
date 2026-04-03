@@ -199,6 +199,7 @@ export const AnalyticsEvent = {
   PAYMENT_FAILED: 'payment_failed',
   PAYMENT_CANCELLED: 'payment_cancelled',
   SYNC_COMPLETE_TTI: 'sync_complete_tti',
+  INCREMENTAL_SYNC_ERROR_SHOWN: 'incremental_sync_error_shown',
   DAILY_CHECKIN_COMPLETED: 'daily_checkin_completed',
   EXPERIMENT_ASSIGNED: 'experiment_assigned',
   TEST_STARTED: 'test_started',

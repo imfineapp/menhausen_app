@@ -23,7 +23,8 @@ export function initCrossTabSyncListener(): void {
       try {
         refreshAllStoresFromStorage()
       } catch (e) {
-        console.warn('[crossTabSync] refresh failed:', e)
+        const ts = ev.data && typeof ev.data === 'object' && 'ts' in ev.data ? (ev.data as { ts?: number }).ts : undefined
+        console.warn('[crossTabSync] refresh failed:', e, ts != null ? { broadcastTs: ts } : {})
       }
     }
   }
