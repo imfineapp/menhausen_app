@@ -8,6 +8,11 @@ export const $syncStatus = atom<SyncStatus>('idle')
 export const $lastSyncTime = atom<Date | null>(null)
 export const $syncError = atom<string | null>(null)
 
+export {
+  $incrementalSyncError,
+  $pendingSyncQueueCount,
+} from '@/src/stores/incremental-sync.store'
+
 export async function initSync(): Promise<SyncResult> {
   $syncError.set(null)
   $syncStatus.set('syncing')

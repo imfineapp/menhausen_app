@@ -24,6 +24,11 @@ import { loadSyncPayloadForType } from './buildSyncPayload';
 import { applyRemoteVariantIfStronger } from '../experiment/experimentAssignment';
 import { saveTopicTestResultsMap, type TopicTestResultStored } from '../experiment/topicTestStorage';
 import { bumpTopicTestVersion } from '@/src/stores/topic-test.store';
+import { refreshAllStoresFromStorage } from '../../src/sync/storeHydration';
+import { notifyCrossTabSyncComplete } from '../../src/sync/crossTabSync';
+import { setIncrementalSyncError, setPendingSyncQueueCount } from '@/src/stores/incremental-sync.store';
+import { ALL_SYNCABLE_TYPES } from './syncableTypes';
+import { dirtyTypesFromSignatures, signaturesFromPayload } from './dirtySignatures';
 
 /**
  * Supabase Sync Service Class
@@ -32,7 +37,8 @@ import { bumpTopicTestVersion } from '@/src/stores/topic-test.store';
  */
 export class SupabaseSyncService {
   private supabase: SupabaseClient | null = null;
-  private syncInProgress = false;
+  /** Serializes initialSync/forceSync so concurrent callers wait instead of failing. */
+  private syncMutex: Promise<void> = Promise.resolve();
   private offlineQueue: SyncQueueItem[] = [];
   private fetchCache: {
     inFlight: Promise<UserDataFromAPI | null> | null;
@@ -44,6 +50,8 @@ export class SupabaseSyncService {
     timestamp: 0,
   };
   private readonly FETCH_CACHE_TTL_MS = 60_000;
+  /** Chrome keepalive requests drop bodies larger than ~64KiB. */
+  private static readonly KEEPALIVE_MAX_BODY_BYTES = 64 * 1024;
   private syncStatus: SyncStatus = {
     isOnline: navigator.onLine,
     lastSync: null,
@@ -56,20 +64,6 @@ export class SupabaseSyncService {
   private pendingSyncTypes = new Set<SyncDataType>();
   private batchFlushTimer: number | null = null;
   private initializationPromise: Promise<void>;
-
-  private static readonly ALL_SYNCABLE_TYPES: SyncDataType[] = [
-    'surveyResults',
-    'dailyCheckins',
-    'userStats',
-    'achievements',
-    'preferences',
-    'flowProgress',
-    'psychologicalTest',
-    'cardProgress',
-    'referralData',
-    'experimentAssignment',
-    'topicTestResults',
-  ];
 
   private parsePreferencesFromStorage(raw: string): Record<string, any> | null {
     // Try legacy/plain JSON first.
@@ -198,6 +192,7 @@ export class SupabaseSyncService {
           };
         });
         this.syncStatus.pendingItems = this.offlineQueue.length;
+        setPendingSyncQueueCount(this.offlineQueue.length);
       }
     } catch (error) {
       console.error('Error loading offline queue:', error);
@@ -211,6 +206,7 @@ export class SupabaseSyncService {
     try {
       localStorage.setItem('supabase_sync_queue', JSON.stringify(this.offlineQueue));
       this.syncStatus.pendingItems = this.offlineQueue.length;
+      setPendingSyncQueueCount(this.offlineQueue.length);
     } catch (error) {
       console.error('Error saving offline queue:', error);
     }
@@ -301,19 +297,16 @@ export class SupabaseSyncService {
       await this.syncToSupabase(data);
       this.syncStatus.lastSync = new Date();
       this.syncStatus.syncInProgress = false;
+      setIncrementalSyncError(null);
+      notifyCrossTabSyncComplete();
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       syncLog.error('[SyncService] batch sync error:', err);
       void captureException(err, { context: 'sync_batch_post', types: Array.from(types).join(',') });
+      setIncrementalSyncError(err.message);
 
       if (this.config.enableOfflineQueue) {
-        this.offlineQueue.push({
-          types: Array.from(types),
-          payload: data,
-          timestamp: new Date(),
-          retryCount: 0,
-        });
-        this.saveOfflineQueue();
+        this.enqueueOfflineBatch(Array.from(types), data);
       }
 
       for (const type of types) {
@@ -328,7 +321,7 @@ export class SupabaseSyncService {
   }
 
   /**
-   * Process offline queue when online
+   * Process offline queue when online (with exponential backoff between retries).
    */
   private async processOfflineQueue(): Promise<void> {
     if (!this.syncStatus.isOnline || this.offlineQueue.length === 0) {
@@ -339,11 +332,19 @@ export class SupabaseSyncService {
     this.offlineQueue = [];
 
     for (const item of itemsToProcess) {
+      const backoffMs =
+        item.retryCount > 0
+          ? Math.min(this.config.retryDelayMs * Math.pow(2, item.retryCount - 1), 30_000)
+          : 0;
+      if (backoffMs > 0) {
+        await new Promise((r) => setTimeout(r, backoffMs));
+      }
       try {
         if (!this.supabase || Object.keys(item.payload).length === 0) {
           continue;
         }
         await this.syncToSupabase(item.payload);
+        setIncrementalSyncError(null);
       } catch {
         if (item.retryCount < this.config.maxRetries) {
           this.offlineQueue.push({
@@ -378,21 +379,28 @@ export class SupabaseSyncService {
       if (Object.keys(data).length === 0) {
         return;
       }
-      void this.flushUnloadWithKeepalive(data);
+      void this.flushUnloadWithKeepalive(data, Array.from(types));
     };
     window.addEventListener('pagehide', run);
     window.addEventListener('beforeunload', run);
   }
 
-  private async flushUnloadWithKeepalive(data: Record<string, unknown>): Promise<void> {
+  private async flushUnloadWithKeepalive(
+    data: Record<string, unknown>,
+    types: SyncDataType[],
+  ): Promise<void> {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     if (!supabaseUrl) return;
     try {
+      const body = JSON.stringify({ data });
+      if (body.length > SupabaseSyncService.KEEPALIVE_MAX_BODY_BYTES) {
+        this.enqueueOfflineBatch(types, data);
+        return;
+      }
       const jwtToken = await getValidJWTToken();
       const initData = jwtToken ? null : this.getInitData();
       const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
       const url = `${supabaseUrl}/functions/v1/sync-user-data`;
-      const body = JSON.stringify({ data });
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
         apikey: anonKey,
@@ -413,7 +421,7 @@ export class SupabaseSyncService {
         keepalive: true,
       });
     } catch {
-      // ignore
+      this.enqueueOfflineBatch(types, data);
     }
   }
 
@@ -445,7 +453,31 @@ export class SupabaseSyncService {
    */
   private getAllLocalStorageData(): Record<string, unknown> {
     syncLog.debug('[SyncService] getAllLocalStorageData - Starting data collection');
-    return this.getLocalStorageDataForTypes(new Set(SupabaseSyncService.ALL_SYNCABLE_TYPES));
+    return this.getLocalStorageDataForTypes(new Set(ALL_SYNCABLE_TYPES));
+  }
+
+  /** Stable JSON signatures per syncable type for dirty detection after merge. */
+  private snapshotSyncedPayloadSignatures(): Record<string, string> {
+    const data = this.getAllLocalStorageData();
+    return signaturesFromPayload(data, ALL_SYNCABLE_TYPES);
+  }
+
+  private computeDirtyTypesAfterMerge(before: Record<string, string>): Set<SyncDataType> {
+    const after = this.getAllLocalStorageData();
+    return dirtyTypesFromSignatures(before, after, ALL_SYNCABLE_TYPES);
+  }
+
+  private enqueueOfflineBatch(types: SyncDataType[], payload: Record<string, unknown>): void {
+    if (!this.config.enableOfflineQueue || Object.keys(payload).length === 0) {
+      return;
+    }
+    this.offlineQueue.push({
+      types,
+      payload,
+      timestamp: new Date(),
+      retryCount: 0,
+    });
+    this.saveOfflineQueue();
   }
 
   /**
@@ -871,13 +903,12 @@ export class SupabaseSyncService {
     }
     } finally {
       if (typeof window !== 'undefined') {
-        void import('../../src/sync/storeHydration')
-          .then((m) => {
-            m.refreshAllStoresFromStorage();
-          })
-          .catch((err) => {
-            console.warn('[SyncService] refreshAllStoresFromStorage failed:', err);
-          });
+        try {
+          refreshAllStoresFromStorage();
+          notifyCrossTabSyncComplete();
+        } catch (err) {
+          console.warn('[SyncService] refreshAllStoresFromStorage failed:', err);
+        }
       }
     }
   }
@@ -899,21 +930,26 @@ export class SupabaseSyncService {
         errors: [],
       };
     }
-    
-    if (this.syncInProgress) {
-      console.warn('[SyncService] Sync already in progress');
-      void capture(AnalyticsEvent.SYNC_ERROR, {
-        error_message: 'Sync already in progress',
-        reason: 'sync_in_progress',
-        duration_ms: Date.now() - syncStartTime,
-      });
-      return {
-        success: false,
-        syncedTypes: [],
-        errors: [{ type: 'surveyResults', error: 'Sync already in progress' }],
-      };
-    }
 
+    const previous = this.syncMutex;
+    let release!: () => void;
+    this.syncMutex = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+
+    try {
+      this.clearFetchCache();
+      return await this.runInitialSyncImpl(syncStartTime);
+    } finally {
+      release();
+    }
+  }
+
+  /**
+   * Core initial sync (runs under mutex; fetch cache cleared by caller).
+   */
+  private async runInitialSyncImpl(syncStartTime: number): Promise<SyncResult> {
     // Wait for initialization to complete before checking if Supabase is configured
     await this.initializationPromise;
 
@@ -966,7 +1002,6 @@ export class SupabaseSyncService {
     syncLog.debug('[SyncService] Starting initial sync for user ID:', telegramUserId);
     syncLog.debug('[SyncService] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
 
-    this.syncInProgress = true;
     this.syncStatus.syncInProgress = true;
 
     try {
@@ -976,36 +1011,41 @@ export class SupabaseSyncService {
       syncLog.debug('[SyncService] Remote data check result:', remoteData ? 'User exists' : 'New user');
 
       if (remoteData) {
-        // Existing user: merge remote with local
+        // Existing user: merge remote with local, then push only types that changed
         syncLog.debug('[SyncService] Existing user detected, merging data');
         syncLog.debug('[SyncService] Remote data keys:', Object.keys(remoteData));
+        const beforeSnapshot = this.snapshotSyncedPayloadSignatures();
         this.mergeAndSave(remoteData);
-
-        // Upload merged local data to ensure consistency
-        const localData = this.getAllLocalStorageData();
-        syncLog.debug('[SyncService] Local data keys after merge:', Object.keys(localData));
+        const dirtyTypes = this.computeDirtyTypesAfterMerge(beforeSnapshot);
+        const localData = this.getLocalStorageDataForTypes(dirtyTypes);
+        syncLog.debug('[SyncService] Local data keys after merge (dirty-only):', Object.keys(localData));
         syncLog.debug('[SyncService] Uploading merged data to Supabase in background...');
-        void this.syncToSupabase(localData)
-          .then((uploadResult) => {
-            syncLog.debug('[SyncService] Background upload result:', uploadResult);
-          })
-          .catch((error) => {
-            console.warn('[SyncService] Background upload failed:', error);
-          });
+
+        if (Object.keys(localData).length > 0) {
+          void this.syncToSupabase(localData)
+            .then((uploadResult) => {
+              syncLog.debug('[SyncService] Background upload result:', uploadResult);
+              setIncrementalSyncError(null);
+            })
+            .catch((error) => {
+              console.warn('[SyncService] Background upload failed:', error);
+              const err = error instanceof Error ? error : new Error(String(error));
+              this.enqueueOfflineBatch(Array.from(dirtyTypes), localData);
+              setIncrementalSyncError(err.message);
+            });
+        }
 
         this.syncStatus.lastSync = new Date();
-        this.syncStatus.syncInProgress = false;
-        this.syncInProgress = false;
 
         void capture(AnalyticsEvent.SYNC_SUCCESS, {
           duration_ms: Date.now() - syncStartTime,
-          synced_types: [] as string[],
+          synced_types: Array.from(dirtyTypes) as string[],
           flow: 'existing_user',
         });
 
         return {
           success: true,
-          syncedTypes: [],
+          syncedTypes: Array.from(dirtyTypes),
         };
       } else {
         // New user: upload all local data
@@ -1013,9 +1053,11 @@ export class SupabaseSyncService {
         const localData = this.getAllLocalStorageData();
         syncLog.debug('[SyncService] Local data keys:', Object.keys(localData));
         syncLog.debug('[SyncService] Local data summary:', Object.keys(localData).reduce((acc, key) => {
-          acc[key] = localData[key] ? (typeof localData[key] === 'object' ? Object.keys(localData[key]).length + ' items' : 'present') : 'null';
+          acc[key] = localData[key] ? (typeof localData[key] === 'object' ? Object.keys(localData[key] as object).length + ' items' : 'present') : 'null';
           return acc;
         }, {} as Record<string, string>));
+
+        const uploadedTypes = Object.keys(localData) as SyncDataType[];
 
         // Only upload if there's data to upload
         if (Object.keys(localData).length > 0) {
@@ -1023,27 +1065,28 @@ export class SupabaseSyncService {
           void this.syncToSupabase(localData)
             .then((uploadResult) => {
               syncLog.debug('[SyncService] Background upload result:', uploadResult);
+              setIncrementalSyncError(null);
+              notifyCrossTabSyncComplete();
             })
             .catch((error) => {
               console.warn('[SyncService] Background upload failed:', error);
+              const err = error instanceof Error ? error : new Error(String(error));
+              this.enqueueOfflineBatch(uploadedTypes, localData);
+              setIncrementalSyncError(err.message);
             });
           this.syncStatus.lastSync = new Date();
-          this.syncStatus.syncInProgress = false;
-          this.syncInProgress = false;
           void capture(AnalyticsEvent.SYNC_SUCCESS, {
             duration_ms: Date.now() - syncStartTime,
-            synced_types: [] as string[],
+            synced_types: uploadedTypes as string[],
             flow: 'new_user_upload',
           });
           return {
             success: true,
-            syncedTypes: [],
+            syncedTypes: uploadedTypes,
           };
         } else {
           // No local data, just mark as synced
           this.syncStatus.lastSync = new Date();
-          this.syncStatus.syncInProgress = false;
-          this.syncInProgress = false;
           void capture(AnalyticsEvent.SYNC_SUCCESS, {
             duration_ms: Date.now() - syncStartTime,
             synced_types: [] as string[],
@@ -1057,8 +1100,6 @@ export class SupabaseSyncService {
       }
     } catch (error) {
       console.error('[SyncService] Initial sync failed:', error);
-      this.syncStatus.syncInProgress = false;
-      this.syncInProgress = false;
       const err = error instanceof Error ? error : new Error(String(error));
       void capture(AnalyticsEvent.SYNC_ERROR, {
         error_message: err.message,
@@ -1071,6 +1112,8 @@ export class SupabaseSyncService {
         syncedTypes: [],
         errors: [{ type: 'surveyResults', error: error instanceof Error ? error.message : 'Unknown error' }],
       };
+    } finally {
+      this.syncStatus.syncInProgress = false;
     }
   }
 

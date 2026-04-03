@@ -2,6 +2,8 @@
  * Сервис для управления статистикой пользователя
  */
 
+import { bumpUserStatsSyncVersion } from '@/src/stores/sync-triggers.store';
+
 import { UserStats } from '../types/achievements';
 import { NON_ACHIEVEMENT_ARTICLE_IDS } from '../utils/articlesList';
 
@@ -59,6 +61,7 @@ export function saveUserStats(stats: UserStats): void {
       lastUpdated: new Date().toISOString()
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    bumpUserStatsSyncVersion();
   } catch (error) {
     console.error('Error saving user stats:', error);
   }

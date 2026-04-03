@@ -29,7 +29,7 @@ import {
   goBack,
 } from './src/stores/navigation.store'
 
-import { refreshFlowProgress, loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
+import { loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
 import { $lastSyncTime, forceSync } from './src/stores/sync.store'
 import { setAuthState } from './src/stores/auth.store'
@@ -38,6 +38,7 @@ import { shouldPullSyncOnForeground } from './src/utils/visibilitySync'
 import { $screenParams } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
 import { useRewardDisplayOrchestrator } from './hooks/useRewardDisplayOrchestrator'
+import { SyncIncrementalErrorBanner } from './components/SyncIncrementalErrorBanner'
 
 function AppContent() {
   const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage()
@@ -183,7 +184,6 @@ function AppContent() {
             jwtExpiresAt: getJWTExpiry(),
             lastError: null,
           })
-          refreshFlowProgress()
           try {
             const savedLanguage = localStorage.getItem('menhausen-language')
             if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'ru')) {
@@ -359,6 +359,7 @@ function AppContent() {
 
   return (
     <ContentLoadingGate>
+      <SyncIncrementalErrorBanner />
       <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
         <div className="flex-1 relative w-full h-full overflow-hidden overflow-x-hidden">
           <BackButton isHomePage={isHomePage} onBack={goBack} />

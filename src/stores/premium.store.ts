@@ -153,32 +153,29 @@ function handlePremiumActivatedEvent(event: Event) {
     purchasedAt
   })
 
-  // Attempt to refresh the verified signature a bit later, similar to previous App behavior.
+  // Refresh verified signature immediately (no artificial delay).
   if (typeof window !== 'undefined') {
-    setTimeout(() => {
-      void (async () => {
-        try {
-          // If signature is already in storage, prefer it; otherwise fetch from Supabase.
-          const existingSig = loadPremiumSignatureFromStorage()
-          if (existingSig) {
-            const verified = await getVerifiedPremiumStatus()
-            if (verified) {
-              setPremium(verified.premium, {
-                source: 'verifiedLocalStorage',
-                plan: verified.plan,
-                expiresAt: verified.expiresAt,
-                purchasedAt: verified.purchasedAt
-              })
-            }
-            return
+    void (async () => {
+      try {
+        const existingSig = loadPremiumSignatureFromStorage()
+        if (existingSig) {
+          const verified = await getVerifiedPremiumStatus()
+          if (verified) {
+            setPremium(verified.premium, {
+              source: 'verifiedLocalStorage',
+              plan: verified.plan,
+              expiresAt: verified.expiresAt,
+              purchasedAt: verified.purchasedAt
+            })
           }
-
-          await loadPremiumFromSupabase()
-        } catch {
-          // ignore and keep optimistic state
+          return
         }
-      })()
-    }, 1000)
+
+        await loadPremiumFromSupabase()
+      } catch {
+        // ignore and keep optimistic state
+      }
+    })()
   }
 }
 

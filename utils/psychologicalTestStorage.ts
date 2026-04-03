@@ -1,5 +1,7 @@
 // Утилиты для хранения результатов психологического теста
 
+import { bumpPsychologicalTestSyncVersion } from '@/src/stores/sync-triggers.store';
+
 import { 
   PsychologicalTestResults, 
   PsychologicalTestHistoryEntry,
@@ -42,6 +44,7 @@ export function saveTestResults(
     };
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+    bumpPsychologicalTestSyncVersion();
     console.log('Psychological test results saved successfully');
     return true;
   } catch (error) {
@@ -102,6 +105,7 @@ export function loadTestHistory(): PsychologicalTestHistoryEntry[] {
 export function clearTestResults(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    bumpPsychologicalTestSyncVersion();
     console.log('Psychological test results cleared');
   } catch (error) {
     console.error('Failed to clear psychological test results:', error);
