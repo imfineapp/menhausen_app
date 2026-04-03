@@ -70,10 +70,23 @@ export function capture(eventName: string, properties?: Record<string, any>): vo
     const defaultEventProps = { source: 'web' }
     const uid = getTelegramUserId()
     const variant = $experimentVariant.get()
+    const experimentProps =
+      variant
+        ? {
+            variant,
+            experiment_variant: variant,
+            experiment_key: EXPERIMENT.KEY_ONBOARDING_FLOW_V1,
+            // Same payload as identify(); avoids person.experiment_variant lag vs events (PostHog breakdowns).
+            $set: {
+              experiment_variant: variant,
+              experiment_key: EXPERIMENT.KEY_ONBOARDING_FLOW_V1,
+            },
+          }
+        : {}
     posthog.capture(eventName, {
       ...defaultEventProps,
       ...(uid ? { user_id: uid } : {}),
-      ...(variant ? { variant } : {}),
+      ...experimentProps,
       ...(properties || {}),
     })
   } catch {
