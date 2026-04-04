@@ -16,7 +16,12 @@ import { getTelegramUserId } from './utils/telegramUserUtils'
 import { processReferralCode, updateReferrerStatsFromList } from './utils/referralUtils'
 import { hasTestBeenCompleted } from './utils/psychologicalTestStorage'
 import { AppScreen } from './types/userState'
-import { assignVariant } from '@/utils/experiment/experimentAssignment'
+import {
+  assignVariant,
+  experimentAssignedInsertId,
+  hasExperimentAssignedAnalyticsBeenSent,
+  markExperimentAssignedAnalyticsSent,
+} from '@/utils/experiment/experimentAssignment'
 import { EXPERIMENT } from '@/utils/experiment/experimentKeys'
 import { $experimentVariant } from '@/src/stores/experiment.store'
 import type { ExperimentVariantType } from '@/src/stores/experiment.store'
@@ -213,12 +218,12 @@ function AppContent() {
         $experimentVariant.set(v)
         // Identify before experiment_assigned so person.experiment_variant is set for person-level breakdowns
         void identify(userId)
-        const w = typeof window !== 'undefined' ? (window as any) : undefined
-        if (w && !w.__EXPERIMENT_ASSIGNED_SENT) {
-          w.__EXPERIMENT_ASSIGNED_SENT = true
+        if (!hasExperimentAssignedAnalyticsBeenSent(EXPERIMENT.KEY_ONBOARDING_FLOW_V1, userId)) {
+          markExperimentAssignedAnalyticsSent(EXPERIMENT.KEY_ONBOARDING_FLOW_V1, userId)
           void capture(AnalyticsEvent.EXPERIMENT_ASSIGNED, {
             experiment_key: EXPERIMENT.KEY_ONBOARDING_FLOW_V1,
             variant: v,
+            $insert_id: experimentAssignedInsertId(EXPERIMENT.KEY_ONBOARDING_FLOW_V1, userId),
           })
         }
         try {
