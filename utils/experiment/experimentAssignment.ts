@@ -30,6 +30,50 @@ export function readVariantFromStorage(): ExperimentVariantType | null {
 
 const SYNC_PAYLOAD_KEY = 'experiment-assignment-sync'
 
+/** Persists across reloads; key includes user + experiment so login/experiment changes do not collide. */
+const ANALYTICS_ASSIGNED_SENT_PREFIX = 'menhausen-exp-assigned-analytics:'
+
+/**
+ * Stable id for PostHog deduplication of `experiment_assigned` across devices/sessions (see PostHog $insert_id).
+ */
+export function experimentAssignedInsertId(experimentKey: string, telegramUserId: string): string {
+  return `exp_assigned:${experimentKey}:${telegramUserId}`
+}
+
+export function hasExperimentAssignedAnalyticsBeenSent(experimentKey: string, telegramUserId: string): boolean {
+  if (typeof localStorage === 'undefined') return false
+  try {
+    return localStorage.getItem(`${ANALYTICS_ASSIGNED_SENT_PREFIX}${experimentKey}:${telegramUserId}`) === '1'
+  } catch {
+    return false
+  }
+}
+
+export function markExperimentAssignedAnalyticsSent(experimentKey: string, telegramUserId: string): void {
+  try {
+    localStorage.setItem(`${ANALYTICS_ASSIGNED_SENT_PREFIX}${experimentKey}:${telegramUserId}`, '1')
+  } catch {
+    // ignore
+  }
+}
+
+/** Call on logout / delete account so a new user on the same browser can send analytics again. */
+export function clearExperimentAssignedAnalyticsFlags(): void {
+  if (typeof localStorage === 'undefined') return
+  try {
+    const toRemove: string[] = []
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key && key.startsWith(ANALYTICS_ASSIGNED_SENT_PREFIX)) {
+        toRemove.push(key)
+      }
+    }
+    toRemove.forEach((k) => localStorage.removeItem(k))
+  } catch {
+    // ignore
+  }
+}
+
 export function writeVariantToStorage(variant: ExperimentVariantType): void {
   try {
     localStorage.setItem(EXPERIMENT.STORAGE_VARIANT, variant)

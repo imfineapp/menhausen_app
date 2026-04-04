@@ -10,6 +10,7 @@ import { clearJWTToken, deleteUserDataFromSupabase } from '@/utils/supabaseSync'
 import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
+import { clearExperimentAssignedAnalyticsFlags } from '@/utils/experiment/experimentAssignment'
 export function handleShowAboutApp(): void {
   openPage($router, 'about')
 }
@@ -178,6 +179,7 @@ export async function handleDeleteAccount(): Promise<{ serverDeleted: boolean }>
 
   localStorage.removeItem('experiment_variant')
   localStorage.removeItem('experiment-assignment-sync')
+  clearExperimentAssignedAnalyticsFlags()
   localStorage.removeItem('topic-test-results-by-theme')
   const topicTestPartialKeys: string[] = []
   for (let i = 0; i < localStorage.length; i++) {

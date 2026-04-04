@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeVariantFromUserId, fnv1aHash } from '@/utils/experiment/experimentAssignment'
+import {
+  clearExperimentAssignedAnalyticsFlags,
+  computeVariantFromUserId,
+  experimentAssignedInsertId,
+  fnv1aHash,
+  hasExperimentAssignedAnalyticsBeenSent,
+  markExperimentAssignedAnalyticsSent,
+} from '@/utils/experiment/experimentAssignment'
 
 describe('fnv1aHash', () => {
   it('returns deterministic output for the same input', () => {
@@ -29,5 +36,24 @@ describe('computeVariantFromUserId', () => {
     expect(counts.A).toBeGreaterThan(700)
     expect(counts.B).toBeGreaterThan(700)
     expect(counts.C).toBeGreaterThan(700)
+  })
+})
+
+describe('experiment_assigned analytics dedupe', () => {
+  it('experimentAssignedInsertId is stable per user and experiment', () => {
+    expect(experimentAssignedInsertId('onboarding_flow_v1', '42')).toBe(
+      'exp_assigned:onboarding_flow_v1:42'
+    )
+  })
+
+  it('mark/has/clear localStorage flag', () => {
+    localStorage.clear()
+    const key = 'onboarding_flow_v1'
+    const uid = '99'
+    expect(hasExperimentAssignedAnalyticsBeenSent(key, uid)).toBe(false)
+    markExperimentAssignedAnalyticsSent(key, uid)
+    expect(hasExperimentAssignedAnalyticsBeenSent(key, uid)).toBe(true)
+    clearExperimentAssignedAnalyticsFlags()
+    expect(hasExperimentAssignedAnalyticsBeenSent(key, uid)).toBe(false)
   })
 })

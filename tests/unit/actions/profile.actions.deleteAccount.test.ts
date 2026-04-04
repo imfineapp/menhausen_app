@@ -69,6 +69,7 @@ function seedDeleteAccountData(): void {
 
   localStorage.setItem('experiment_variant', 'A')
   localStorage.setItem('experiment-assignment-sync', '{}')
+  localStorage.setItem('menhausen-exp-assigned-analytics:onboarding_flow_v1:12345', '1')
   localStorage.setItem('topic-test-results-by-theme', '{}')
   localStorage.setItem('topic-test-partial-theme1', '{}')
   localStorage.setItem('topic-test-partial-theme2', '{}')
@@ -98,6 +99,7 @@ describe('handleDeleteAccount storage cleanup', () => {
     await handleDeleteAccount()
     expect(localStorage.getItem('experiment_variant')).toBeNull()
     expect(localStorage.getItem('experiment-assignment-sync')).toBeNull()
+    expect(localStorage.getItem('menhausen-exp-assigned-analytics:onboarding_flow_v1:12345')).toBeNull()
     expect(localStorage.getItem('topic-test-results-by-theme')).toBeNull()
     expect(localStorage.getItem('topic-test-partial-theme1')).toBeNull()
     expect(localStorage.getItem('topic-test-partial-theme2')).toBeNull()
