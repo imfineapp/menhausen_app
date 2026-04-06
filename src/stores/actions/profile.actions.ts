@@ -11,6 +11,7 @@ import { setAuthState } from '@/src/stores/auth.store'
 import { resetUserStats } from '@/services/userStatsService'
 import { clearTestResults } from '@/utils/psychologicalTestStorage'
 import { clearExperimentAssignedAnalyticsFlags } from '@/utils/experiment/experimentAssignment'
+import { getTechniqueRouteName } from '@/src/domain/mentalTechniquesNavigation.domain'
 export function handleShowAboutApp(): void {
   openPage($router, 'about')
 }
@@ -109,6 +110,15 @@ export function handleBackToProfileFromUnderConstruction(): void {
 
 export function handleBackFromMentalTechnique(): void {
   openPage($router, 'home')
+}
+
+export function handleOpenMentalTechnique(techniqueId: string): void {
+  const route = getTechniqueRouteName(techniqueId)
+  if (!route) {
+    console.warn('[mental-techniques] Unknown technique id:', techniqueId)
+    return
+  }
+  openPage($router, route)
 }
 
 export function handleGoToProfile(): void {
