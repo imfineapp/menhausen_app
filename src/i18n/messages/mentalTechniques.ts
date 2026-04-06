@@ -1,12 +1,18 @@
 import { i18n } from '../setup'
 
 export const mentalTechniquesMessages = i18n('mentalTechniques', {
+  back: "Back",
+  done: "Done",
+  continue: "Continue",
+  tryAgain: "Try again",
   techniqueNotFound: "Technique not found",
   techniqueDataError: "Technique data error",
   techniqueDataLoadFailed: "Failed to load technique data",
   techniqueCompleted: "Technique completed",
   yourResponses: "Your responses",
   aboutTechnique: "About the technique",
+  tips: "Tips",
+  phase: "Phase",
   step: "Step",
   followInstructionAbove: "Follow the instruction above",
   pause: "Pause",

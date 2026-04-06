@@ -21,6 +21,9 @@ import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
 
 const ActivityBlockNew = lazy(() => import('./ActivityBlockNew').then((m) => ({ default: m.ActivityBlockNew })));
+const MentalTechniquesBlock = lazy(() =>
+  import('./mental-techniques/MentalTechniquesBlock').then((m) => ({ default: m.MentalTechniquesBlock })),
+);
 
 // Типы для пропсов компонента
 interface HomeScreenProps {
@@ -28,6 +31,7 @@ interface HomeScreenProps {
   onGoToTheme: (themeId: string) => void; // Функция для перехода к теме
   onArticleClick?: (articleId: string) => void; // Функция для открытия статьи
   onViewAllArticles?: () => void; // Функция для просмотра всех статей
+  onOpenMentalTechnique?: (techniqueId: string) => void; // Открыть технику быстрой помощи
   userHasPremium: boolean; // Статус Premium подписки пользователя
 }
 
@@ -37,6 +41,7 @@ interface MainPageContentBlockProps {
   onGoToTheme: (themeId: string) => void;
   onArticleClick?: (articleId: string) => void;
   onViewAllArticles?: () => void;
+  onOpenMentalTechnique?: (techniqueId: string) => void;
   userHasPremium: boolean;
 }
 
@@ -291,7 +296,7 @@ function WorriesContainer({ onGoToTheme, userHasPremium }: { onGoToTheme: (theme
 /**
  * Адаптивный основной контейнер контента главной страницы
  */
-function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }:
+function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, onOpenMentalTechnique, userHasPremium }:
   MainPageContentBlockProps) {
 
   return (
@@ -312,6 +317,14 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
           onViewAll={onViewAllArticles} 
         />
       )}
+      {/* Блок быстрых техник помощи */}
+      {onOpenMentalTechnique && (
+        <div className="w-full">
+          <Suspense fallback={<div className="h-[220px] w-full rounded-xl bg-[rgba(217,217,217,0.04)]" aria-hidden="true" />}>
+            <MentalTechniquesBlock onOpenTechnique={onOpenMentalTechnique} />
+          </Suspense>
+        </div>
+      )}
       <WorriesContainer onGoToTheme={onGoToTheme} userHasPremium={userHasPremium} />
     </div>
   );
@@ -322,7 +335,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
  * Адаптивный главный компонент домашней страницы
  * Объединяет все блоки и управляет навигацией с полной поддержкой всех устройств
  */
-export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
+export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, onOpenMentalTechnique, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const home = useStore(homeMessages);
   
@@ -370,6 +383,7 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
             onGoToTheme={onGoToTheme}
             onArticleClick={onArticleClick}
             onViewAllArticles={onViewAllArticles}
+            onOpenMentalTechnique={onOpenMentalTechnique}
             userHasPremium={userHasPremium}
           />
         </div>

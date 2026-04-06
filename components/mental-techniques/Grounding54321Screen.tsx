@@ -4,12 +4,12 @@ import { useStore } from '@nanostores/react';
 // КОМПОНЕНТ: Техника заземления 5-4-3-2-1
 // ========================================================================================
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useContent } from '../ContentContext';
-import { MiniStripeLogo } from '../ProfileLayoutComponents';
-import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import { StripedProgressBar } from '../ui/StripedProgressBar';
 import { GROUNDING_54321_STEPS, getNextStepOrComplete, isGroundingStepCompleted } from '@/src/domain/grounding.domain';
+import { MentalTechniqueShell } from './MentalTechniqueShell';
+import { TechniqueControlsRow, TechniquePrimaryButton, TechniqueSecondaryButton } from './TechniqueControls';
 
 interface Grounding54321ScreenProps {
   onBack: () => void;
@@ -89,11 +89,7 @@ function InteractiveInput({
           maxLength={maxLength}
           className="w-full px-4 py-3 bg-transparent text-[#cfcfcf] placeholder-[#8a8a8a] focus:outline-none"
         />
-        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          <span className="text-[#8a8a8a] text-sm">
-            {value.length}/{maxLength}
-          </span>
-        </div>
+        {/* Счетчик символов убран из дефолта — меньше “админского” ощущения */}
       </div>
       
       <button
@@ -126,25 +122,16 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
 
   // Получаем данные техники из системы контента
   const technique = getMentalTechnique('grounding-5-4-3-2-1');
+
+  const steps = useMemo(() => technique?.steps ?? [], [technique]);
   
   if (!technique) {
     return (
-      <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-        <MiniStripeLogo />
-        <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-          <div className="text-center">
-            <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {msgs.techniqueNotFound}
-            </h1>
-            <button
-              onClick={onBack}
-              className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
-            >
-              {msgs.back}
-            </button>
-          </div>
-        </div>
-      </div>
+      <MentalTechniqueShell title={msgs.techniqueNotFound} subtitle={msgs.techniqueDataLoadFailed}>
+        <TechniqueControlsRow>
+          <TechniquePrimaryButton onClick={onBack}>{msgs.back}</TechniquePrimaryButton>
+        </TechniqueControlsRow>
+      </MentalTechniqueShell>
     );
   }
 
@@ -157,135 +144,82 @@ export function Grounding54321Screen({ onBack }: Grounding54321ScreenProps) {
     if (isCompleted) setIsCompleted(true);
   };
 
-  const currentStepData = technique.steps[currentStep];
+  const currentStepData = steps[currentStep];
 
   // Проверяем, что currentStepData существует
   if (!currentStepData) {
     return (
-      <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-        <MiniStripeLogo />
-        <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-          <div className="text-center">
-            <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {msgs.techniqueDataError}
-            </h1>
-            <p className="text-[#cfcfcf] text-lg">
-              {msgs.techniqueDataLoadFailed}
-            </p>
-          </div>
-        </div>
-      </div>
+      <MentalTechniqueShell title={msgs.techniqueDataError} subtitle={msgs.techniqueDataLoadFailed} metaChip={getLocalizedText(technique.duration)}>
+        <TechniqueControlsRow>
+          <TechniquePrimaryButton onClick={onBack}>{msgs.back}</TechniquePrimaryButton>
+        </TechniqueControlsRow>
+      </MentalTechniqueShell>
     );
   }
 
   if (isCompleted) {
     return (
-      <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-        <MiniStripeLogo />
-        
-        <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-          {/* Заголовок завершения */}
-          <div className="text-center">
-            <h1 className="typography-h1 text-[#e1ff00] mb-2">
-              {msgs.techniqueCompleted}
-            </h1>
-            <p className="typography-body text-[#cfcfcf]">
-              {msgs.grounding54321Success}
-            </p>
+      <MentalTechniqueShell
+        title={msgs.techniqueCompleted}
+        subtitle={msgs.grounding54321Success}
+        metaChip={getLocalizedText(technique.duration)}
+        accordionTitle={msgs.aboutTechnique}
+        accordionItems={technique.accordionItems.map((item) => ({
+          title: getLocalizedText(item.title),
+          content: getLocalizedText(item.content),
+        }))}
+      >
+        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
+          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
+          <div className="flex flex-col gap-3">
+            <h3 className="typography-h3 text-[#e1ff00]">{msgs.yourResponses}</h3>
+            {responses.map((response, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
+                <p className="typography-caption text-[#cfcfcf]">{response}</p>
+              </div>
+            ))}
           </div>
-
-          {/* Ваши ответы */}
-          <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-            <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-            <div className="flex flex-col gap-3">
-              <h3 className="typography-h3 text-[#e1ff00]">{msgs.yourResponses}</h3>
-              {responses.map((response, index) => (
-                <div key={index} className="flex items-start gap-3">
-                  <div className="size-2 rounded-full bg-[#e1ff00] mt-2 flex-shrink-0" />
-                  <p className="typography-caption text-[#cfcfcf]">
-                    {response}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Дополнительная информация */}
-          <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-            <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-            <div className="flex flex-col gap-4">
-              <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
-              <MentalTechniqueAccordion 
-                items={technique.accordionItems.map(item => ({
-                  title: getLocalizedText(item.title),
-                  content: getLocalizedText(item.content)
-                }))}
-              />
-            </div>
-          </div>
-
         </div>
-      </div>
+
+        <TechniqueControlsRow>
+          <TechniquePrimaryButton onClick={onBack}>{msgs.back}</TechniquePrimaryButton>
+        </TechniqueControlsRow>
+      </MentalTechniqueShell>
     );
   }
 
+  const inputPlaceholder =
+    currentStepData.placeholder ? getLocalizedText(currentStepData.placeholder) : 'Коротко опишите…';
+
   return (
-    <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-      <MiniStripeLogo />
-      
-      <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-        {/* Заголовок */}
-        <div className="text-center">
-          <h1 className="typography-h1 text-[#e1ff00] mb-2">
-            {getLocalizedText(technique.title)}
-          </h1>
-          <p className="typography-body text-[#cfcfcf]">
-            {getLocalizedText(technique.subtitle)}
-          </p>
-          <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg typography-caption">
-              {getLocalizedText(technique.duration)}
-            </span>
-          </div>
+    <MentalTechniqueShell
+      title={getLocalizedText(technique.title)}
+      subtitle={getLocalizedText(technique.subtitle)}
+      metaChip={getLocalizedText(technique.duration)}
+      accordionTitle={msgs.aboutTechnique}
+      accordionItems={technique.accordionItems.map((item) => ({
+        title: getLocalizedText(item.title),
+        content: getLocalizedText(item.content),
+      }))}
+    >
+      <GroundingVisualization currentStep={currentStep} />
+
+      <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
+        <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
+        <div className="text-center flex flex-col gap-2">
+          <h3 className="typography-h3 text-[#e1ff00]">
+            {msgs.step} {currentStep + 1} {msgs.of} {steps.length}
+          </h3>
+          <p className="typography-body text-[#cfcfcf]">{getLocalizedText(currentStepData.instruction)}</p>
         </div>
-
-        {/* Визуализация прогресса */}
-        <GroundingVisualization currentStep={currentStep} />
-
-        {/* Текущий шаг */}
-        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-          <div className="text-center">
-            <h3 className="typography-h3 text-[#e1ff00] mb-2">
-              {msgs.step} {currentStep + 1} {msgs.of} {technique.steps.length}
-            </h3>
-            <p className="typography-body text-[#cfcfcf] mb-4">
-              {getLocalizedText(currentStepData.instruction)}
-            </p>
-          </div>
-        </div>
-
-        {/* Поле ввода */}
-        <InteractiveInput
-          placeholder={currentStepData.placeholder ? getLocalizedText(currentStepData.placeholder) : ''}
-          onComplete={handleResponse}
-        />
-
-        {/* Дополнительная информация */}
-        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-          <div className="flex flex-col gap-4">
-            <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
-            <MentalTechniqueAccordion 
-              items={technique.accordionItems.map(item => ({
-                title: getLocalizedText(item.title),
-                content: getLocalizedText(item.content)
-              }))}
-            />
-          </div>
-        </div>
-
       </div>
-    </div>
+
+      <InteractiveInput placeholder={inputPlaceholder} onComplete={handleResponse} />
+
+      <TechniqueControlsRow>
+        <TechniqueSecondaryButton onClick={onBack}>{msgs.back}</TechniqueSecondaryButton>
+      </TechniqueControlsRow>
+    </MentalTechniqueShell>
   );
 }

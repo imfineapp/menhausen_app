@@ -480,12 +480,18 @@
     "close": "Закрыть"
   },
   "mentalTechniques": {
+    "back": "Назад",
+    "done": "Готово",
+    "continue": "Продолжить",
+    "tryAgain": "Попробовать снова",
     "techniqueNotFound": "Техника не найдена",
     "techniqueDataError": "Ошибка данных техники",
     "techniqueDataLoadFailed": "Не удалось загрузить данные техники",
     "techniqueCompleted": "Техника завершена",
     "yourResponses": "Ваши ответы",
     "aboutTechnique": "О технике",
+    "tips": "Подсказки",
+    "phase": "Фаза",
     "step": "Шаг",
     "followInstructionAbove": "Выполните инструкцию выше",
     "pause": "Пауза",
