@@ -31,6 +31,8 @@ export function transformToAPIFormat(type: SyncDataType, data: any): any {
       return transformCardProgress(data);
     case 'referralData':
       return transformReferralData(data);
+    case 'rapidTechniquesResults':
+      return data;
     case 'experimentAssignment':
       return data;
     case 'topicTestResults':
@@ -69,6 +71,8 @@ export function transformFromAPIFormat(type: SyncDataType, data: any): any {
       return transformCardProgressFromAPI(data);
     case 'referralData':
       return transformReferralDataFromAPI(data);
+    case 'rapidTechniquesResults':
+      return data;
     case 'experimentAssignment':
       return data;
     case 'topicTestResults':

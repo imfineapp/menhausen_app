@@ -16,6 +16,7 @@ export type SyncDataType =
   | 'psychologicalTest'
   | 'cardProgress'
   | 'referralData'
+  | 'rapidTechniquesResults'
   | 'experimentAssignment'
   | 'topicTestResults'
   | 'language'
@@ -103,6 +104,7 @@ export interface UserDataFromAPI {
   psychologicalTest?: any;
   cardProgress?: Record<string, any>;
   referralData?: any;
+  rapidTechniquesResults?: any;
   experimentAssignment?: { experimentKey: string; variant: string; assignedAt?: string };
   topicTestResults?: Record<
     string,

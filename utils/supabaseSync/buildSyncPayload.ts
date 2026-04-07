@@ -14,6 +14,7 @@ import { getTelegramUserId } from '../telegramUserUtils';
 import { syncLog } from './syncLogger';
 import { loadExperimentAssignmentSyncPayload } from '../experiment/experimentAssignment';
 import { loadTopicTestResultsMap } from '../experiment/topicTestStorage';
+import { storageReadJson } from '@/src/effects/storage.effects'
 
 export function loadSyncPayloadForType(
   type: SyncDataType,
@@ -168,6 +169,15 @@ export function loadSyncPayloadForType(
       } catch (e) {
         console.warn('Error loading referral data:', e);
         return undefined;
+      }
+
+    case 'rapidTechniquesResults':
+      try {
+        const results = storageReadJson<any>('rapid-techniques-flow-results', null as any)
+        return results ? transformToAPIFormat('rapidTechniquesResults', results) : undefined
+      } catch (e) {
+        console.warn('Error loading rapid techniques results:', e)
+        return undefined
       }
 
     case 'experimentAssignment': {
