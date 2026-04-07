@@ -19,6 +19,9 @@ import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
+import { openPage } from '@nanostores/router'
+import { $router } from '@/src/stores/router.store'
+import { rapidTechniquesFlowMessages } from '@/src/i18n/messages/rapidTechniquesFlow'
 
 const ActivityBlockNew = lazy(() => import('./ActivityBlockNew').then((m) => ({ default: m.ActivityBlockNew })));
 
@@ -325,6 +328,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
 export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const home = useStore(homeMessages);
+  const rapid = useStore(rapidTechniquesFlowMessages)
   
   // Автоматическая проверка достижений при изменении статистики
   useAchievementAutoCheck();
@@ -364,6 +368,20 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         }}
       >
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
+          <div className="max-w-[351px] mx-auto mb-6">
+            <button
+              type="button"
+              onClick={() => openPage($router, 'rapidTechniquesFlow', { step: '0' })}
+              className="w-full rounded-xl p-4 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left"
+            >
+              <div className="typography-h2 text-[#e1ff00]">
+                <h2>{rapid.homeCtaTitle}</h2>
+              </div>
+              <div className="typography-body text-[#8a8a8a] mt-2">
+                {rapid.homeCtaDescription}
+              </div>
+            </button>
+          </div>
           {/* Основной контент страницы */}
           <MainPageContentBlock
             onGoToProfile={onGoToProfile}

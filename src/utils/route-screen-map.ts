@@ -34,6 +34,7 @@ export const ROUTE_TO_SCREEN: Record<string, AppScreen> = {
   breathingSquare: 'breathing-square',
   grounding54321: 'grounding-5-4-3-2-1',
   groundingAnchor: 'grounding-anchor',
+  rapidTechniquesFlow: 'rapid-techniques-flow',
   allArticles: 'all-articles',
   article: 'article',
   badges: 'badges',

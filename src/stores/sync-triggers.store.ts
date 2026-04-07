@@ -18,3 +18,8 @@ export const $referralDataVersion = atom(0)
 export function bumpReferralDataSyncVersion(): void {
   $referralDataVersion.set($referralDataVersion.get() + 1)
 }
+
+export const $rapidTechniquesResultsVersion = atom(0)
+export function bumpRapidTechniquesResultsSyncVersion(): void {
+  $rapidTechniquesResultsVersion.set($rapidTechniquesResultsVersion.get() + 1)
+}
