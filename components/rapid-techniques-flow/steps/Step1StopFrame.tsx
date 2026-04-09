@@ -44,7 +44,7 @@ function ruPlural(n: number, one: string, few: string, many: string): string {
 }
 
 export function Step1StopFrame(props: Step1StopFrameProps) {
-  const { backLabel, nextLabel, onBack, onNext, onDoneChange, title, subtitle, progressText, initialDone } = props
+  const { backLabel, nextLabel, onBack, onNext, onDoneChange, title, subtitle: _subtitle, progressText, initialDone } = props
   const currentLocale = useStore(locale)
   const DURATION_OPTIONS = useMemo(() => [10, 30, 60] as const, [])
   const [durationSec, setDurationSec] = useState<(typeof DURATION_OPTIONS)[number]>(10)
@@ -163,7 +163,6 @@ export function Step1StopFrame(props: Step1StopFrameProps) {
     const n = state === 'running' ? remaining : durationSec
     // We intentionally display everything in seconds (10/30/60),
     // even if the picker label says "1 минута".
-    const unit = 'second'
 
     if (currentLocale === 'ru') {
       return ruPlural(n, 'секунда', 'секунды', 'секунд')
