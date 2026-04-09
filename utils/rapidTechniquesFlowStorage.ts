@@ -17,6 +17,13 @@ export type RapidTechniquesDraft = {
   brainDumpNow?: string
   brainDumpOneStep?: string
   brainDumpWait?: string
+  brainDumpNoControl?: string
+  brainDumpMode?: 'readyToWrite' | 'hardToWrite'
+  brainDumpSubStep?: 'mode' | 'dump' | 'gentle' | 'sort' | 'result'
+  brainDumpTimerSec?: number
+  brainDumpGentleState?: string
+  brainDumpGentleSource?: string
+  brainDumpGentleNote?: string
   // Step 5
   postCycleStress?: number
   startedAt: string

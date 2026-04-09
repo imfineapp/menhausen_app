@@ -97,7 +97,12 @@ export class SupabaseSyncService {
     this.config = { ...DEFAULT_SYNC_CONFIG, ...config };
     const isTestMode = (() => {
       try {
-        return (import.meta as any).env?.MODE === 'test'
+        const metaMode = (import.meta as any).env?.MODE
+        if (metaMode === 'test') return true
+        const env = (typeof process !== 'undefined' ? (process as any).env : undefined) as Record<string, any> | undefined
+        if (env?.NODE_ENV === 'test') return true
+        if (env?.VITEST === 'true' || env?.VITEST === '1') return true
+        return false
       } catch {
         return false
       }

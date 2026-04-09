@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
 
-import { Button } from '@/components/ui/button'
+import { FixedBottomCta } from '@/components/rapid-techniques-flow/ui/FixedBottomCta'
+import { FlowHeader } from '@/components/rapid-techniques-flow/ui/FlowHeader'
+import { RapidFlowShell } from '@/components/rapid-techniques-flow/ui/RapidFlowShell'
 
 export type Step6ResultsSummaryProps = {
   backLabel: string
@@ -36,14 +38,14 @@ export function Step6ResultsSummary(props: Step6ResultsSummaryProps) {
   }, [deltaPct])
 
   return (
-    <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto overflow-x-hidden safe-top safe-bottom">
-      <div className="px-4 pt-[84px] pb-10 max-w-[351px] mx-auto flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={onBack} type="button">
-            {backLabel}
-          </Button>
-          {progressText ? <div className="text-sm text-[#8a8a8a]">{progressText}</div> : <div />}
-        </div>
+    <RapidFlowShell>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden safe-top safe-bottom">
+        <div className="px-4 pt-[100px] pb-28 max-w-[351px] mx-auto flex flex-col gap-6">
+          <FlowHeader
+            backLabel={backLabel}
+            onBack={onBack}
+            right={progressText ? <div className="text-sm text-[#8a8a8a]">{progressText}</div> : undefined}
+          />
 
         <div className="flex flex-col gap-2">
           <div className="text-[10px] tracking-[0.15em] uppercase text-[#8a8a8a]">Rapid Techniques Series</div>
@@ -90,13 +92,11 @@ export function Step6ResultsSummary(props: Step6ResultsSummaryProps) {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <Button type="button" onClick={onNext}>
-            {nextLabel}
-          </Button>
         </div>
       </div>
-    </div>
+
+      <FixedBottomCta primaryLabel={nextLabel} onPrimary={onNext} />
+    </RapidFlowShell>
   )
 }
 
