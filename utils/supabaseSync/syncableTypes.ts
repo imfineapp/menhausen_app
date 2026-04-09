@@ -11,6 +11,7 @@ export const ALL_SYNCABLE_TYPES: readonly SyncDataType[] = [
   'psychologicalTest',
   'cardProgress',
   'referralData',
+  'rapidTechniquesResults',
   'experimentAssignment',
   'topicTestResults',
 ]

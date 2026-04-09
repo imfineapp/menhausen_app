@@ -227,6 +227,10 @@ export const AnalyticsEvent = {
   FIRST_CARD_COMPLETED: 'first_card_completed',
   PURCHASE_ATTEMPT: 'purchase_attempt',
   PURCHASE_COMPLETED: 'purchase_completed',
+  RAPID_FLOW_STARTED: 'rapid_flow_started',
+  RAPID_FLOW_STEP_COMPLETED: 'rapid_flow_step_completed',
+  RAPID_FLOW_COMPLETED: 'rapid_flow_completed',
+  RAPID_FLOW_DROPPED: 'rapid_flow_dropped',
 } as const
 
 export type AnalyticsEventName = (typeof AnalyticsEvent)[keyof typeof AnalyticsEvent]
