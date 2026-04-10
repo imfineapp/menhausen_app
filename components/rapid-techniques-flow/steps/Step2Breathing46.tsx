@@ -12,7 +12,14 @@ export type Step2Breathing46Props = {
   onNext: () => void
   title: string
   subtitle?: string
-  // progressText removed - no step indicator needed
+  startLabel?: string
+  repeatLabel?: string
+  phaseLabels?: {
+    inhale: string
+    exhale: string
+    done: string
+  }
+  tipText?: string
   initialCompletedCycles?: number
   onCompletedCyclesChange?: (cycles: number) => void
 }
@@ -39,6 +46,10 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
     onNext,
     title,
     subtitle,
+    startLabel = 'Start',
+    repeatLabel = 'Repeat',
+    phaseLabels = { inhale: 'Inhale', exhale: 'Exhale', done: 'Ready' },
+    tipText,
     initialCompletedCycles = 0,
     onCompletedCyclesChange,
   } = props
@@ -193,7 +204,7 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
     return { r, circumference, dashoffset }
   }, [progress])
 
-  const phaseLabel = phase === 'inhale' ? 'Вдох' : phase === 'exhale' ? 'Выдох' : 'Готово'
+  const phaseLabel = phase === 'inhale' ? phaseLabels.inhale : phase === 'exhale' ? phaseLabels.exhale : phaseLabels.done
   const bigNumber = phase === 'done' ? '' : String(secondsLeft)
 
   const resetCycles = () => {
@@ -317,7 +328,7 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
                       onClick={startCycles}
                       className="text-3xl font-semibold text-white hover:opacity-90 active:opacity-80"
                     >
-                      Начать
+                      {startLabel}
                     </button>
                   ) : (
                     <>
@@ -332,7 +343,7 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
                           onClick={resetCycles}
                           className="text-3xl font-semibold text-white hover:opacity-90 active:opacity-80"
                         >
-                          Повторить
+                          {repeatLabel}
                         </button>
                       )}
                     </>
@@ -342,18 +353,20 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
             </div>
           </div>
 
+          {tipText ? (
           <div className="mt-8 text-center max-w-[300px]">
             <div className="typography-body text-[#8a8a8a]">
-              Главное — <span className="text-white font-bold">удлинить выдох</span>. Это сигнализирует нервной системе о безопасности.
+              {tipText}
             </div>
           </div>
+        ) : null}
         </div>
 
         </div>
       </div>
 
       <FixedBottomCta
-        secondaryLabel={showBottomRepeat ? 'Повторить' : undefined}
+        secondaryLabel={showBottomRepeat ? repeatLabel : undefined}
         onSecondary={showBottomRepeat ? resetCycles : undefined}
         secondaryAnimate
         primaryLabel={nextLabel}

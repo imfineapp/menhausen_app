@@ -31,6 +31,14 @@ export function RapidTechniquesFlowScreen() {
         }}
         title={t.steps.breathing46Title}
         subtitle={t.steps.breathing46Subtitle}
+        startLabel={t.start}
+        repeatLabel={t.repeat}
+        phaseLabels={{
+          inhale: t.inhale,
+          exhale: t.exhale,
+          done: t.ready,
+        }}
+        tipText={t.tip}
         initialCompletedCycles={0}
         onCompletedCyclesChange={() => {}}
       />
