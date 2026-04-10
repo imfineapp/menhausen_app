@@ -1,6 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { lazy, Suspense, useMemo, useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Wind } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -368,20 +368,6 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         }}
       >
         <div className="px-[16px] sm:px-[20px] md:px-[21px] pt-[100px]">
-          <div className="max-w-[351px] mx-auto mb-6">
-            <button
-              type="button"
-              onClick={() => openPage($router, 'rapidTechniquesFlow', { step: '0' })}
-              className="w-full rounded-xl p-4 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left"
-            >
-              <div className="typography-h2 text-[#e1ff00]">
-                <h2>{rapid.homeCtaTitle}</h2>
-              </div>
-              <div className="typography-body text-[#8a8a8a] mt-2">
-                {rapid.homeCtaDescription}
-              </div>
-            </button>
-          </div>
           {/* Основной контент страницы */}
           <MainPageContentBlock
             onGoToProfile={onGoToProfile}
@@ -394,6 +380,31 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         
         {/* Отступ между блоками */}
         <div className="h-[40px]"></div>
+        
+        {/* Кнопка быстрого дыхания - внизу */}
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] mb-[48px] sm:mb-[54px] md:mb-[60px]">
+          <div className="max-w-[351px] mx-auto">
+            <button
+              type="button"
+              onClick={() => openPage($router, 'rapidTechniquesFlow', { step: '0' })}
+              className="w-full rounded-xl p-5 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left active:scale-[0.99]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#e1ff00] flex items-center justify-center flex-shrink-0">
+                  <Wind className="w-5 h-5 text-[#111111]" />
+                </div>
+                <div>
+                  <div className="typography-h2 text-[#e1ff00]">
+                    <h2>{rapid.homeCtaTitle}</h2>
+                  </div>
+                  <div className="typography-body text-[#8a8a8a]">
+                    {rapid.homeCtaDescription}
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
         
         {/* Блок экстренной помощи - СКРЫТ ПО ТРЕБОВАНИЮ */}
         {/* <EmergencyBlock onOpenMentalTechnique={onOpenMentalTechnique} /> */}
