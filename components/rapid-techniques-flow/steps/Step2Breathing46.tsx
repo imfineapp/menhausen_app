@@ -12,7 +12,7 @@ export type Step2Breathing46Props = {
   onNext: () => void
   title: string
   subtitle?: string
-  progressText?: string
+  // progressText removed - no step indicator needed
   initialCompletedCycles?: number
   onCompletedCyclesChange?: (cycles: number) => void
 }
@@ -39,7 +39,6 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
     onNext,
     title,
     subtitle,
-    progressText,
     initialCompletedCycles = 0,
     onCompletedCyclesChange,
   } = props
@@ -224,14 +223,16 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
               const inwardY = -Math.sin(p.angleRad) * p.travelPx
               const tangentX = -Math.sin(p.angleRad)
               const tangentY = Math.cos(p.angleRad)
+              // Inhale: particles move OUT from center to edge. Exhale: particles move IN toward center.
+              const direction = phase === 'inhale' ? -1 : 1
               return (
                 <motion.span
                   key={p.id}
                   initial={{ opacity: 0, x: 0, y: 0 }}
                   animate={{
                     opacity: [0, p.startOpacity, 0],
-                    x: inwardX + tangentX * p.driftPx,
-                    y: inwardY + tangentY * p.driftPx,
+                    x: direction * inwardX + tangentX * p.driftPx,
+                    y: direction * inwardY + tangentY * p.driftPx,
                   }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: p.durationMs / 1000, ease: 'easeOut' }}
@@ -263,7 +264,6 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
           <FlowHeader
             backLabel={backLabel}
             onBack={onBack}
-            right={progressText ? <div className="text-sm text-[#8a8a8a]">{progressText}</div> : undefined}
           />
 
           <div className="flex flex-col gap-2 text-center">

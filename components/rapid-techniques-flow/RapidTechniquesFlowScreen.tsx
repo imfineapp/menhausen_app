@@ -31,7 +31,6 @@ export function RapidTechniquesFlowScreen() {
         }}
         title={t.steps.breathing46Title}
         subtitle={t.steps.breathing46Subtitle}
-        progressText={t.stepXof7?.replace('{step}', '1') ?? 'Шаг 1'}
         initialCompletedCycles={0}
         onCompletedCyclesChange={() => {}}
       />

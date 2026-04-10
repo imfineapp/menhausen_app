@@ -3,6 +3,16 @@
  * Tests progress display, dynamic content updates, user interface interactions, and accessibility
  */
 
+import { atom } from 'nanostores';
+
+// Mock rapidTechniquesFlowMessages with proper atom interface
+vi.mock('../../src/i18n/messages/rapidTechniquesFlow', () => ({
+  rapidTechniquesFlowMessages: atom({ 
+    homeCtaTitle: 'Breathing 4-6',
+    homeCtaDescription: 'Quick calming in 1 minute',
+  }),
+}));
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { HomeScreen } from '../../components/HomeScreen';
