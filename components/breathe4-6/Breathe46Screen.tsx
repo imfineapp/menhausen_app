@@ -2,12 +2,12 @@ import React, { useCallback, useEffect } from 'react'
 import { useStore } from '@nanostores/react'
 import { goBack } from '@/src/stores/navigation.store'
 import { clearBackButtonOverride, setBackButtonOverride } from '@/src/stores/back-button-override.store'
-import { rapidTechniquesFlowMessages } from '@/src/i18n/messages/rapidTechniquesFlow'
-import { RapidFlowScreenTransition } from '@/components/rapid-techniques-flow/ui/RapidFlowScreenTransition'
-import { Step2Breathing46 } from '@/components/rapid-techniques-flow/steps/Step2Breathing46'
+import { breathe46Messages } from '@/src/i18n/messages/breathe46'
+import { BreatheScreenTransition } from '@/components/breathe4-6/ui/BreatheScreenTransition'
+import { Breathing46 } from '@/components/breathe4-6/steps/Breathing46'
 
-export function RapidTechniquesFlowScreen() {
-  const t = useStore(rapidTechniquesFlowMessages)
+export function Breathe46Screen() {
+  const t = useStore(breathe46Messages)
 
   const onBack = useCallback(() => {
     goBack()
@@ -21,8 +21,8 @@ export function RapidTechniquesFlowScreen() {
   }, [onBack])
 
   return (
-    <RapidFlowScreenTransition stepKey={0}>
-      <Step2Breathing46
+    <BreatheScreenTransition stepKey={0}>
+      <Breathing46
         backLabel={t.back}
         nextLabel={t.finish}
         onBack={onBack}
@@ -42,6 +42,6 @@ export function RapidTechniquesFlowScreen() {
         initialCompletedCycles={0}
         onCompletedCyclesChange={() => {}}
       />
-    </RapidFlowScreenTransition>
+    </BreatheScreenTransition>
   )
 }

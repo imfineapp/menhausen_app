@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
-import { FixedBottomCta } from '@/components/rapid-techniques-flow/ui/FixedBottomCta'
-import { FlowHeader } from '@/components/rapid-techniques-flow/ui/FlowHeader'
-import { RapidFlowShell } from '@/components/rapid-techniques-flow/ui/RapidFlowShell'
+import { FixedBottomCta } from '@/components/breathe4-6/ui/FixedBottomCta'
+import { FlowHeader } from '@/components/breathe4-6/ui/FlowHeader'
+import { BreatheShell } from '@/components/breathe4-6/ui/BreatheShell'
 
-export type Step2Breathing46Props = {
+export type Breathing46Props = {
   backLabel: string
   nextLabel: string
   onBack: () => void
@@ -38,7 +38,7 @@ type Particle = {
   driftPx: number
 }
 
-export function Step2Breathing46(props: Step2Breathing46Props) {
+export function Breathing46(props: Breathing46Props) {
   const {
     backLabel,
     nextLabel,
@@ -225,7 +225,7 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
   const showBottomRepeat = phase === 'done' || progress >= 0.92
 
   return (
-    <RapidFlowShell>
+    <BreatheShell>
       {!shouldReduceMotion ? (
         <div className="fixed inset-0 pointer-events-none z-10">
           <AnimatePresence>
@@ -373,7 +373,7 @@ export function Step2Breathing46(props: Step2Breathing46Props) {
         onPrimary={onNext}
         primaryDisabled={!canGoNext}
       />
-    </RapidFlowShell>
+    </BreatheShell>
   )
 }
 

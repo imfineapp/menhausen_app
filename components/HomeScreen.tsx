@@ -21,7 +21,7 @@ import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
 import { openPage } from '@nanostores/router'
 import { $router } from '@/src/stores/router.store'
-import { rapidTechniquesFlowMessages } from '@/src/i18n/messages/rapidTechniquesFlow'
+import { breathe46Messages } from '@/src/i18n/messages/breathe46'
 
 const ActivityBlockNew = lazy(() => import('./ActivityBlockNew').then((m) => ({ default: m.ActivityBlockNew })));
 
@@ -328,7 +328,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
 export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const home = useStore(homeMessages);
-  const rapid = useStore(rapidTechniquesFlowMessages)
+  const breathe = useStore(breathe46Messages)
   
   // Автоматическая проверка достижений при изменении статистики
   useAchievementAutoCheck();
@@ -386,7 +386,7 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
           <div className="max-w-[351px] mx-auto">
             <button
               type="button"
-              onClick={() => openPage($router, 'rapidTechniquesFlow', { step: '0' })}
+              onClick={() => openPage($router, 'breathe46')}
               className="w-full rounded-xl p-5 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left active:scale-[0.99]"
             >
               <div className="flex items-center gap-3">
@@ -395,10 +395,10 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
                 </div>
                 <div>
                   <div className="typography-h2 text-[#e1ff00]">
-                    <h2>{rapid.homeCtaTitle}</h2>
+                    <h2>{breathe.homeCtaTitle}</h2>
                   </div>
                   <div className="typography-body text-[#8a8a8a]">
-                    {rapid.homeCtaDescription}
+                    {breathe.homeCtaDescription}
                   </div>
                 </div>
               </div>

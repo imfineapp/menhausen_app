@@ -5,9 +5,9 @@
 
 import { atom } from 'nanostores';
 
-// Mock rapidTechniquesFlowMessages with proper atom interface
-vi.mock('../../src/i18n/messages/rapidTechniquesFlow', () => ({
-  rapidTechniquesFlowMessages: atom({ 
+// Mock breathe46Messages with proper atom interface
+vi.mock('../../src/i18n/messages/breathe46', () => ({
+  breathe46Messages: atom({ 
     homeCtaTitle: 'Breathing 4-6',
     homeCtaDescription: 'Quick calming in 1 minute',
   }),

@@ -3,7 +3,7 @@ import React from 'react'
 import { Light } from '@/components/Light'
 import { MiniStripeLogo } from '@/components/ProfileLayoutComponents'
 
-export function RapidFlowShell(props: { children: React.ReactNode; logoOpacity?: number }) {
+export function BreatheShell(props: { children: React.ReactNode; logoOpacity?: number }) {
   const { children, logoOpacity = 1 } = props
 
   return (

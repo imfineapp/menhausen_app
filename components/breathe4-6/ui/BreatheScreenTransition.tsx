@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 
-type RapidFlowScreenTransitionProps = {
+type BreatheScreenTransitionProps = {
   /** Must change when the visible step changes (e.g. effectiveStep). */
   stepKey: number
   children: ReactNode
@@ -13,7 +13,7 @@ type RapidFlowScreenTransitionProps = {
  * can overlap (mode="sync") for a calmer handoff than instant swaps.
  * Respects prefers-reduced-motion.
  */
-export function RapidFlowScreenTransition(props: RapidFlowScreenTransitionProps) {
+export function BreatheScreenTransition(props: BreatheScreenTransitionProps) {
   const { stepKey, children } = props
   const reduceMotion = useReducedMotion()
   const duration = reduceMotion ? 0 : 0.22

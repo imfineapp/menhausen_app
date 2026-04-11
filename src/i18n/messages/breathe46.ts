@@ -1,6 +1,6 @@
 import { i18n } from '../setup'
 
-export const rapidTechniquesFlowMessages = i18n('rapidTechniquesFlow', {
+export const breathe46Messages = i18n('breathe46', {
   homeCtaTitle: 'Breathing 4-6',
   homeCtaDescription: 'Quick calming in 1 minute',
   back: 'Back',
