@@ -95,10 +95,26 @@ export class SupabaseSyncService {
 
   constructor(config?: Partial<SyncConfig>) {
     this.config = { ...DEFAULT_SYNC_CONFIG, ...config };
-    // Initialize Supabase asynchronously and track the promise
-    this.initializationPromise = this.initializeSupabase().catch((error) => {
-      console.error('Error initializing Supabase:', error);
-    });
+    const isTestMode = (() => {
+      try {
+        const metaMode = (import.meta as any).env?.MODE
+        if (metaMode === 'test') return true
+        const env = (typeof process !== 'undefined' ? (process as any).env : undefined) as Record<string, any> | undefined
+        if (env?.NODE_ENV === 'test') return true
+        if (env?.VITEST === 'true' || env?.VITEST === '1') return true
+        return false
+      } catch {
+        return false
+      }
+    })()
+
+    // Initialize Supabase asynchronously and track the promise.
+    // In unit tests, avoid async initialization side effects; tests can stub `supabase` directly.
+    this.initializationPromise = isTestMode
+      ? Promise.resolve()
+      : this.initializeSupabase().catch((error) => {
+          console.error('Error initializing Supabase:', error);
+        });
     this.setupOnlineListeners();
     this.loadOfflineQueue();
     this.setupUnloadFlush();
@@ -853,6 +869,16 @@ export class SupabaseSyncService {
           console.warn('[SyncService] mergeAndSave - Error restoring referral list to localStorage:', error);
         }
       }
+    }
+
+    if (remoteData.rapidTechniquesResults) {
+      const merged = resolveConflict(
+        'rapidTechniquesResults',
+        (localData as any).rapidTechniquesResults,
+        remoteData.rapidTechniquesResults,
+      )
+      const localFormat = transformFromAPIFormat('rapidTechniquesResults', merged)
+      localStorage.setItem('rapid-techniques-flow-results', JSON.stringify(localFormat))
     }
 
     if (remoteData.experimentAssignment) {

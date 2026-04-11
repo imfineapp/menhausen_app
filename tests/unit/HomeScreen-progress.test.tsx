@@ -1,8 +1,17 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import { atom } from 'nanostores';
 import { HomeScreen } from '../../components/HomeScreen';
 import { ThemeCardManager } from '../../utils/ThemeCardManager';
+
+// Mock breathe46Messages
+vi.mock('../../src/i18n/messages/breathe46', () => ({
+  breathe46Messages: atom({ 
+    homeCtaTitle: 'Breathing 4-6',
+    homeCtaDescription: 'Quick calming in 1 minute',
+  }),
+}));
 
 // Mock achievement services
 vi.mock('../../services/achievementStorage', () => {

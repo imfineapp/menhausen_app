@@ -37,6 +37,7 @@ const ROUTES = {
   breathingSquare: '/techniques/breathing-square',
   grounding54321: '/techniques/grounding-54321',
   groundingAnchor: '/techniques/grounding-anchor',
+  breathe46: '/techniques/breathe-4-6',
   allArticles: '/articles',
   article: '/articles/:articleId',
   badges: '/badges',
