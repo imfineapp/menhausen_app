@@ -21,7 +21,6 @@ export type Breathing46Props = {
   }
   tipText?: string
   initialCompletedCycles?: number
-  onCompletedCyclesChange?: (cycles: number) => void
 }
 
 type Phase = 'inhale' | 'exhale' | 'done'
@@ -51,7 +50,6 @@ export function Breathing46(props: Breathing46Props) {
     phaseLabels = { inhale: 'Inhale', exhale: 'Exhale', done: 'Ready' },
     tipText,
     initialCompletedCycles = 0,
-    onCompletedCyclesChange,
   } = props
 
   const TOTAL_CYCLES = 3
@@ -66,10 +64,6 @@ export function Breathing46(props: Breathing46Props) {
   const circleRef = useRef<HTMLDivElement | null>(null)
   const spawnTimeoutRef = useRef<number | null>(null)
   const [particles, setParticles] = useState<Particle[]>([])
-
-  useEffect(() => {
-    onCompletedCyclesChange?.(completedCycles)
-  }, [completedCycles, onCompletedCyclesChange])
 
   useEffect(() => {
     if (!running) return

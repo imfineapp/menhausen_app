@@ -40,7 +40,6 @@ export function Breathe46Screen() {
         }}
         tipText={t.tip}
         initialCompletedCycles={0}
-        onCompletedCyclesChange={() => {}}
       />
     </BreatheScreenTransition>
   )
