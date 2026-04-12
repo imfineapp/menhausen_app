@@ -16,6 +16,7 @@ import {
   $userStatsVersion,
   $psychologicalTestStorageVersion,
   $referralDataVersion,
+  $rapidTechniquesResultsVersion,
 } from '@/src/stores/sync-triggers.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
 import type { SyncDataType } from '@/utils/supabaseSync/types'
@@ -49,6 +50,7 @@ export function initStoreSyncSubscriptions(): void {
   onSet($userStatsVersion, () => queueIfNeeded('userStats'))
   onSet($psychologicalTestStorageVersion, () => queueIfNeeded('psychologicalTest'))
   onSet($referralDataVersion, () => queueIfNeeded('referralData'))
+  onSet($rapidTechniquesResultsVersion, () => queueIfNeeded('rapidTechniquesResults'))
   onSet($topicTestVersion, () => queueIfNeeded('topicTestResults'))
 
   if (typeof window !== 'undefined') {

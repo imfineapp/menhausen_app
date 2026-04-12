@@ -45,6 +45,9 @@ export function resolveConflict(
     case 'referralData':
       return mergeReferralData(localData, remoteData);
 
+    case 'rapidTechniquesResults':
+      return mergeRapidTechniquesResults(localData, remoteData)
+
     case 'experimentAssignment':
       return remoteData || localData;
 
@@ -54,6 +57,36 @@ export function resolveConflict(
     default:
       // Default: remote wins
       return remoteData || localData;
+  }
+}
+
+function mergeRapidTechniquesResults(local: any, remote: any): any {
+  if (!remote) return local
+  if (!local) return remote
+
+  const localHistory = Array.isArray(local.history) ? local.history : []
+  const remoteHistory = Array.isArray(remote.history) ? remote.history : []
+
+  const byId = new Map<string, any>()
+  for (const h of localHistory) {
+    const id = h?.id ? String(h.id) : null
+    if (id) byId.set(id, h)
+  }
+  for (const h of remoteHistory) {
+    const id = h?.id ? String(h.id) : null
+    if (id) byId.set(id, h)
+  }
+
+  const mergedHistory = Array.from(byId.values()).sort(
+    (a, b) => Date.parse(String(b?.completedAt || 0)) - Date.parse(String(a?.completedAt || 0)),
+  )
+  const lastCompletedAt = remote.lastCompletedAt || local.lastCompletedAt || undefined
+
+  return {
+    ...remote,
+    ...local,
+    lastCompletedAt,
+    history: mergedHistory,
   }
 }
 

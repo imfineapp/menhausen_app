@@ -1,6 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { lazy, Suspense, useMemo, useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Wind } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -19,6 +19,9 @@ import { useAchievementAutoCheck } from '../hooks/useAchievementAutoCheck';
 import { ThemeCard } from './ThemeCard';
 import { getThemeMatchPercentage } from '../utils/themeTestMapping';
 import { sortWorries, type ThemeWorry } from '@/src/domain/homeWorriesList.domain';
+import { openPage } from '@nanostores/router'
+import { $router } from '@/src/stores/router.store'
+import { breathe46Messages } from '@/src/i18n/messages/breathe46'
 
 const ActivityBlockNew = lazy(() => import('./ActivityBlockNew').then((m) => ({ default: m.ActivityBlockNew })));
 
@@ -163,7 +166,7 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
       {/* Фон блока */}
       <div className="absolute inset-0" data-name="user_frame_info_block_background">
-        <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+<div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
           <div
             aria-hidden="true"
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
@@ -325,6 +328,7 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
 export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewAllArticles, userHasPremium }: HomeScreenProps) {
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
   const home = useStore(homeMessages);
+  const breathe = useStore(breathe46Messages)
   
   // Автоматическая проверка достижений при изменении статистики
   useAchievementAutoCheck();
@@ -374,8 +378,37 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
           />
         </div>
         
-        {/* Отступ между блоками */}
-        <div className="h-[40px]"></div>
+        {/* Секция "Прийти в себя" */}
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] mb-[48px] sm:mb-[54px] md:mb-[60px]">
+          <div className="max-w-[351px] mx-auto flex flex-col gap-4">
+            <div className="typography-h2 text-[#e1ff00]">
+              <h2>{home.resetYourself.title}</h2>
+            </div>
+            <div className="typography-body text-[#8a8a8a]">
+              {home.resetYourself.subtitle}
+            </div>
+            
+            <button
+              type="button"
+              onClick={() => openPage($router, 'breathe46')}
+              className="w-full rounded-xl p-5 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left active:scale-[0.99]"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#e1ff00] flex items-center justify-center flex-shrink-0">
+                  <Wind className="w-5 h-5 text-[#111111]" />
+                </div>
+                <div>
+                  <div className="typography-h3 text-white">
+                    <h3>{breathe.homeCtaTitle}</h3>
+                  </div>
+                  <div className="typography-body text-[#8a8a8a]">
+                    {breathe.homeCtaDescription}
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
         
         {/* Блок экстренной помощи - СКРЫТ ПО ТРЕБОВАНИЮ */}
         {/* <EmergencyBlock onOpenMentalTechnique={onOpenMentalTechnique} /> */}
