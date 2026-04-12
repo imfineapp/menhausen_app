@@ -166,16 +166,13 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
     <div className="relative rounded-xl p-4 sm:p-5 md:p-6 w-full">
       {/* Фон блока */}
       <div className="absolute inset-0" data-name="user_frame_info_block_background">
-        <div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
+<div className="absolute bg-[rgba(217,217,217,0.04)] inset-0 rounded-xl" data-name="Block">
           <div
             aria-hidden="true"
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
           />
-          </div>
         </div>
-        
-        {/* Нижний отступ для safe area */}
-        <div className="h-[48px] sm:h-[54px] md:h-[60px]"></div>
+      </div>
 
       {/* Контент блока */}
       <button
