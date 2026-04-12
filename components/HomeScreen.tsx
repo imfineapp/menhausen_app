@@ -171,8 +171,11 @@ function UserFrameInfoBlock({ onClick, userHasPremium }: { onClick: () => void; 
             aria-hidden="true"
             className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl"
           />
+          </div>
         </div>
-      </div>
+        
+        {/* Нижний отступ для safe area */}
+        <div className="h-[48px] sm:h-[54px] md:h-[60px]"></div>
 
       {/* Контент блока */}
       <button
@@ -381,9 +384,16 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
         {/* Отступ между блоками */}
         <div className="h-[40px]"></div>
         
-        {/* Кнопка быстрого дыхания - внизу */}
-        <div className="px-[16px] sm:px-[20px] md:px-[21px] mb-[48px] sm:mb-[54px] md:mb-[60px]">
-          <div className="max-w-[351px] mx-auto">
+        {/* Секция "Прийти в себя" */}
+        <div className="px-[16px] sm:px-[20px] md:px-[21px]">
+          <div className="max-w-[351px] mx-auto flex flex-col gap-4">
+            <div className="typography-h2 text-[#e1ff00]">
+              <h2>{home.resetYourself.title}</h2>
+            </div>
+            <div className="typography-body text-[#8a8a8a]">
+              {home.resetYourself.subtitle}
+            </div>
+            
             <button
               type="button"
               onClick={() => openPage($router, 'breathe46')}
@@ -394,8 +404,8 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
                   <Wind className="w-5 h-5 text-[#111111]" />
                 </div>
                 <div>
-                  <div className="typography-h2 text-[#e1ff00]">
-                    <h2>{breathe.homeCtaTitle}</h2>
+                  <div className="typography-h3 text-white">
+                    <h3>{breathe.homeCtaTitle}</h3>
                   </div>
                   <div className="typography-body text-[#8a8a8a]">
                     {breathe.homeCtaDescription}

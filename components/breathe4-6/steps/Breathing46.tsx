@@ -21,6 +21,7 @@ export type Breathing46Props = {
   }
   tipText?: string
   initialCompletedCycles?: number
+  onComplete?: () => void
 }
 
 type Phase = 'inhale' | 'exhale' | 'done'
@@ -50,6 +51,7 @@ export function Breathing46(props: Breathing46Props) {
     phaseLabels = { inhale: 'Inhale', exhale: 'Exhale', done: 'Ready' },
     tipText,
     initialCompletedCycles = 0,
+    onComplete,
   } = props
 
   const TOTAL_CYCLES = 3
@@ -97,6 +99,15 @@ export function Breathing46(props: Breathing46Props) {
     setPhase('inhale')
     setSecondsLeft(INHALE)
   }, [secondsLeft, running, phase, completedCycles])
+
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
+
+  useEffect(() => {
+    if (phase === 'done') {
+      onCompleteRef.current?.()
+    }
+  }, [phase])
 
   useEffect(() => {
     if (shouldReduceMotion) return

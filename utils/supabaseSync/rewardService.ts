@@ -8,6 +8,7 @@ export enum RewardEventType {
   CARD_COMPLETE_LEVEL_3 = 'card_complete_level_3',
   CARD_COMPLETE_LEVEL_4 = 'card_complete_level_4',
   CARD_COMPLETE_LEVEL_5 = 'card_complete_level_5',
+  BREATHING_46_COMPLETED = 'breathing_46_completed',
 }
 
 export interface GrantRewardInput {

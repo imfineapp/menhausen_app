@@ -1,24 +1,62 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useStore } from '@nanostores/react'
 import { goBack } from '@/src/stores/navigation.store'
 import { clearBackButtonOverride, setBackButtonOverride } from '@/src/stores/back-button-override.store'
 import { breathe46Messages } from '@/src/i18n/messages/breathe46'
 import { BreatheScreenTransition } from '@/components/breathe4-6/ui/BreatheScreenTransition'
 import { Breathing46 } from '@/components/breathe4-6/steps/Breathing46'
+import { capture, AnalyticsEvent } from '@/utils/analytics/posthog'
+import { grantReward, RewardEventType } from '@/utils/supabaseSync/rewardService'
 
 export function Breathe46Screen() {
   const t = useStore(breathe46Messages)
+  const [startTime] = useState(() => Date.now())
+  const [completed, setCompleted] = useState(false)
 
   const onBack = useCallback(() => {
+    if (!completed) {
+      capture(AnalyticsEvent.BREATHING_46_DROPPED, {
+        droppedAt: Math.floor((Date.now() - startTime) / 1000),
+      })
+    }
     goBack()
-  }, [])
+  }, [completed, startTime])
 
   useEffect(() => {
+    capture(AnalyticsEvent.BREATHING_46_STARTED)
     setBackButtonOverride({ isVisible: true, onBack })
     return () => {
       clearBackButtonOverride()
     }
   }, [onBack])
+
+  const handleCompleted = useCallback(async () => {
+    if (completed) return
+    setCompleted(true)
+
+    const durationSeconds = Math.floor((Date.now() - startTime) / 1000)
+    capture(AnalyticsEvent.BREATHING_46_COMPLETED, {
+      cyclesCompleted: 3,
+      durationSeconds,
+    })
+
+    try {
+      const result = await grantReward({
+        eventType: RewardEventType.BREATHING_46_COMPLETED,
+        referenceId: `breathing_${Date.now()}`,
+      })
+      if (result.granted) {
+        capture(AnalyticsEvent.BREATHING_46_EARNED_POINTS, {
+          points: result.points,
+        })
+        console.log('[Breathing46] Earned', result.points, 'points')
+      } else {
+        console.log('[Breathing46] Reward not granted:', result.reason)
+      }
+    } catch (err) {
+      console.error('[Breathing46] Reward error:', err)
+    }
+  }, [completed, startTime])
 
   return (
     <BreatheScreenTransition stepKey={0}>
@@ -40,6 +78,7 @@ export function Breathe46Screen() {
         }}
         tipText={t.tip}
         initialCompletedCycles={0}
+        onComplete={handleCompleted}
       />
     </BreatheScreenTransition>
   )
