@@ -6,7 +6,8 @@ import { breathe46Messages } from '@/src/i18n/messages/breathe46'
 import { BreatheScreenTransition } from '@/components/breathe4-6/ui/BreatheScreenTransition'
 import { Breathing46 } from '@/components/breathe4-6/steps/Breathing46'
 import { capture, AnalyticsEvent } from '@/utils/analytics/posthog'
-import { grantReward, RewardEventType } from '@/utils/supabaseSync/rewardService'
+import { earnPoints, refreshPoints } from '@/src/stores/points.store'
+import { RewardEventType } from '@/utils/supabaseSync/rewardService'
 
 export function Breathe46Screen() {
   const t = useStore(breathe46Messages)
@@ -41,18 +42,16 @@ export function Breathe46Screen() {
     })
 
     try {
-      const result = await grantReward({
+      await earnPoints(15, {
         eventType: RewardEventType.BREATHING_46_COMPLETED,
         referenceId: `breathing_${Date.now()}`,
+        note: 'Breathing 4-6 completed',
+        payload: {
+          cyclesCompleted: 3,
+          durationSeconds,
+        },
       })
-      if (result.granted) {
-        capture(AnalyticsEvent.BREATHING_46_EARNED_POINTS, {
-          points: result.points,
-        })
-        console.log('[Breathing46] Earned', result.points, 'points')
-      } else {
-        console.log('[Breathing46] Reward not granted:', result.reason)
-      }
+      refreshPoints()
     } catch (err) {
       console.error('[Breathing46] Reward error:', err)
     }

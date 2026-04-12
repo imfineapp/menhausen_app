@@ -381,11 +381,8 @@ export function HomeScreen({ onGoToProfile, onGoToTheme, onArticleClick, onViewA
           />
         </div>
         
-        {/* Отступ между блоками */}
-        <div className="h-[40px]"></div>
-        
         {/* Секция "Прийти в себя" */}
-        <div className="px-[16px] sm:px-[20px] md:px-[21px]">
+        <div className="px-[16px] sm:px-[20px] md:px-[21px] mb-[48px] sm:mb-[54px] md:mb-[60px]">
           <div className="max-w-[351px] mx-auto flex flex-col gap-4">
             <div className="typography-h2 text-[#e1ff00]">
               <h2>{home.resetYourself.title}</h2>
