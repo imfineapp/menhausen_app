@@ -6,6 +6,7 @@ import { bumpReferralDataSyncVersion } from '@/src/stores/sync-triggers.store';
 
 import { getTelegramUserId, isTelegramEnvironment } from './telegramUserUtils';
 import { loadUserStats, saveUserStats } from '../services/userStatsService';
+import { isStartParamReferralCode } from './attribution';
 
 // Ключи для localStorage
 const REFERRAL_CODE_KEY = 'menhausen_referral_code';
@@ -30,14 +31,24 @@ export function getReferralCodeFromStartParam(): string | null {
     // Метод 1: Получить из initDataUnsafe.start_param
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
     if (webAppStartParam) {
-      return webAppStartParam;
+      // Проверяем: это реферальный код (REF_*), а не UTM атрибуция
+      if (isStartParamReferralCode(webAppStartParam)) {
+        return webAppStartParam;
+      }
+      // Это UTM атрибуция - не реферальный код
+      return null;
     }
 
     // Метод 2: Получить из URL параметров
     const urlParams = new URLSearchParams(window.location.search);
-    const startParam = urlParams.get('startapp') || urlParams.get('tgWebAppStartParam');
+    const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam');
     if (startParam) {
-      return startParam;
+      // Проверяем: это реферальный код (REF_*), а не UTM атрибуция
+      if (isStartParamReferralCode(startParam)) {
+        return startParam;
+      }
+      // Это UTM атрибуция - не реферальный код
+      return null;
     }
 
     return null;

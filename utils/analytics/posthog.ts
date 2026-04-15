@@ -4,9 +4,45 @@ import type { PostHogConfig } from 'posthog-js'
 import { $experimentVariant } from '@/src/stores/experiment.store'
 import { EXPERIMENT } from '@/utils/experiment/experimentKeys'
 import { getTelegramUserId } from '@/utils/telegramUserUtils'
+import type { AttributionData } from '@/utils/attribution'
 
 /** Singleton used by PostHogProvider (`client={posthog}`) and non-React code (stores, services). */
 export { posthog }
+
+/** Module-level storage for UTM attribution data */
+let storedAttribution: AttributionData | null = null
+
+/**
+ * Сохранить UTM атрибуцию для использования в capture() и identify()
+ * @param {AttributionData | null} data - Данные атрибуции или null для очистки
+ */
+export function setAttributionData(data: AttributionData | null): void {
+  storedAttribution = data
+}
+
+/**
+ * Получить сохранённые UTM данные
+ * @returns {AttributionData | null} Сохранённые данные атрибуции
+ */
+export function getAttributionData(): AttributionData | null {
+  return storedAttribution
+}
+
+/**
+ * Сформировать UTM свойства для PostHog events
+ * @returns {Record<string, string>} Объект с utm_* полями
+ */
+function getUtmProps(): Record<string, string> {
+  if (!storedAttribution) {
+    return {}
+  }
+  return {
+    utm_source: storedAttribution.utm_source || '',
+    utm_medium: storedAttribution.utm_medium || '',
+    utm_campaign: storedAttribution.utm_campaign || '',
+    utm_referrer: storedAttribution.utm_referrer || '',
+  }
+}
 
 function getEnv(key: string): string | undefined {
   try {
@@ -83,10 +119,12 @@ export function capture(eventName: string, properties?: Record<string, any>): vo
             },
           }
         : {}
+    const utmProps = getUtmProps()
     posthog.capture(eventName, {
       ...defaultEventProps,
       ...(uid ? { user_id: uid } : {}),
       ...experimentProps,
+      ...utmProps,
       ...(properties || {}),
     })
   } catch {
@@ -140,7 +178,8 @@ export function identify(distinctId: string, properties?: Record<string, any>): 
       defaultProps.experiment_key = EXPERIMENT.KEY_ONBOARDING_FLOW_V1
     }
 
-    const mergedProps = { ...defaultProps, ...(properties || {}) }
+    const utmProps = getUtmProps()
+    const mergedProps = { ...defaultProps, ...utmProps, ...(properties || {}) }
 
     posthog.identify(distinctId, mergedProps)
   } catch {
