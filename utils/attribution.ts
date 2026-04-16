@@ -79,44 +79,41 @@ function convertToAttribution(obj: Record<string, any>): AttributionData {
 /**
  * Получить start параметр из Telegram WebApp или URL
  * @returns {string | null} Значение start параметра или null
+ * 
+ * ВАЖНО: Для direct links (?startapp=) Telegram может не передавать start_param в initDataUnsafe.
  */
 function getStartParam(): string | null {
   try {
-    console.log('[Attribution] Debug - full hash:', window.location.hash)
-
     // Метод 1: Получить из initDataUnsafe.start_param (Telegram WebApp)
+    // Работает для attachment menu, может не работать для direct links
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
-    console.log('[Attribution] Debug - initDataUnsafe.start_param:', webAppStartParam)
     if (webAppStartParam) {
       return webAppStartParam
     }
 
-    // Метод 2: Получить из hash-фрагмента (Telegram передаёт данные через #tgWebAppData=)
+    // Метод 2: Проверить хэш напрямую - там могут быть параметры
+    // Формат: #tgWebAppData=...&tgWebAppVersion=...&...
     const hash = window.location.hash
-    if (hash && hash.startsWith('#tgWebAppData=')) {
-      try {
-        const hashContent = hash.substring('#tgWebAppData='.length)
-        console.log('[Attribution] Debug - hash content (truncated):', hashContent.substring(0, 200))
-        const decoded = decodeURIComponent(hashContent)
-        console.log('[Attribution] Debug - decoded (truncated):', decoded.substring(0, 200))
-        const params = new URLSearchParams(decoded)
-        const startFromHash = params.get('start') || params.get('startapp')
-        console.log('[Attribution] Debug - start from hash:', startFromHash)
-        if (startFromHash) {
-          return startFromHash
+    if (hash && hash.startsWith('#')) {
+      // Парсим хэш вручную - разбиваем по & и =
+      const hashContent = hash.substring(1) // убираем #
+      const pairs = hashContent.split('&')
+      for (const pair of pairs) {
+        const idx = pair.indexOf('=')
+        if (idx > 0) {
+          const key = pair.substring(0, idx)
+          if (key === 'start' || key === 'startapp' || key === 'tgWebAppStartParam') {
+            return decodeURIComponent(pair.substring(idx + 1))
+          }
         }
-      } catch (e) {
-        console.warn('[Attribution] Error parsing hash:', e)
       }
     }
 
-    // Метод 3: Получить из URL параметров (Direct Link)
+    // Метод 3: Попробовать через URLSearchParams
     const urlParams = new URLSearchParams(window.location.search)
-    console.log('[Attribution] Debug - URL search:', window.location.search)
-    const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
-    console.log('[Attribution] Debug - start from URL search:', startParam)
-    if (startParam) {
-      return startParam
+    const startFromSearch = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
+    if (startFromSearch) {
+      return startFromSearch
     }
 
     return null
