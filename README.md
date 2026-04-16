@@ -1,5 +1,7 @@
 # Menhausen Telegram Mini App
 
+[![Version](https://img.shields.io/badge/version-1.2.90-blue.svg)](https://github.com/imfineapp/menhausen_app/releases)
+
 A comprehensive mental health support application built as a Telegram Mini App, featuring personalized exercises, mood tracking, and evidence-based psychological techniques.
 
 ## 🚀 Quick Start
@@ -495,6 +497,7 @@ const observer = new PerformanceObserver((list) => {
 ## 📞 Support
 
 ### Documentation
+- **Changelog**: [CHANGELOG.md](./CHANGELOG.md) - Release history and updates
 - **Design Guidelines**: `/guidelines/Guidelines.md`
 - **Technical Spec**: `/specification.md`
 - **API Documentation**: Coming with backend integration
