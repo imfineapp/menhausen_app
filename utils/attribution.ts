@@ -82,25 +82,37 @@ function convertToAttribution(obj: Record<string, any>): AttributionData {
  */
 function getStartParam(): string | null {
   try {
-    console.log('[Attribution] Debug - Telegram.WebApp exists:', !!window.Telegram?.WebApp)
-    console.log('[Attribution] Debug - initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe)
-    console.log('[Attribution] Debug - start_param:', window.Telegram?.WebApp?.initDataUnsafe?.start_param)
-    console.log('[Attribution] Debug - window.location.search:', window.location.search)
-    console.log('[Attribution] Debug - window.location.href:', window.location.href)
-
     // Метод 1: Получить из initDataUnsafe.start_param (Telegram WebApp)
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
     if (webAppStartParam) {
-      console.log('[Attribution] Debug - found in initDataUnsafe:', webAppStartParam)
       return webAppStartParam
     }
 
-    // Метод 2: Получить из URL параметров (Direct Link)
+    // Метод 2: Получить из hash-фрагмента (Telegram передаёт данные через #tgWebAppData=)
+    const hash = window.location.hash
+    if (hash && hash.startsWith('#tgWebAppData=')) {
+      try {
+        const hashParams = new URLSearchParams(hash.substring(1))
+        const tgWebAppData = hashParams.get('tgWebAppData')
+        if (tgWebAppData) {
+          // Декодируем tgWebAppData - это может содержать start_param
+          const decoded = decodeURIComponent(tgWebAppData)
+          const params = new URLSearchParams(decoded)
+          const startFromHash = params.get('start') || params.get('startapp')
+          if (startFromHash) {
+            console.log('[Attribution] Found in hash tgWebAppData:', startFromHash)
+            return startFromHash
+          }
+        }
+      } catch (e) {
+        console.warn('[Attribution] Error parsing hash:', e)
+      }
+    }
+
+    // Метод 3: Получить из URL параметров (Direct Link)
     const urlParams = new URLSearchParams(window.location.search)
-    console.log('[Attribution] Debug - URL params:', Object.fromEntries(urlParams.entries()))
     const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
     if (startParam) {
-      console.log('[Attribution] Debug - found in URL:', startParam)
       return startParam
     }
 
