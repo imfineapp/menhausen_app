@@ -14,6 +14,8 @@ import { capture, AnalyticsEvent, identify } from './src/effects/analytics.effec
 import { initScreenViewTracking } from './src/effects/screen-view.effect'
 import { getTelegramUserId } from './utils/telegramUserUtils'
 import { processReferralCode, updateReferrerStatsFromList } from './utils/referralUtils'
+import { getAttributionFromStartParam } from './utils/attribution'
+import { setAttributionData } from './utils/analytics/posthog'
 import { hasTestBeenCompleted } from './utils/psychologicalTestStorage'
 import { AppScreen } from './types/userState'
 import {
@@ -100,6 +102,10 @@ function AppContent() {
   }, [])
 
   useEffect(() => {
+    const attribution = getAttributionFromStartParam()
+    if (attribution) {
+      setAttributionData(attribution)
+    }
     processReferralCode()
     updateReferrerStatsFromList()
   }, [])
