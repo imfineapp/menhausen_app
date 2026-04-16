@@ -3,8 +3,6 @@
  * Извлекает UTM параметры из start параметра Telegram Mini App
  */
 
-import { isTelegramEnvironment } from './telegramUserUtils';
-
 export interface AttributionData {
   utm_source?: string;
   utm_medium?: string;
@@ -84,18 +82,13 @@ function convertToAttribution(obj: Record<string, any>): AttributionData {
  */
 function getStartParam(): string | null {
   try {
-    const isTg = isTelegramEnvironment()
-    if (!isTg) {
-      return null
-    }
-
-    // Метод 1: Получить из initDataUnsafe.start_param
+    // Метод 1: Получить из initDataUnsafe.start_param (Telegram WebApp)
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
     if (webAppStartParam) {
       return webAppStartParam
     }
 
-    // Метод 2: Получить из URL параметров
+    // Метод 2: Получить из URL параметров (Direct Link)
     const urlParams = new URLSearchParams(window.location.search)
     const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
     if (startParam) {
