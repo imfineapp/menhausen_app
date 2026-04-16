@@ -82,8 +82,11 @@ function convertToAttribution(obj: Record<string, any>): AttributionData {
  */
 function getStartParam(): string | null {
   try {
+    console.log('[Attribution] Debug - full hash:', window.location.hash)
+
     // Метод 1: Получить из initDataUnsafe.start_param (Telegram WebApp)
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
+    console.log('[Attribution] Debug - initDataUnsafe.start_param:', webAppStartParam)
     if (webAppStartParam) {
       return webAppStartParam
     }
@@ -92,17 +95,15 @@ function getStartParam(): string | null {
     const hash = window.location.hash
     if (hash && hash.startsWith('#tgWebAppData=')) {
       try {
-        const hashParams = new URLSearchParams(hash.substring(1))
-        const tgWebAppData = hashParams.get('tgWebAppData')
-        if (tgWebAppData) {
-          // Декодируем tgWebAppData - это может содержать start_param
-          const decoded = decodeURIComponent(tgWebAppData)
-          const params = new URLSearchParams(decoded)
-          const startFromHash = params.get('start') || params.get('startapp')
-          if (startFromHash) {
-            console.log('[Attribution] Found in hash tgWebAppData:', startFromHash)
-            return startFromHash
-          }
+        const hashContent = hash.substring('#tgWebAppData='.length)
+        console.log('[Attribution] Debug - hash content (truncated):', hashContent.substring(0, 200))
+        const decoded = decodeURIComponent(hashContent)
+        console.log('[Attribution] Debug - decoded (truncated):', decoded.substring(0, 200))
+        const params = new URLSearchParams(decoded)
+        const startFromHash = params.get('start') || params.get('startapp')
+        console.log('[Attribution] Debug - start from hash:', startFromHash)
+        if (startFromHash) {
+          return startFromHash
         }
       } catch (e) {
         console.warn('[Attribution] Error parsing hash:', e)
@@ -111,7 +112,9 @@ function getStartParam(): string | null {
 
     // Метод 3: Получить из URL параметров (Direct Link)
     const urlParams = new URLSearchParams(window.location.search)
+    console.log('[Attribution] Debug - URL search:', window.location.search)
     const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
+    console.log('[Attribution] Debug - start from URL search:', startParam)
     if (startParam) {
       return startParam
     }
