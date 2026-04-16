@@ -82,16 +82,25 @@ function convertToAttribution(obj: Record<string, any>): AttributionData {
  */
 function getStartParam(): string | null {
   try {
+    console.log('[Attribution] Debug - Telegram.WebApp exists:', !!window.Telegram?.WebApp)
+    console.log('[Attribution] Debug - initDataUnsafe:', window.Telegram?.WebApp?.initDataUnsafe)
+    console.log('[Attribution] Debug - start_param:', window.Telegram?.WebApp?.initDataUnsafe?.start_param)
+    console.log('[Attribution] Debug - window.location.search:', window.location.search)
+    console.log('[Attribution] Debug - window.location.href:', window.location.href)
+
     // Метод 1: Получить из initDataUnsafe.start_param (Telegram WebApp)
     const webAppStartParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param
     if (webAppStartParam) {
+      console.log('[Attribution] Debug - found in initDataUnsafe:', webAppStartParam)
       return webAppStartParam
     }
 
     // Метод 2: Получить из URL параметров (Direct Link)
     const urlParams = new URLSearchParams(window.location.search)
+    console.log('[Attribution] Debug - URL params:', Object.fromEntries(urlParams.entries()))
     const startParam = urlParams.get('start') || urlParams.get('startapp') || urlParams.get('tgWebAppStartParam')
     if (startParam) {
+      console.log('[Attribution] Debug - found in URL:', startParam)
       return startParam
     }
 
