@@ -1,358 +1,362 @@
 /**
  * Unit tests for DailyCheckinManager utility class
- * Tests core logic, day boundaries, data persistence, and edge cases
+ * Tests core logic, multi-check-in storage, 4h cooldown, and backward compat
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { DailyCheckinManager, DailyCheckinStatus, CheckinData } from '../../utils/DailyCheckinManager';
+import { DailyCheckinManager, DailyCheckinStatus } from '../../utils/DailyCheckinManager';
+
+function createMemoryLocalStorage() {
+  const store: Record<string, string> = {};
+  return {
+    getItem: (key: string) => (Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null),
+    setItem: (key: string, value: string) => { store[key] = value; },
+    removeItem: (key: string) => { delete store[key]; },
+    clear: () => { for (const k of Object.keys(store)) delete store[k]; },
+    key: (index: number) => Object.keys(store)[index] ?? null,
+    get length() { return Object.keys(store).length; },
+  } as Storage;
+}
 
 describe('DailyCheckinManager', () => {
-  // Mock localStorage
-  const localStorageMock = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn(),
-    length: 0,
-    key: vi.fn()
-  };
-
   beforeEach(() => {
-    // Replace localStorage entirely (global setup uses a mock with a length getter; Object.assign breaks)
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
-      writable: true,
-      configurable: true,
-    });
-    localStorageMock.getItem.mockClear();
-    localStorageMock.setItem.mockClear();
-    localStorageMock.removeItem.mockClear();
-    localStorageMock.clear.mockClear();
-    localStorageMock.length = 0;
-    localStorageMock.key.mockClear();
-    
-    // Ensure the mock is properly set up
-    vi.spyOn(Storage.prototype, 'key').mockImplementation(localStorageMock.key);
+    vi.useFakeTimers();
+    vi.stubGlobal('localStorage', createMemoryLocalStorage());
   });
 
   afterEach(() => {
-    // Clear any real localStorage data
-    localStorage.clear();
+    vi.useRealTimers();
   });
 
   describe('getCurrentDayKey', () => {
     it('should generate correct day key format (YYYY-MM-DD)', () => {
-      // Mock current date to 2024-01-15
-      vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-01-15T10:30:00Z'));
-      
       const dayKey = DailyCheckinManager.getCurrentDayKey();
       expect(dayKey).toBe('2024-01-15');
-      
-      vi.useRealTimers();
     });
 
     it('should handle different dates correctly', () => {
-      // Test with different date (using local time)
-      vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-12-31T23:30:00'));
-      
       const dayKey = DailyCheckinManager.getCurrentDayKey();
       expect(dayKey).toBe('2024-12-31');
-      
-      vi.useRealTimers();
     });
   });
 
   describe('isNewDay', () => {
     it('should return true when dates are different', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00Z'));
       const result = DailyCheckinManager.isNewDay('2024-01-14');
       expect(result).toBe(true);
     });
 
     it('should return false when dates are the same', () => {
-      // Mock current date
-      vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-01-15T10:30:00Z'));
-      
       const result = DailyCheckinManager.isNewDay('2024-01-15');
       expect(result).toBe(false);
-      
-      vi.useRealTimers();
-    });
-  });
-
-  describe('isAfterResetTime', () => {
-    it('should return true when current time is after 6 AM', () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date('2024-01-15T08:00:00Z'));
-      
-      const result = DailyCheckinManager.isAfterResetTime();
-      expect(result).toBe(true);
-      
-      vi.useRealTimers();
-    });
-
-    it('should return false when current time is before 6 AM', () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date('2024-01-15T04:00:00'));
-      
-      const result = DailyCheckinManager.isAfterResetTime();
-      expect(result).toBe(false);
-      
-      vi.useRealTimers();
-    });
-
-    it('should return true when current time is exactly 6 AM', () => {
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date('2024-01-15T06:00:00'));
-      
-      const result = DailyCheckinManager.isAfterResetTime();
-      expect(result).toBe(true);
-      
-      vi.useRealTimers();
-    });
-  });
-
-  describe('getStorageKey', () => {
-    it('should generate correct storage key with prefix', () => {
-      const key = DailyCheckinManager.getStorageKey('2024-01-15');
-      expect(key).toBe('daily_checkin_2024-01-15');
     });
   });
 
   describe('saveCheckin', () => {
     it('should save check-in data successfully', () => {
-      const checkinData = {
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4'
-      };
-
-      const result = DailyCheckinManager.saveCheckin(checkinData);
-      expect(result).toBe(true);
-      expect(localStorageMock.setItem).toHaveBeenCalled();
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      const result = DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      expect(result.success).toBe(true);
     });
 
-    it('should handle save errors gracefully', () => {
-      localStorageMock.setItem.mockImplementation(() => {
-        throw new Error('Storage error');
-      });
+    it('should return cooldown when saving within 4 hours', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      const r1 = DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      expect(r1.success).toBe(true);
 
-      const checkinData = {
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4'
-      };
+      vi.setSystemTime(new Date('2024-01-15T11:30:00'));
+      const r2 = DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      expect(r2.success).toBe(false);
+      if (!r2.success) expect(r2.reason).toBe('cooldown');
+    });
 
-      const result = DailyCheckinManager.saveCheckin(checkinData);
-      expect(result).toBe(false);
+    it('should allow save after 4 hours', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      vi.setSystemTime(new Date('2024-01-15T14:30:00'));
+      const r = DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+      expect(r.success).toBe(true);
     });
 
     it('should include all required fields in saved data', () => {
-      const checkinData = {
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4'
-      };
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
 
-      DailyCheckinManager.saveCheckin(checkinData);
-      
-      expect(localStorageMock.setItem).toHaveBeenCalled();
-      const savedData = JSON.parse(localStorageMock.setItem.mock.calls[0][1]);
-      
-      expect(savedData).toHaveProperty('id');
-      expect(savedData).toHaveProperty('date');
-      expect(savedData).toHaveProperty('timestamp');
-      expect(savedData).toHaveProperty('mood', 'happy');
-      expect(savedData).toHaveProperty('value', 4);
-      expect(savedData).toHaveProperty('color', '#4ecdc4');
-      expect(savedData).toHaveProperty('completed', true);
+      const retrieved = DailyCheckinManager.getCheckin('2024-01-15');
+      expect(retrieved).toBeTruthy();
+      expect(retrieved?.mood).toBe('happy');
+      expect(retrieved?.value).toBe(4);
+      expect(retrieved?.color).toBe('#4ecdc4');
+      expect(retrieved?.completed).toBe(true);
+      expect(retrieved?.date).toBe('2024-01-15');
+      expect(retrieved?.id).toBeTruthy();
+      expect(retrieved?.timestamp).toBeTruthy();
     });
   });
 
-  describe('getCheckin', () => {
-    it('should retrieve saved check-in data', () => {
-      const mockData: CheckinData = {
-        id: 'test-id',
-        date: '2024-01-15',
-        timestamp: Date.now(),
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4',
-        completed: true
-      };
-
-      localStorageMock.getItem.mockReturnValue(JSON.stringify(mockData));
-
-      const result = DailyCheckinManager.getCheckin('2024-01-15');
-      expect(result).toEqual(mockData);
+  describe('shouldPromptCheckin', () => {
+    it('should return true when no check-ins exist', () => {
+      expect(DailyCheckinManager.shouldPromptCheckin()).toBe(true);
     });
 
-    it('should return null when no data exists', () => {
-      localStorageMock.getItem.mockReturnValue(null);
+    it('should return false within 4 hours of last check-in', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
 
-      const result = DailyCheckinManager.getCheckin('2024-01-15');
-      expect(result).toBeNull();
+      vi.setSystemTime(new Date('2024-01-15T13:00:00'));
+      expect(DailyCheckinManager.shouldPromptCheckin()).toBe(false);
     });
 
-    it('should handle JSON parse errors gracefully', () => {
-      localStorageMock.getItem.mockReturnValue('invalid-json');
+    it('should return true after 4 hours', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
 
-      const result = DailyCheckinManager.getCheckin('2024-01-15');
-      expect(result).toBeNull();
+      vi.setSystemTime(new Date('2024-01-15T14:30:01'));
+      expect(DailyCheckinManager.shouldPromptCheckin()).toBe(true);
+    });
+  });
+
+  describe('getCheckinsForDay', () => {
+    it('should return empty array when no check-ins exist for a day', () => {
+      const result = DailyCheckinManager.getCheckinsForDay('2024-01-15');
+      expect(result).toEqual([]);
+    });
+
+    it('should return check-ins for a specific day', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      const entries = DailyCheckinManager.getCheckinsForDay('2024-01-15');
+      expect(entries).toHaveLength(1);
+      expect(entries[0].mood).toBe('happy');
+    });
+
+    it('should return multiple sessions for the same day', () => {
+      vi.setSystemTime(new Date('2024-01-15T08:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      vi.setSystemTime(new Date('2024-01-15T12:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 2, color: '#fff' });
+
+      const entries = DailyCheckinManager.getCheckinsForDay('2024-01-15');
+      expect(entries).toHaveLength(2);
+    });
+  });
+
+  describe('getAverageMoodForDay', () => {
+    it('should return null for empty days', () => {
+      expect(DailyCheckinManager.getAverageMoodForDay('2024-01-15')).toBeNull();
+    });
+
+    it('should return normalized value for single check-in', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      // value 4 + 1 = 5
+      expect(DailyCheckinManager.getAverageMoodForDay('2024-01-15')).toBe(5);
+    });
+
+    it('should compute average of multiple sessions on same day', () => {
+      vi.setSystemTime(new Date('2024-01-15T08:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' }); // normalized: 5
+
+      vi.setSystemTime(new Date('2024-01-15T12:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 2, color: '#fff' }); // normalized: 3
+
+      // average of 5 and 3 = 4
+      expect(DailyCheckinManager.getAverageMoodForDay('2024-01-15')).toBe(4);
+    });
+  });
+
+  describe('getLastCheckin', () => {
+    it('should return null when no check-ins exist', () => {
+      expect(DailyCheckinManager.getLastCheckin()).toBeNull();
+    });
+
+    it('should return the most recent check-in', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      vi.setSystemTime(new Date('2024-01-15T14:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+
+      const last = DailyCheckinManager.getLastCheckin();
+      expect(last?.mood).toBe('ok');
     });
   });
 
   describe('getCurrentDayStatus', () => {
     it('should return NOT_COMPLETED when no check-in exists', () => {
-      localStorageMock.getItem.mockReturnValue(null);
-
       const result = DailyCheckinManager.getCurrentDayStatus();
       expect(result).toBe(DailyCheckinStatus.NOT_COMPLETED);
     });
 
-    it('should return COMPLETED when check-in exists and is completed', () => {
-      const mockData: CheckinData = {
-        id: 'test-id',
-        date: '2024-01-15',
-        timestamp: Date.now(),
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4',
-        completed: true
-      };
-
-      localStorageMock.getItem.mockReturnValue(JSON.stringify(mockData));
-
-      const result = DailyCheckinManager.getCurrentDayStatus();
-      expect(result).toBe(DailyCheckinStatus.COMPLETED);
+    it('should return COMPLETED when check-in exists', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      expect(DailyCheckinManager.getCurrentDayStatus()).toBe(DailyCheckinStatus.COMPLETED);
     });
   });
 
   describe('getTotalCheckins', () => {
     it('should return 0 when no check-ins exist', () => {
-      localStorageMock.length = 0;
-
-      const result = DailyCheckinManager.getTotalCheckins();
-      expect(result).toBe(0);
+      expect(DailyCheckinManager.getTotalCheckins()).toBe(0);
     });
 
-    it('should handle storage errors gracefully', () => {
-      localStorageMock.length = 1;
-      localStorageMock.key.mockImplementation(() => {
-        throw new Error('Storage error');
-      });
+    it('should count multiple sessions', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
 
-      const result = DailyCheckinManager.getTotalCheckins();
-      expect(result).toBe(0);
+      vi.setSystemTime(new Date('2024-01-15T14:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+
+      expect(DailyCheckinManager.getTotalCheckins()).toBe(2);
     });
   });
 
   describe('getCheckinStreak', () => {
     it('should return 0 when no check-ins exist', () => {
-      localStorageMock.getItem.mockReturnValue(null);
+      expect(DailyCheckinManager.getCheckinStreak()).toBe(0);
+    });
 
-      const result = DailyCheckinManager.getCheckinStreak();
-      expect(result).toBe(0);
+    it('should count consecutive days', () => {
+      vi.setSystemTime(new Date('2024-01-14T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      expect(DailyCheckinManager.getCheckinStreak()).toBe(2);
+    });
+
+    it('should count days not sessions (multiple sessions same day = 1 streak day)', () => {
+      // Day 1: 3 sessions
+      vi.setSystemTime(new Date('2024-01-14T08:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+      vi.setSystemTime(new Date('2024-01-14T12:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      vi.setSystemTime(new Date('2024-01-14T16:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'anxious', value: 1, color: '#ff0' });
+
+      // Day 2: 2 sessions
+      vi.setSystemTime(new Date('2024-01-15T08:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      vi.setSystemTime(new Date('2024-01-15T12:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+
+      // Streak should be 2 days, not 5
+      expect(DailyCheckinManager.getCheckinStreak()).toBe(2);
+      // But total checkins should be 5
+      expect(DailyCheckinManager.getTotalCheckins()).toBe(5);
     });
   });
 
   describe('clearAllCheckins', () => {
     it('should clear all check-in data successfully', () => {
-      // Set up some mock data
-      localStorageMock.length = 0;
-      localStorageMock.key.mockReturnValue(null);
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+      expect(DailyCheckinManager.getTotalCheckins()).toBe(1);
 
-      const result = DailyCheckinManager.clearAllCheckins();
-      expect(result).toBe(true);
+      DailyCheckinManager.clearAllCheckins();
+      expect(DailyCheckinManager.getTotalCheckins()).toBe(0);
     });
   });
 
   describe('getAllCheckins', () => {
     it('should return empty array when no check-ins exist', () => {
-      localStorageMock.length = 0;
+      expect(DailyCheckinManager.getAllCheckins()).toHaveLength(0);
+    });
 
-      const result = DailyCheckinManager.getAllCheckins();
-      expect(result).toHaveLength(0);
+    it('should return all check-ins sorted by timestamp desc', () => {
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+
+      vi.setSystemTime(new Date('2024-01-15T14:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+
+      const all = DailyCheckinManager.getAllCheckins();
+      expect(all).toHaveLength(2);
+      // Newest first
+      expect(all[0].mood).toBe('ok');
+      expect(all[1].mood).toBe('happy');
     });
   });
 
   describe('Time boundary testing', () => {
-    it('should handle day transitions correctly', () => {
-      // Test at 5:59 AM (before reset)
-      vi.useFakeTimers();
-      vi.setSystemTime(new Date('2024-01-15T05:59:00'));
-      
-      expect(DailyCheckinManager.isAfterResetTime()).toBe(false);
-      
-      // Test at 6:00 AM (at reset)
-      vi.setSystemTime(new Date('2024-01-15T06:00:00'));
-      expect(DailyCheckinManager.isAfterResetTime()).toBe(true);
-      
-      // Test at 6:01 AM (after reset)
-      vi.setSystemTime(new Date('2024-01-15T06:01:00'));
-      expect(DailyCheckinManager.isAfterResetTime()).toBe(true);
-      
-      vi.useRealTimers();
-    });
-
     it('should handle midnight transitions correctly', () => {
-      // Test at 11:59 PM
-      vi.useFakeTimers();
       vi.setSystemTime(new Date('2024-01-14T23:59:00'));
-      
-      const dayKey1 = DailyCheckinManager.getCurrentDayKey();
-      expect(dayKey1).toBe('2024-01-14');
-      
-      // Test at 12:00 AM (next day)
+      expect(DailyCheckinManager.getCurrentDayKey()).toBe('2024-01-14');
+
       vi.setSystemTime(new Date('2024-01-15T00:00:00'));
-      
-      const dayKey2 = DailyCheckinManager.getCurrentDayKey();
-      expect(dayKey2).toBe('2024-01-15');
-      
-      vi.useRealTimers();
+      expect(DailyCheckinManager.getCurrentDayKey()).toBe('2024-01-15');
     });
   });
 
   describe('Data persistence testing', () => {
     it('should persist data across multiple calls', () => {
-      const checkinData = {
-        mood: 'happy',
-        value: 4,
-        color: '#4ecdc4'
-      };
+      vi.setSystemTime(new Date('2024-01-15T10:30:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
 
-      // Save check-in
-      DailyCheckinManager.saveCheckin(checkinData);
-      
-      // Mock the saved data for retrieval
-      const savedData = JSON.parse(localStorageMock.setItem.mock.calls[0][1]);
-      localStorageMock.getItem.mockReturnValue(JSON.stringify(savedData));
-
-      // Retrieve check-in
       const retrieved = DailyCheckinManager.getCheckin('2024-01-15');
       expect(retrieved).toBeTruthy();
       expect(retrieved?.mood).toBe('happy');
     });
+  });
 
-    it('should handle concurrent access gracefully', () => {
-      const checkinData = {
+  describe('Backward-compat migration', () => {
+    it('should migrate legacy key to session key on read', () => {
+      // Simulate legacy key format (no timestamp suffix)
+      const legacyData = JSON.stringify({
+        id: 'checkin_legacy_2024-01-15',
+        date: '2024-01-15',
+        timestamp: new Date('2024-01-15T10:00:00').getTime(),
         mood: 'happy',
         value: 4,
-        color: '#4ecdc4'
-      };
+        color: '#4ecdc4',
+        completed: true,
+      });
+      localStorage.setItem('daily_checkin_2024-01-15', legacyData);
 
-      // Reset localStorage mock to ensure clean state
-      localStorageMock.setItem.mockClear();
-      localStorageMock.setItem.mockReturnValue(undefined);
+      // Call getCheckinsForDay — should migrate the legacy key
+      const entries = DailyCheckinManager.getCheckinsForDay('2024-01-15');
+      expect(entries).toHaveLength(1);
+      expect(entries[0].mood).toBe('happy');
+      expect(entries[0].value).toBe(4);
 
-      // Simulate concurrent saves
-      const result1 = DailyCheckinManager.saveCheckin(checkinData);
-      const result2 = DailyCheckinManager.saveCheckin(checkinData);
+      // Legacy key should be removed
+      expect(localStorage.getItem('daily_checkin_2024-01-15')).toBeNull();
 
-      expect(result1).toBe(true);
-      expect(result2).toBe(true);
+      // New session key should exist
+      const keys = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
+        .filter((key): key is string => key !== null)
+        .filter((k) => k.startsWith('daily_checkin_2024-01-15_'));
+      expect(keys).toHaveLength(1);
+    });
+
+    it('should read both legacy and new session keys for same day', () => {
+      // Create legacy key
+      const legacyData = JSON.stringify({
+        id: 'checkin_legacy_2024-01-15',
+        date: '2024-01-15',
+        timestamp: new Date('2024-01-15T10:00:00').getTime(),
+        mood: 'happy',
+        value: 4,
+        color: '#4ecdc4',
+        completed: true,
+      });
+      localStorage.setItem('daily_checkin_2024-01-15', legacyData);
+
+      // Create new session key
+      vi.setSystemTime(new Date('2024-01-15T14:00:00'));
+      DailyCheckinManager.saveCheckin({ mood: 'ok', value: 2, color: '#fff' });
+
+      const entries = DailyCheckinManager.getCheckinsForDay('2024-01-15');
+      expect(entries).toHaveLength(2);
     });
   });
 });
+

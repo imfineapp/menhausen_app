@@ -42,9 +42,12 @@ export interface CheckinHistory {
 export interface DailyCheckinManagerInterface {
   getCurrentDayKey(): string;
   isNewDay(lastCheckinDate: string): boolean;
-  isAfterResetTime(): boolean;
-  saveCheckin(checkinData: CheckinFormData): boolean;
+  saveCheckin(checkinData: CheckinFormData): { success: false; reason: 'cooldown' } | { success: true; data: CheckinData };
   getCheckin(dateKey: string): CheckinData | null;
+  getCheckinsForDay(dateKey: string): CheckinData[];
+  getLastCheckin(): CheckinData | null;
+  shouldPromptCheckin(): boolean;
+  getAverageMoodForDay(dateKey: string): number | null;
   getCurrentDayStatus(): DailyCheckinStatus;
   getTotalCheckins(): number;
   getCheckinStreak(): number;

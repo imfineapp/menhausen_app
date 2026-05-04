@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { AreaChart, Area, XAxis, YAxis } from 'recharts';
+import { AreaChart, Area, Line, XAxis, YAxis } from 'recharts';
 import { ChartContainer } from './ui/chart';
 import { profileMessages } from '@/src/i18n/messages/profile';
 import { commonMessages } from '@/src/i18n/messages/common';
@@ -83,20 +83,35 @@ export function MentalLevelBlock() {
                   tickLine={{ stroke: '#212121' }}
                 />
                 <YAxis 
-                  domain={[1, 5]}
-                  ticks={[1, 2, 3, 4, 5]}
+                  domain={[0, 5]}
+                  ticks={[0, 1, 2, 3, 4, 5]}
                   tick={{ fill: '#8a8a8a', fontSize: 12 }}
                   axisLine={{ stroke: '#212121' }}
                   tickLine={{ stroke: '#212121' }}
                   width={30}
                   orientation="left"
                 />
+                {/* Solid area — fills only on days with check-in data */}
                 <Area
                   type="monotone"
                   dataKey="value"
                   stroke="#e1ff00"
+                  strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorValue)"
+                  connectNulls={false}
+                />
+                {/* Dotted context line — bridges gaps across empty days */}
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#e1ff00"
+                  strokeWidth={1.5}
+                  strokeDasharray="4 4"
+                  opacity={0.4}
+                  connectNulls={true}
+                  dot={false}
+                  activeDot={false}
                 />
               </AreaChart>
             </ChartContainer>

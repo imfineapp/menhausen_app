@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 const mockCapture = vi.hoisted(() => vi.fn());
 
@@ -39,13 +39,18 @@ describe('DailyCheckinManager PostHog', () => {
   beforeEach(() => {
     mockCapture.mockClear();
     vi.stubGlobal('localStorage', createMemoryLocalStorage());
+    vi.useFakeTimers();
   });
 
-  it('emits daily_checkin_completed once when saving twice the same day', () => {
-    vi.useFakeTimers();
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('emits daily_checkin_completed once per session (cooldown blocks second)', () => {
     vi.setSystemTime(new Date('2026-03-28T12:00:00'));
 
     DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+    // Second save within 4h — blocked by cooldown, no capture
     DailyCheckinManager.saveCheckin({ mood: 'neutral', value: 2, color: '#ffd93d' });
 
     expect(mockCapture).toHaveBeenCalledTimes(1);
@@ -58,13 +63,28 @@ describe('DailyCheckinManager PostHog', () => {
         checkin_streak: expect.any(Number),
       }),
     );
+  });
 
-    vi.useRealTimers();
+  it('emits again after 4h cooldown', () => {
+    vi.setSystemTime(new Date('2026-03-28T12:00:00'));
+    DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
+    expect(mockCapture).toHaveBeenCalledTimes(1);
+
+    // Advance 4 hours
+    vi.setSystemTime(new Date('2026-03-28T16:00:00'));
+    DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
+    expect(mockCapture).toHaveBeenCalledTimes(2);
+    expect(mockCapture.mock.calls[1][0]).toBe('daily_checkin_completed');
+    expect(mockCapture.mock.calls[1][1]).toEqual(
+      expect.objectContaining({
+        date_key: '2026-03-28',
+        mood: 'ok',
+        mood_value: 3,
+      }),
+    );
   });
 
   it('emits again on a new calendar day', () => {
-    vi.useFakeTimers();
-
     vi.setSystemTime(new Date('2026-03-28T12:00:00'));
     DailyCheckinManager.saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' });
     expect(mockCapture).toHaveBeenCalledTimes(1);
@@ -72,15 +92,5 @@ describe('DailyCheckinManager PostHog', () => {
     vi.setSystemTime(new Date('2026-03-29T12:00:00'));
     DailyCheckinManager.saveCheckin({ mood: 'ok', value: 3, color: '#fff' });
     expect(mockCapture).toHaveBeenCalledTimes(2);
-    expect(mockCapture.mock.calls[1][0]).toBe('daily_checkin_completed');
-    expect(mockCapture.mock.calls[1][1]).toEqual(
-      expect.objectContaining({
-        date_key: '2026-03-29',
-        mood: 'ok',
-        mood_value: 3,
-      }),
-    );
-
-    vi.useRealTimers();
   });
 });

@@ -39,12 +39,12 @@ export function refreshCheckin() {
   $checkinRefreshNonce.set(++refreshNonceCounter)
 }
 
-export function saveCheckin(checkinData: Omit<CheckinData, 'id' | 'date' | 'timestamp' | 'completed'>) {
-  const ok = DailyCheckinManager.saveCheckin(checkinData)
-  if (ok) {
+export function saveCheckin(checkinData: Omit<CheckinData, 'id' | 'date' | 'timestamp' | 'completed'>): boolean {
+  const result = DailyCheckinManager.saveCheckin(checkinData)
+  if (result.success) {
     refreshCheckin()
   }
-  return ok
+  return result.success
 }
 
 onMount($todayCheckin, () => {

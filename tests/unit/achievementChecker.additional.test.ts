@@ -11,6 +11,7 @@ const baseStats: UserStats = {
   checkins: 0,
   checkinStreak: 0,
   lastCheckinDate: null,
+  lastCheckinTimestamp: null,
   cardsOpened: {},
   topicsCompleted: [],
   cardsRepeated: {},
