@@ -2,6 +2,9 @@ import React, { Suspense } from 'react'
 import { LoadingScreen } from '@/components/LoadingScreen'
 const BadgesScreen = React.lazy(() => import('@/components/BadgesScreen').then((m) => ({ default: m.BadgesScreen })))
 import { CheckInScreen } from '@/components/CheckInScreen'
+const AudioPlayerScreen = React.lazy(() =>
+  import('@/components/AudioPlayerScreen').then((m) => ({ default: m.AudioPlayerScreen })),
+)
 const Breathe46Screen = React.lazy(() =>
   import('@/components/breathe4-6/Breathe46Screen').then((m) => ({ default: m.Breathe46Screen })),
 )
@@ -29,6 +32,8 @@ export function renderMiscRoutes(ctx: RouteContext): React.ReactNode | null {
   switch (currentScreen) {
     case 'checkin':
       return wrapScreen(<CheckInScreen onSubmit={onCheckInSubmit} onBack={handlers.handleBackToHome} />)
+    case 'audio-player':
+      return wrapScreen(withSuspense(<AudioPlayerScreen />))
     case 'breathe-4-6':
       return wrapScreen(withSuspense(<Breathe46Screen />))
     case 'breathing-4-7-8':

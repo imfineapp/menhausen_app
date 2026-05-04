@@ -10,6 +10,7 @@ export const ROUTE_TO_SCREEN: Record<string, AppScreen> = {
   topicTestResults: 'topic-test-results',
   home: 'home',
   checkin: 'checkin',
+  audioPlayer: 'audio-player',
   themeWelcome: 'theme-welcome',
   themeHome: 'theme-home',
   cardDetails: 'card-details',

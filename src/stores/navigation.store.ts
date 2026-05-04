@@ -51,6 +51,7 @@ function resolveRouteFromScreen(screen: AppScreen): LegacyRoute {
     'topic-test-results': { route: 'topicTestResults' },
     home: { route: 'home' },
     checkin: { route: 'checkin' },
+    'audio-player': { route: 'audioPlayer' },
     profile: { route: 'profile' },
     about: { route: 'about' },
     privacy: { route: 'privacy' },
