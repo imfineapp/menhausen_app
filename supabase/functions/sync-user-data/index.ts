@@ -87,22 +87,42 @@ async function syncSurveyResults(supabase: any, telegramUserId: number, data: an
 /**
  * Sync daily checkins
  * Uses upsert to preserve existing checkins that are not in the data object
- * Only updates/inserts the checkins provided in the data parameter
+ * Only updates/inserts the checkins provided in the data parameter.
+ * session_id distinguishes multiple sessions per day (UNIQUE(telegram_user_id, session_id) in DB).
  */
 async function syncDailyCheckins(supabase: any, telegramUserId: number, data: any): Promise<void> {
   if (!data || typeof data !== 'object') return;
 
-  // Upsert checkins (update existing or insert new)
-  // This preserves checkins in the database that are not in the data object
-  const checkins = Object.keys(data).map(dateKey => ({
-    telegram_user_id: telegramUserId,
-    date_key: dateKey,
-    mood: data[dateKey].mood || null,
-    value: data[dateKey].value || null,
-    color: data[dateKey].color || null,
-    encrypted_data: data[dateKey].encryptedData || null,
-    completed: data[dateKey].completed !== undefined ? data[dateKey].completed : true,
-  }));
+  const checkins = Object.keys(data)
+    .filter((dateKey) => {
+      if (!dateKey || typeof dateKey !== 'string') return false;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+        console.warn('[syncDailyCheckins] Skipping invalid date_key:', dateKey);
+        return false;
+      }
+      return true;
+    })
+    .map((dateKey) => {
+      const entry = data[dateKey] || {};
+      const rawSession =
+        entry.session_id != null && String(entry.session_id).trim() !== ''
+          ? String(entry.session_id).trim()
+          : entry.id != null && String(entry.id).trim() !== ''
+            ? String(entry.id).trim()
+            : dateKey;
+      const sessionId = rawSession.length > 255 ? rawSession.slice(0, 255) : rawSession;
+
+      return {
+        telegram_user_id: telegramUserId,
+        date_key: dateKey,
+        session_id: sessionId,
+        mood: entry.mood ?? null,
+        value: entry.value ?? null,
+        color: entry.color ?? null,
+        encrypted_data: entry.encryptedData ?? null,
+        completed: entry.completed !== undefined ? entry.completed : true,
+      };
+    });
 
   console.log(`[syncDailyCheckins] Upserting ${checkins.length} checkins for user ${telegramUserId}`);
 
@@ -110,7 +130,7 @@ async function syncDailyCheckins(supabase: any, telegramUserId: number, data: an
     const { error } = await supabase
       .from('daily_checkins')
       .upsert(checkins, {
-        onConflict: 'telegram_user_id,date_key',
+        onConflict: 'telegram_user_id,session_id',
       });
 
     if (error) {
