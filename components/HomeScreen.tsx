@@ -1,6 +1,6 @@
 // Импортируем необходимые хуки и SVG пути
 import { lazy, Suspense, useMemo, useState } from 'react';
-import { ChevronRight, Wind } from 'lucide-react';
+import { ChevronRight, Play, Wind } from 'lucide-react';
 import svgPaths from "../imports/svg-9v3gqqhb3l";
 import { MiniStripeLogo } from './ProfileLayoutComponents';
 import { Light } from './Light';
@@ -303,6 +303,26 @@ function MainPageContentBlock({ onGoToProfile, onGoToTheme, onArticleClick, onVi
       data-name="Main_page_contenct_block"
     >
       <UserFrameInfoBlock onClick={onGoToProfile} userHasPremium={userHasPremium} />
+
+      <button
+        type="button"
+        onClick={() => openPage($router, 'audioPlayer')}
+        className="w-full rounded-xl p-5 bg-[rgba(217,217,217,0.04)] border border-[#212121] hover:opacity-90 transition-opacity text-left active:scale-[0.99]"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-[#e1ff00] flex items-center justify-center flex-shrink-0">
+            <Play className="w-5 h-5 text-[#111111]" />
+          </div>
+          <div>
+            <div className="typography-h3 text-white">
+              <h3>Аудио‑плеер (тест)</h3>
+            </div>
+            <div className="typography-body text-[#8a8a8a]">
+              Открыть экран с Play/Pause для MP3
+            </div>
+          </div>
+        </div>
+      </button>
 
       {/* CheckInBlock скрыт по требованию */}
       {/* <CheckInBlock onGoToCheckIn={onGoToCheckIn} onInfoClick={onInfoClick} /> */}

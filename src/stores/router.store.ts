@@ -13,6 +13,7 @@ const ROUTES = {
   topicTestResults: '/topic-test/results',
   home: '/',
   checkin: '/checkin',
+  audioPlayer: '/audio-player',
   themeWelcome: '/theme/:themeId/welcome',
   themeHome: '/theme/:themeId',
   cardDetails: '/theme/:themeId/card/:cardId',
