@@ -267,21 +267,6 @@ export function BadgesScreen({ onBack: _onBack }: BadgesScreenProps) {
           <div className="pb-8">
             <BadgesSlider badges={badges} onCurrentIndexChange={setCurrentIndex} />
           </div>
-
-          {/* Мотивирующий текст */}
-          <div className="pb-8">
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2 text-[#e1ff00]">
-                {getLocalizedBadges().congratulations}
-              </h2>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                {unlockedCount > 0 
-                  ? getLocalizedBadges().motivatingText
-                  : getLocalizedBadges().motivatingTextNoBadges
-                }
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

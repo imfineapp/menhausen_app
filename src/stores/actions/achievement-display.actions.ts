@@ -1,5 +1,6 @@
 import { checkAndUnlockAchievements } from '@/src/stores/achievements.store'
 import { $screenParams, setEarnedAchievementIds } from '@/src/stores/screen-params.store'
+import { onNewAchievementsUnlocked } from '@/src/stores/bottom-nav-notifications.store'
 
 export async function checkAndShowAchievements(
   delay: number = 200,
@@ -22,6 +23,7 @@ export async function checkAndShowAchievements(
 
     if (newlyUnlocked.length > 0) {
       setEarnedAchievementIds(newlyUnlocked)
+      onNewAchievementsUnlocked(newlyUnlocked)
     }
   } catch (error) {
     console.error('[Achievements] Error checking achievements:', error)

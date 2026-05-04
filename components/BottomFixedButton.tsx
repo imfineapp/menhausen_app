@@ -36,11 +36,14 @@ export function BottomFixedButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-1/2 transform -translate-x-1/2 px-[126px] py-[15px] rounded-xl bottom-[35px] w-[350px] min-h-[44px] min-w-[44px] ${
+      className={`absolute bg-[#e1ff00] box-border content-stretch flex flex-row gap-2.5 h-[46px] items-center justify-center left-1/2 transform -translate-x-1/2 px-[126px] py-[15px] rounded-xl w-[350px] min-h-[44px] min-w-[44px] ${
         disabled 
           ? 'opacity-50 cursor-not-allowed' 
           : 'cursor-pointer hover:bg-[#d1ef00] active:scale-[0.98] transition-all duration-200'
       } ${className}`}
+      style={{
+        bottom: 'calc(35px + var(--bottom-nav-offset, 0px))',
+      }}
       data-name={dataName || 'Bottom Fixed CTA Button'}
       aria-label={ariaLabel}
     >

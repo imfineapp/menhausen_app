@@ -15,7 +15,12 @@ export function FixedBottomCta(props: FixedBottomCtaProps) {
   const { primaryLabel, onPrimary, primaryDisabled, secondaryLabel, onSecondary, secondaryDisabled, secondaryAnimate } = props
 
   return (
-    <div className="fixed inset-x-0 bottom-0 pb-[35px] flex flex-col items-center gap-3 z-50 pointer-events-auto">
+    <div
+      className="fixed inset-x-0 bottom-0 flex flex-col items-center gap-3 z-50 pointer-events-auto"
+      style={{
+        paddingBottom: 'calc(35px + env(safe-area-inset-bottom) + var(--bottom-nav-offset, 0px))',
+      }}
+    >
       {secondaryAnimate ? (
         <AnimatePresence>
           {secondaryLabel && onSecondary ? (

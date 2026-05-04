@@ -4,6 +4,7 @@ import { useStore } from '@nanostores/react'
 
 import ScreenRouter from './src/ScreenRouter'
 import { BackButton } from './components/ui/back-button'
+import { BottomNav, type BottomNavRoute } from './components/ui/BottomNav'
 import { ContentLoadingGate } from './components/ContentContext'
 import { useLanguage } from './components/LanguageContext'
 import { initLanguage } from './src/stores/language.store'
@@ -48,6 +49,14 @@ import { $screenParams } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
 import { useRewardDisplayOrchestrator } from './hooks/useRewardDisplayOrchestrator'
 import { SyncIncrementalErrorBanner } from './components/SyncIncrementalErrorBanner'
+import {
+  $hasBadgesDot,
+  $hasBreathingDot,
+  $hasProfileDot,
+  markBadgesSeen,
+  markBreathingSeenForToday,
+  markProfileSeen,
+} from '@/src/stores/bottom-nav-notifications.store'
 
 function AppContent() {
   const { language: currentLanguageFromContext, setLanguage: updateLanguage } = useLanguage()
@@ -373,19 +382,65 @@ function AppContent() {
   }, [])
 
   const isHomePage = currentScreen === 'home'
+  const routerPage = useStore($router)
+  const currentRoute = routerPage?.route as string | undefined
+  const showBottomNav =
+    currentRoute === 'home' || currentRoute === 'breathe46' || currentRoute === 'badges' || currentRoute === 'profile'
+
+  const activeBottomRoute: BottomNavRoute | null =
+    currentRoute === 'home' || currentRoute === 'breathe46' || currentRoute === 'badges' || currentRoute === 'profile'
+      ? (currentRoute as BottomNavRoute)
+      : null
+
+  const bottomNavHeight = 72
+  const bottomNavBottomInset = 16
+  const bottomNavPadding = showBottomNav
+    ? `calc(${bottomNavHeight + bottomNavBottomInset}px + env(safe-area-inset-bottom))`
+    : undefined
+  const bottomNavOffsetVar = showBottomNav ? `${bottomNavHeight + bottomNavBottomInset}px` : '0px'
+
+  const hasBreathingDot = useStore($hasBreathingDot)
+  const hasBadgesDot = useStore($hasBadgesDot)
+  const hasProfileDot = useStore($hasProfileDot)
+
+  useEffect(() => {
+    if (!currentRoute) return
+    if (currentRoute === 'breathe46') markBreathingSeenForToday()
+    if (currentRoute === 'badges') markBadgesSeen()
+    if (currentRoute === 'profile') markProfileSeen()
+  }, [currentRoute])
 
   return (
     <ContentLoadingGate>
       <SyncIncrementalErrorBanner />
-      <div className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col">
+      <div
+        className="w-full h-screen max-h-screen relative overflow-hidden overflow-x-hidden bg-[#111111] flex flex-col"
+        style={{ ['--bottom-nav-offset' as any]: bottomNavOffsetVar }}
+      >
         <div className="flex-1 relative w-full h-full overflow-hidden overflow-x-hidden">
           <BackButton isHomePage={isHomePage} onBack={goBack} />
-          <div className="relative w-full h-full overflow-hidden">
+          <div className="relative w-full h-full overflow-hidden" style={{ paddingBottom: bottomNavPadding }}>
             <AnimatePresence mode="wait">
               <ScreenRouter />
             </AnimatePresence>
           </div>
         </div>
+        {showBottomNav && activeBottomRoute && (
+          <BottomNav
+            activeRoute={activeBottomRoute}
+            dots={{
+              breathe46: hasBreathingDot,
+              badges: hasBadgesDot,
+              profile: hasProfileDot,
+            }}
+            onNavigate={(route) => {
+              if (route === 'breathe46') markBreathingSeenForToday()
+              if (route === 'badges') markBadgesSeen()
+              if (route === 'profile') markProfileSeen()
+              openPage($router, route)
+            }}
+          />
+        )}
       </div>
     </ContentLoadingGate>
   )

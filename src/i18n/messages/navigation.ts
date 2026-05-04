@@ -11,5 +11,11 @@ export const navigationMessages = i18n('navigation', {
   unlock: "Unlock",
   previous: "Previous",
   morePages: "More pages",
-  more: "More"
+  more: "More",
+  tabs: {
+    home: "Home",
+    breathe46: "Breathing",
+    badges: "Achievements",
+    profile: "Profile",
+  },
 } as any)
