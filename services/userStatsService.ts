@@ -8,7 +8,7 @@ import { UserStats } from '../types/achievements';
 import { NON_ACHIEVEMENT_ARTICLE_IDS } from '../utils/articlesList';
 
 const STORAGE_KEY = 'menhausen_user_stats';
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 function getDefaultStats(): UserStats {
   return {
@@ -16,6 +16,7 @@ function getDefaultStats(): UserStats {
     checkins: 0,
     checkinStreak: 0,
     lastCheckinDate: null,
+    lastCheckinTimestamp: null,
     cardsOpened: {},
     topicsCompleted: [],
     cardsRepeated: {},
@@ -98,48 +99,54 @@ export function updateUserStats(
  */
 function migrateStats(oldStats: any): UserStats {
   const defaultStats = getDefaultStats();
+
+  // v1 → v2: add lastCheckinTimestamp field
+  if (oldStats.version < 2) {
+    oldStats.lastCheckinTimestamp = oldStats.lastCheckinDate ? Date.now() : null;
+  }
+
   return {
     ...defaultStats,
     ...oldStats,
-    // гарантируем наличие массива уникальных прочтений
     readArticleIds: Array.isArray(oldStats?.readArticleIds) ? oldStats.readArticleIds : [],
-    // гарантируем наличие массива уникально открытых карточек
     openedCardIds: Array.isArray(oldStats?.openedCardIds) ? oldStats.openedCardIds : [],
+    lastCheckinTimestamp: oldStats.lastCheckinTimestamp ?? null,
     version: STORAGE_VERSION
   };
 }
 
 /**
- * Увеличить счетчик check-ins и обновить streak
+ * Increase check-in counter and update streak.
+ * Called per check-in session (multiple times per day allowed with 4h cooldown).
+ * Cooldown enforcement lives in DailyCheckinManager.shouldPromptCheckin().
  */
 export function incrementCheckin(): UserStats {
-  const today = new Date().toISOString().split('T')[0];
+  const now = Date.now()
+  const today = new Date().toISOString().split('T')[0]
   return updateUserStats((current) => {
+    // Determine if the streak continues or resets
+    let newStreak = current.checkinStreak
     const lastDate = current.lastCheckinDate
-      ? new Date(current.lastCheckinDate).toISOString().split('T')[0]
-      : null;
 
-    if (lastDate === today) {
-      return current;
-    }
-
-    let newStreak = current.checkinStreak;
     if (!lastDate) {
-      newStreak = 1;
+      newStreak = 1
+    } else if (lastDate === today) {
+      // Same day — keep streak, just increment session count
     } else {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayStr = yesterday.toISOString().split('T')[0];
-      newStreak = lastDate === yesterdayStr ? current.checkinStreak + 1 : 1;
+      const yesterday = new Date()
+      yesterday.setDate(yesterday.getDate() - 1)
+      const yesterdayStr = yesterday.toISOString().split('T')[0]
+      newStreak = lastDate === yesterdayStr ? current.checkinStreak + 1 : 1
     }
 
     return {
       ...current,
       checkins: current.checkins + 1,
       checkinStreak: newStreak,
-      lastCheckinDate: today
-    };
-  });
+      lastCheckinDate: today,
+      lastCheckinTimestamp: now,
+    }
+  })
 }
 
 /**

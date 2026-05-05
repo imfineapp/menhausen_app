@@ -388,25 +388,27 @@ function transformDailyCheckinsFromAPI(data: any): Record<string, any> {
   }
 
   // API format: { "YYYY-MM-DD": { ...checkinData } }
-  // localStorage format: { "daily_checkin_YYYY-MM-DD": { ...checkinData } }
+  // localStorage format: { "daily_checkin_YYYY-MM-DD_<timestamp>": { ...checkinData } }
+  // When multiple local sessions exist for a day, the API stores the latest.
+  // On pull, we store it as a single session entry using its timestamp (or Date.now() fallback).
   const result: Record<string, any> = {};
 
   Object.keys(data).forEach(dateKey => {
-    // Skip undefined, null, or empty keys to prevent "daily_checkin_undefined"
     if (!dateKey || dateKey === 'undefined' || dateKey === 'null') {
       console.warn('[transformDailyCheckinsFromAPI] Skipping invalid dateKey:', dateKey);
       return;
     }
     
-    // Validate dateKey format (should be YYYY-MM-DD)
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
       console.warn('[transformDailyCheckinsFromAPI] Invalid dateKey format, expected YYYY-MM-DD, got:', dateKey);
       return;
     }
 
-    const localStorageKey = `daily_checkin_${dateKey}`;
+    const checkinData = data[dateKey];
+    const ts = checkinData?.timestamp || Date.now();
+    const localStorageKey = `daily_checkin_${dateKey}_${ts}`;
     console.log('[transformDailyCheckinsFromAPI] Transforming:', dateKey, '->', localStorageKey);
-    result[localStorageKey] = data[dateKey];
+    result[localStorageKey] = checkinData;
   });
 
   console.log('[transformDailyCheckinsFromAPI] Result keys:', Object.keys(result));

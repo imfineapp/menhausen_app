@@ -19,14 +19,15 @@ export interface UserStats {
   version: number;
   checkins: number;
   checkinStreak: number;
-  lastCheckinDate: string | null;
+  lastCheckinDate: string | null; // YYYY-MM-DD — kept for streak logic
+  lastCheckinTimestamp: number | null; // Unix ms — last check-in time for cooldown
   cardsOpened: Record<string, number>; // topicId -> count
   topicsCompleted: string[]; // topicIds
   cardsRepeated: Record<string, number>; // cardId -> count
   topicsRepeated: string[]; // topicIds
   articlesRead: number;
-  readArticleIds?: string[]; // список уникально прочитанных статей (опционально для обратной совместимости)
-  openedCardIds?: string[]; // список уникально открытых карточек (опционально для обратной совместимости)
+  readArticleIds?: string[];
+  openedCardIds?: string[];
   referralsInvited: number;
   referralsPremium: number;
   lastUpdated: string;

@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   getCheckin: vi.fn(),
   getCheckinStreak: vi.fn(),
   getTotalCheckins: vi.fn(),
+  shouldPromptCheckin: vi.fn(),
 }))
 
 vi.mock('@/utils/DailyCheckinManager', () => ({
@@ -15,6 +16,7 @@ vi.mock('@/utils/DailyCheckinManager', () => ({
     getCheckin: mocks.getCheckin,
     getCheckinStreak: mocks.getCheckinStreak,
     getTotalCheckins: mocks.getTotalCheckins,
+    shouldPromptCheckin: mocks.shouldPromptCheckin,
   },
   DailyCheckinStatus: {
     NOT_COMPLETED: 'not_completed',
@@ -39,26 +41,35 @@ import {
 describe('checkin.store', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mocks.getCurrentDayKey.mockReturnValue('daily_checkin_2026-03-21')
+    mocks.getCurrentDayKey.mockReturnValue('2026-03-21')
     mocks.getCheckin.mockReturnValue(null)
     mocks.getCheckinStreak.mockReturnValue(0)
     mocks.getTotalCheckins.mockReturnValue(0)
+    mocks.shouldPromptCheckin.mockReturnValue(true)
     $todayCheckin.set(null)
   })
 
   it('saveCheckin updates today state on success', () => {
-    mocks.saveCheckin.mockReturnValue(true)
+    mocks.saveCheckin.mockReturnValue({ success: true, data: { id: 'c1', completed: true, mood: 'happy' } })
     mocks.getCheckin.mockReturnValue({
       id: 'c1',
       completed: true,
-      moodScore: 4,
+      mood: 'happy',
     })
 
-    const ok = saveCheckin({ moodScore: 4, selectedEmotions: [], moodTags: [], note: '' } as any)
+    const ok = saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' } as any)
 
     expect(ok).toBe(true)
     expect($todayCheckin.get()).toEqual(expect.objectContaining({ id: 'c1', completed: true }))
     expect($checkinStatus.get()).toBe('completed')
+  })
+
+  it('saveCheckin returns false on cooldown', () => {
+    mocks.saveCheckin.mockReturnValue({ success: false, reason: 'cooldown' })
+
+    const ok = saveCheckin({ mood: 'happy', value: 4, color: '#4ecdc4' } as any)
+
+    expect(ok).toBe(false)
   })
 
   it('refreshCheckin recalculates streak from manager', () => {
@@ -69,4 +80,3 @@ describe('checkin.store', () => {
     expect($checkinStreak.get()).toBe(7)
   })
 })
-

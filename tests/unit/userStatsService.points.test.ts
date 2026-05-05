@@ -39,14 +39,14 @@ describe('userStatsService points & persistence', () => {
     expect(next.checkins).toBe(2);
   });
 
-  it('incrementCheckin updates count and streak once per day', () => {
+  it('incrementCheckin updates count and streak (multiple per day allowed)', () => {
     const s1 = incrementCheckin();
     expect(s1.checkins).toBe(1);
     expect(s1.checkinStreak).toBe(1);
     const s2 = incrementCheckin();
-    // повтор в тот же день не увеличивает
-    expect(s2.checkins).toBe(1);
-    expect(s2.checkinStreak).toBe(1);
+    // multiple sessions per day now increment the counter
+    expect(s2.checkins).toBe(2);
+    expect(s2.checkinStreak).toBe(1); // same day, streak stays
   });
 
   it('markArticleRead is idempotent and aligns articlesRead with unique ids', () => {

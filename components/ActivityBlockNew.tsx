@@ -23,8 +23,8 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const nextTarget = useStore($nextLevelTarget);
 
   // Derived check-in stats from store.
-  const totalCheckins = useStore($totalCheckins);
-  useStore($checkinStreak);
+  const checkinStreak = useStore($checkinStreak);
+  void useStore($totalCheckins); // keep for reactivity trigger
 
   const today = new Date()
   today.setHours(23, 59, 59, 999)
@@ -51,7 +51,7 @@ export function ActivityBlockNew({ activityData }: ActivityBlockNewProps) {
   const defaultData: ActivityData = {
     // Keep the existing behavior (tests expect "days" based on total check-ins),
     // but subscribe to the streak store so check-in streak logic stays exercised.
-    streakDays: totalCheckins > 0 ? totalCheckins : 0,
+    streakDays: checkinStreak,
     currentPoints: pointsBalance,
     targetPoints: nextTarget,
     weeklyCheckins: {

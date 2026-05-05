@@ -109,53 +109,69 @@ function mergeTopicTestResults(local: any, remote: any): any {
 }
 
 /**
- * Merge daily checkins (by date_key)
+ * Merge daily checkins (by session id, fallback to date_key).
+ * Supports multi-session-per-day: unions sessions from local and remote.
  */
 function mergeDailyCheckins(local: any, remote: any): any {
-  console.log('[mergeDailyCheckins] Starting merge');
-  console.log('[mergeDailyCheckins] local:', local ? Object.keys(local) : 'null/undefined');
-  console.log('[mergeDailyCheckins] remote:', remote ? Object.keys(remote) : 'null/undefined');
-  
-  if (!local) {
-    console.log('[mergeDailyCheckins] No local data, returning remote');
-    return remote;
-  }
-  if (!remote) {
-    console.log('[mergeDailyCheckins] No remote data, returning local');
-    return local;
-  }
+  if (!local) return remote;
+  if (!remote) return local;
 
-  const merged = { ...local };
-  console.log('[mergeDailyCheckins] Initial merged keys:', Object.keys(merged));
+  const merged: Record<string, any> = {};
 
-  // Merge by date_key
-  Object.keys(remote).forEach(dateKey => {
-    // Skip invalid date keys to prevent "daily_checkin_undefined"
-    if (!dateKey || dateKey === 'undefined' || dateKey === 'null' || typeof dateKey !== 'string') {
-      console.warn('[mergeDailyCheckins] Skipping invalid dateKey:', dateKey);
-      return;
-    }
-    
-    // Validate dateKey format (should be YYYY-MM-DD)
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
-      console.warn('[mergeDailyCheckins] Skipping invalid dateKey format, expected YYYY-MM-DD, got:', dateKey);
-      return;
-    }
+  // Helper: normalize a single entry into a merged set keyed by session id
+  const addEntry = (entry: any, dateKey: string) => {
+    // Use session_id or id as unique key; fallback to date_key for legacy
+    const sessionId = entry?.session_id || entry?.id;
+    const key = sessionId ? `${dateKey}::${sessionId}` : dateKey;
 
-    console.log('[mergeDailyCheckins] Processing dateKey:', dateKey);
-    console.log('[mergeDailyCheckins] - merged[dateKey] exists:', !!merged[dateKey]);
-    console.log('[mergeDailyCheckins] - remote[dateKey]:', remote[dateKey]);
-    
-    if (!merged[dateKey] || new Date(remote[dateKey].date || dateKey) > new Date(local[dateKey]?.date || dateKey)) {
-      console.log('[mergeDailyCheckins] - Merging remote data for', dateKey);
-      merged[dateKey] = remote[dateKey];
+    // If this key already exists, keep the one with the newer timestamp
+    if (merged[key]) {
+      const existingTime = merged[key].timestamp || merged[key].updated_at || 0;
+      const newTime = entry?.timestamp || entry?.updated_at || 0;
+      if (newTime > existingTime) {
+        merged[key] = entry;
+      }
     } else {
-      console.log('[mergeDailyCheckins] - Keeping local data for', dateKey);
+      merged[key] = entry;
     }
-  });
+  };
 
-  console.log('[mergeDailyCheckins] Final merged keys:', Object.keys(merged));
-  return merged;
+  // Process all local entries
+  for (const dateKey of Object.keys(local)) {
+    if (!dateKey || dateKey === 'undefined' || dateKey === 'null' || typeof dateKey !== 'string') continue;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) continue;
+    const entry = local[dateKey];
+    if (Array.isArray(entry)) {
+      entry.forEach((e: any) => addEntry(e, dateKey));
+    } else if (entry && typeof entry === 'object') {
+      addEntry(entry, dateKey);
+    }
+  }
+
+  // Process all remote entries (union, don't replace)
+  for (const dateKey of Object.keys(remote)) {
+    if (!dateKey || dateKey === 'undefined' || dateKey === 'null' || typeof dateKey !== 'string') continue;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) continue;
+    const entry = remote[dateKey];
+    if (Array.isArray(entry)) {
+      entry.forEach((e: any) => addEntry(e, dateKey));
+    } else if (entry && typeof entry === 'object') {
+      addEntry(entry, dateKey);
+    }
+  }
+
+  // Flatten back to date_key → single entry format (latest session per date_key)
+  // The API sync sends one entry per date_key, so the merged result should match
+  const result: Record<string, any> = {};
+  for (const key of Object.keys(merged)) {
+    const dateKey = key.split('::')[0];
+    const entry = merged[key];
+    if (!result[dateKey] || (entry?.timestamp || 0) > (result[dateKey]?.timestamp || 0)) {
+      result[dateKey] = entry;
+    }
+  }
+
+  return result;
 }
 
 /**

@@ -9,7 +9,7 @@ import { useLanguage } from './components/LanguageContext'
 import { initLanguage } from './src/stores/language.store'
 
 import { isTelegramEnvironment } from './utils/telegramUserUtils'
-import { DailyCheckinManager, DailyCheckinStatus } from './utils/DailyCheckinManager'
+import { DailyCheckinManager } from './utils/DailyCheckinManager'
 import { capture, AnalyticsEvent, identify } from './src/effects/analytics.effects'
 import { initScreenViewTracking } from './src/effects/screen-view.effect'
 import { getTelegramUserId } from './utils/telegramUserUtils'
@@ -35,6 +35,8 @@ import {
   setNavigationState,
   goBack,
 } from './src/stores/navigation.store'
+import { $router } from './src/stores/router.store'
+import { openPage } from '@nanostores/router'
 
 import { loadFlowProgressFromLocalStorage } from './src/stores/app-flow.store'
 import { getSyncService } from '@/utils/supabaseSync/supabaseSyncService'
@@ -152,14 +154,10 @@ function AppContent() {
       if (!skipFullPsych && !hasTestBeenCompleted()) {
         return 'psychological-test-preambula'
       }
-      const checkinStatus = DailyCheckinManager.getCurrentDayStatus()
-      if (checkinStatus === DailyCheckinStatus.NOT_COMPLETED) {
+      if (DailyCheckinManager.shouldPromptCheckin()) {
         return 'checkin'
       }
-      if (checkinStatus === DailyCheckinStatus.COMPLETED) {
-        return 'home'
-      }
-      return 'checkin'
+      return 'home'
     }
 
     const checkLocalData = (): boolean => {
@@ -305,6 +303,13 @@ function AppContent() {
       const lastMs = last?.getTime() ?? null
       if (shouldPullSyncOnForeground(lastMs)) {
         void forceSync()
+      }
+
+      // Re-check check-in prompt when returning from background
+      const screen = $currentScreen.get()
+      const interruptibleScreens: AppScreen[] = ['home', 'profile', 'about', 'privacy', 'terms', 'pin-settings', 'app-settings', 'badges', 'all-articles', 'article', 'under-construction']
+      if (interruptibleScreens.includes(screen) && DailyCheckinManager.shouldPromptCheckin()) {
+        openPage($router, 'checkin')
       }
     }
     document.addEventListener('visibilitychange', handleVisibility)

@@ -44,7 +44,18 @@ describe('CheckInScreen', () => {
   describe('Data Submission', () => {
     it('should call onSubmit with correct data when submitted', async () => {
       const mockSaveCheckin = vi.mocked(DailyCheckinManager.saveCheckin);
-      mockSaveCheckin.mockReturnValue(true);
+      mockSaveCheckin.mockReturnValue({
+        success: true,
+        data: {
+          id: 'checkin_test',
+          date: '2026-05-04',
+          timestamp: Date.now(),
+          mood: 'Good',
+          value: 3,
+          color: '#e1ff00',
+          completed: true,
+        }
+      });
 
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
@@ -64,7 +75,7 @@ describe('CheckInScreen', () => {
 
     it('should handle save failure gracefully', async () => {
       const mockSaveCheckin = vi.mocked(DailyCheckinManager.saveCheckin);
-      mockSaveCheckin.mockReturnValue(false);
+      mockSaveCheckin.mockReturnValue({ success: false, reason: 'cooldown' });
 
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
@@ -83,7 +94,7 @@ describe('CheckInScreen', () => {
   describe('Error States', () => {
     it('should handle DailyCheckinManager errors gracefully', async () => {
       const mockSaveCheckin = vi.mocked(DailyCheckinManager.saveCheckin);
-      mockSaveCheckin.mockReturnValue(false); // Simulate save failure
+      mockSaveCheckin.mockReturnValue({ success: false, reason: 'cooldown' }); // Simulate save failure
 
       render(<CheckInScreen onSubmit={mockOnSubmit} onBack={mockOnBack} />);
       
