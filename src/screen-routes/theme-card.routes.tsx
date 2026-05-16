@@ -36,6 +36,7 @@ export function renderThemeCardRoutes(ctx: RouteContext): React.ReactNode | null
           onGoToTheme={handlers.handleGoToTheme}
           onArticleClick={handlers.handleOpenArticle}
           onViewAllArticles={handlers.handleGoToAllArticles}
+          onOpenMentalTechnique={handlers.handleOpenMentalTechnique}
           userHasPremium={userHasPremium}
         />,
       )

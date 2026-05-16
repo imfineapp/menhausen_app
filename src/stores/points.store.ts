@@ -116,6 +116,11 @@ onMount($pointsBalance, () => {
     console.warn('Failed to replay offline reward queue on mount', error)
   })
 
+  // Vitest / non-browser environments
+  if (typeof window === 'undefined') {
+    return () => {}
+  }
+
   const onOnline = () => {
     replayOfflineRewardQueue().catch((error) => {
       console.warn('Failed to replay offline reward queue on reconnect', error)

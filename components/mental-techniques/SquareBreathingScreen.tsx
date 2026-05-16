@@ -4,11 +4,11 @@ import { useStore } from '@nanostores/react';
 // КОМПОНЕНТ: Квадратное дыхание
 // ========================================================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useContent } from '../ContentContext';
-import { MiniStripeLogo } from '../ProfileLayoutComponents';
-import { MentalTechniqueAccordion } from '../ui/accordion-mental-technique';
 import { getSquareBreathingDotPosition } from '@/src/domain/squareBreathing.domain';
+import { MentalTechniqueShell } from './MentalTechniqueShell';
+import { TechniqueControlsRow, TechniquePrimaryButton, TechniqueSecondaryButton } from './TechniqueControls';
 
 interface SquareBreathingScreenProps {
   onBack: () => void;
@@ -28,73 +28,24 @@ function SquareVisualization({
   
   return (
     <div className="flex justify-center items-center">
-      <div className="relative w-[180px] h-[180px] border-2 border-[#e1ff00] rounded-lg">
-        {/* Квадрат */}
-        <div className="absolute inset-0 border-2 border-[#e1ff00] rounded-lg"></div>
-        
-        {/* Подсветка текущей стороны */}
-        <div 
-          className="absolute w-2 h-2 bg-[#e1ff00] rounded-full transition-all duration-100"
+      <div className="relative w-[196px] h-[196px] rounded-2xl">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 rounded-2xl border-2 border-[#e1ff00] opacity-80"
+          style={{ boxShadow: '0 0 24px rgba(225, 255, 0, 0.18)' }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-5 rounded-xl border border-[#e1ff00] opacity-25"
+        />
+        <div
+          className="absolute w-3.5 h-3.5 bg-[#e1ff00] rounded-full transition-all duration-150"
           style={{
-            left: pos.x - 4,
-            top: pos.y - 4
+            left: pos.x - 7,
+            top: pos.y - 7,
+            boxShadow: '0 0 18px rgba(225, 255, 0, 0.35)',
           }}
-        ></div>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Интерактивный таймер для квадратного дыхания
- */
-function BreathingTimer({ 
-  isRunning, 
-  onToggle, 
-  onComplete 
-}: { 
-  isRunning: boolean;
-  onToggle: () => void;
-  onComplete: () => void;
-}) {
-  const msgs = useStore(mentalTechniquesMessages);
-  
-  return (
-    <div className="text-center space-y-4">
-      <button
-        onClick={onToggle}
-        className="px-8 py-4 bg-[#e1ff00] text-[#2d2b2b] rounded-lg typography-button hover:bg-[#d4e600] transition-colors"
-      >
-        {isRunning ? msgs.pause : msgs.start}
-      </button>
-      
-      <button
-        onClick={onComplete}
-        className="px-6 py-2 bg-[#333] text-[#cfcfcf] rounded-lg typography-button hover:bg-[#444] transition-colors"
-      >
-        {msgs.reset}
-      </button>
-    </div>
-  );
-}
-
-/**
- * Дополнительная информация
- */
-function AdditionalInfo({ technique }: { technique: any }) {
-  const { getLocalizedText } = useContent();
-  const msgs = useStore(mentalTechniquesMessages);
-  
-  return (
-    <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-      <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-      <div className="space-y-4">
-        <h3 className="typography-h3 text-[#e1ff00]">{msgs.aboutTechnique}</h3>
-        <MentalTechniqueAccordion 
-          items={technique?.accordionItems?.map((item: any) => ({
-            title: getLocalizedText(item.title),
-            content: getLocalizedText(item.content)
-          })) || []}
+          aria-hidden="true"
         />
       </div>
     </div>
@@ -111,102 +62,91 @@ export function SquareBreathingScreen({ onBack }: SquareBreathingScreenProps) {
   // Получаем данные техники из системы контента
   const technique = getMentalTechnique('breathing-square');
   
-  // Состояние для анимации
+  const steps = useMemo(() => technique?.steps ?? [], [technique]);
   const [isRunning, setIsRunning] = useState(false);
-  const [position, setPosition] = useState(0); // 0-3 для сторон квадрата
-  const [progress, setProgress] = useState(0); // 0-100 для текущей стороны
-  
-  // Таймер для анимации
+  const [position, setPosition] = useState(0); // 0-3 стороны квадрата
+  const [progress, setProgress] = useState(0); // 0-100 по стороне
+  const [cycle, setCycle] = useState(1);
+
+  const stepIndex = position % 4;
+  const currentStep = steps[stepIndex];
+  const stepDurationSec = currentStep?.duration ?? 4;
+  const currentInstruction = currentStep?.instruction ?? '';
+
+  // Осмысленный тайминг: 100% за duration секунд.
+  const tickMs = Math.max(20, Math.round((stepDurationSec * 1000) / 100));
+
   useEffect(() => {
     if (!isRunning) return;
     
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
-          setPosition(prevPos => (prevPos + 1) % 4);
+          setPosition(prevPos => {
+            const next = (prevPos + 1) % 4;
+            // цикл считаем по полному кругу (после 4-й стороны)
+            if (prevPos === 3) setCycle((c) => c + 1);
+            return next;
+          });
           return 0;
         }
         return prev + 1;
       });
-    }, 50); // Обновляем каждые 50мс для плавной анимации
+    }, tickMs);
     
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, tickMs]);
   
   const handleToggle = () => {
     setIsRunning(prev => !prev);
   };
   
-  const handleComplete = () => {
+  const handleReset = () => {
     setIsRunning(false);
     setPosition(0);
     setProgress(0);
+    setCycle(1);
   };
   
   if (!technique) {
     return (
-      <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-        <MiniStripeLogo />
-        <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-          <div className="text-center">
-            <h1 className="text-[#e1ff00] text-3xl font-bold mb-2">
-              {msgs.techniqueNotFound}
-            </h1>
-            <button
-              onClick={onBack}
-              className="w-full py-3 bg-[#e1ff00] text-[#2d2b2b] rounded-lg font-semibold hover:bg-[#d4e600] transition-colors"
-            >
-              {msgs.back}
-            </button>
-          </div>
-        </div>
-      </div>
+      <MentalTechniqueShell title={msgs.techniqueNotFound} subtitle={msgs.techniqueDataLoadFailed}>
+        <TechniqueControlsRow>
+          <TechniquePrimaryButton onClick={onBack}>{msgs.back}</TechniquePrimaryButton>
+        </TechniqueControlsRow>
+      </MentalTechniqueShell>
     );
   }
 
   return (
-    <div className="bg-[#111111] relative w-full h-full min-h-screen overflow-y-auto">
-      <MiniStripeLogo />
-      
-      <div className="flex flex-col gap-6 px-4 pt-[100px] pb-6 max-w-md mx-auto">
-        {/* Заголовок */}
-        <div className="text-center">
-          <h1 className="typography-h1 text-[#e1ff00] mb-2">
-            {getLocalizedText(technique.title)}
-          </h1>
-          <p className="typography-body text-[#cfcfcf]">
-            {getLocalizedText(technique.subtitle)}
+    <MentalTechniqueShell
+      title={getLocalizedText(technique.title)}
+      subtitle={getLocalizedText(technique.subtitle)}
+      metaChip={getLocalizedText(technique.duration)}
+      accordionTitle={msgs.aboutTechnique}
+      accordionItems={(technique.accordionItems ?? []).map((item: any) => ({
+        title: getLocalizedText(item.title),
+        content: getLocalizedText(item.content),
+      }))}
+    >
+      <SquareVisualization position={position} progress={progress} />
+
+      <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
+        <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
+        <div className="text-center flex flex-col gap-2">
+          <p className="typography-caption text-[#8a8a8a]">
+            {msgs.cycle} {cycle} • {msgs.step} {stepIndex + 1} {msgs.of} 4
           </p>
-          <div className="mt-2">
-            <span className="bg-[#e1ff00] text-[#2d2b2b] px-3 py-1 rounded-lg typography-caption">
-              {getLocalizedText(technique.duration)}
-            </span>
-          </div>
+          <p className="typography-body text-[#cfcfcf]">
+            {getLocalizedText(currentInstruction as any)}
+          </p>
         </div>
-
-        {/* Визуализация */}
-        <SquareVisualization position={position} progress={progress} />
-
-        {/* Текущий шаг */}
-        <div className="bg-[rgba(217,217,217,0.04)] rounded-xl p-4 relative">
-          <div className="absolute border border-[#212121] border-solid inset-0 pointer-events-none rounded-xl" />
-          <div className="text-center">
-            <p className="typography-body text-white mb-2">
-              {msgs.cycle} {Math.floor(position / 4) + 1} - {msgs.step} {position + 1} {msgs.of} 4
-            </p>
-          </div>
-        </div>
-
-        {/* Интерактивный таймер */}
-        <BreathingTimer 
-          isRunning={isRunning}
-          onToggle={handleToggle}
-          onComplete={handleComplete}
-        />
-
-        {/* Дополнительная информация */}
-        <AdditionalInfo technique={technique} />
       </div>
-    </div>
+
+      <TechniqueControlsRow>
+        <TechniquePrimaryButton onClick={handleToggle}>{isRunning ? msgs.pause : msgs.start}</TechniquePrimaryButton>
+        <TechniqueSecondaryButton onClick={handleReset}>{msgs.reset}</TechniqueSecondaryButton>
+      </TechniqueControlsRow>
+    </MentalTechniqueShell>
   );
 }
