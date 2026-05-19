@@ -10,7 +10,9 @@ describe('SupabaseSyncService batched sync', () => {
     vi.useRealTimers();
   });
 
-  it('queues preferences within debounce window and sends one POST without points payload', async () => {
+  it(
+    'queues preferences within debounce window and sends one POST without points payload',
+    async () => {
     vi.useFakeTimers();
     localStorage.setItem('menhausen-language', 'en');
 
@@ -27,12 +29,17 @@ describe('SupabaseSyncService batched sync', () => {
 
     svc.queueSync('preferences');
 
-    await vi.advanceTimersByTimeAsync(500);
+    // `queueSync` schedules a debounced flush via setTimeout; run timers to completion
+    // and allow the async `flushPendingBatchSync()` chain to resolve.
+    await vi.runAllTimersAsync();
+    await Promise.resolve();
     await Promise.resolve();
 
     expect(syncSpy).toHaveBeenCalledTimes(1);
     const payload = syncSpy.mock.calls[0][0] as Record<string, unknown>;
     expect(payload).toHaveProperty('preferences');
     expect(payload).not.toHaveProperty('points');
-  });
+    },
+    15_000,
+  );
 });

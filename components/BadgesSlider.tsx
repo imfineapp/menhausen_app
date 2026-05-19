@@ -203,38 +203,7 @@ export function BadgesSlider({ badges, onCurrentIndexChange }: BadgesSliderProps
         ))}
       </div>
 
-      {/* Индикаторы */}
-      <div className="flex justify-center items-center mt-6 space-x-2 h-2">
-        {badges.map((_, index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full transition-all duration-300 flex-shrink-0 cursor-pointer min-w-0 min-h-0 max-w-2 max-h-2 ${
-              index === currentIndex
-                ? 'bg-white'
-                : 'bg-white/30 hover:bg-white/50'
-            }`}
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              minWidth: '8px',
-              minHeight: '8px',
-              maxWidth: '8px',
-              maxHeight: '8px'
-            }}
-            onClick={() => {
-              setCurrentIndex(index);
-              if (sliderRef.current) {
-                const cardWidth = getCardWidth();
-                sliderRef.current.scrollTo({
-                  left: index * cardWidth,
-                  behavior: 'smooth'
-                });
-              }
-            }}
-          />
-        ))}
-      </div>
+      {/* Индикаторы скрыты по требованию */}
 
       {/* Кнопки навигации (скрыты на мобильных) */}
       <div className="hidden md:block">
