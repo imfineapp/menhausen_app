@@ -26,7 +26,12 @@ import { saveTopicTestResultsMap, type TopicTestResultStored } from '../experime
 import { bumpTopicTestVersion } from '@/src/stores/topic-test.store';
 import { refreshAllStoresFromStorage } from '../../src/sync/storeHydration';
 import { notifyCrossTabSyncComplete } from '../../src/sync/crossTabSync';
-import { setIncrementalSyncError, setPendingSyncQueueCount } from '@/src/stores/incremental-sync.store';
+import {
+  reportIncrementalSyncError,
+  setIncrementalSyncError,
+  setPendingSyncQueueCount,
+} from '@/src/stores/incremental-sync.store';
+import { shouldApplyRemotePremiumStatus } from '@/src/domain/premium.domain';
 import { ALL_SYNCABLE_TYPES } from './syncableTypes';
 import { dirtyTypesFromSignatures, signaturesFromPayload } from './dirtySignatures';
 
@@ -319,7 +324,7 @@ export class SupabaseSyncService {
       const err = error instanceof Error ? error : new Error(String(error));
       syncLog.error('[SyncService] batch sync error:', err);
       void captureException(err, { context: 'sync_batch_post', types: Array.from(types).join(',') });
-      setIncrementalSyncError(err.message);
+      reportIncrementalSyncError(err.message);
 
       if (this.config.enableOfflineQueue) {
         this.enqueueOfflineBatch(Array.from(types), data);
@@ -911,9 +916,21 @@ export class SupabaseSyncService {
 
     // Handle premium status
     if (remoteData.hasPremium !== undefined) {
-      syncLog.debug('[SyncService] mergeAndSave - Updating premium status:', remoteData.hasPremium);
-      // Save legacy format for backward compatibility
-      localStorage.setItem('user-premium-status', remoteData.hasPremium ? 'true' : 'false');
+      const localPurchasedAt = localStorage.getItem('user-premium-purchased-at');
+      const shouldApply = shouldApplyRemotePremiumStatus({
+        remoteHasPremium: remoteData.hasPremium,
+        remotePremiumSignature: remoteData.premiumSignature,
+        localPurchasedAt,
+      });
+
+      if (shouldApply) {
+        syncLog.debug('[SyncService] mergeAndSave - Updating premium status:', remoteData.hasPremium);
+        localStorage.setItem('user-premium-status', remoteData.hasPremium ? 'true' : 'false');
+      } else {
+        syncLog.debug(
+          '[SyncService] mergeAndSave - Skipping premium downgrade during purchase grace window',
+        );
+      }
     }
 
     // Handle premium signature (Ed25519 signed data)
@@ -1057,7 +1074,7 @@ export class SupabaseSyncService {
               console.warn('[SyncService] Background upload failed:', error);
               const err = error instanceof Error ? error : new Error(String(error));
               this.enqueueOfflineBatch(Array.from(dirtyTypes), localData);
-              setIncrementalSyncError(err.message);
+              reportIncrementalSyncError(err.message);
             });
         }
 
@@ -1098,7 +1115,7 @@ export class SupabaseSyncService {
               console.warn('[SyncService] Background upload failed:', error);
               const err = error instanceof Error ? error : new Error(String(error));
               this.enqueueOfflineBatch(uploadedTypes, localData);
-              setIncrementalSyncError(err.message);
+              reportIncrementalSyncError(err.message);
             });
           this.syncStatus.lastSync = new Date();
           void capture(AnalyticsEvent.SYNC_SUCCESS, {

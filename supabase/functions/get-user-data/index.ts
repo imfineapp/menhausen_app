@@ -372,9 +372,8 @@ async function getPremiumStatus(
   telegramUserId: number,
   initData: string | null
 ): Promise<boolean> {
-  // Determine bot and environment from initData
   let isTestEnvironment = false;
-  
+
   if (initData) {
     const botInfo = await determineBotInfo(initData);
     if (botInfo) {
@@ -382,28 +381,18 @@ async function getPremiumStatus(
       isTestEnvironment = testBotIds.includes(botInfo.id);
     }
   }
-  
-  if (isTestEnvironment) {
-    // For test/staging: check if user has active test subscription
-    const { data: testSubscriptions } = await supabase
-      .from('premium_subscriptions')
-      .select('id')
-      .eq('telegram_user_id', telegramUserId)
-      .eq('status', 'active')
-      .eq('is_test_payment', true)
-      .limit(1);
-    
-    return (testSubscriptions && testSubscriptions.length > 0);
-  } else {
-    // For production: use users.has_premium (updated only by production subscriptions)
-    const { data: user } = await supabase
-      .from('users')
-      .select('has_premium')
-      .eq('telegram_user_id', telegramUserId)
-      .maybeSingle();
-    
-    return user?.has_premium === true;
-  }
+
+  const nowIso = new Date().toISOString();
+  const { data: subscriptions } = await supabase
+    .from('premium_subscriptions')
+    .select('id')
+    .eq('telegram_user_id', telegramUserId)
+    .eq('status', 'active')
+    .eq('is_test_payment', isTestEnvironment)
+    .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
+    .limit(1);
+
+  return !!(subscriptions && subscriptions.length > 0);
 }
 
 /**
@@ -464,7 +453,8 @@ async function getOrGenerateEd25519Keys(
 async function signPremiumStatus(
   supabase: any,
   telegramUserId: number,
-  hasPremium: boolean
+  hasPremium: boolean,
+  initData: string | null
 ): Promise<{
   data: {
     premium: boolean;
@@ -487,12 +477,23 @@ async function signPremiumStatus(
     let purchasedAt: string | undefined;
 
     if (hasPremium) {
+      let isTestEnvironment = false;
+      if (initData) {
+        const botInfo = await determineBotInfo(initData);
+        if (botInfo) {
+          const testBotIds = getTestBotIds();
+          isTestEnvironment = testBotIds.includes(botInfo.id);
+        }
+      }
+
+      const nowIso = new Date().toISOString();
       const { data: subscription } = await supabase
         .from('premium_subscriptions')
         .select('plan_type, expires_at, created_at')
         .eq('telegram_user_id', telegramUserId)
         .eq('status', 'active')
-        .eq('is_test_payment', false)
+        .eq('is_test_payment', isTestEnvironment)
+        .or(`expires_at.is.null,expires_at.gt.${nowIso}`)
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -689,7 +690,7 @@ serve(async (req) => {
     userData.hasPremium = hasPremium;
 
     // Sign premium status with Ed25519
-    const premiumSignature = await signPremiumStatus(supabase, telegramUserId, hasPremium);
+    const premiumSignature = await signPremiumStatus(supabase, telegramUserId, hasPremium, initData);
 
     // If no data exists at all, user probably doesn't exist
     // But this is just an optimization - we still return empty data structure

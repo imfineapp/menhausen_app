@@ -48,6 +48,7 @@ import { shouldPullSyncOnForeground } from './src/utils/visibilitySync'
 import { $screenParams } from './src/stores/screen-params.store'
 import { checkAndShowAchievements } from './src/stores/actions/achievement-display.actions'
 import { useRewardDisplayOrchestrator } from './hooks/useRewardDisplayOrchestrator'
+import { checkAndApplyPremiumExpiration } from '@/src/stores/premium.store'
 import { SyncIncrementalErrorBanner } from './components/SyncIncrementalErrorBanner'
 import {
   $hasBadgesDot,
@@ -313,6 +314,8 @@ function AppContent() {
       if (shouldPullSyncOnForeground(lastMs)) {
         void forceSync()
       }
+
+      checkAndApplyPremiumExpiration()
 
       // Re-check check-in prompt when returning from background
       const screen = $currentScreen.get()

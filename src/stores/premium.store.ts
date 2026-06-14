@@ -10,6 +10,18 @@ import { storageGetItem, storageSetItem } from '@/src/effects/storage.effects'
 import { onPremiumActivated } from '@/src/effects/premium.effects'
 import { fetchUserData } from '@/src/effects/supabase.effects'
 import { getSyncService } from '@/utils/supabaseSync'
+import {
+  isPremiumExpired,
+  PREMIUM_RECONCILE_BACKOFF_MS,
+  PREMIUM_RECONCILE_MAX_ATTEMPTS,
+  resolveEffectivePremium,
+  shouldDemotePremiumFromFetch,
+} from '@/src/domain/premium.domain'
+import {
+  endPremiumReconciliation,
+  isPremiumReconciliationActive,
+  startPremiumReconciliation,
+} from '@/src/stores/premium-reconciliation.store'
 
 export type PremiumStatusSource =
   | 'legacyLocalStorage'
@@ -17,6 +29,7 @@ export type PremiumStatusSource =
   | 'supabaseSignature'
   | 'supabaseUnsigned'
   | 'telegramEvent'
+  | 'expired'
   | 'unknown'
 
 export type PremiumStatus = {
@@ -26,8 +39,62 @@ export type PremiumStatus = {
   purchasedAt?: string
 }
 
+let expirationTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearExpirationTimer(): void {
+  if (expirationTimer !== null) {
+    clearTimeout(expirationTimer)
+    expirationTimer = null
+  }
+}
+
+function schedulePremiumExpiration(expiresAt?: string): void {
+  clearExpirationTimer()
+  if (!expiresAt) return
+
+  const expiresMs = Date.parse(expiresAt)
+  if (Number.isNaN(expiresMs)) return
+
+  const delay = expiresMs - Date.now()
+  if (delay <= 0) {
+    applyExpiredPremiumState()
+    return
+  }
+
+  expirationTimer = setTimeout(() => {
+    applyExpiredPremiumState()
+  }, delay)
+}
+
+function applyExpiredPremiumState(): void {
+  clearExpirationTimer()
+  storageSetItem('user-premium-status', 'false')
+  localStorage.removeItem('premium-signature')
+  localStorage.removeItem('user-premium-expires-at')
+  $isPremium.set(false)
+  $premiumStatus.set({ source: 'expired' })
+}
+
 function loadLegacyPremiumFromStorage(): boolean {
   return storageGetItem('user-premium-status') === 'true'
+}
+
+function getLocalPurchasedAt(): string | null {
+  return storageGetItem('user-premium-purchased-at')
+}
+
+function applyPremiumState(
+  premium: boolean,
+  status: Partial<PremiumStatus>,
+): void {
+  if (!premium) {
+    setPremium(false, status)
+    clearExpirationTimer()
+    return
+  }
+
+  setPremium(true, status)
+  schedulePremiumExpiration(status.expiresAt)
 }
 
 export const $isPremium = atom<boolean>(false)
@@ -38,7 +105,6 @@ export const $premiumStatus = atom<PremiumStatus>({
 export function setPremium(nextPremium: boolean, nextStatus?: Partial<PremiumStatus>) {
   $isPremium.set(nextPremium)
 
-  // Persist in the legacy format so the rest of the codebase keeps working.
   storageSetItem('user-premium-status', nextPremium ? 'true' : 'false')
 
   if (nextStatus?.plan) {
@@ -58,11 +124,15 @@ export function setPremium(nextPremium: boolean, nextStatus?: Partial<PremiumSta
   })
 }
 
+export function checkAndApplyPremiumExpiration(): void {
+  const expiresAt = storageGetItem('user-premium-expires-at') ?? $premiumStatus.get().expiresAt
+  if (!$isPremium.get()) return
+  if (!isPremiumExpired(expiresAt)) return
+  applyExpiredPremiumState()
+}
+
 export function initPremiumFromLocalStorage() {
-  // Prefer verified signature if available.
   try {
-    // This internally verifies the stored signature and can clear invalid storage.
-    // It's async, but we also set a synchronous fallback so UI doesn't flicker.
     const fallback = loadLegacyPremiumFromStorage()
     $isPremium.set(fallback)
     $premiumStatus.set({ source: fallback ? 'legacyLocalStorage' : 'legacyLocalStorage' })
@@ -71,20 +141,33 @@ export function initPremiumFromLocalStorage() {
     $premiumStatus.set({ source: 'unknown' })
   }
 
-  // Then attempt verified signature in the background.
   void (async () => {
     try {
       const verified = await getVerifiedPremiumStatus()
       if (verified) {
-        setPremium(verified.premium, {
+        const effectivePremium = resolveEffectivePremium({
+          premium: verified.premium,
+          expiresAt: verified.expiresAt,
+        })
+        if (!effectivePremium) {
+          applyExpiredPremiumState()
+          return
+        }
+        applyPremiumState(true, {
           source: 'verifiedLocalStorage',
           plan: verified.plan,
           expiresAt: verified.expiresAt,
           purchasedAt: verified.purchasedAt
         })
       } else {
-        // Keep existing fallback from legacy format.
-        setPremium(loadLegacyPremiumFromStorage(), { source: 'legacyLocalStorage' })
+        const legacyPremium = loadLegacyPremiumFromStorage()
+        const expiresAt = storageGetItem('user-premium-expires-at') ?? undefined
+        if (legacyPremium && isPremiumExpired(expiresAt)) {
+          applyExpiredPremiumState()
+          return
+        }
+        setPremium(legacyPremium, { source: 'legacyLocalStorage', expiresAt })
+        if (legacyPremium) schedulePremiumExpiration(expiresAt)
       }
     } catch {
       setPremium(loadLegacyPremiumFromStorage(), { source: 'legacyLocalStorage' })
@@ -92,9 +175,16 @@ export function initPremiumFromLocalStorage() {
   })()
 }
 
-export async function loadPremiumFromSupabase() {
+type LoadPremiumOptions = {
+  fromReconciliation?: boolean
+}
+
+export async function loadPremiumFromSupabase(options: LoadPremiumOptions = {}) {
+  const fromReconciliation = options.fromReconciliation === true
+  const reconciliationActive = isPremiumReconciliationActive()
+  const localPurchasedAt = getLocalPurchasedAt()
+
   try {
-    // Premium activation can happen right after startup sync; force a fresh read.
     getSyncService().clearFetchCache()
     const result = await fetchUserData()
     if (!result) return
@@ -103,31 +193,86 @@ export async function loadPremiumFromSupabase() {
       const sig = result.premiumSignature as PremiumSignatureData
       const isValid = await verifyPremiumSignature(sig)
       if (isValid) {
-        savePremiumSignatureToStorage(sig)
-        setPremium(sig.data.premium, {
-          source: 'supabaseSignature',
-          plan: sig.data.plan,
+        const effectivePremium = resolveEffectivePremium({
+          premium: sig.data.premium,
           expiresAt: sig.data.expiresAt,
-          purchasedAt: sig.data.purchasedAt
         })
+
+        if (effectivePremium) {
+          savePremiumSignatureToStorage(sig)
+          applyPremiumState(true, {
+            source: 'supabaseSignature',
+            plan: sig.data.plan,
+            expiresAt: sig.data.expiresAt,
+            purchasedAt: sig.data.purchasedAt
+          })
+          endPremiumReconciliation()
+          return
+        }
+
+        if (
+          shouldDemotePremiumFromFetch({
+            hasPremium: false,
+            premiumSignature: sig,
+            isReconciliationActive: reconciliationActive || fromReconciliation,
+            localPurchasedAt,
+          })
+        ) {
+          savePremiumSignatureToStorage(sig)
+          applyExpiredPremiumState()
+          endPremiumReconciliation()
+          return
+        }
+
         return
       }
-      // Signature invalid: fall back to unsigned hasPremium if available.
-      if (typeof (result as any).hasPremium === 'boolean') {
-        setPremium((result as any).hasPremium, { source: 'supabaseUnsigned' })
+
+      if (typeof (result as { hasPremium?: boolean }).hasPremium === 'boolean') {
+        if (
+          shouldDemotePremiumFromFetch({
+            hasPremium: (result as { hasPremium: boolean }).hasPremium,
+            premiumSignature: sig,
+            isReconciliationActive: reconciliationActive || fromReconciliation,
+            localPurchasedAt,
+          })
+        ) {
+          setPremium((result as { hasPremium: boolean }).hasPremium, { source: 'supabaseUnsigned' })
+        }
       }
       return
     }
 
     if (typeof result.hasPremium === 'boolean') {
-      setPremium(result.hasPremium, { source: 'supabaseUnsigned' })
+      if (result.hasPremium) {
+        applyPremiumState(true, { source: 'supabaseUnsigned' })
+        endPremiumReconciliation()
+        return
+      }
+
+      if (
+        shouldDemotePremiumFromFetch({
+          hasPremium: result.hasPremium,
+          isReconciliationActive: reconciliationActive || fromReconciliation,
+          localPurchasedAt,
+        })
+      ) {
+        setPremium(false, { source: 'supabaseUnsigned' })
+        clearExpirationTimer()
+      }
       return
     }
 
-    // If Supabase didn't return premium fields, keep whatever we have locally.
     const verified = await getVerifiedPremiumStatus()
     if (verified) {
-      setPremium(verified.premium, {
+      const effectivePremium = resolveEffectivePremium({
+        premium: verified.premium,
+        expiresAt: verified.expiresAt,
+      })
+      if (!effectivePremium) {
+        applyExpiredPremiumState()
+        return
+      }
+      applyPremiumState(true, {
         source: 'verifiedLocalStorage',
         plan: verified.plan,
         expiresAt: verified.expiresAt,
@@ -135,25 +280,48 @@ export async function loadPremiumFromSupabase() {
       })
     }
   } catch {
-    // Offline mode: use local verified signature (if any).
     initPremiumFromLocalStorage()
   }
 }
 
+async function sleep(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function reconcilePremiumWithServer(): Promise<void> {
+  for (let attempt = 0; attempt < PREMIUM_RECONCILE_MAX_ATTEMPTS; attempt++) {
+    if (!isPremiumReconciliationActive()) return
+
+    await loadPremiumFromSupabase({ fromReconciliation: true })
+
+    const status = $premiumStatus.get()
+    if ($isPremium.get() && status.source === 'supabaseSignature') {
+      endPremiumReconciliation()
+      return
+    }
+
+    const backoff = PREMIUM_RECONCILE_BACKOFF_MS[attempt] ?? 16_000
+    await sleep(backoff)
+  }
+
+  endPremiumReconciliation()
+}
+
 function handlePremiumActivatedEvent(event: Event) {
-  const customEvent = event as CustomEvent<any>
+  const customEvent = event as CustomEvent<{ planType?: string; timestamp?: number }>
   const detail = customEvent.detail ?? {}
 
   const planType = typeof detail.planType === 'string' ? detail.planType : undefined
-  const purchasedAt = typeof detail.timestamp === 'number' ? new Date(detail.timestamp).toISOString() : undefined
+  const purchasedAt =
+    typeof detail.timestamp === 'number' ? new Date(detail.timestamp).toISOString() : undefined
 
-  setPremium(true, {
+  startPremiumReconciliation()
+  applyPremiumState(true, {
     source: 'telegramEvent',
     plan: planType,
     purchasedAt
   })
 
-  // Refresh verified signature immediately (no artificial delay).
   if (typeof window !== 'undefined') {
     void (async () => {
       try {
@@ -161,26 +329,32 @@ function handlePremiumActivatedEvent(event: Event) {
         if (existingSig) {
           const verified = await getVerifiedPremiumStatus()
           if (verified) {
-            setPremium(verified.premium, {
-              source: 'verifiedLocalStorage',
-              plan: verified.plan,
+            const effectivePremium = resolveEffectivePremium({
+              premium: verified.premium,
               expiresAt: verified.expiresAt,
-              purchasedAt: verified.purchasedAt
             })
+            if (effectivePremium) {
+              applyPremiumState(true, {
+                source: 'verifiedLocalStorage',
+                plan: verified.plan,
+                expiresAt: verified.expiresAt,
+                purchasedAt: verified.purchasedAt
+              })
+              endPremiumReconciliation()
+              return
+            }
           }
-          return
         }
 
-        await loadPremiumFromSupabase()
+        await reconcilePremiumWithServer()
       } catch {
-        // ignore and keep optimistic state
+        // Keep optimistic premium during grace window.
       }
     })()
   }
 }
 
 onMount($isPremium, () => {
-  // Ensure tests that clear localStorage between renders don't get stale premium state.
   initPremiumFromLocalStorage()
 
   if (typeof window !== 'undefined') {
@@ -189,4 +363,3 @@ onMount($isPremium, () => {
 
   return () => {}
 })
-
