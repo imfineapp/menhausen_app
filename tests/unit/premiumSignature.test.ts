@@ -275,6 +275,37 @@ describe('premiumSignature', () => {
       });
     });
 
+    it('should return non-premium when signature is valid but subscription expired', async () => {
+      const signatureData: PremiumSignatureData = {
+        data: {
+          premium: true,
+          plan: 'monthly',
+          expiresAt: '2020-01-01T00:00:00Z',
+          purchasedAt: '2019-12-01T00:00:00Z',
+          timestamp: Date.now(),
+        },
+        signature: 'dGVzdC1zaWduYXR1cmU=',
+        publicKey: 'dGVzdC1wdWJsaWMta2V5',
+        version: 1,
+      };
+
+      localStorageMock.storage['premium-signature'] = JSON.stringify(signatureData);
+
+      const mockPublicKey = {} as CryptoKey;
+      mockCryptoSubtle.importKey.mockResolvedValue(mockPublicKey);
+      mockCryptoSubtle.verify.mockResolvedValue(true);
+
+      const result = await getVerifiedPremiumStatus();
+
+      expect(result).toEqual({
+        premium: false,
+        plan: 'monthly',
+        expiresAt: '2020-01-01T00:00:00Z',
+        purchasedAt: '2019-12-01T00:00:00Z',
+      });
+      expect(localStorageMock.removeItem).toHaveBeenCalledWith('premium-signature');
+    });
+
     it('should return premium status with minimal data when signature is valid', async () => {
       const signatureData: PremiumSignatureData = {
         data: {
