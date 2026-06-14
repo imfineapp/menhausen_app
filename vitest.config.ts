@@ -17,7 +17,6 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      all: false,
       include: [
         'src/stores/achievements.store.ts',
         'src/stores/points.store.ts',
