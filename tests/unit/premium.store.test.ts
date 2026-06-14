@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 
 vi.mock('@/utils/supabaseSync', () => ({
   getSyncService: vi.fn()
@@ -19,7 +19,18 @@ import {
   loadPremiumSignatureFromStorage
 } from '@/utils/premiumSignature'
 
-import { $isPremium, $premiumStatus, initPremiumFromLocalStorage, loadPremiumFromSupabase, setPremium } from '../../src/stores/premium.store'
+import {
+  $isPremium,
+  $premiumStatus,
+  checkAndApplyPremiumExpiration,
+  initPremiumFromLocalStorage,
+  loadPremiumFromSupabase,
+  setPremium,
+} from '../../src/stores/premium.store'
+import {
+  endPremiumReconciliation,
+  startPremiumReconciliation,
+} from '../../src/stores/premium-reconciliation.store'
 
 describe('premium.store', () => {
   const localStorageMock = {
@@ -39,6 +50,7 @@ describe('premium.store', () => {
   beforeEach(() => {
     localStorageMock.storage = {}
     vi.clearAllMocks()
+    endPremiumReconciliation()
 
     Object.defineProperty(global, 'localStorage', {
       value: localStorageMock,
@@ -54,6 +66,11 @@ describe('premium.store', () => {
 
     $isPremium.set(false)
     $premiumStatus.set({ source: 'unknown' })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    endPremiumReconciliation()
   })
 
   it('setPremium persists legacy localStorage keys', () => {
@@ -123,5 +140,47 @@ describe('premium.store', () => {
     expect($premiumStatus.get().source).toBe('supabaseSignature')
     expect(localStorageMock.setItem).toHaveBeenCalledWith('user-premium-status', 'true')
   })
-})
 
+  it('keeps optimistic premium when fetch returns unsigned hasPremium false during reconciliation', async () => {
+    localStorageMock.setItem('user-premium-status', 'true')
+    localStorageMock.setItem(
+      'user-premium-purchased-at',
+      new Date().toISOString(),
+    )
+
+    startPremiumReconciliation()
+
+    const fetchUserData = vi.fn().mockResolvedValue({
+      hasPremium: false,
+    })
+
+    vi.mocked(getSyncService).mockReturnValue({
+      fetchUserData,
+      clearFetchCache: vi.fn(),
+    } as any)
+
+    setPremium(true, { source: 'telegramEvent', plan: 'monthly' })
+
+    await loadPremiumFromSupabase({ fromReconciliation: true })
+
+    expect($isPremium.get()).toBe(true)
+    expect($premiumStatus.get().source).toBe('telegramEvent')
+  })
+
+  it('checkAndApplyPremiumExpiration clears premium when expiresAt is in the past', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-06-14T12:00:00.000Z'))
+
+    setPremium(true, {
+      source: 'verifiedLocalStorage',
+      plan: 'monthly',
+      expiresAt: '2026-06-14T11:00:00.000Z',
+    })
+
+    checkAndApplyPremiumExpiration()
+
+    expect($isPremium.get()).toBe(false)
+    expect($premiumStatus.get().source).toBe('expired')
+    expect(localStorageMock.removeItem).toHaveBeenCalledWith('premium-signature')
+  })
+})

@@ -1,9 +1,14 @@
 /**
  * Premium Status Signature Verification
- * 
+ *
  * Provides functions for verifying Ed25519 signatures of premium status data
  * Uses Web Crypto API available in modern browsers
  */
+
+import {
+  isPremiumExpired,
+  resolveEffectivePremium,
+} from '@/src/domain/premium.domain'
 
 export interface PremiumSignatureData {
   data: {
@@ -210,11 +215,24 @@ export async function getVerifiedPremiumStatus(): Promise<{
     return null;
   }
 
-  // Check if data is expired (optional - can add expiration check here)
-  // For now, we trust the timestamp from server
+  // Expired subscriptions are treated as non-premium even with a valid signature.
+  const effectivePremium = resolveEffectivePremium({
+    premium: signatureData.data.premium,
+    expiresAt: signatureData.data.expiresAt,
+  })
+
+  if (!effectivePremium && signatureData.data.premium && isPremiumExpired(signatureData.data.expiresAt)) {
+    localStorage.removeItem('premium-signature')
+    return {
+      premium: false,
+      plan: signatureData.data.plan,
+      expiresAt: signatureData.data.expiresAt,
+      purchasedAt: signatureData.data.purchasedAt,
+    }
+  }
 
   return {
-    premium: signatureData.data.premium,
+    premium: effectivePremium,
     plan: signatureData.data.plan,
     expiresAt: signatureData.data.expiresAt,
     purchasedAt: signatureData.data.purchasedAt,
