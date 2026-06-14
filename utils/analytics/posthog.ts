@@ -265,6 +265,7 @@ export const AnalyticsEvent = {
   FIRST_CARD_STARTED: 'first_card_started',
   FIRST_CARD_COMPLETED: 'first_card_completed',
   PURCHASE_ATTEMPT: 'purchase_attempt',
+  PREMIUM_PAYMENT_CONFIRMED: 'premium_payment_confirmed',
   PURCHASE_COMPLETED: 'purchase_completed',
   BREATHING_46_STARTED: 'breathing_46_started',
   BREATHING_46_COMPLETED: 'breathing_46_completed',

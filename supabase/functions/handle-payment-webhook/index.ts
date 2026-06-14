@@ -9,6 +9,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { answerPreCheckoutQuery, getBotInfo } from '../_shared/telegram-bot-api.ts';
 import { getTelegramBotTokens } from '../_shared/telegram-auth.ts';
+import { capturePostHogEvent, POSTHOG_EVENT } from '../_shared/posthog-capture.ts';
 
 /**
  * Find the bot token that corresponds to the given bot_id (from invoice payload).
@@ -105,7 +106,7 @@ async function activatePremiumSubscription(
     paymentChargeId: string;
     invoiceMessageId: number;
   }
-): Promise<void> {
+): Promise<boolean> {
   const { telegramUserId, botId, botUsername, isTestPayment, planType, paymentChargeId, invoiceMessageId } = params;
   
   const startsAt = new Date();
@@ -128,7 +129,7 @@ async function activatePremiumSubscription(
   
   if (existing) {
     console.log('[handle-payment-webhook] Duplicate payment detected:', paymentChargeId);
-    return; // Already processed
+    return false; // Already processed
   }
   
   // Insert subscription
@@ -159,6 +160,8 @@ async function activatePremiumSubscription(
     isTestPayment,
     paymentChargeId
   });
+
+  return true;
 }
 
 /**
@@ -283,7 +286,7 @@ serve(async (req) => {
         const isTestPayment = payload.t === 1 || payload.isTestPayment === true;
         
         // Activate premium subscription
-        await activatePremiumSubscription(supabase, {
+        const activated = await activatePremiumSubscription(supabase, {
           telegramUserId: telegramUserId,
           botId,
           botUsername,
@@ -292,6 +295,19 @@ serve(async (req) => {
           paymentChargeId: payment.telegram_payment_charge_id,
           invoiceMessageId: update.message.message_id
         });
+
+        if (activated) {
+          await capturePostHogEvent(
+            POSTHOG_EVENT.PREMIUM_PAYMENT_CONFIRMED,
+            telegramUserId,
+            {
+              plan_type: planType,
+              is_test_payment: isTestPayment,
+              bot_id: botId,
+              telegram_payment_charge_id: payment.telegram_payment_charge_id,
+            },
+          );
+        }
         
         // Note: Premium signature will be generated on next get-user-data call
         // This ensures signature is always fresh and includes latest subscription data
