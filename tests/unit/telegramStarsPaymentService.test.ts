@@ -15,6 +15,7 @@ vi.mock('../../utils/telegramUserUtils', () => ({
 
 vi.mock('../../utils/supabaseSync/authService', () => ({
   getValidJWTToken: vi.fn(),
+  getLastAuthError: vi.fn(),
 }));
 
 // Mock localStorage
@@ -80,6 +81,7 @@ beforeEach(() => {
   // Default mocks
   vi.mocked(telegramUserUtils.getTelegramUserId).mockReturnValue('123456789');
   vi.mocked(authService.getValidJWTToken).mockResolvedValue('test-jwt-token');
+  vi.mocked(authService.getLastAuthError).mockReturnValue(null);
 });
 
 afterEach(() => {

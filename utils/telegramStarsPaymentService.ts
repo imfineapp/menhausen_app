@@ -5,7 +5,7 @@
  */
 
 import { getTelegramUserId } from './telegramUserUtils';
-import { getValidJWTToken } from './supabaseSync/authService';
+import { getLastAuthError, getValidJWTToken } from './supabaseSync/authService';
 import { AnalyticsEvent, capture, captureException } from './analytics/posthog';
 import { $screenParams } from '@/src/stores/screen-params.store';
 import { $experimentVariant } from '@/src/stores/experiment.store';
@@ -65,7 +65,12 @@ class TelegramStarsPaymentService {
     // Get JWT token for authentication
     const jwtToken = await getValidJWTToken();
     if (!jwtToken) {
-      throw new Error('JWT token not available. Please authenticate first.');
+      const authError = getLastAuthError();
+      throw new Error(
+        authError?.error
+          ? `Authentication failed: ${authError.error}`
+          : 'JWT token not available. Please authenticate first.'
+      );
     }
     
     // Prepare headers

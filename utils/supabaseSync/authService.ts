@@ -10,6 +10,14 @@ import { setAuthState } from '../../src/stores/auth.store';
 const JWT_TOKEN_KEY = 'supabase_jwt_token';
 const JWT_TOKEN_EXPIRY_KEY = 'supabase_jwt_token_expiry';
 
+export interface AuthError {
+  error?: string;
+  code?: string;
+}
+
+let refreshPromise: Promise<string | null> | null = null;
+let lastAuthError: AuthError | null = null;
+
 interface AuthResponse {
   success: boolean;
   token?: string;
@@ -347,32 +355,53 @@ export async function deleteUserDataFromSupabase(): Promise<{ success: boolean; 
 }
 
 /**
- * Get JWT token, refreshing if expired
+ * Last auth failure from getValidJWTToken refresh flow (for diagnostics / user messaging).
+ */
+export function getLastAuthError(): AuthError | null {
+  return lastAuthError;
+}
+
+async function performTokenRefresh(): Promise<string | null> {
+  console.log('[authService] Refreshing JWT token...');
+  const authResult = await refreshJWTToken();
+  if (authResult.success && authResult.token) {
+    lastAuthError = null;
+    console.log('[authService] JWT token refreshed successfully');
+    return authResult.token;
+  }
+
+  lastAuthError = { error: authResult.error, code: authResult.code };
+  console.error('[authService] Failed to refresh JWT token:', authResult.error);
+  return null;
+}
+
+/**
+ * Get JWT token, refreshing if expired.
+ * Concurrent callers share a single in-flight refresh to avoid auth races.
  */
 export async function getValidJWTToken(): Promise<string | null> {
-  let token = getJWTToken();
+  const token = getJWTToken();
   const isExpired = isJWTTokenExpired();
-  
+
   console.log('[authService] getValidJWTToken - has token:', !!token, 'is expired:', isExpired);
-  
-  if (!token || isExpired) {
-    // Token missing or expired, refresh it
-    console.log('[authService] Refreshing JWT token...');
-    const authResult = await refreshJWTToken();
-    if (authResult.success && authResult.token) {
-      token = authResult.token;
-      console.log('[authService] JWT token refreshed successfully');
-    } else {
-      console.error('[authService] Failed to refresh JWT token:', authResult.error);
-      return null;
-    }
-  } else {
+
+  if (token && !isExpired) {
     console.log('[authService] Using existing JWT token');
+    setAuthState({ jwtExpiresAt: getTokenExpiry(token) ?? null });
+    return token;
   }
 
-  if (token) {
-    setAuthState({ jwtExpiresAt: getTokenExpiry(token) ?? null })
+  if (!refreshPromise) {
+    refreshPromise = performTokenRefresh().finally(() => {
+      refreshPromise = null;
+    });
   }
 
-  return token;
+  const refreshedToken = await refreshPromise;
+
+  if (refreshedToken) {
+    setAuthState({ jwtExpiresAt: getTokenExpiry(refreshedToken) ?? null });
+  }
+
+  return refreshedToken;
 }
