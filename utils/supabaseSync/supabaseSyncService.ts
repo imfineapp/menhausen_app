@@ -44,6 +44,9 @@ export class SupabaseSyncService {
   private supabase: SupabaseClient | null = null;
   /** Serializes initialSync/forceSync so concurrent callers wait instead of failing. */
   private syncMutex: Promise<void> = Promise.resolve();
+  /** Serializes upload POSTs so batch sync and background initial sync do not race on mobile. */
+  private uploadMutex: Promise<void> = Promise.resolve();
+  private offlineRetryTimer: number | null = null;
   private offlineQueue: SyncQueueItem[] = [];
   private fetchCache: {
     inFlight: Promise<UserDataFromAPI | null> | null;
@@ -328,6 +331,7 @@ export class SupabaseSyncService {
 
       if (this.config.enableOfflineQueue) {
         this.enqueueOfflineBatch(Array.from(types), data);
+        this.scheduleOfflineQueueRetry();
       }
 
       for (const type of types) {
@@ -501,6 +505,50 @@ export class SupabaseSyncService {
     this.saveOfflineQueue();
   }
 
+  private static isFetchNetworkError(error: unknown): boolean {
+    return error instanceof TypeError && error.message === 'Failed to fetch';
+  }
+
+  private scheduleOfflineQueueRetry(): void {
+    if (!this.config.enableOfflineQueue || this.offlineQueue.length === 0) {
+      return;
+    }
+    if (this.offlineRetryTimer != null) {
+      return;
+    }
+    this.offlineRetryTimer = window.setTimeout(() => {
+      this.offlineRetryTimer = null;
+      void this.processOfflineQueue();
+    }, this.config.retryDelayMs);
+  }
+
+  private async fetchSupabaseFunction(url: string, init: RequestInit): Promise<Response> {
+    const maxAttempts = Math.max(1, this.config.maxRetries);
+    let lastError: unknown;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        return await fetch(url, {
+          mode: 'cors',
+          credentials: 'omit',
+          ...init,
+        });
+      } catch (error) {
+        lastError = error;
+        const canRetry =
+          SupabaseSyncService.isFetchNetworkError(error) && attempt < maxAttempts;
+        if (!canRetry) {
+          throw error;
+        }
+        const delayMs = this.config.retryDelayMs * attempt;
+        syncLog.debug(
+          `[SyncService] fetch network error, retry ${attempt}/${maxAttempts} in ${delayMs}ms`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+    throw lastError;
+  }
+
   /**
    * Fetch user data from Supabase
    */
@@ -645,7 +693,22 @@ export class SupabaseSyncService {
         errors: [],
       };
     }
-    
+
+    const previous = this.uploadMutex;
+    let release!: () => void;
+    this.uploadMutex = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    await previous;
+
+    try {
+      return await this.runSyncToSupabaseImpl(data);
+    } finally {
+      release();
+    }
+  }
+
+  private async runSyncToSupabaseImpl(data: any): Promise<SyncResult> {
     if (!this.supabase) {
       throw new Error('Supabase client not initialized');
     }
@@ -701,8 +764,7 @@ export class SupabaseSyncService {
         throw new Error('No authentication method available (JWT token or Telegram initData)');
       }
 
-      // Call Edge Function
-      const response = await fetch(url, {
+      const response = await this.fetchSupabaseFunction(url, {
         method: 'POST',
         headers,
         body,
@@ -1074,6 +1136,7 @@ export class SupabaseSyncService {
               console.warn('[SyncService] Background upload failed:', error);
               const err = error instanceof Error ? error : new Error(String(error));
               this.enqueueOfflineBatch(Array.from(dirtyTypes), localData);
+              this.scheduleOfflineQueueRetry();
               reportIncrementalSyncError(err.message);
             });
         }
@@ -1115,6 +1178,7 @@ export class SupabaseSyncService {
               console.warn('[SyncService] Background upload failed:', error);
               const err = error instanceof Error ? error : new Error(String(error));
               this.enqueueOfflineBatch(uploadedTypes, localData);
+              this.scheduleOfflineQueueRetry();
               reportIncrementalSyncError(err.message);
             });
           this.syncStatus.lastSync = new Date();
